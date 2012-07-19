@@ -71,8 +71,6 @@ class ListenerFactory;
 //! \version: 1.0
 class ENGINE_PUBLIC_EXPORT SoundManager: public core::System, public core::Singleton<SoundManager>
 {
-	friend class ResourceManager;
-
 public:
 
 	// Default Constructor

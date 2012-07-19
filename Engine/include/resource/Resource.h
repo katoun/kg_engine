@@ -51,9 +51,6 @@ class ResourceEventReceiver;
 //! they are.
 class ENGINE_PUBLIC_EXPORT Resource
 {
-	friend class Serializer;
-	friend class ResourceManager;
-
 public:
     
 	Resource(const std::string& filename, Serializer* serializer = NULL);

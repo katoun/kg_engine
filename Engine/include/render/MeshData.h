@@ -52,8 +52,6 @@ class IndexData;
 //! Defines a mesh resource.
 class ENGINE_PUBLIC_EXPORT MeshData: public resource::Resource
 {
-	friend class Model;
-
 public:
 
 	MeshData(const std::string& name, resource::Serializer* serializer);

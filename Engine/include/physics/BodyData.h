@@ -59,8 +59,6 @@ enum BodyType
 //!  version: 1.0
 class ENGINE_PUBLIC_EXPORT BodyData: public resource::Resource
 {
-	friend class Body;
-
 public:
 
 	BodyData(const std::string& name, resource::Serializer* serializer);

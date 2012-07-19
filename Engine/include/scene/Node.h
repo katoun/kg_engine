@@ -47,8 +47,6 @@ namespace scene
 //!	it and all of it's children.
 class ENGINE_PUBLIC_EXPORT Node: public engine::Object
 {
-	//friend class SceneManager; // Allow full access to scene manager
-
 public:
 	
 	Node();

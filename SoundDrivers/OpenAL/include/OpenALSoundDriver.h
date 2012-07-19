@@ -48,8 +48,6 @@ namespace sound
 
 class OpenALSoundDriver: public SoundDriver, public core::Singleton<OpenALSoundDriver>
 {
-	friend class ResourceManager;
-
 public:
 	// Default constructor / destructor
 	OpenALSoundDriver();
