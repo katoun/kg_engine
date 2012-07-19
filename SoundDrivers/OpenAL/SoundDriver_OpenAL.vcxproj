@@ -73,7 +73,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engined.lib;libOpenAL32.dll.a;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engined.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -116,7 +116,7 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Confi
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engine.lib;PocoFoundationd.lib;PocoUtild.lib;PocoXMLd.lib;libOpenAL32.dll.a;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\poco\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
