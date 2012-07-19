@@ -26,6 +26,9 @@ THE SOFTWARE.
 
 #include <sound/Sound.h>
 #include <sound/SoundData.h>
+#include <game/GameObject.h>
+#include <game/Transform.h>
+#include <game/ComponentDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 #include <core/Vector3d.h>
@@ -34,12 +37,13 @@ THE SOFTWARE.
 namespace sound
 {
 
-unsigned int Sound::msNextGeneratedSoundIndex = 0;
-
-Sound::Sound(SoundData* soundData): scene::Node("Sound_" + core::intToString(msNextGeneratedSoundIndex++))
+Sound::Sound(): game::Component()
 {
-	mNodeType = scene::NT_SOUND;
+	mType = game::COMPONENT_TYPE_SOUND;
 
+	mSoundData = NULL;
+
+	mLastPosition = core::vector3d::ORIGIN_3D;
 	mVelocity = core::vector3d::ORIGIN_3D;
 
 	mPitch = 1.0f;
@@ -51,34 +55,14 @@ Sound::Sound(SoundData* soundData): scene::Node("Sound_" + core::intToString(msN
 	mOuterConeGain = 1.0f;
 
 	mLoop = false;
-
-	assert(soundData != NULL);
-	if (soundData == NULL)
-		return;
-
-	mSoundData = soundData;
-	mSoundData->addResourceEventReceiver(this);
-}
-
-Sound::Sound(const std::string& name, SoundData* soundData): scene::Node(name)
-{
-	mNodeType = scene::NT_SOUND;
-
-	mVelocity = core::vector3d::ORIGIN_3D;
-
-	mLoop = false;
-
-	assert(soundData != NULL);
-	if (soundData == NULL)
-		return;
-
-	mSoundData = soundData;
-	mSoundData->addResourceEventReceiver(this);
 }
 
 Sound::~Sound()
 {
-	if (mSoundData != NULL)	mSoundData->removeResourceEventReceiver(this);
+	if (mSoundData != NULL)
+	{
+		mSoundData->removeResourceEventReceiver(this);
+	}
 
 	uninitialize();
 }
@@ -90,12 +74,16 @@ void Sound::setSoundData(const std::string& filename)
 		return;
 
 	if (mSoundData != NULL)
+	{
 		mSoundData->removeResourceEventReceiver(this);
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mSoundData = newSoundData;
 	mSoundData->addResourceEventReceiver(this);
+
+	setSoundDataImpl(mSoundData);
 }
 
 void Sound::setSoundData(SoundData* soundData)
@@ -104,12 +92,16 @@ void Sound::setSoundData(SoundData* soundData)
 		return;
 
 	if (mSoundData != NULL)
+	{
 		mSoundData->removeResourceEventReceiver(this);
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mSoundData = soundData;
 	mSoundData->addResourceEventReceiver(this);
+
+	setSoundDataImpl(mSoundData);
 }
 
 SoundData* Sound::getSoundData() const
@@ -136,20 +128,6 @@ bool Sound::isPaused() const
 bool Sound::isStopped() const
 {
 	return true;
-}
-
-void Sound::setVelocity(float x, float y, float z)
-{
-	mVelocity.X = x;
-	mVelocity.Y = y;
-	mVelocity.Z = z;
-	mModifiedAbsoluteTransform = true;
-}
-
-void Sound::setVelocity(const core::vector3d& vec)
-{
-	mVelocity = vec;
-	mModifiedAbsoluteTransform = true;
 }
 
 const core::vector3d& Sound::getVelocity() const
@@ -277,7 +255,7 @@ void Sound::resourceLoaded(const resource::ResourceEvent& evt)
 		mOuterConeAngle = mSoundData->getOuterConeAngle();
 		mOuterConeGain = mSoundData->getOuterConeGain();
 
-		initialize();//HERE IS THE PROBLEM!!!
+		initialize();
 	}
 }
 
@@ -300,5 +278,21 @@ void Sound::resourceUnloaded(const resource::ResourceEvent& evt)
 		uninitialize();
 	}
 }
+
+void Sound::updateImpl(float elapsedTime)
+{
+	if (mGameObject != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL && pTransform->isAbsoluteTransformModified())
+		{
+			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
+			mVelocity = delta / elapsedTime;
+			mLastPosition = pTransform->getAbsolutePosition();
+		}
+	}
+}
+
+void Sound::setSoundDataImpl(SoundData* soundData) {}
 
 } // end namespace sound

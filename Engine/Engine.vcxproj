@@ -372,6 +372,7 @@
     <ClCompile Include="src\sound\ListenerFactory.cpp" />
     <ClCompile Include="src\sound\Sound.cpp" />
     <ClCompile Include="src\sound\SoundData.cpp" />
+    <ClCompile Include="src\sound\SoundFactory.cpp" />
     <ClCompile Include="src\sound\SoundManager.cpp" />
     <ClCompile Include="src\sound\SoundDriver.cpp" />
     <ClCompile Include="src\physics\Body.cpp" />

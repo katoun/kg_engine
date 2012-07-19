@@ -80,24 +80,11 @@ public:
 
 	~SoundManager();
 
-	//! Initialize all sound elements waiting to be initialized.
-	void initializeObjects();
-
-	//! Creates a sound to be managed by sound manager.
-	Sound* createSound(const std::string& filename, scene::Node* parent = NULL);
-	Sound* createSound(const std::string& name, const std::string& filename, scene::Node* parent = NULL);
-
-	Sound* createSound(SoundData* soundData, scene::Node* parent = NULL);
-	Sound* createSound(const std::string& name, SoundData* soundData, scene::Node* parent = NULL);
-
-	//! Retrieves a pointer to a sound by id.
-	Sound* getSound(const unsigned int& id);
-
-	//! Retrieves the total number of created sounds.
-	unsigned int getNumberOfSounds() const;
+	//!  Adds a sound to be managed by this sound manager.
+	void addSound(Sound* sound);
 
 	//! Removes a sound.
-	void removeSound(Sound *sound);
+	void removeSound(Sound* sound);
 	//! Removes a sound.
 	void removeSound(const unsigned int& id);
 	//! Removes (and destroys) all sounds.
@@ -110,10 +97,10 @@ public:
 	Listener* getActiveListener();
 
 	//!  Adds a listener to be managed by this sound manager.
-	void addListener(Listener *listener);
+	void addListener(Listener* listener);
 
 	//! Removes a listener.
-	void removeListener(Listener *listener);
+	void removeListener(Listener* listener);
 	//! Removes a listener.
 	void removeListener(const unsigned int& id);
 
@@ -135,8 +122,8 @@ public:
 	//! Returns the speed of sound.
 	float getSoundSpeed() const;
 
-	void setSoundFactory(SoundFactory* factory);
-	void removeSoundFactory();
+	void setDefaultSoundFactory(game::ComponentFactory* factory);
+	void removeDefaultSoundFactory();
 
 	static SoundManager& getInstance();
 	static SoundManager* getInstancePtr();
@@ -154,6 +141,7 @@ protected:
 	void removeDefaultFactoriesImpl();
 
 	game::ComponentFactory* mDefaultListenerFactory;
+	game::ComponentFactory* mDefaultSoundFactory;
 
 	SoundDriver* mSoundDriver;
 
@@ -163,8 +151,6 @@ protected:
 	//! Central list of listeners - for easy memory management and lookup.
 	std::map<unsigned int, Listener*> mListeners;
 	Listener* mActiveListener;
-
-	SoundFactory* mSoundFactory;
 
 	float mDopplerFactor;
 	float mSoundSpeed;

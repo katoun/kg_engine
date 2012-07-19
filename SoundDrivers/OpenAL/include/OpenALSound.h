@@ -37,8 +37,7 @@ class OPENAL_PUBLIC_EXPORT OpenALSound: public Sound
 {
 public:
 
-	OpenALSound(SoundData* soundData);
-	OpenALSound(const std::string& name, SoundData* soundData);
+	OpenALSound();
 	~OpenALSound();
 
 	void play();
@@ -72,10 +71,14 @@ public:
 protected:
 
 	void initializeImpl();
-
-	void updateTransformImpl();
+	void uninitializeImpl();
+	void updateImpl(float elapsedTime);
+	void onMessageImpl(unsigned int messageID);
+	void setSoundDataImpl(SoundData* soundData);
 
 	ALuint mSourceId;
+
+	bool mSourceNeedsUpdate;
 
 	static bool checkALError();
 	static bool checkALError(const std::string& message);

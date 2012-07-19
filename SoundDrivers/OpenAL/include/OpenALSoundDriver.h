@@ -38,6 +38,11 @@ class Serializer;
 class DataStream;
 }
 
+namespace game
+{
+class ComponentFactory;
+}
+
 namespace sound
 {
 

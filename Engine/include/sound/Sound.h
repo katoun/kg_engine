@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _SOUND_H_
 
 #include <core/Config.h>
-#include <scene/Node.h>
+#include <core/Vector3d.h>
+#include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
 
 namespace core
@@ -50,13 +51,11 @@ class SoundProperties;
 //!  Defines a sound in the sound world.
 //!  Author: Kat'Oun
 //!  version: 1.0
-class ENGINE_PUBLIC_EXPORT Sound: public scene::Node, public resource::ResourceEventReceiver
+class ENGINE_PUBLIC_EXPORT Sound: public game::Component, public resource::ResourceEventReceiver
 {
 public:
 
-	Sound(SoundData* soundData);
-	Sound(const std::string& name, SoundData* soundData);
-
+	Sound();
 	virtual ~Sound();
 
 	//! Sets the sound data this sound will use.
@@ -83,8 +82,6 @@ public:
 	//! Returns true if the sound is stopped.
 	virtual bool isStopped() const;
 
-	void setVelocity(float x, float y, float z);
-	void setVelocity(const core::vector3d& vec);
 	const core::vector3d& getVelocity() const;
 
 	//! Sets the pitch multiplier.
@@ -142,11 +139,12 @@ public:
 
 protected:
 
-	// Incremented count for next index
-	static unsigned int msNextGeneratedSoundIndex;
+	void updateImpl(float elapsedTime);
+	virtual void setSoundDataImpl(SoundData* soundData);
 
 	SoundData* mSoundData;
 
+	core::vector3d mLastPosition;
 	core::vector3d mVelocity;
 
 	float mPitch;

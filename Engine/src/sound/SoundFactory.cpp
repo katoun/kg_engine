@@ -24,31 +24,14 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _OPENAL_SOUND_FACTORY_H_
-#define _OPENAL_SOUND_FACTORY_H_
-
-#include <OpenALConfig.h>
 #include <sound/SoundFactory.h>
-
-namespace game
-{
-class Component;
-}
 
 namespace sound
 {
 
-class OPENAL_PUBLIC_EXPORT OpenALSoundFactory: public SoundFactory
+SoundFactory::SoundFactory(): game::ComponentFactory()
 {
-public:
-
-	//! Creates a new sound component.
-	game::Component* createComponent();
-
-	//! Destroys a sound component which was created by this factory.
-	void destroyComponent(game::Component* component);
-};
+	mName = "Sound";
+}
 
 } // end namespace sound
-
-#endif

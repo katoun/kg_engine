@@ -26,27 +26,29 @@ THE SOFTWARE.
 
 #include <OpenALSoundFactory.h>
 #include <OpenALSound.h>
+#include <sound/SoundManager.h>
 
 namespace sound
 {
 
-Sound* OpenALSoundFactory::createSound(SoundData* soundData)
+game::Component* OpenALSoundFactory::createComponent()
 {
-	return new OpenALSound(soundData);
+	OpenALSound* pSound = new OpenALSound();
+
+	SoundManager::getInstance().addSound(pSound);
+
+	return pSound;
 }
 
-Sound* OpenALSoundFactory::createSound(const std::string& name, SoundData* soundData)
+void OpenALSoundFactory::destroyComponent(game::Component* component)
 {
-	return new OpenALSound(name, soundData);
-}
+	OpenALSound* pSound = static_cast<OpenALSound*>(component);
 
-void OpenALSoundFactory::destroySound(Sound* sound)
-{
-	OpenALSound* openalSound = static_cast<OpenALSound*>(sound);
+	SoundManager::getInstance().removeSound(pSound);
 
-	assert(openalSound != NULL);
-	if (openalSound != NULL)
-		delete openalSound;
+	assert(pSound != NULL);
+	if (pSound != NULL)
+		delete pSound;
 }
 
 } // end namespace sound

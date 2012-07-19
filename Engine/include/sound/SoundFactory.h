@@ -28,23 +28,16 @@ THE SOFTWARE.
 #define _SOUND_FACTORY_H_
 
 #include <core/Config.h>
+#include <game/ComponentFactory.h>
 
 namespace sound
 {
 
-class Sound;
-class SoundData;
-
-class ENGINE_PUBLIC_EXPORT SoundFactory
+class ENGINE_PUBLIC_EXPORT SoundFactory: public game::ComponentFactory
 {
 public:
 
-	//! Creates a new sound object.
-	virtual Sound* createSound(SoundData* soundData) = 0;
-	virtual Sound* createSound(const std::string& name, SoundData* soundData) = 0;
-
-	//! Destroys a sound object which was created by this factory.
-	virtual void destroySound(Sound* sound) = 0;
+	SoundFactory();
 };
 
 } // end namespace sound

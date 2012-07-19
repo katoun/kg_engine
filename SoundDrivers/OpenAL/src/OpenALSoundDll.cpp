@@ -46,7 +46,7 @@ extern "C" void OPENAL_PUBLIC_EXPORT loadPlugin() throw()
 	openalSoundDriver = OpenALSoundDriver::getInstancePtr();
 	openalSoundFactory = new OpenALSoundFactory();
 	SoundManager::getInstance().setSystemDriver((core::SystemDriver*)openalSoundDriver);
-	SoundManager::getInstance().setSoundFactory(openalSoundFactory);
+	SoundManager::getInstance().setDefaultSoundFactory(openalSoundFactory);
 
 	openalSoundDataFactory = new OpenALSoundDataFactory();
 	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA, openalSoundDataFactory);
@@ -55,14 +55,18 @@ extern "C" void OPENAL_PUBLIC_EXPORT loadPlugin() throw()
 extern "C" void OPENAL_PUBLIC_EXPORT unloadPlugin()
 {
 	SoundManager::getInstance().removeSystemDriver();
-	SoundManager::getInstance().removeSoundFactory();
+	SoundManager::getInstance().removeDefaultSoundFactory();
 
 	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA);
 
 	if (openalSoundFactory != NULL)
+	{
 		delete openalSoundFactory;
+	}
 	if (openalSoundDataFactory != NULL)
+	{
 		delete openalSoundDataFactory;
+	}
 }
 
 } // end namespace sound
