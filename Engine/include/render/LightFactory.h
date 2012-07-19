@@ -24,36 +24,33 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <sound/ListenerFactory.h>
-#include <sound/Listener.h>
-#include <sound/SoundManager.h>
+#ifndef _LIGHT_FACTORY_H_
+#define _LIGHT_FACTORY_H_
 
-namespace sound
-{
+#include <core/Config.h>
+#include <game/ComponentFactory.h>
 
-ListenerFactory::ListenerFactory(): game::ComponentFactory()
+namespace game
 {
-	mName = "Listener";
+class Component;
 }
 
-game::Component* ListenerFactory::createComponent()
+namespace render
 {
-	Listener* pListener = new Listener();
 
-	SoundManager::getInstance().addListener(pListener);
-
-	return pListener;
-}
-
-void ListenerFactory::destroyComponent(game::Component* component)
+class ENGINE_PUBLIC_EXPORT LightFactory: public game::ComponentFactory
 {
-	Listener* pListener = static_cast<Listener*>(component);
+public:
 
-	SoundManager::getInstance().removeListener(pListener);
+	LightFactory();
 
-	assert(pListener != NULL);
-	if (pListener != NULL)
-		delete pListener;
-}
+	//! Creates a new transform component.
+	game::Component* createComponent();
 
-} // end namespace game
+	//! Destroys a transform component which was created by this factory.
+	void destroyComponent(game::Component* component);
+};
+
+} // end namespace render
+
+#endif

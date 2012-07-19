@@ -24,36 +24,36 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <sound/ListenerFactory.h>
-#include <sound/Listener.h>
-#include <sound/SoundManager.h>
+#include <render/LightFactory.h>
+#include <render/Light.h>
+#include <render/RenderManager.h>
 
-namespace sound
+namespace render
 {
 
-ListenerFactory::ListenerFactory(): game::ComponentFactory()
+LightFactory::LightFactory(): game::ComponentFactory()
 {
-	mName = "Listener";
+	mName = "Light";
 }
 
-game::Component* ListenerFactory::createComponent()
+game::Component* LightFactory::createComponent()
 {
-	Listener* pListener = new Listener();
+	Light* pLight = new Light();
 
-	SoundManager::getInstance().addListener(pListener);
+	RenderManager::getInstance().addLight(pLight);
 
-	return pListener;
+	return pLight;
 }
 
-void ListenerFactory::destroyComponent(game::Component* component)
+void LightFactory::destroyComponent(game::Component* component)
 {
-	Listener* pListener = static_cast<Listener*>(component);
+	Light* pLight = static_cast<Light*>(component);
 
-	SoundManager::getInstance().removeListener(pListener);
+	RenderManager::getInstance().removeLight(pLight);
 
-	assert(pListener != NULL);
-	if (pListener != NULL)
-		delete pListener;
+	assert(pLight != NULL);
+	if (pLight != NULL)
+		delete pLight;
 }
 
 } // end namespace game

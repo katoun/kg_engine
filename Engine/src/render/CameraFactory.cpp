@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <render/CameraFactory.h>
 #include <render/Camera.h>
+#include <render/RenderManager.h>
 
 namespace render
 {
@@ -37,12 +38,18 @@ CameraFactory::CameraFactory(): game::ComponentFactory()
 
 game::Component* CameraFactory::createComponent()
 {
-	return new Camera();
+	Camera* pCamera = new Camera();
+
+	RenderManager::getInstance().addCamera(pCamera);
+
+	return pCamera;
 }
 
 void CameraFactory::destroyComponent(game::Component* component)
 {
 	Camera* pCamera = static_cast<Camera*>(component);
+
+	RenderManager::getInstance().removeCamera(pCamera);
 
 	assert(pCamera != NULL);
 	if (pCamera != NULL)

@@ -147,8 +147,8 @@ protected:
 	CGcontext mCgContext;
 
 	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
-	void setGLLight(unsigned int index, Light* lt);
-	void setGLLightPositionDirection(unsigned int index, Light* lt);
+	void setGLLight(unsigned int index, Light* light);
+	void setGLLightPositionDirection(unsigned int index, Light* light);
 	static GLint getGLBlendMode(SceneBlendFactor gameBlend);
 
 	//! Utility function to get the correct GL type based on VET's.

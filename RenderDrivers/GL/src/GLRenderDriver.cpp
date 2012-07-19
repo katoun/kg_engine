@@ -35,6 +35,9 @@ THE SOFTWARE.
 #include <render/Renderable.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
+#include <game/GameObject.h>
+#include <game/ComponentDefines.h>
+#include <game/Transform.h>
 #include <GLRenderDriver.h>
 #include <GLTexture.h>
 #include <GLShader.h>
@@ -1152,17 +1155,17 @@ void GLRenderDriver::makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 	gl_matrix[15] = m[15];
 }
 
-void GLRenderDriver::setGLLight(unsigned int index, Light* lt)
+void GLRenderDriver::setGLLight(unsigned int index, Light* light)
 {
 	GLint gl_index = GL_LIGHT0 + index;
 
-	if (lt->isVisible())
+	if (light->isVisible())
 	{
-		switch (lt->getLightType())
+		switch (light->getLightType())
 		{
 		case LIGHT_TYPE_SPOTLIGHT:
-			glLightf(gl_index, GL_SPOT_CUTOFF, lt->getSpotlightOuterAngle());
-			glLightf(gl_index, GL_SPOT_EXPONENT, lt->getSpotlightFalloff());
+			glLightf(gl_index, GL_SPOT_CUTOFF, light->getSpotlightOuterAngle());
+			glLightf(gl_index, GL_SPOT_EXPONENT, light->getSpotlightFalloff());
 			break;
 		default:
 			glLightf(gl_index, GL_SPOT_CUTOFF, 180.0f);
@@ -1173,33 +1176,33 @@ void GLRenderDriver::setGLLight(unsigned int index, Light* lt)
 		Color col;
 		GLfloat f4vals[4];
 
-		col = lt->getAmbientColor();
+		col = light->getAmbientColor();
 		f4vals[0] = 0;//col.R;
 		f4vals[1] = 0;//col.G;
 		f4vals[2] = 0;//col.B;
 		f4vals[3] = 1;//col.A;
 		glLightfv(gl_index, GL_AMBIENT, f4vals);
 
-		col = lt->getDiffuseColor();
+		col = light->getDiffuseColor();
 		f4vals[0] = col.R;
 		f4vals[1] = col.G;
 		f4vals[2] = col.B;
 		f4vals[3] = col.A;
 		glLightfv(gl_index, GL_DIFFUSE, f4vals);
 	
-		col = lt->getSpecularColor();
+		col = light->getSpecularColor();
 		f4vals[0] = col.R;
 		f4vals[1] = col.G;
 		f4vals[2] = col.B;
 		f4vals[3] = col.A;
 		glLightfv(gl_index, GL_SPECULAR, f4vals);
 
-		setGLLightPositionDirection(index, lt);
+		setGLLightPositionDirection(index, light);
 
 		// Attenuation
-		glLightf(gl_index, GL_CONSTANT_ATTENUATION, lt->getAttenuationConstant());
-		glLightf(gl_index, GL_LINEAR_ATTENUATION, lt->getAttenuationLinear());
-		glLightf(gl_index, GL_QUADRATIC_ATTENUATION, lt->getAttenuationQuadric());
+		glLightf(gl_index, GL_CONSTANT_ATTENUATION, light->getAttenuationConstant());
+		glLightf(gl_index, GL_LINEAR_ATTENUATION, light->getAttenuationLinear());
+		glLightf(gl_index, GL_QUADRATIC_ATTENUATION, light->getAttenuationQuadric());
 		// Enable in the scene
 		glEnable(gl_index);
 
@@ -1211,30 +1214,40 @@ void GLRenderDriver::setGLLight(unsigned int index, Light* lt)
 	}
 }
 
-void GLRenderDriver::setGLLightPositionDirection(unsigned int index, Light* lt)
+void GLRenderDriver::setGLLightPositionDirection(unsigned int index, Light* light)
 {
-	GLint gl_index = GL_LIGHT0 + index;
+	if (light == NULL)
+		return;
+	
+	if (light->getGameObject() == NULL)
+		return;
 
-	// Set position / direction
-	core::vector3d vec;
-	GLfloat f4vals[4];
+	game::Transform* pTransform = static_cast<game::Transform*>(light->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+	if (pTransform != NULL)
+	{
+		GLint gl_index = GL_LIGHT0 + index;
+
+		// Set position / direction
+		core::vector3d vec;
+		GLfloat f4vals[4];
     
-    vec = lt->getAbsolutePosition();
-    f4vals[0] = vec.X;
-    f4vals[1] = vec.Y;
-    f4vals[2] = vec.Z;
-    f4vals[3] = 1.0;
-    glLightfv(gl_index, GL_POSITION, f4vals);    
+		vec = pTransform->getAbsolutePosition();
+		f4vals[0] = vec.X;
+		f4vals[1] = vec.Y;
+		f4vals[2] = vec.Z;
+		f4vals[3] = 1.0;
+		glLightfv(gl_index, GL_POSITION, f4vals);    
     
-    if (lt->getLightType() == LIGHT_TYPE_SPOTLIGHT)
-    {
-		vec = lt->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
-        f4vals[0] = vec.X; 
-        f4vals[1] = vec.Y;
-        f4vals[2] = vec.Z; 
-        f4vals[3] = 0.0; 
-        glLightfv(gl_index, GL_SPOT_DIRECTION, f4vals);
-    }
+		if (light->getLightType() == LIGHT_TYPE_SPOTLIGHT)
+		{
+			vec = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
+			f4vals[0] = vec.X; 
+			f4vals[1] = vec.Y;
+			f4vals[2] = vec.Z; 
+			f4vals[3] = 0.0; 
+			glLightfv(gl_index, GL_SPOT_DIRECTION, f4vals);
+		}
+	}
 }
 
 void GLRenderDriver::initializeImpl()

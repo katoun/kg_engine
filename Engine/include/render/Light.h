@@ -28,7 +28,7 @@ THE SOFTWARE.
 #define _LIGHT_H_
 
 #include <core/Config.h>
-#include <scene/Node.h>
+#include <game/Component.h>
 #include <render/LightDefines.h>
 #include <render/Color.h>
 
@@ -36,16 +36,13 @@ namespace render
 {
 
 //! Representation of a light in the render world.
-class ENGINE_PUBLIC_EXPORT Light: public scene::Node
+class ENGINE_PUBLIC_EXPORT Light: public game::Component
 {
 public:
 
 	Light();
-	Light(const std::string& name);
 
 	~Light();
-
-	inline Light& operator=(const Light& other);
 
 	void setLightType(LightType type);
 	LightType getLightType();
@@ -87,9 +84,6 @@ public:
 	bool isVisible();
 
 private:
-
-	// Incremented count for next index
-	static unsigned int msNextGeneratedLightIndex;
 
 	LightType mLightType;
 

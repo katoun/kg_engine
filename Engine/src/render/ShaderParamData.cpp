@@ -184,7 +184,14 @@ const core::vector3d& ShaderParamData::getCameraPositionObjectSpace()
 
 const core::vector3d& ShaderParamData::getCurrentLightPosition()
 {
-	if (mCurrentLight) mLightPosition = mCurrentLight->getAbsolutePosition();
+	if (mCurrentLight != NULL && mCurrentLight->getGameObject() != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			mLightPosition = pTransform->getAbsolutePosition();
+		}
+	}
 
 	return mLightPosition;
 }
@@ -220,7 +227,16 @@ const core::vector3d& ShaderParamData::getCurrentLightPositionViewSpace()
 const core::vector3d& ShaderParamData::getCurrentLightDirection()
 {
 	if (mCurrentLight != NULL)
-		mLightDirection = mCurrentLight->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
+		
+
+	if (mCurrentLight != NULL && mCurrentLight->getGameObject() != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			mLightDirection = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
+		}
+	}
 
 	return mLightDirection;
 }

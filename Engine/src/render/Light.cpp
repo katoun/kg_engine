@@ -25,36 +25,15 @@ THE SOFTWARE.
 */
 
 #include <render/Light.h>
+#include <game/ComponentDefines.h>
 #include <core/Utils.h>
 
 namespace render
 {
 
-unsigned int Light::msNextGeneratedLightIndex = 0;
-
-Light::Light(): scene::Node("Light_" + core::intToString(msNextGeneratedLightIndex++))
+Light::Light(): game::Component()
 {
-	mNodeType = scene::NT_LIGHT;
-
-	mLightType = LIGHT_TYPE_POINT;
-	mVisible = true;
-	mAmbient = render::Color::White;
-	mDiffuse = render::Color::White;
-	mSpecular = render::Color::Black;
-
-	mSpotOuter = 40.0f;
-	mSpotInner = 30.0f;
-	mSpotFalloff = 1.0f;
-	mRange = 1000.0f;
-	mAttenuationConst = 1.0f;
-	mAttenuationLinear = 0.0f;
-	mAttenuationQuad = 0.0f;
-	mPowerScale = 1.0f;
-}
-
-Light::Light(const std::string& name): scene::Node(name)
-{
-	mNodeType = scene::NT_LIGHT;
+	mType = game::COMPONENT_TYPE_LIGHT;
 
 	mLightType = LIGHT_TYPE_POINT;
 	mVisible = true;
@@ -74,36 +53,9 @@ Light::Light(const std::string& name): scene::Node(name)
 
 Light::~Light() {}
 
-Light& Light::operator=(const Light& other)
-{
-	mPosition = other.mPosition;
-	mOrientation = other.mOrientation;
-	mScale = other.mScale;
-	mModifiedAbsoluteTransform = true;
-
-	mLightType = other.mLightType;
-	mVisible = other.mVisible;
-	mAmbient = other.mAmbient;
-	mDiffuse = other.mDiffuse;
-	mSpecular = other.mSpecular;
-
-	mSpotOuter = other.mSpotOuter;
-	mSpotInner = other.mSpotInner;
-	mSpotFalloff = other.mSpotFalloff;
-
-	mRange = other.mRange;
-	mAttenuationConst = other.mAttenuationConst;
-	mAttenuationLinear = other.mAttenuationLinear;
-	mAttenuationQuad = other.mAttenuationQuad;
-	mPowerScale = other.mPowerScale;
-
-	return *this;
-}
-
 void Light::setLightType(LightType type)
 {
 	mLightType = type;
-	mModifiedAbsoluteTransform = true;
 }
 
 LightType Light::getLightType()
@@ -116,13 +68,11 @@ void Light::setAmbientColor(float red, float green, float blue)
 	mAmbient.R = red;
 	mAmbient.G = green;
 	mAmbient.B = blue;
-	mModifiedAbsoluteTransform = true;
 }
 
 void Light::setAmbientColor(const render::Color& color)
 {
 	mAmbient = color;
-	mModifiedAbsoluteTransform = true;
 }
 
 const render::Color& Light::getAmbientColor() const

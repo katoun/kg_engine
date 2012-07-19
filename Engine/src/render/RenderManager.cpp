@@ -49,6 +49,7 @@ THE SOFTWARE.
 #include <render/MaterialFactory.h>
 #include <render/MeshDataFactory.h>
 #include <render/CameraFactory.h>
+#include <render/LightFactory.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 #include <scene/SceneManager.h>
@@ -74,6 +75,7 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mDefaultMaterialFactory = new MaterialFactory();
 	mDefaultMeshDataFactory = new MeshDataFactory();
 	mDefaultCameraFactory = new CameraFactory();
+	mDefaultLightFactory = new LightFactory();
 
 	mMainWindow = NULL;
 	mRenderDriver = NULL;
@@ -115,6 +117,10 @@ RenderManager::~RenderManager()
 	if (mDefaultCameraFactory != NULL)
 	{
 		delete mDefaultCameraFactory;
+	}
+	if (mDefaultLightFactory != NULL)
+	{
+		delete mDefaultLightFactory;
 	}
 }
 
@@ -205,45 +211,20 @@ signed int RenderManager::getViewportWidth() const
 	return mLastViewportWidth;
 }
 
-Light* RenderManager::createLight(scene::Node* parent)
+void RenderManager::addLight(Light *light)
 {
-	Light* newLight = new Light();
-	mLights[newLight->getID()] = newLight;
+	if (light == NULL)
+		return;
 
-	scene::SceneManager::getInstance().addNode(newLight, parent);
-
-	return newLight;
+	mLights[light->getID()] = light;
 }
 
-Light* RenderManager::createLight(const std::string& name, scene::Node* parent)
+void RenderManager::removeLight(Light *light)
 {
-	Light* newLight = new Light(name);
-	mLights[newLight->getID()] = newLight;
+	if (light == NULL)
+		return;
 
-	scene::SceneManager::getInstance().addNode(newLight, parent);
-
-	return newLight;
-}
-
-Light* RenderManager::getLight(const unsigned int& id)
-{
-	std::map<unsigned int, Light*>::const_iterator i = mLights.find(id);
-	if (i != mLights.end())
-		return i->second;
-
-	return NULL;
-}
-
-unsigned int RenderManager::getNumberOfLights() const
-{
-	return mLights.size();
-}
-
-void RenderManager::removeLight(Light *lt)
-{
-	if (lt == NULL)	return;
-
-	removeLight(lt->getID());
+	removeLight(light->getID());
 }
 
 void RenderManager::removeLight(const unsigned int& id)
@@ -251,16 +232,10 @@ void RenderManager::removeLight(const unsigned int& id)
 	std::map<unsigned int, Light*>::iterator i = mLights.find(id);
 	if (i != mLights.end())
 		mLights.erase(i);
-
-	scene::SceneManager::getInstance().removeNode(id);
 }
 
 void RenderManager::removeAllLights()
 {
-	std::map<unsigned int, Light*>::const_iterator i;
-	for (i = mLights.begin(); i != mLights.end(); ++i)
-		scene::SceneManager::getInstance().removeNode(i->second->getID());
-
 	mLights.clear();
 }
 
@@ -928,6 +903,7 @@ void RenderManager::registerDefaultFactoriesImpl()
 	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
 
 	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mDefaultCameraFactory);
+	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mDefaultLightFactory);
 }
 
 void RenderManager::removeDefaultFactoriesImpl()
@@ -937,6 +913,7 @@ void RenderManager::removeDefaultFactoriesImpl()
 	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
 
 	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_CAMERA);
+	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_LIGHT);
 }
 
 void RenderManager::fireFrameStarted()
@@ -1095,22 +1072,31 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 	for (li = mLights.begin(); li != mLights.end(); ++li)
 	{
 		Light* pLight = li->second;
-		if (pLight != NULL && pLight->getVisibleAxis())
+		if (pLight != NULL)
 		{
-			mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-			mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-			mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
+			game::Transform* pTransform = NULL;
+			if (pLight->getGameObject() != NULL)
+			{
+				pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			}
 
-			mRenderDriver->setDepthBufferCheckEnabled(true);
-			mRenderDriver->setDepthBufferWriteEnabled(true);
-			mRenderDriver->disableTextureUnitsFrom(0);
-			mRenderDriver->setLightingEnabled(false);
-			mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-			mRenderDriver->setFog(FM_NONE);
+			if (pTransform != NULL && pTransform->getVisibleAxis())
+			{
+				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
+				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
+				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
 
-			mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
+				mRenderDriver->setDepthBufferCheckEnabled(true);
+				mRenderDriver->setDepthBufferWriteEnabled(true);
+				mRenderDriver->disableTextureUnitsFrom(0);
+				mRenderDriver->setLightingEnabled(false);
+				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
+				mRenderDriver->setFog(FM_NONE);
 
-			mRenderDriver->renderAxes(pLight->getAbsolutePosition(), pLight->getAbsoluteOrientation());
+				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
+
+				mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
+			}
 		}
 	}
 	
@@ -1206,29 +1192,43 @@ void RenderManager::findLightsAffectingRenderables(Renderable* renderable)
 	std::list<Light*>::const_iterator i;
 	for (i = mLightsAffectingFrustum.begin(); i!= mLightsAffectingFrustum.end(); ++i)
 	{
-		if ((*i)->getLightType() == LIGHT_TYPE_DIRECTIONAL)
+		Light* pLight = (*i);
+		if (pLight != NULL)
 		{
-			DistanceLight newLight;
-			newLight.light = (*i);
-			newLight.distance = 0;
-			// No distance
-			mDistanceLights.push_back(newLight);
-		}
-		else
-		{
-			// Calculate squared distance
-			float distance = ((*i)->getAbsolutePosition() - renderable->getAbsolutePosition()).getLengthSQ();
-			// only add in-range lights
-			float range = (*i)->getAttenuationRange();
-			float maxDist = range + renderable->getBoundingSphere().Radius;
-			//if (distance <= (maxDist * maxDist))//Katoun TEMP REM for testing!!!
+			if (pLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
 			{
 				DistanceLight newLight;
-				newLight.light = (*i);
-				newLight.distance = distance;
+				newLight.light = pLight;
+				newLight.distance = 0;
+				// No distance
 				mDistanceLights.push_back(newLight);
 			}
-		}
+			else
+			{
+				// Calculate squared distance
+				float distance = 0.0f;
+				game::Transform* pTransform = NULL;
+				if (pLight->getGameObject() != NULL)
+				{
+					pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+					if (pTransform != NULL)
+					{
+						distance = (pTransform->getAbsolutePosition() - renderable->getAbsolutePosition()).getLengthSQ();
+					}
+				}
+
+				// only add in-range lights
+				float range = pLight->getAttenuationRange();
+				float maxDist = range + renderable->getBoundingSphere().Radius;
+				//if (distance <= (maxDist * maxDist))//Katoun TEMP REM for testing!!!
+				{
+					DistanceLight newLight;
+					newLight.light = pLight;
+					newLight.distance = distance;
+					mDistanceLights.push_back(newLight);
+				}
+			}
+		}	
 	}
 
 	std::sort(mDistanceLights.begin(), mDistanceLights.end());
@@ -1264,9 +1264,11 @@ void RenderManager::findVisibleRenderables(Camera* camera)
 					if (camera->getGameObject() != NULL)
 					{
 						pTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-
-						// Calculate squared distance
-						newRenderable.distance = (mi->second->getAbsolutePosition() - pTransform->getAbsolutePosition()).getLengthSQ();
+						if (pTransform != NULL)
+						{
+							// Calculate squared distance
+							newRenderable.distance = (mi->second->getAbsolutePosition() - pTransform->getAbsolutePosition()).getLengthSQ();
+						}
 					}
 
 					mTransparentRenderables.push_back(newRenderable);

@@ -442,6 +442,9 @@
     <ClInclude Include="include\game\MessageDefines.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\LightFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -759,6 +762,9 @@
     </ClCompile>
     <ClCompile Include="src\sound\ListenerFactory.cpp">
       <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\LightFactory.cpp">
+      <Filter>render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

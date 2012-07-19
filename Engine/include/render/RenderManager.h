@@ -132,17 +132,11 @@ public:
 	//! Gets the width of the destination viewport in pixels.
 	signed int getViewportWidth() const;
 
-	//! Creates a light to be managed by rendering manager.
-	Light* createLight(scene::Node* parent = NULL);
-	Light* createLight(const std::string& name, scene::Node* parent = NULL);
-	//! Retrieves a pointer to a light by id.
-	Light* getLight(const unsigned int& id);
-
-	//! Retrieves the total number of created lights.
-	unsigned int getNumberOfLights() const;
+	//!  Adds a light to be managed by this scene manager.
+	void addLight(Light *light);
 
 	//! Removes a light from the rendering.
-	void removeLight(Light *lt);
+	void removeLight(Light *light);
 	//! Removes a light from the rendering.
 	void removeLight(const unsigned int& id);
 	//! Removes (and destroys) all lights from the rendering.
@@ -309,6 +303,7 @@ protected:
 	MeshDataFactory* mDefaultMeshDataFactory;
 
 	game::ComponentFactory* mDefaultCameraFactory;
+	game::ComponentFactory* mDefaultLightFactory;
 
 	RenderDriver* mRenderDriver;
 

@@ -192,6 +192,7 @@
     <ClInclude Include="include\render\IndexBuffer.h" />
     <ClInclude Include="include\render\Light.h" />
     <ClInclude Include="include\render\LightDefines.h" />
+    <ClInclude Include="include\render\LightFactory.h" />
     <ClInclude Include="include\render\Material.h" />
     <ClInclude Include="include\render\MaterialFactory.h" />
     <ClInclude Include="include\render\MeshData.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="src\render\Frustum.cpp" />
     <ClCompile Include="src\render\IndexBuffer.cpp" />
     <ClCompile Include="src\render\Light.cpp" />
+    <ClCompile Include="src\render\LightFactory.cpp" />
     <ClCompile Include="src\render\Material.cpp" />
     <ClCompile Include="src\render\MaterialFactory.cpp" />
     <ClCompile Include="src\render\MeshData.cpp" />
