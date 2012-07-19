@@ -1,0 +1,9 @@
+<Engine>
+	<Bitdepth>32</Bitdepth>
+	<Fullscreen>No</Fullscreen>
+	<VSync>No</VSync>
+	<VideoSize>
+		<Width>1024</Width>
+		<Height>768</Height>
+	</VideoSize>
+</Engine>

@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}</ProjectGuid>
+    <RootNamespace>GameEngine</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>Engine</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE"
+/D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;POCO_NO_UNWINDOWS;POCO_NO_AUTOMATIC_LIBS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <SubSystem>
+      </SubSystem>
+      <ImportLibrary>$(ProjectDir)..\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\poco\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PocoFoundationd.lib;PocoUtild.lib;PocoXMLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE"
+/D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;POCO_NO_AUTOMATIC_LIBS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\poco\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>
+      </SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>$(ProjectDir)..\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>PocoFoundation.lib;PocoUtil.lib;PocoXML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\core\Config.h" />
+    <ClInclude Include="include\core\Log.h" />
+    <ClInclude Include="include\core\LogDefines.h" />
+    <ClInclude Include="include\core\System.h" />
+    <ClInclude Include="include\core\SystemDefines.h" />
+    <ClInclude Include="include\core\SystemDriver.h" />
+    <ClInclude Include="include\engine\EngineEvent.h" />
+    <ClInclude Include="include\engine\EngineEventReceiver.h" />
+    <ClInclude Include="include\engine\EngineManager.h" />
+    <ClInclude Include="include\engine\EngineSettings.h" />
+    <ClInclude Include="include\engine\Object.h" />
+    <ClInclude Include="include\engine\ObjectDefines.h" />
+    <ClInclude Include="include\engine\Plugin.h" />
+    <ClInclude Include="include\engine\PluginManager.h" />
+    <ClInclude Include="include\core\Aabox3d.h" />
+    <ClInclude Include="include\core\Line2d.h" />
+    <ClInclude Include="include\core\Line3d.h" />
+    <ClInclude Include="include\core\Math.h" />
+    <ClInclude Include="include\core\Matrix4.h" />
+    <ClInclude Include="include\core\Plane3d.h" />
+    <ClInclude Include="include\core\Position2d.h" />
+    <ClInclude Include="include\core\Quaternion.h" />
+    <ClInclude Include="include\core\Singleton.h" />
+    <ClInclude Include="include\core\Sphere3d.h" />
+    <ClInclude Include="include\core\Utils.h" />
+    <ClInclude Include="include\core\Vector2d.h" />
+    <ClInclude Include="include\core\Vector3d.h" />
+    <ClInclude Include="include\core\Vector4d.h" />
+    <ClInclude Include="include\Game.h" />
+    <ClInclude Include="include\game\Component.h" />
+    <ClInclude Include="include\game\ComponentDefines.h" />
+    <ClInclude Include="include\game\ComponentFactory.h" />
+    <ClInclude Include="include\game\GameManager.h" />
+    <ClInclude Include="include\game\GameObject.h" />
+    <ClInclude Include="include\game\Transform.h" />
+    <ClInclude Include="include\game\TransformDefines.h" />
+    <ClInclude Include="include\game\TransformFactory.h" />
+    <ClInclude Include="include\input\InputDeviceDefines.h" />
+    <ClInclude Include="include\input\JoystickDefines.h" />
+    <ClInclude Include="include\input\KeyboardDefines.h" />
+    <ClInclude Include="include\input\MouseDefines.h" />
+    <ClInclude Include="include\physics\BodyDataFactory.h" />
+    <ClInclude Include="include\physics\BodyFactory.h" />
+    <ClInclude Include="include\physics\JointDefines.h" />
+    <ClInclude Include="include\physics\JointFactory.h" />
+    <ClInclude Include="include\physics\ShapeDefines.h" />
+    <ClInclude Include="include\physics\ShapeFactory.h" />
+    <ClInclude Include="include\platform\PlatformDefines.h" />
+    <ClInclude Include="include\render\BlendMode.h" />
+    <ClInclude Include="include\render\Camera.h" />
+    <ClInclude Include="include\render\CameraDefines.h" />
+    <ClInclude Include="include\render\CameraFactory.h" />
+    <ClInclude Include="include\render\Color.h" />
+    <ClInclude Include="include\render\Font.h" />
+    <ClInclude Include="include\render\FontFactory.h" />
+    <ClInclude Include="include\render\FrameEventReceiver.h" />
+    <ClInclude Include="include\render\Frustum.h" />
+    <ClInclude Include="include\render\FrustumDefines.h" />
+    <ClInclude Include="include\render\IndexBuffer.h" />
+    <ClInclude Include="include\render\Light.h" />
+    <ClInclude Include="include\render\LightDefines.h" />
+    <ClInclude Include="include\render\Material.h" />
+    <ClInclude Include="include\render\MaterialFactory.h" />
+    <ClInclude Include="include\render\MeshData.h" />
+    <ClInclude Include="include\render\MeshDataFactory.h" />
+    <ClInclude Include="include\render\Model.h" />
+    <ClInclude Include="include\render\Overlay.h" />
+    <ClInclude Include="include\render\PanelOverlay.h" />
+    <ClInclude Include="include\render\Renderable.h" />
+    <ClInclude Include="include\render\RenderableDefines.h" />
+    <ClInclude Include="include\render\RenderManager.h" />
+    <ClInclude Include="include\render\RenderDriver.h" />
+    <ClInclude Include="include\render\RenderTarget.h" />
+    <ClInclude Include="include\render\RenderTargetEvent.h" />
+    <ClInclude Include="include\render\RenderTargetEventReceiver.h" />
+    <ClInclude Include="include\render\RenderWindow.h" />
+    <ClInclude Include="include\render\Shader.h" />
+    <ClInclude Include="include\render\ShaderDefines.h" />
+    <ClInclude Include="include\render\ShaderParamData.h" />
+    <ClInclude Include="include\render\TextOverlay.h" />
+    <ClInclude Include="include\render\Texture.h" />
+    <ClInclude Include="include\render\TextureDefines.h" />
+    <ClInclude Include="include\render\TextureUnit.h" />
+    <ClInclude Include="include\render\VertexBuffer.h" />
+    <ClInclude Include="include\render\VertexIndexData.h" />
+    <ClInclude Include="include\render\Viewport.h" />
+    <ClInclude Include="include\resource\ResourceEvent.h" />
+    <ClInclude Include="include\resource\ResourceEventReceiver.h" />
+    <ClInclude Include="include\resource\ResourceFactory.h" />
+    <ClInclude Include="include\scene\Node.h" />
+    <ClInclude Include="include\scene\NodeDefines.h" />
+    <ClInclude Include="include\scene\SceneManager.h" />
+    <ClInclude Include="include\platform\PlatformManager.h" />
+    <ClInclude Include="include\platform\PlatformDriver.h" />
+    <ClInclude Include="include\input\Cursor.h" />
+    <ClInclude Include="include\input\InputDevice.h" />
+    <ClInclude Include="include\input\InputEvent.h" />
+    <ClInclude Include="include\input\InputManager.h" />
+    <ClInclude Include="include\input\InputDriver.h" />
+    <ClInclude Include="include\input\Joystick.h" />
+    <ClInclude Include="include\input\JoystickEvent.h" />
+    <ClInclude Include="include\input\JoystickEventReceiver.h" />
+    <ClInclude Include="include\input\Keyboard.h" />
+    <ClInclude Include="include\input\KeyEvent.h" />
+    <ClInclude Include="include\input\KeyEventReceiver.h" />
+    <ClInclude Include="include\input\Mouse.h" />
+    <ClInclude Include="include\input\MouseEvent.h" />
+    <ClInclude Include="include\input\MouseEventReceiver.h" />
+    <ClInclude Include="include\resource\Buffer.h" />
+    <ClInclude Include="include\resource\LoadEvent.h" />
+    <ClInclude Include="include\resource\LoadEventReceiver.h" />
+    <ClInclude Include="include\resource\PixelFormat.h" />
+    <ClInclude Include="include\resource\Resource.h" />
+    <ClInclude Include="include\resource\ResourceDefines.h" />
+    <ClInclude Include="include\resource\ResourceManager.h" />
+    <ClInclude Include="include\resource\Serializer.h" />
+    <ClInclude Include="include\sound\Listener.h" />
+    <ClInclude Include="include\sound\Sound.h" />
+    <ClInclude Include="include\sound\SoundData.h" />
+    <ClInclude Include="include\sound\SoundFactory.h" />
+    <ClInclude Include="include\sound\SoundManager.h" />
+    <ClInclude Include="include\sound\SoundDriver.h" />
+    <ClInclude Include="include\physics\Body.h" />
+    <ClInclude Include="include\physics\BodyData.h" />
+    <ClInclude Include="include\physics\CollisionEvent.h" />
+    <ClInclude Include="include\physics\CollisionEventReceiver.h" />
+    <ClInclude Include="include\physics\CollisionPoint.h" />
+    <ClInclude Include="include\physics\Joint.h" />
+    <ClInclude Include="include\physics\Material.h" />
+    <ClInclude Include="include\physics\PhysicsManager.h" />
+    <ClInclude Include="include\physics\PhysicsDriver.h" />
+    <ClInclude Include="include\physics\Shape.h" />
+    <ClInclude Include="include\Core.h" />
+    <ClInclude Include="include\Engine.h" />
+    <ClInclude Include="include\Input.h" />
+    <ClInclude Include="include\Physics.h" />
+    <ClInclude Include="include\Platform.h" />
+    <ClInclude Include="include\Render.h" />
+    <ClInclude Include="include\Resource.h" />
+    <ClInclude Include="include\Scene.h" />
+    <ClInclude Include="include\Sound.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\Log.cpp" />
+    <ClCompile Include="src\core\System.cpp" />
+    <ClCompile Include="src\core\SystemDriver.cpp" />
+    <ClCompile Include="src\engine\EngineEvent.cpp" />
+    <ClCompile Include="src\engine\EngineEventReceiver.cpp" />
+    <ClCompile Include="src\engine\EngineManager.cpp" />
+    <ClCompile Include="src\engine\EngineSettings.cpp" />
+    <ClCompile Include="src\engine\Object.cpp" />
+    <ClCompile Include="src\engine\Plugin.cpp" />
+    <ClCompile Include="src\engine\PluginManager.cpp" />
+    <ClCompile Include="src\core\Aabox3d.cpp" />
+    <ClCompile Include="src\core\Line2d.cpp" />
+    <ClCompile Include="src\core\Line3d.cpp" />
+    <ClCompile Include="src\core\Math.cpp" />
+    <ClCompile Include="src\core\Matrix4.cpp" />
+    <ClCompile Include="src\core\Plane3d.cpp" />
+    <ClCompile Include="src\core\Position2d.cpp" />
+    <ClCompile Include="src\core\Quaternion.cpp" />
+    <ClCompile Include="src\core\Sphere3d.cpp" />
+    <ClCompile Include="src\core\Utils.cpp" />
+    <ClCompile Include="src\core\Vector2d.cpp" />
+    <ClCompile Include="src\core\Vector3d.cpp" />
+    <ClCompile Include="src\core\Vector4d.cpp" />
+    <ClCompile Include="src\game\Component.cpp" />
+    <ClCompile Include="src\game\ComponentFactory.cpp" />
+    <ClCompile Include="src\game\GameManager.cpp" />
+    <ClCompile Include="src\game\GameObject.cpp" />
+    <ClCompile Include="src\game\Transform.cpp" />
+    <ClCompile Include="src\game\TransformFactory.cpp" />
+    <ClCompile Include="src\physics\BodyDataFactory.cpp" />
+    <ClCompile Include="src\physics\CollisionEvent.cpp" />
+    <ClCompile Include="src\physics\CollisionPoint.cpp" />
+    <ClCompile Include="src\render\BlendMode.cpp" />
+    <ClCompile Include="src\render\Camera.cpp" />
+    <ClCompile Include="src\render\CameraFactory.cpp" />
+    <ClCompile Include="src\render\Color.cpp" />
+    <ClCompile Include="src\render\Font.cpp" />
+    <ClCompile Include="src\render\FontFactory.cpp" />
+    <ClCompile Include="src\render\FrameEventReceiver.cpp" />
+    <ClCompile Include="src\render\Frustum.cpp" />
+    <ClCompile Include="src\render\IndexBuffer.cpp" />
+    <ClCompile Include="src\render\Light.cpp" />
+    <ClCompile Include="src\render\Material.cpp" />
+    <ClCompile Include="src\render\MaterialFactory.cpp" />
+    <ClCompile Include="src\render\MeshData.cpp" />
+    <ClCompile Include="src\render\MeshDataFactory.cpp" />
+    <ClCompile Include="src\render\Model.cpp" />
+    <ClCompile Include="src\render\Overlay.cpp" />
+    <ClCompile Include="src\render\PanelOverlay.cpp" />
+    <ClCompile Include="src\render\Renderable.cpp" />
+    <ClCompile Include="src\render\RenderManager.cpp" />
+    <ClCompile Include="src\render\RenderDriver.cpp" />
+    <ClCompile Include="src\render\RenderTarget.cpp" />
+    <ClCompile Include="src\render\RenderTargetEvent.cpp" />
+    <ClCompile Include="src\render\RenderTargetEventReceiver.cpp" />
+    <ClCompile Include="src\render\RenderWindow.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="src\render\ShaderParamData.cpp" />
+    <ClCompile Include="src\render\TextOverlay.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="src\render\TextureUnit.cpp" />
+    <ClCompile Include="src\render\VertexBuffer.cpp" />
+    <ClCompile Include="src\render\VertexIndexData.cpp" />
+    <ClCompile Include="src\render\Viewport.cpp" />
+    <ClCompile Include="src\resource\LoadEvent.cpp" />
+    <ClCompile Include="src\resource\ResourceEvent.cpp" />
+    <ClCompile Include="src\resource\ResourceEventReceiver.cpp" />
+    <ClCompile Include="src\scene\Node.cpp" />
+    <ClCompile Include="src\scene\SceneManager.cpp" />
+    <ClCompile Include="src\platform\PlatformManager.cpp" />
+    <ClCompile Include="src\platform\PlatformDriver.cpp" />
+    <ClCompile Include="src\input\Cursor.cpp" />
+    <ClCompile Include="src\input\InputDevice.cpp" />
+    <ClCompile Include="src\input\InputEvent.cpp" />
+    <ClCompile Include="src\input\InputManager.cpp" />
+    <ClCompile Include="src\input\InputDriver.cpp" />
+    <ClCompile Include="src\input\Joystick.cpp" />
+    <ClCompile Include="src\input\JoystickEvent.cpp" />
+    <ClCompile Include="src\input\JoystickEventReceiver.cpp" />
+    <ClCompile Include="src\input\Keyboard.cpp" />
+    <ClCompile Include="src\input\KeyEvent.cpp" />
+    <ClCompile Include="src\input\KeyEventReceiver.cpp" />
+    <ClCompile Include="src\input\Mouse.cpp" />
+    <ClCompile Include="src\input\MouseEvent.cpp" />
+    <ClCompile Include="src\input\MouseEventReceiver.cpp" />
+    <ClCompile Include="src\resource\Buffer.cpp" />
+    <ClCompile Include="src\resource\LoadEventReceiver.cpp" />
+    <ClCompile Include="src\resource\PixelFormat.cpp" />
+    <ClCompile Include="src\resource\Resource.cpp" />
+    <ClCompile Include="src\resource\ResourceManager.cpp" />
+    <ClCompile Include="src\resource\Serializer.cpp" />
+    <ClCompile Include="src\sound\Listener.cpp" />
+    <ClCompile Include="src\sound\Sound.cpp" />
+    <ClCompile Include="src\sound\SoundData.cpp" />
+    <ClCompile Include="src\sound\SoundManager.cpp" />
+    <ClCompile Include="src\sound\SoundDriver.cpp" />
+    <ClCompile Include="src\physics\Body.cpp" />
+    <ClCompile Include="src\physics\BodyData.cpp" />
+    <ClCompile Include="src\physics\CollisionEventReceiver.cpp" />
+    <ClCompile Include="src\physics\Joint.cpp" />
+    <ClCompile Include="src\physics\Material.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsManager.cpp" />
+    <ClCompile Include="src\physics\PhysicsDriver.cpp" />
+    <ClCompile Include="src\physics\Shape.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

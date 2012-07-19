@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material>
+	<ambient r="1.0" g="1.0" b="1.0"/>
+	<diffuse r="1.0" g="1.0" b="1.0"/>
+	<lighting value="true"/>
+
+	<!--
+	<vertex_shader>
+		<shader value="shaders/BasicShader_vp.cg"/>
+		<entry_point value="main_vp"/>
+		<param_auto name="worldViewProjMatrix" type="worldviewproj_matrix"/>
+	</vertex_shader>
+	
+	<fragment_shader>
+		<shader value="shaders/BasicShader_fp.cg"/>
+		<entry_point value="main_fp"/>
+	</fragment_shader>
+	-->
+
+	<texture_unit>
+		<texture value="textures/Grid1x1m.tga"/>
+	</texture_unit>	
+</material>

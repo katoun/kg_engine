@@ -1,0 +1,9 @@
+void main_fp
+(
+	in float4 iPosition:		POSITION,
+	
+	out float4 oColor:		COLOR
+)
+{
+	oColor = float4(0, 0, 1, 1);
+}

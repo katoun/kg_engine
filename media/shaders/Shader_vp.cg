@@ -1,0 +1,44 @@
+void main_vp
+(
+	in float4 iPosition:	POSITION,
+	in float4 iTexCoord:	TEXCOORD0,
+	in float3 iNormal:		NORMAL,
+	in float3 iTangent:		TANGENT,
+	
+	uniform float4x4 worldViewProjMatrix,
+	
+	uniform float3 lightPosition,	// Object-space
+	uniform float3 cameraPosition,	// Object-space
+	
+	out float4 oPosition:		POSITION,
+	out float4 oTexCoord:		TEXCOORD0,
+	out float3 oLightDirection:	TEXCOORD1,
+	out float3 oHalfAngle:		TEXCOORD2
+)
+{
+	oPosition = mul(worldViewProjMatrix, iPosition);
+	oTexCoord = iTexCoord;
+	
+	// Calculate the binormal (NB we assume both normal and tangent are
+	// already normalised)
+	// NB looks like nvidia cross params are BACKWARDS to what you'd expect
+	// this equates to NxT, not TxN
+	float3 binormal = cross(iTangent, iNormal);
+	
+	// Form a rotation matrix out of the vectors
+	float3x3 rotation = float3x3(iTangent, binormal, iNormal);
+	
+	float3 lightDir = normalize(lightPosition);
+	
+	// Transform the light vector according to this matrix
+	oLightDirection = mul(rotation, lightDir);
+	
+	// Calculate half-angle in tangent space
+	float3 eyeDir = normalize(cameraPosition - iPosition.xyz);
+	float3 halfAngle = normalize(eyeDir + lightDir);
+	oHalfAngle = mul(rotation, halfAngle);
+	
+	oLightDirection = normalize(lightPosition - iPosition.xyz);
+	float3 eyeDirection = normalize(cameraPosition - iPosition.xyz);
+	oHalfAngle = normalize(oLightDirection + eyeDirection);
+}

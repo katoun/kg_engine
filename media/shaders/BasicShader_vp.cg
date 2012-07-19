@@ -1,0 +1,14 @@
+void main_vp
+(
+	in float4 iPosition:	POSITION,
+	in float4 iTexCoord:	TEXCOORD0,
+	
+	uniform float4x4 worldViewProjMatrix,
+	
+	out float4 oPosition:		POSITION,
+	out float4 oTexCoord:		TEXCOORD0
+)
+{
+	oPosition = mul(worldViewProjMatrix, iPosition);
+	oTexCoord = iTexCoord;
+}

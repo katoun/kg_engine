@@ -1,0 +1,22 @@
+Dependencies are located here.
+
+POCO				1.4.3p1					for Engine
+CPUInfo				1.0.0					for Engine
+OpenInput			0.2.3					for InputDriver_Win32
+Bullet				2.80					for PhysicsDriver_Bullet
+GLew				1.7.0					for RenderDriver_GL
+CG					3.1 April 2012			for RenderDriver_GL
+FreeImage			3.15.3					for RenderDriver_GL
+OpenAL soft			1.14					for SoundDriver_OpenAL
+alure				1.2						for SoundDriver_OpenAL
+libogg				1.3.0					for SoundDriver_OpenAL
+libvorbis			1.3.3					for SoundDriver_OpenAL
+wxMSW				2.9.4					for Editor
+
+
+The following will be compiled alongside the project:
+POCO
+OpenInput
+Bullet
+libogg
+libvorbis

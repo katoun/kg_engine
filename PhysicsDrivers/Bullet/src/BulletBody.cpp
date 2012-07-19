@@ -1,0 +1,381 @@
+/*
+-----------------------------------------------------------------------------
+Copyright (c) 2006-2012 Catalin Alexandru Nastase
+
+KG game engine (http://k-game.sourceforge.net) is made available under the LGPL License (http://www.gnu.org/copyleft/lgpl.html)
+
+Under the LGPL you may use KG game engine for any purpose you wish, as long as you:
+1. Release any modifications to the KG game engine source back to the community
+2. Pass on the source to KG game engine with all the copyrights intact, or link back to a place where the source code can be obtained (http://k-game.sourceforge.net)
+3. Make it clear where you have customised it.
+The above is a precis, please do read the full license agreement.
+-----------------------------------------------------------------------------
+*/
+
+#include <physics/BodyData.h>
+#include <physics/Material.h>
+#include <resource/Resource.h>
+#include <resource/ResourceManager.h>
+#include <platform/PlatformManager.h>
+#include <BulletBody.h>
+#include <BulletShape.h>
+#include <BulletPhysicsDriver.h>
+
+#include <list>
+
+namespace physics
+{
+
+BulletBody::BulletBody(BodyData* bodyRes): Body(bodyRes)
+{
+	mRigidBody = NULL;
+	mMotionState = NULL;
+}
+
+BulletBody::BulletBody(const std::string& name, BodyData* bodyRes): Body(name, bodyRes)
+{
+	mRigidBody = NULL;
+	mMotionState = NULL;
+}
+
+BulletBody::~BulletBody() {}
+
+void BulletBody::setEnabled(bool enabled)
+{
+	Body::setEnabled(enabled);
+
+	if (mRigidBody != NULL)
+	{
+		if (mEnabled)
+		{
+			mRigidBody->setActivationState(ACTIVE_TAG);
+			mRigidBody->setActivationState(DISABLE_DEACTIVATION);
+		}
+		else
+		{
+			mRigidBody->setActivationState(ISLAND_SLEEPING);
+		}
+	}
+}
+
+void BulletBody::setMaterial(const std::string& filename)
+{
+	Body::setMaterial(filename);
+
+	if (mRigidBody != NULL)
+	{
+		if (mMaterial != NULL)
+		{
+			mRigidBody->setFriction(mMaterial->getStaticFriction());
+			mRigidBody->setRestitution(mMaterial->getRestitution());
+		}
+	}
+}
+
+void BulletBody::setMaterial(Material* material)
+{
+	if (material == NULL)
+		return;
+
+	if (mMaterial != material)
+	{
+		Body::setMaterial(material);
+
+		if (mRigidBody != NULL)
+		{
+			if (mMaterial)
+			{
+				mRigidBody->setFriction(mMaterial->getStaticFriction());
+				mRigidBody->setRestitution(mMaterial->getRestitution());
+			}
+		}
+	}
+}
+
+void BulletBody::applyForce(const core::vector3d& force)
+{
+	Body::applyForce(force);
+
+	if (mRigidBody != NULL)
+	{
+		btVector3 f(mForce.X, mForce.Y, mForce.Z);
+		mRigidBody->applyCentralForce(f);
+
+		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+}
+
+void BulletBody::applyTorque(const core::vector3d& torque)
+{
+	Body::applyTorque(torque);
+	
+	if (mRigidBody == NULL)
+	{
+		btVector3 t(mTorque.X, mTorque.Y, mTorque.Z);
+		mRigidBody->applyTorque(t);
+	
+		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+}
+
+void BulletBody::applyLinearImpulse(const core::vector3d& linearImpulse)
+{
+	Body::applyLinearImpulse(linearImpulse);
+		
+	if (mRigidBody != NULL)
+	{
+		btVector3 impulse(mLinearImpulse.X, mLinearImpulse.Y, mLinearImpulse.Z);
+		mRigidBody->applyCentralImpulse(impulse);
+
+		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+}
+
+void BulletBody::applyAngularImpulse(const core::vector3d& angularImpulse)
+{
+	Body::applyAngularImpulse(angularImpulse);
+	
+	if (mRigidBody != NULL)
+	{
+		btVector3 impulse(mAngularImpulse.X, mAngularImpulse.Y, mAngularImpulse.Z);
+		mRigidBody->applyTorqueImpulse(impulse);
+
+		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+}
+
+btRigidBody* BulletBody::getBulletRigidBody()
+{
+	return mRigidBody;
+}
+
+void BulletBody::initializeImpl()
+{
+	Body::initializeImpl();
+
+	if (mBodyData == NULL)
+		return;
+
+	if (mMaterial == NULL)
+		return;
+
+	if (mBodyData->getState() != resource::RESOURCE_STATE_LOADED)
+		return;
+
+	if (mMaterial->getState() != resource::RESOURCE_STATE_LOADED)
+		return;
+
+	if (mRigidBody != NULL)
+		return;
+	
+	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+
+	assert(pDynamicsWorld != NULL);
+	if (pDynamicsWorld == NULL)
+		return;
+
+	if (mBodyData->getShapes().size() == 0)
+		return;
+
+	std::list<Shape*>::const_iterator i = mBodyData->getShapes().begin();
+	btCollisionShape* pShape = addBulletShape((*i));
+
+	if (pShape == NULL)
+		return;
+
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(btVector3(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsolutePosition.Z));
+	trans.setRotation(btQuaternion(mAbsoluteOrientation.X, mAbsoluteOrientation.Y, mAbsoluteOrientation.Z, mAbsoluteOrientation.W));
+
+	mMotionState = new btDefaultMotionState(trans);
+
+	btVector3 localInertia(0,0,0);
+
+	btScalar mass(mMass);
+
+	if (mBodyType != BT_DYNAMIC)
+		mass = 0;
+
+	if (mBodyType == BT_DYNAMIC)
+		pShape->calculateLocalInertia(mass, localInertia);
+
+	mRigidBody = new btRigidBody(mass, mMotionState, pShape, localInertia);
+
+	mRigidBody->setFriction(mMaterial->getStaticFriction());
+	mRigidBody->setRestitution(mMaterial->getRestitution());
+
+	int currFlags = mRigidBody->getCollisionFlags();
+
+	switch (mBodyType)
+	{
+	case BT_DYNAMIC:
+		currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+		currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+		break;
+	case BT_STATIC:
+		currFlags |= btCollisionObject::CF_STATIC_OBJECT;
+		currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+		break;
+	case BT_KINEMATIC:
+		currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+		currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+		break;
+	}
+	
+	currFlags |= btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK;
+	mRigidBody->setCollisionFlags(currFlags);
+	mRigidBody->updateInertiaTensor();
+
+	pDynamicsWorld->addRigidBody(mRigidBody);
+
+	if (mEnabled)
+	{
+		mRigidBody->setActivationState(ACTIVE_TAG);
+		mRigidBody->setActivationState(DISABLE_DEACTIVATION);
+	}
+	else
+	{
+		mRigidBody->setActivationState(ISLAND_SLEEPING);
+	}
+
+	mRigidBody->setUserPointer(static_cast<Body*>(this));
+
+	if (mBodyType != BT_STATIC)
+	{
+		mRigidBody->setDamping(btScalar(mLinearDamping), btScalar(mAngularDamping));
+		mRigidBody->setLinearVelocity(btVector3(mLinearVelocity.X, mLinearVelocity.Y, mLinearVelocity.X));
+		mRigidBody->setAngularVelocity(btVector3(mAngularVelocity.X, mAngularVelocity.Y, mAngularVelocity.X));
+	}
+
+	if (mForce != core::vector3d::ORIGIN_3D)
+	{
+		btVector3 f(mForce.X, mForce.Y, mForce.Z);
+		mRigidBody->applyCentralForce(f);
+
+		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+
+	if (mTorque != core::vector3d::ORIGIN_3D)
+	{
+		btVector3 t(mTorque.X, mTorque.Y, mTorque.Z);
+		mRigidBody->applyTorque(t);
+	
+		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+
+	if (mLinearImpulse != core::vector3d::ORIGIN_3D)
+	{
+		btVector3 impulse(mLinearImpulse.X, mLinearImpulse.Y, mLinearImpulse.Z);
+		mRigidBody->applyCentralImpulse(impulse);
+
+		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+
+	if (mAngularImpulse != core::vector3d::ORIGIN_3D)
+	{
+		btVector3 impulse(mAngularImpulse.X, mAngularImpulse.Y, mAngularImpulse.Z);
+		mRigidBody->applyTorqueImpulse(impulse);
+
+		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+	}
+}
+
+void BulletBody::uninitializeImpl()
+{
+	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+
+	assert(pDynamicsWorld != NULL);
+	if (pDynamicsWorld == NULL)
+		return;
+	
+	if (mMotionState != NULL)
+		delete mMotionState;
+
+	if (mRigidBody != NULL)
+	{
+		pDynamicsWorld->removeRigidBody(mRigidBody);
+		delete mRigidBody;
+	}
+}
+
+void BulletBody::updateTransformImpl()
+{
+	if (mRigidBody != NULL)
+	{
+		if (mModifiedAbsoluteTransform)
+		{
+			Body::updateTransformImpl();
+
+			btTransform trans;
+			trans.setIdentity();
+			trans.setOrigin(btVector3(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsolutePosition.Z));
+			trans.setRotation(btQuaternion(mAbsoluteOrientation.X, mAbsoluteOrientation.Y, mAbsoluteOrientation.Z, mAbsoluteOrientation.W));
+	
+			mRigidBody->setWorldTransform(trans);
+		}
+		else if (mRigidBody->isActive())
+		{
+			btTransform trans;
+			mRigidBody->getMotionState()->getWorldTransform(trans);
+
+			btVector3 globalPos = trans.getOrigin();
+			btQuaternion globalOrient = trans.getRotation();
+
+			mPosition.X = globalPos.getX();
+			mPosition.Y = globalPos.getY();
+			mPosition.Z = globalPos.getZ();
+
+			mOrientation.X = globalOrient.getX();
+			mOrientation.Y = globalOrient.getY();
+			mOrientation.Z = globalOrient.getZ();
+			mOrientation.W = globalOrient.getW();
+
+			mModifiedAbsoluteTransform = true;
+
+			Body::updateTransformImpl();
+		}
+	}
+}
+
+btCollisionShape* BulletBody::addBulletShape(Shape* shape)
+{
+	if (shape == NULL)
+		return NULL;
+
+	switch(shape->getShapeType())
+	{
+	case SHAPE_TYPE_UNDEFINED:
+		break;
+	case SHAPE_TYPE_PLANE:
+		{
+			BulletPlaneShape* bulletPlaneShape = static_cast<BulletPlaneShape*>(shape);
+			return bulletPlaneShape->getBulletCollisionShape();
+		}
+		break;
+	case SHAPE_TYPE_SPHERE:
+		{
+			BulletSphereShape* bulletSphereShape = static_cast<BulletSphereShape*>(shape);
+			return bulletSphereShape->getBulletCollisionShape();
+		}
+		break;
+	case SHAPE_TYPE_BOX:
+		{
+			BulletBoxShape* bulletBoxShape = static_cast<BulletBoxShape*>(shape);
+			return bulletBoxShape->getBulletCollisionShape();
+		}
+		break;
+	case SHAPE_TYPE_CAPSULE:
+		break;
+	case SHAPE_TYPE_CONVEX:
+		break;
+	case SHAPE_TYPE_MESH:
+		break;
+	default:
+		break;	
+	}
+
+	return NULL;
+}
+
+} // end namespace game

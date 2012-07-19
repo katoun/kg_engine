@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{fc8abcb6-664f-4220-8a48-3eea18c4ef4e}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Source Files\openinput">
+      <UniqueIdentifier>{4706ffea-a66f-4718-89f8-aac5b7d0b9f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\openinput\win32">
+      <UniqueIdentifier>{b0e0793c-ddb1-4db7-b1d7-5619f2073cb5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Win32Config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Win32Cursor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Win32InputDriver.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Win32Joystick.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Win32Keyboard.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Win32Mouse.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_action.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_api.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_events.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_joystick.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_keyboard.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_mouse.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\openinput_types.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\include\config.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\src\bootstrap.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\src\internal.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\src\private.h">
+      <Filter>Source Files\openinput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\openinput\src\win32\win32.h">
+      <Filter>Source Files\openinput\win32</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Win32Cursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Win32InputDll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Win32InputDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Win32Joystick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Win32Keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Win32Mouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\action.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\appstate.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\debug.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\device.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\events.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\joystick.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\keyboard.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\keynames.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\main.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\mouse.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\queue.c">
+      <Filter>Source Files\openinput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\win32\win32.c">
+      <Filter>Source Files\openinput\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\win32\win32_events.c">
+      <Filter>Source Files\openinput\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\openinput\src\win32\win32_translate.c">
+      <Filter>Source Files\openinput\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

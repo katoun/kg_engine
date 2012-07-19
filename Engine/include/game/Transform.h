@@ -1,0 +1,132 @@
+/*
+-----------------------------------------------------------------------------
+Copyright (c) 2006-2012 Catalin Alexandru Nastase
+
+KG game engine (http://k-game.sourceforge.net) is made available under the LGPL License (http://www.gnu.org/copyleft/lgpl.html)
+
+Under the LGPL you may use KG game engine for any purpose you wish, as long as you:
+1. Release any modifications to the KG game engine source back to the community
+2. Pass on the source to KG game engine with all the copyrights intact, or link back to a place where the source code can be obtained (http://k-game.sourceforge.net)
+3. Make it clear where you have customised it.
+The above is a precis, please do read the full license agreement.
+-----------------------------------------------------------------------------
+*/
+
+#ifndef _TRANSFORM_H_
+#define _TRANSFORM_H_
+
+#include <core/Config.h>
+#include <core/Vector3d.h>
+#include <core/Quaternion.h>
+#include <game/Component.h>
+#include <game/TransformDefines.h>
+
+#include <string>
+
+namespace game
+{
+
+class ENGINE_PUBLIC_EXPORT Transform: public Component
+{
+public:
+
+	Transform();
+	~Transform();
+
+	//! Gets if the axis are visible.
+	bool getVisibleAxis();
+
+	//! Sets is the axis are visible.
+	void setVisibleAxis(bool visible);
+
+	//! Gets the position.
+	const core::vector3d& getPosition();
+
+	//! Sets the position.
+	virtual void setPosition(float x, float y, float z);
+	virtual void setPosition(const core::vector3d& pos);
+
+	//!Gets the orientation.
+	const core::quaternion& getOrientation();
+
+	//!Sets the orientation.
+	virtual void setOrientation(const core::quaternion& q);
+
+	//!Gets the scaling factor.
+	const core::vector3d& getScale();
+
+	//!Sets the scaling factor.
+	void setScale(float x, float y, float z);
+	void setScale(const core::vector3d& scale);
+
+	bool isAbsoluteTransformModified();
+
+	//! Returns true if is affected by orientation applied to the parent.
+	bool getInheritOrientation();
+
+	//! Tells it should inherit orientation from it's parent.
+	void setInheritOrientation(bool inherit);
+
+	//! Returns true if is affected by scaling factors applied to the parent.
+	bool getInheritScale();
+
+	//! Tells it should inherit scaling factors from it's parent.
+	void setInheritScale(bool inherit);
+
+	//! Gets the position as derived from all parents.
+	const core::vector3d& getAbsolutePosition();
+
+	//! Gets the orientation as derived from all parents.
+	const core::quaternion& getAbsoluteOrientation();
+
+	//! Gets the scaling facto as derived from all parents.
+	const core::vector3d& getAbsoluteScale();
+
+	//Transformations on all coordinates
+	virtual void scale(const core::vector3d& scale);
+	virtual void translate(const core::vector3d& d, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void rotate(const core::quaternion& q, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	
+	virtual void rotate(const float& degrees, const core::vector3d& axis, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void rotateX(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void rotateY(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void rotateZ(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+
+protected:
+
+	void updateImpl(float elapsedTime);
+	void onParentChangedImpl(GameObject* gameObject);
+
+	//! Flag indicating derived transform was modified.
+	bool mModifiedAbsoluteTransform;
+
+	bool mVisibleAxis;
+
+	//! Stores the position/translation relative to its parent.
+	core::vector3d mPosition;
+
+	//! Stores the orientation relative to it's parent.
+	core::quaternion mOrientation;
+
+	//! Stores the scaling factor.
+	core::vector3d mScale;
+
+	//! Cached combined position.
+	core::vector3d mAbsolutePosition;
+
+	//! Cached combined orientation.
+	core::quaternion mAbsoluteOrientation;
+
+	//! Cached combined scale.
+	core::vector3d mAbsoluteScale;
+
+	//! Stores whether inherits orientation from it's parent
+	bool mInheritOrientation;
+
+	//! Stores whether inherits scale from it's parent
+	bool mInheritScale;
+};
+
+} // end namespace game
+
+#endif

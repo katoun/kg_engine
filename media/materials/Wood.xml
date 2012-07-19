@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material>
+	<restitution value="0.15"/>
+	<static_friction value="0.8"/>
+	<dynamic_friction value="1.0"/>
+</material>

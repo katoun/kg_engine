@@ -1,0 +1,133 @@
+/*
+-----------------------------------------------------------------------------
+Copyright (c) 2006-2012 Catalin Alexandru Nastase
+
+KG game engine (http://k-game.sourceforge.net) is made available under the LGPL License (http://www.gnu.org/copyleft/lgpl.html)
+
+Under the LGPL you may use KG game engine for any purpose you wish, as long as you:
+1. Release any modifications to the KG game engine source back to the community
+2. Pass on the source to KG game engine with all the copyrights intact, or link back to a place where the source code can be obtained (http://k-game.sourceforge.net)
+3. Make it clear where you have customised it.
+The above is a precis, please do read the full license agreement.
+-----------------------------------------------------------------------------
+*/
+
+#ifndef _SHADER_H_
+#define _SHADER_H_
+
+#include <core/Config.h>
+#include <resource/Resource.h>
+#include <render/ShaderDefines.h>
+#include <render/ShaderParamData.h>
+#include <render/TextureDefines.h>
+#include <render/Color.h>
+#include <core/Vector2d.h>
+#include <core/Vector3d.h>
+#include <core/Vector4d.h>
+#include <core/Matrix4.h>
+
+#include <string>
+#include <vector>
+#include <map>
+
+namespace resource
+{
+class Serializer;
+}
+
+namespace render
+{
+
+class Light;
+class Texture;
+
+struct ENGINE_PUBLIC_EXPORT ShaderParameter
+{
+	ShaderParameter();
+
+	ShaderParameterType paramType;			// Param type
+	ShaderAutoParameterType autoParamType;	// Auto Param type
+	unsigned int index;								// Start index in buffer (either float, int or texture buffer)
+	unsigned int elemCount;							// Number of elements
+};
+
+//! Abstract class representing a Shader resource.
+//!
+//! This class defines the low-level program in assembler code,
+//! the sort used to directly assemble into machine instructions for the GPU to execute.
+class ENGINE_PUBLIC_EXPORT Shader: public resource::Resource
+{
+public:
+
+	Shader(const std::string& name, resource::Serializer* serializer);
+	virtual ~Shader();
+
+	//! Sets the type of texture,
+	void setShaderType(const ShaderType& type);
+
+	//! Gets the type of shader.
+	ShaderType getShaderType();
+
+	void setSource(const std::string& source);
+
+	void setEntryPoint(const std::string& entry);
+
+	virtual void bind();
+
+	virtual void unbind();
+
+	virtual void updateAutoParameters(ShaderParamData& data);
+
+	virtual void setParameter(const std::string& name, const Color& col);
+	virtual void setParameter(const std::string& name, const core::vector2d& vec);
+	virtual void setParameter(const std::string& name, const core::vector3d& vec);
+	virtual void setParameter(const std::string& name, const core::vector4d& vec);
+	virtual void setParameter(const std::string& name, const core::matrix4& m);
+	virtual void setParameter(const std::string& name, const float* val, unsigned int count);
+	virtual void setParameter(const std::string& name, const signed int* val, unsigned int count);
+
+	virtual void addParameter(const std::string& name, ShaderParameterType type);
+
+	void setAutoParameter(const std::string& name, ShaderAutoParameterType type);
+
+protected:
+
+	virtual bool loadImpl();
+	virtual void unloadImpl();
+
+	ShaderType mShaderType;
+
+	std::string mSource;		// The assembler source of the program (may be blank until file loaded)
+	std::string mEntryPoint;	// Entry point eg. main_vp, main_fp etc
+
+	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type, unsigned int index, unsigned int elemCount);
+	virtual ShaderParameter* createParameterImpl(const std::string& name);
+
+	ShaderParameter* findParameter(const std::string& name);
+	void writedParameterData(unsigned int index, const float* val, unsigned int count);
+	void writedParameterData(unsigned int index, const signed int* val, unsigned int count);
+
+	float* getFloatPrameterData(unsigned int index);
+	const float* getFloatPrameterData(unsigned int index) const;
+
+	signed int* getIntPrameterData(unsigned int index);
+	const signed int* getIntPrameterData(unsigned int index) const;
+
+	void removeAllParameters();
+
+	static bool isFloat(ShaderParameterType type);
+	static bool isFloat(ShaderAutoParameterType type);
+	static bool isSampler(ShaderParameterType type);
+	static unsigned int getElementCount(ShaderParameterType type);
+	static unsigned int getElementCount(ShaderAutoParameterType type);
+	static ShaderParameterType getType(ShaderAutoParameterType type);
+	static ShaderParameterType getType(TextureType type);
+
+	std::vector<float> mFloatParameterData;
+	std::vector<signed int> mIntParameterData;
+	hashmap<std::string, ShaderParameter*> mParameters;
+};
+
+} // end namespace render
+
+#endif

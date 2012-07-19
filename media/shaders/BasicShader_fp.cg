@@ -1,0 +1,14 @@
+void main_fp
+(
+	in float4 iPosition:		POSITION,
+	in float2 iTexCoord:		TEXCOORD0,
+	
+	uniform sampler2D diffuseMap:	TEXUNIT0,
+	
+	out float4 oColor:		COLOR
+)
+{
+	//Diffuse
+	float4 diffuseColor = tex2D(diffuseMap, iTexCoord);
+	oColor = diffuseColor;
+}

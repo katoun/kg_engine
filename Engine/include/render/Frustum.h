@@ -1,0 +1,71 @@
+/*
+-----------------------------------------------------------------------------
+Copyright (c) 2006-2012 Catalin Alexandru Nastase
+
+KG game engine (http://k-game.sourceforge.net) is made available under the LGPL License (http://www.gnu.org/copyleft/lgpl.html)
+
+Under the LGPL you may use KG game engine for any purpose you wish, as long as you:
+1. Release any modifications to the KG game engine source back to the community
+2. Pass on the source to KG game engine with all the copyrights intact, or link back to a place where the source code can be obtained (http://k-game.sourceforge.net)
+3. Make it clear where you have customised it.
+The above is a precis, please do read the full license agreement.
+-----------------------------------------------------------------------------
+*/
+
+#ifndef _FRUSTUM_H_
+#define _FRUSTUM_H_
+
+#include <core/Config.h>
+#include <core/Plane3d.h>
+#include <core/Vector3d.h>
+
+namespace core
+{
+class matrix4;
+class sphere3d;
+class aabox3d;
+}
+
+namespace render
+{
+
+enum ProjectionType;
+
+//! A frustum represents a pyramid, capped at the near and far end which is
+//! used to represent either a visible area or a projection area. Can be used
+//! for a number of applications.
+class ENGINE_PUBLIC_EXPORT Frustum
+{
+public:
+
+	Frustum();
+
+	~Frustum();
+
+	//! build the view frustum
+	void buildViewFrustum(const core::matrix4& projMat, const core::matrix4& viewMat, ProjectionType projType, float fov, float aspect, float near, float far);
+
+	//! transforms the frustum by the matrix
+	//! \param mat: Matrix by which the view frustum is transformed.
+	void transform(const core::matrix4& mat);
+
+	const core::vector3d* getCorners();
+
+	//! Tests whether the given point is visible in the Frustum.
+	bool isVisible(const core::vector3d& point);
+
+	//! Tests whether the given sphere is visible in the Frustum.
+	bool isVisible(const core::sphere3d& sphere);
+
+	//! Tests whether the given aabox is visible in the Frustum.
+	bool isVisible(const core::aabox3d& box);
+
+protected:
+
+	core::plane3d mPlanes[6];
+	core::vector3d mCorners[8];
+};
+
+} //namespace render
+
+#endif

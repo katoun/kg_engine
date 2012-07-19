@@ -1,0 +1,49 @@
+/*
+-----------------------------------------------------------------------------
+Copyright (c) 2006-2012 Catalin Alexandru Nastase
+
+KG game engine (http://k-game.sourceforge.net) is made available under the LGPL License (http://www.gnu.org/copyleft/lgpl.html)
+
+Under the LGPL you may use KG game engine for any purpose you wish, as long as you:
+1. Release any modifications to the KG game engine source back to the community
+2. Pass on the source to KG game engine with all the copyrights intact, or link back to a place where the source code can be obtained (http://k-game.sourceforge.net)
+3. Make it clear where you have customised it.
+The above is a precis, please do read the full license agreement.
+-----------------------------------------------------------------------------
+*/
+
+#ifndef _ENGINE_EVENT_RECEIVER_H_
+#define _ENGINE_EVENT_RECEIVER_H_
+
+#include <core/Config.h>
+
+namespace engine
+{
+
+struct EngineEvent;
+
+class ENGINE_PUBLIC_EXPORT EngineEventReceiver
+{
+public:
+
+	virtual ~EngineEventReceiver();
+
+	//! Called just after the engine has been initialized.
+	virtual void engineInitialized();
+	//! Called just after the engine has been uninitialized.
+	virtual void engineUninitialized();
+
+	//! Called just after the engine has started.
+	virtual void engineStarted();
+	//! Called just before the engine has stopped.
+	virtual void engineStopped();
+	
+	//! Called when the engine is about to begin updating.
+	virtual void engineUpdateStarted(const EngineEvent& evt);
+	//! Called just after the engine has been updated.
+	virtual void engineUpdateEnded(const EngineEvent& evt);
+};
+
+} // end namespace engine
+
+#endif

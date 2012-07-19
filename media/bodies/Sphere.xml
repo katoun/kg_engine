@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<body>
+	<type value="dynamic"/>
+	<mass value="10.0"/>
+	<material value="materials/Rubber.xml"/>
+	<shape>
+		<type value="sphere"/>
+		<dimension radius="1.0"/>
+	</shape>	
+</body>

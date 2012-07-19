@@ -1,0 +1,59 @@
+OpenInput
+------------------------------------------------------------------------
+
+The OpenInput library is intended as a free, easy-to-use, cross-platform
+input handler library. The goal is to provide a SDL-like interface to
+input devices such as keyboards, mice and joysticks while keeping the
+dependencies for the library at a bare minimum.
+
+As a user of OpenInput, you will find it very easy to use: The functions 
+and data structures are intuitive and fully documented. The library has 
+support for both event-based input handling, and for state-based events, 
+also known as unbuffered input.
+
+For the developer, the internal design of OpenInput is highly modular: 
+The device drivers are decoupled from the library itself, which makes it 
+very easy to write additional drivers. The internal API is ofcourse also
+fully documented (as are the device drivers).
+
+A lot of code has been ripped, abused and otherwise mangled and
+mingled from the SDL project (http://www.libsdl.org/), and you
+should know that
+
+       Without the EXCELLENT piece of software SDL is
+       OpenInput would simply never have existed!
+       Thank you so much and keep up the good work!
+
+OpenInput is licensed under the GNU Lesser General Public License (LGPL).
+
+See the INSTALL file for installation instructions.
+
+The official OpenInput homepage is located at
+
+	http://home.gna.org/openinput
+
+The official Subversion repository containing the sources and friends
+for OpenInput can be obtained using the following subversion command:
+
+	svn co http://svn.gna.org/svn/openinput/trunk openinput
+
+If you feel you deserve commit-priviligies, please send me an email at
+makob@makob.dk. Report bugs to makob@makob.dk.
+
+------------------------------------------------------------------------
+
+Copyright (C) 2005  Jakob Kjaer <makob@makob.dk>.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
