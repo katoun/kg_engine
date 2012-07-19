@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <game/GameObject.h>
 #include <game/Component.h>
+#include <game/MessageDefines.h>
 #include <core/Utils.h>
 
 namespace game
@@ -103,8 +104,10 @@ void GameObject::setParent(GameObject* parent)
 
 	mParent = parent;
 	mParent->mChildren[mID] = this;
+
 	//notify components that parent game object has changed!!!
-	std::map<unsigned int, Component*>::iterator i;
+	sendMessage(MESSAGE_PARENT_CHANGED);
+	/*std::map<unsigned int, Component*>::iterator i;
 	for (i = mComponents.begin(); i != mComponents.end(); ++i)
 	{
 		Component* pComponent = i->second;
@@ -113,7 +116,7 @@ void GameObject::setParent(GameObject* parent)
 		{
 			pComponent->onParentChanged(parent);
 		}
-	}
+	}*/
 }
 
 std::map<unsigned int, GameObject*>& GameObject::getChildren()
@@ -133,7 +136,8 @@ void GameObject::addChild(GameObject* child)
 	child->mParent = this;
 	
 	//notify child components that parent game object has changed!!!
-	std::map<unsigned int, Component*>::iterator i;
+	sendMessage(MESSAGE_PARENT_CHANGED);
+	/*std::map<unsigned int, Component*>::iterator i;
 	for (i = mComponents.begin(); i != mComponents.end(); ++i)
 	{
 		Component* pComponent = i->second;
@@ -142,7 +146,7 @@ void GameObject::addChild(GameObject* child)
 		{
 			pComponent->onParentChanged(this);
 		}
-	}
+	}*/
 }
 
 void GameObject::removeChild(GameObject* child)
@@ -221,6 +225,37 @@ Component* GameObject::getComponent(unsigned int type)
 	}
 
 	return NULL;
+}
+
+void GameObject::sendMessage(unsigned int messageID)
+{
+	onMessage(messageID);
+}
+
+void GameObject::onMessage(unsigned int messageID)
+{
+	//Send to components first
+	std::map<unsigned int, Component*>::iterator i;
+	for (i = mComponents.begin(); i != mComponents.end(); ++i)
+	{
+		Component* pComponent = i->second;
+
+		if (pComponent != NULL)
+		{
+			pComponent->onMessage(messageID);
+		}
+	}
+
+	//Sent to childer second
+	std::map<unsigned int, GameObject*>::iterator j;
+	for (j = mChildren.begin(); j != mChildren.end(); ++j)
+	{
+		GameObject* pGameObject = j->second;
+		if (pGameObject != NULL)
+		{
+			pGameObject->onMessage(messageID);
+		}
+	}
 }
 
 void GameObject::update(float elapsedTime)

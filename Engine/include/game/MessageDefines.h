@@ -24,67 +24,18 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _COMPONENT_H_
-#define _COMPONENT_H_
-
-#include <core/Config.h>
-#include <game/ComponentDefines.h>
-
-#include <string>
+#ifndef _MESSAGE_DEFINES_H_
+#define _MESSAGE_DEFINES_H_
 
 namespace game
 {
 
-class GameObject;
-
-class ENGINE_PUBLIC_EXPORT Component
+enum Message
 {
-public:
-
-	Component();
-	~Component();
-
-	//! Returns the id of the game object.
-	const unsigned int& getID() const;
-
-	//! Gets object type.
-	const unsigned int getType() const;
-
-	//! Initialize object.
-	void initialize();
-
-	//! Uninitialize object.
-	void uninitialize();
-
-	void update(float elapsedTime);
-
-	//! Returns true if the Component has been initialized.
-	bool isInitialized() const;
-
-	void onAttach(GameObject* gameObject);
-
-	void onDetach();
-
-	void onMessage(unsigned int messageID);
-
-	GameObject* getGameObject();
-
-protected:
-
-	unsigned int mID;
-
-	static unsigned int mIndexCounter;
-
-	unsigned int mType;
-
-	virtual void initializeImpl();
-	virtual void uninitializeImpl();
-	virtual void updateImpl(float elapsedTime);
-	virtual void onMessageImpl(unsigned int messageID);
-
-	bool mInitialized;
-
-	GameObject* mGameObject;
+	MESSAGE_UNDEFINED,
+	MESSAGE_PARENT_CHANGED,
+	MESSAGE_TRANSFORM_NEEDS_UPDATE,
+	MESSAGE_COUNT
 };
 
 } // end namespace game

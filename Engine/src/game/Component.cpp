@@ -98,9 +98,9 @@ void Component::onDetach()
 	mGameObject = NULL;
 }
 
-void Component::onParentChanged(GameObject* gameObject)
+void Component::onMessage(unsigned int messageID)
 {
-	onParentChangedImpl(gameObject);
+	onMessageImpl(messageID);
 }
 
 GameObject* Component::getGameObject()
@@ -114,6 +114,6 @@ void Component::uninitializeImpl() {}
 
 void Component::updateImpl(float elapsedTime) {}
 
-void Component::onParentChangedImpl(GameObject* gameObject) {}
+void Component::onMessageImpl(unsigned int messageID) {}
 
 } // end namespace game

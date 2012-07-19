@@ -439,6 +439,9 @@
     <ClInclude Include="include\sound\ListenerFactory.h">
       <Filter>sound</Filter>
     </ClInclude>
+    <ClInclude Include="include\game\MessageDefines.h">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">

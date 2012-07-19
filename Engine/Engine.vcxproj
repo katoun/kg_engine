@@ -164,6 +164,7 @@
     <ClInclude Include="include\game\ComponentFactory.h" />
     <ClInclude Include="include\game\GameManager.h" />
     <ClInclude Include="include\game\GameObject.h" />
+    <ClInclude Include="include\game\MessageDefines.h" />
     <ClInclude Include="include\game\Transform.h" />
     <ClInclude Include="include\game\TransformDefines.h" />
     <ClInclude Include="include\game\TransformFactory.h" />

@@ -74,6 +74,9 @@ public:
 
 	Component* getComponent(unsigned int type);
 
+	void sendMessage(unsigned int messageID);
+	void onMessage(unsigned int messageID);
+
 	void update(float elapsedTime);
 
 protected:
@@ -84,14 +87,14 @@ protected:
 
 	static unsigned int mIndexCounter;
 
+	virtual void updateImpl(float elapsedTime);
+
 	GameObject* mParent;
 
 	//! Central list of children.
 	std::map<unsigned int, GameObject*> mChildren;
 
 	std::map<unsigned int, Component*> mComponents;
-
-	virtual void updateImpl(float elapsedTime);
 };
 
 } // end namespace game

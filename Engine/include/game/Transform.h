@@ -107,10 +107,7 @@ public:
 protected:
 
 	void updateImpl(float elapsedTime);
-	void onParentChangedImpl(GameObject* gameObject);
-
-	//! Flag indicating derived transform was modified.
-	bool mModifiedAbsoluteTransform;
+	void onMessageImpl(unsigned int messageID);
 
 	bool mVisibleAxis;
 
@@ -131,6 +128,9 @@ protected:
 
 	//! Cached combined scale.
 	core::vector3d mAbsoluteScale;
+
+	//! Flag indicating transform needs an update.
+	bool mTransformNeedsUpdate;
 
 	//! Stores whether inherits orientation from it's parent
 	bool mInheritOrientation;

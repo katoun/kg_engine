@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <game/GameObject.h>
 #include <game/Transform.h>
 #include <game/ComponentDefines.h>
+#include <game/MessageDefines.h>
 #include <core/Math.h>
 #include <core/Utils.h>
 
@@ -62,8 +63,9 @@ Camera::Camera(): game::Component()
 	mProjMatrix = core::matrix4::ZERO;
 	mProjMatrixRS = core::matrix4::ZERO;
 
-	mModifiedProjection = true;
-	mModifiedView = true;
+	mProjectionNeedsUpdate = true;
+	mViewNeedsUpdate = true;
+	mFrustumNeedsUpdate = true;
 }
 
 Camera::~Camera()
@@ -77,7 +79,7 @@ Camera::~Camera()
 void Camera::setProjectionType(ProjectionType pt)
 {
 	mProjType = pt;
-	mModifiedProjection = true;
+	mProjectionNeedsUpdate = true;
 }
 
 ProjectionType Camera::getProjectionType()
@@ -124,7 +126,7 @@ void Camera::setFixedUpAxis(bool useFixed, const core::vector3d& fixedAxis)
 void Camera::setFOV(float fov)
 {
 	mFOV = fov;
-	mModifiedProjection = true;
+	mProjectionNeedsUpdate = true;
 }
 
 float Camera::getFOV()
@@ -135,7 +137,7 @@ float Camera::getFOV()
 void Camera::setNearClipDistance(float nearPlane)
 {
 	mNearDist = nearPlane;
-	mModifiedProjection = true;
+	mProjectionNeedsUpdate = true;
 }
 
 float Camera::getNearClipDistance()
@@ -156,7 +158,7 @@ float Camera::getFarClipDistance()
 void Camera::setAspectRatio(float r)
 {
 	mAspect = r;
-	mModifiedProjection = true;
+	mProjectionNeedsUpdate = true;
 }
 
 float Camera::getAspectRatio()
@@ -186,23 +188,22 @@ Frustum* Camera::getFrustum() const
 
 void Camera::updateImpl(float elapsedTime)
 {
-	if (mGameObject != NULL)
-	{
-		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
-		{
-			mModifiedView = pTransform->isAbsoluteTransformModified();
-		}
-	}
-
 	updateProjection();
 	updateView();
 	updateFrustum();
 }
 
+void Camera::onMessageImpl(unsigned int messageID)
+{
+	if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
+	{
+		mViewNeedsUpdate = true;
+	}
+}
+
 void Camera::updateProjection()
 {
-	if(mModifiedProjection)
+	if(mProjectionNeedsUpdate)
 	{
 		if(mProjType == PROJECTION_TYPE_PERSPECTIVE)
 		{
@@ -239,13 +240,14 @@ void Camera::updateProjection()
 		
 		RenderManager::getInstance().convertProjectionMatrix(mProjMatrix, mProjMatrixRS);
 
-		mModifiedProjection = false;
+		mProjectionNeedsUpdate = false;
+		mFrustumNeedsUpdate = true;
 	}
 }
 
 void Camera::updateView()
 {
-	if(mModifiedView)
+	if(mViewNeedsUpdate)
 	{
 		// ----------------------
 		// Update the view matrix
@@ -271,13 +273,19 @@ void Camera::updateView()
 		//std::cout<<"Up: "<<(up)<<std::endl;
 #endif
 
-		mModifiedView = false;
+		mViewNeedsUpdate = false;
+		mFrustumNeedsUpdate = true;
 	}
 }
 
 void Camera::updateFrustum()
 {
-	mFrustum->buildViewFrustum(mProjMatrix, mViewMatrix, mProjType, mFOV, mAspect, mNearDist, mFarDist);
+	if (mFrustumNeedsUpdate)
+	{
+		mFrustum->buildViewFrustum(mProjMatrix, mViewMatrix, mProjType, mFOV, mAspect, mNearDist, mFarDist);
+
+		mFrustumNeedsUpdate = false;
+	}
 }
 
 } //namespace render

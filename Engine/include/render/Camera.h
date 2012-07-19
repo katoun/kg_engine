@@ -159,6 +159,7 @@ public:
 protected:
 
 	void updateImpl(float elapsedTime);
+	void onMessageImpl(unsigned int messageID);
 
 	void updateProjection();
 	void updateView();
@@ -185,8 +186,9 @@ protected:
 	core::matrix4 mProjMatrix;		// Pre-calced projection matrix
 	core::matrix4 mViewMatrix;		// Pre-calced view matrix	
 	
-	bool mModifiedProjection;	// Something's changed in the projection?
-	bool mModifiedView;			// Something's changed int the view?
+	bool mProjectionNeedsUpdate;	// Projection needs an update?
+	bool mViewNeedsUpdate;			// View needs an update?
+	bool mFrustumNeedsUpdate;		// Frustum needs an update ?
 };
 
 } //namespace render

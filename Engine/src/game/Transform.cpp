@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <game/Transform.h>
 #include <game/GameObject.h>
+#include <game/MessageDefines.h>
 #include <core/Matrix4.h>
 
 namespace game
@@ -42,7 +43,7 @@ Transform::Transform(): Component()
 	mScale = mAbsoluteScale = core::vector3d::UNIT_SCALE;
 	mInheritOrientation = true;
 	mInheritScale = true;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 Transform::~Transform() {}
@@ -67,13 +68,13 @@ void Transform::setPosition(float x, float y, float z)
 	mPosition.X = x;
 	mPosition.Y = y;
 	mPosition.Z = z;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 void Transform::setPosition(const core::vector3d& pos)
 {
 	mPosition = pos;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 const core::quaternion& Transform::getOrientation()
@@ -84,7 +85,7 @@ const core::quaternion& Transform::getOrientation()
 void Transform::setOrientation(const core::quaternion& q)
 {
 	mOrientation = q;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 const core::vector3d& Transform::getScale()
@@ -97,18 +98,18 @@ void Transform::setScale(float x, float y, float z)
 	mScale.X = x;
 	mScale.Y = y;
 	mScale.Z = z;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 void Transform::setScale(const core::vector3d& scale)
 {
 	mScale = scale;
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 bool Transform::isAbsoluteTransformModified()
 {
-	return mModifiedAbsoluteTransform;
+	return mTransformNeedsUpdate;
 }
 
 bool Transform::getInheritOrientation()
@@ -152,7 +153,7 @@ void Transform::scale(const core::vector3d &scale)
 	m.setScale(scale);
 	m.transformVector(mScale);
 
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
@@ -192,7 +193,7 @@ void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
 		break;		
 	}
 
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 void Transform::rotate(const core::quaternion &q, TransformSpace relativeTo)
@@ -217,7 +218,7 @@ void Transform::rotate(const core::quaternion &q, TransformSpace relativeTo)
 		break;		
 	}
 
-	mModifiedAbsoluteTransform = true;
+	mTransformNeedsUpdate = true;
 }
 
 void Transform::rotate(const float& degrees, const core::vector3d &axis, TransformSpace relativeTo)
@@ -244,24 +245,11 @@ void Transform::rotateZ(float degrees, TransformSpace relativeTo)
 
 void Transform::updateImpl(float elapsedTime)
 {
-	if (mModifiedAbsoluteTransform)
+	if (mTransformNeedsUpdate)
 	{
 		if (mGameObject != NULL)
 		{
-			std::map<unsigned int, GameObject*> children = mGameObject->getChildren();
-			std::map<unsigned int, GameObject*>::const_iterator i;
-			for (i = children.begin(); i != children.end(); ++i)
-			{
-				GameObject* pChild = i->second;
-				if (pChild != NULL)
-				{
-					Transform* pChildTransform = static_cast<Transform*>(pChild->getComponent(COMPONENT_TYPE_TRANSFORM));
-					if (pChildTransform != NULL)
-					{
-						pChildTransform->mModifiedAbsoluteTransform = true;
-					}
-				}
-			}
+			mGameObject->sendMessage(MESSAGE_TRANSFORM_NEEDS_UPDATE);
 
 			GameObject* pParent = mGameObject->getParent();
 			if (pParent != NULL)
@@ -328,13 +316,16 @@ void Transform::updateImpl(float elapsedTime)
 			}
 		}
 
-		mModifiedAbsoluteTransform = false;
+		mTransformNeedsUpdate = false;
 	}
 }
 
-void Transform::onParentChangedImpl(GameObject* gameObject)
+void Transform::onMessageImpl(unsigned int messageID)
 {
-	mModifiedAbsoluteTransform = true;
+	if (messageID == MESSAGE_PARENT_CHANGED)
+	{
+		mTransformNeedsUpdate = true;
+	}
 }
 
 } // end namespace game
