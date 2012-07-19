@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-KG game engine (https://github.com/katoun/kg_engine) is made available under the MIT License.
+KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
 
 Copyright (c) 2006-2012 Catalin Alexandru Nastase
 
