@@ -36,11 +36,15 @@ namespace game
 
 GameManager::GameManager(): core::System("GameManager")
 {
-	mDefaultTransformFactory = NULL;
+	mDefaultTransformFactory = new TransformFactory();
 }
 
 GameManager::~GameManager()
 {
+	if (mDefaultTransformFactory != NULL)
+	{
+		delete mDefaultTransformFactory;
+	}
 }
 
 GameObject* GameManager::createGameObject()
@@ -239,19 +243,12 @@ void GameManager::updateImpl(float elapsedTime)
 
 void GameManager::registerDefaultFactoriesImpl()
 {
-	mDefaultTransformFactory = new TransformFactory();
-
 	registerComponentFactory(COMPONENT_TYPE_TRANSFORM, mDefaultTransformFactory);
 }
 
 void GameManager::removeDefaultFactoriesImpl()
 {
 	removeComponentFactory(COMPONENT_TYPE_TRANSFORM);
-
-	if (mDefaultTransformFactory != NULL)
-	{
-		delete mDefaultTransformFactory;
-	}
 }
 
 GameManager& GameManager::getInstance()

@@ -49,6 +49,11 @@ namespace scene
 class Node;
 }
 
+namespace game
+{
+class ComponentFactory;
+}
+
 namespace sound
 {
 
@@ -57,6 +62,7 @@ class SoundData;
 class Listener;
 class SoundDriver;
 class SoundFactory;
+class ListenerFactory;
 
 //! Sound Manager.
 //! 
@@ -97,21 +103,14 @@ public:
 	//! Removes (and destroys) all sounds.
 	void removeAllSounds();
 
-	//! Creates a listener to be managed by sound manager.
-	Listener* createListener(scene::Node* parent = NULL);
-	Listener* createListener(const std::string& name, scene::Node* parent = NULL);
-
 	//! Sets a pointer to the active listener.
 	void setActiveListener(Listener *listener);
 
-	//! Retrieve a pointer to the active listener.
+	//! Gets the active listener.
 	Listener* getActiveListener();
 
-	//! Retrieves a pointer to the a listener.
-	Listener* getListener(const unsigned int& id);
-
-	//! Retrieves the total number of created listeners.
-	unsigned int getNumberOfListeners() const;
+	//!  Adds a listener to be managed by this sound manager.
+	void addListener(Listener *listener);
 
 	//! Removes a listener.
 	void removeListener(Listener *listener);
@@ -151,6 +150,10 @@ protected:
 	void updateImpl(float elapsedTime);
 	void setSystemDriverImpl(core::SystemDriver* systemDriver);
 	void removeSystemDriverImpl();
+	void registerDefaultFactoriesImpl();
+	void removeDefaultFactoriesImpl();
+
+	game::ComponentFactory* mDefaultListenerFactory;
 
 	SoundDriver* mSoundDriver;
 

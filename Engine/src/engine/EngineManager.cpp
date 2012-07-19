@@ -203,10 +203,6 @@ void EngineManager::updateImpl(float elapsedTime)
 	fireEngineUpdateEnded();
 }
 
-void EngineManager::registerDefaultFactoriesImpl() {}
-
-void EngineManager::removeDefaultFactoriesImpl() {}
-
 void EngineManager::fireEngineInitialized()
 {
 	// Tell all listeners

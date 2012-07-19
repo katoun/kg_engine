@@ -28,9 +28,14 @@ THE SOFTWARE.
 #include <sound/Sound.h>
 #include <sound/SoundData.h>
 #include <sound/Listener.h>
+#include <sound/ListenerFactory.h>
 #include <sound/SoundFactory.h>
 #include <sound/SoundDriver.h>
 #include <scene/SceneManager.h>
+#include <game/GameObject.h>
+#include <game/ComponentDefines.h>
+#include <game/ComponentFactory.h>
+#include <game/GameManager.h>
 
 template<> sound::SoundManager& core::Singleton<sound::SoundManager>::ms_Singleton = sound::SoundManager();
 
@@ -46,9 +51,17 @@ SoundManager::SoundManager(): core::System("SoundManager")
 	mSoundSpeed = 343.3f;
 
 	mSoundFactory = NULL;
+
+	mDefaultListenerFactory = new ListenerFactory();
 }
 
-SoundManager::~SoundManager() {}
+SoundManager::~SoundManager()
+{
+	if (mDefaultListenerFactory != NULL)
+	{
+		delete mDefaultListenerFactory;
+	}
+}
 
 Sound* SoundManager::createSound(const std::string& filename, scene::Node* parent)
 {
@@ -56,7 +69,8 @@ Sound* SoundManager::createSound(const std::string& filename, scene::Node* paren
 		return NULL;
 
 	SoundData* newSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
-	if (!newSoundData) return NULL;
+	if (!newSoundData)
+		return NULL;
 
 	Sound* newSound = NULL;
 	newSound = mSoundFactory->createSound(newSoundData);
@@ -72,14 +86,17 @@ Sound* SoundManager::createSound(const std::string& filename, scene::Node* paren
 
 Sound* SoundManager::createSound(const std::string& name, const std::string& filename, scene::Node* parent)
 {
-	if (mSoundFactory == NULL) return NULL;
+	if (mSoundFactory == NULL)
+		return NULL;
 
 	SoundData* newSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
-	if (newSoundData = NULL) return NULL;
+	if (newSoundData = NULL)
+		return NULL;
 
 	Sound* newSound = NULL;
 	newSound = mSoundFactory->createSound(name, newSoundData);
-	if (newSound == NULL) return NULL;
+	if (newSound == NULL)
+		return NULL;
 
 	mSounds[newSound->getID()] = newSound;
 
@@ -90,12 +107,16 @@ Sound* SoundManager::createSound(const std::string& name, const std::string& fil
 
 Sound* SoundManager::createSound(SoundData* soundData, scene::Node* parent)
 {
-	if (mSoundFactory == NULL) return NULL;
-	if (soundData == NULL) return NULL;
+	if (mSoundFactory == NULL)
+		return NULL;
+
+	if (soundData == NULL)
+		return NULL;
 
 	Sound* newSound = NULL;
 	newSound = mSoundFactory->createSound(soundData);
-	if (newSound == NULL) return NULL;
+	if (newSound == NULL)
+		return NULL;
 
 	mSounds[newSound->getID()] = newSound;
 
@@ -106,12 +127,16 @@ Sound* SoundManager::createSound(SoundData* soundData, scene::Node* parent)
 
 Sound* SoundManager::createSound(const std::string& name, SoundData* soundData, scene::Node* parent)
 {
-	if (mSoundFactory == NULL) return NULL;
-	if (soundData == NULL) return NULL;
+	if (mSoundFactory == NULL)
+		return NULL;
+
+	if (soundData == NULL)
+		return NULL;
 
 	Sound* newSound = NULL;
 	newSound = mSoundFactory->createSound(name, soundData);
-	if (newSound == NULL) return NULL;
+	if (newSound == NULL)
+		return NULL;
 
 	mSounds[newSound->getID()] = newSound;
 
@@ -160,35 +185,9 @@ void SoundManager::removeAllSounds()
 	mSounds.clear();
 }
 
-Listener* SoundManager::createListener(scene::Node* parent)
-{
-	Listener* newListener = NULL;
-	newListener = new Listener();
-
-	mListeners[newListener->getID()] = newListener;
-
-	scene::SceneManager::getInstance().addNode(newListener, parent);
-
-	return newListener;
-}
-
-Listener* SoundManager::createListener(const std::string& name, scene::Node* parent)
-{
-	Listener* newListener = NULL;
-	newListener = new Listener(name);
-
-	mListeners[newListener->getID()] = newListener;
-
-	scene::SceneManager::getInstance().addNode(newListener, parent);
-
-	return newListener;
-}
-
 void SoundManager::setActiveListener(Listener* listener)
 {
-	assert(listener);
-
-	if (!listener)
+	if (listener = NULL)
 		return;
 
 	mActiveListener = listener;
@@ -199,23 +198,17 @@ Listener* SoundManager::getActiveListener()
 	return mActiveListener;
 }
 
-Listener* SoundManager::getListener(const unsigned int& id)
+void SoundManager::addListener(Listener *listener)
 {
-	std::map<unsigned int, Listener*>::const_iterator i = mListeners.find(id);
-	if (i != mListeners.end())
-		return i->second;
+	if (listener == NULL)
+		return;
 
-	return NULL;
-}
-
-unsigned int SoundManager::getNumberOfListeners() const
-{
-	return mListeners.size();
+	mListeners[listener->getID()] = listener;
 }
 
 void SoundManager::removeListener(Listener *listener)
 {
-	if (!listener)
+	if (listener == NULL)
 		return;
 
 	removeListener(listener->getID());
@@ -226,16 +219,10 @@ void SoundManager::removeListener(const unsigned int& id)
 	std::map<unsigned int, Listener*>::iterator i = mListeners.find(id);
 	if (i != mListeners.end())
 		mListeners.erase(i);
-
-	scene::SceneManager::getInstance().removeNode(id);
 }
 
 void SoundManager::removeAllListeners()
 {
-	std::map<unsigned int, Listener*>::const_iterator i;
-	for (i = mListeners.begin(); i != mListeners.end(); ++i)
-		scene::SceneManager::getInstance().removeNode(i->second->getID());
-
 	mListeners.clear();
 }
 
@@ -246,7 +233,8 @@ void SoundManager::setDopplerFactor(float dopplerFactor)
 		return;
 
 	mDopplerFactor = dopplerFactor;
-	if (mSoundDriver) mSoundDriver->setDopplerFactor(dopplerFactor);
+	if (mSoundDriver != NULL)
+		mSoundDriver->setDopplerFactor(dopplerFactor);
 }
 
 float SoundManager::getDopplerFactor() const
@@ -261,12 +249,23 @@ void SoundManager::setSoundSpeed(float soundSpeed)
 		return;
 
 	mSoundSpeed = soundSpeed;
-	if (mSoundDriver) mSoundDriver->setSoundSpeed(soundSpeed);
+	if (mSoundDriver != NULL)
+		mSoundDriver->setSoundSpeed(soundSpeed);
 }
 
 float SoundManager::getSoundSpeed() const
 {
 	return mSoundSpeed;
+}
+
+void SoundManager::setSoundFactory(SoundFactory* factory)
+{
+	mSoundFactory = factory;
+}
+
+void SoundManager::removeSoundFactory()
+{
+	mSoundFactory = NULL;
 }
 
 void SoundManager::initializeImpl() {}
@@ -299,14 +298,14 @@ void SoundManager::removeSystemDriverImpl()
 	mSoundDriver = NULL;
 }
 
-void SoundManager::setSoundFactory(SoundFactory* factory)
+void SoundManager::registerDefaultFactoriesImpl()
 {
-	mSoundFactory = factory;
+	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_LISTENER, mDefaultListenerFactory);
 }
 
-void SoundManager::removeSoundFactory()
+void SoundManager::removeDefaultFactoriesImpl()
 {
-	mSoundFactory = NULL;
+	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_LISTENER);
 }
 
 SoundManager& SoundManager::getInstance()

@@ -24,42 +24,30 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <sound/ListenerFactory.h>
 #include <sound/Listener.h>
-#include <core/Utils.h>
-#include <game/GameObject.h>
-#include <game/Transform.h>
-#include <game/ComponentDefines.h>
+#include <game/Component.h>
 
 namespace sound
 {
 
-Listener::Listener(): game::Component()
+ListenerFactory::ListenerFactory(): game::ComponentFactory()
 {
-	mType = game::COMPONENT_TYPE_LISTENER;
-
-	mLastPosition = core::vector3d::ORIGIN_3D;
-	mVelocity = core::vector3d::ORIGIN_3D;
+	mName = "Listener";
 }
 
-Listener::~Listener() {}
-
-const core::vector3d& Listener::getVelocity() const
+game::Component* ListenerFactory::createComponent()
 {
-	return mVelocity;
+	return new Listener();
 }
 
-void Listener::updateImpl(float elapsedTime)
+void ListenerFactory::destroyComponent(game::Component* component)
 {
-	if (mGameObject != NULL)
-	{
-		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL && pTransform->isAbsoluteTransformModified())
-		{
-			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
-			mVelocity = delta / elapsedTime;
-			mLastPosition = pTransform->getAbsolutePosition();
-		}
-	}
+	Listener* pListener = static_cast<Listener*>(component);
+
+	assert(pListener != NULL);
+	if (pListener != NULL)
+		delete pListener;
 }
 
-} // end namespace sound
+} // end namespace game

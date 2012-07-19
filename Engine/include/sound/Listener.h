@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _LISTENER_H_
 
 #include <core/Config.h>
-#include <scene/Node.h>
+#include <core/Vector3d.h>
+#include <game/Component.h>
 
 namespace core
 {
@@ -40,7 +41,7 @@ namespace sound
 //!  Defines a listener in the sound world.
 //!  Author: Kat'Oun
 //!  version: 1.0
-class ENGINE_PUBLIC_EXPORT Listener: public scene::Node
+class ENGINE_PUBLIC_EXPORT Listener: public game::Component
 {
 public:
 
@@ -49,15 +50,13 @@ public:
 
 	virtual ~Listener();
 
-	void setVelocity(float x, float y, float z);
-	void setVelocity(const core::vector3d& vec);
 	const core::vector3d& getVelocity() const;
 
 protected:
 
-	// Incremented count for next index
-	static unsigned int msNextGeneratedListenerIndex;
+	void updateImpl(float elapsedTime);
 
+	core::vector3d mLastPosition;
 	core::vector3d mVelocity;
 };
 

@@ -24,42 +24,33 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <sound/Listener.h>
-#include <core/Utils.h>
-#include <game/GameObject.h>
-#include <game/Transform.h>
-#include <game/ComponentDefines.h>
+#ifndef _LISTENER_FACTORY_H_
+#define _LISTENER_FACTORY_H_
+
+#include <core/Config.h>
+#include <game/ComponentFactory.h>
+
+namespace game
+{
+class Component;
+}
 
 namespace sound
 {
 
-Listener::Listener(): game::Component()
+class ENGINE_PUBLIC_EXPORT ListenerFactory: public game::ComponentFactory
 {
-	mType = game::COMPONENT_TYPE_LISTENER;
+public:
 
-	mLastPosition = core::vector3d::ORIGIN_3D;
-	mVelocity = core::vector3d::ORIGIN_3D;
-}
+	ListenerFactory();
 
-Listener::~Listener() {}
+	//! Creates a new transform component.
+	game::Component* createComponent();
 
-const core::vector3d& Listener::getVelocity() const
-{
-	return mVelocity;
-}
-
-void Listener::updateImpl(float elapsedTime)
-{
-	if (mGameObject != NULL)
-	{
-		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL && pTransform->isAbsoluteTransformModified())
-		{
-			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
-			mVelocity = delta / elapsedTime;
-			mLastPosition = pTransform->getAbsolutePosition();
-		}
-	}
-}
+	//! Destroys a transform component which was created by this factory.
+	void destroyComponent(game::Component* component);
+};
 
 } // end namespace sound
+
+#endif

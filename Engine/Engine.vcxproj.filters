@@ -436,6 +436,9 @@
     <ClInclude Include="include\game\TransformFactory.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="include\sound\ListenerFactory.h">
+      <Filter>sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -750,6 +753,9 @@
     </ClCompile>
     <ClCompile Include="src\game\TransformFactory.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound\ListenerFactory.cpp">
+      <Filter>sound</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

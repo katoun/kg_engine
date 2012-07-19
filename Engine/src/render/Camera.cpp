@@ -39,6 +39,8 @@ namespace render
 
 Camera::Camera(): game::Component()
 {
+	mType = game::COMPONENT_TYPE_CAMERA;
+	
 	mFixedUp = true;
 	mFixedUpAxis = core::vector3d::UNIT_Y;
 

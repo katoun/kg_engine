@@ -247,6 +247,7 @@
     <ClInclude Include="include\resource\ResourceManager.h" />
     <ClInclude Include="include\resource\Serializer.h" />
     <ClInclude Include="include\sound\Listener.h" />
+    <ClInclude Include="include\sound\ListenerFactory.h" />
     <ClInclude Include="include\sound\Sound.h" />
     <ClInclude Include="include\sound\SoundData.h" />
     <ClInclude Include="include\sound\SoundFactory.h" />
@@ -365,6 +366,7 @@
     <ClCompile Include="src\resource\ResourceManager.cpp" />
     <ClCompile Include="src\resource\Serializer.cpp" />
     <ClCompile Include="src\sound\Listener.cpp" />
+    <ClCompile Include="src\sound\ListenerFactory.cpp" />
     <ClCompile Include="src\sound\Sound.cpp" />
     <ClCompile Include="src\sound\SoundData.cpp" />
     <ClCompile Include="src\sound\SoundManager.cpp" />

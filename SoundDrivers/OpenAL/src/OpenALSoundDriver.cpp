@@ -29,6 +29,9 @@ THE SOFTWARE.
 #include <sound/Listener.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
+#include <game/GameObject.h>
+#include <game/Transform.h>
+#include <game/ComponentDefines.h>
 #include <OpenALSoundDriver.h>
 #include <OpenALSoundData.h>
 #include <OpenALSound.h>
@@ -48,33 +51,39 @@ OpenALSoundDriver::~OpenALSoundDriver() {}
 
 void OpenALSoundDriver::updateListener(Listener* listener)
 {
-	assert(listener != NULL);
 	if (listener == NULL)
 		return;
 
-	core::vector3d position = listener->getAbsolutePosition();
-	core::vector3d direction = listener->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
-	core::vector3d up = listener->getAbsoluteOrientation() * core::vector3d::UNIT_Y;
-	core::vector3d velocity = listener->getVelocity();
+	if (listener->getGameObject() != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(listener->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			core::vector3d position = pTransform->getAbsolutePosition();
+			core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
+			core::vector3d up = pTransform->getAbsoluteOrientation() * core::vector3d::UNIT_Y;
+			core::vector3d velocity = listener->getVelocity();
 
-	// Initial orientation of the listener = direction + direction up
-	ALfloat lorientation[6];
-	lorientation[0] = -direction.X;
-	lorientation[1] = -direction.Y;
-	lorientation[2] = -direction.Z;
-	lorientation[3] = up.X;
-	lorientation[4] = up.Y;
-	lorientation[5] = up.Z;
+			// Initial orientation of the listener = direction + direction up
+			ALfloat lorientation[6];
+			lorientation[0] = -direction.X;
+			lorientation[1] = -direction.Y;
+			lorientation[2] = -direction.Z;
+			lorientation[3] = up.X;
+			lorientation[4] = up.Y;
+			lorientation[5] = up.Z;
 
-	alListener3f(AL_POSITION, position.X, position.Y, position.Z);
-	if (checkALError("setListenerPosition::alListenerfv:AL_POSITION"))
-		return;
-	alListenerfv(AL_ORIENTATION, lorientation);
-	if (checkALError("setListenerPosition::alListenerfv:AL_DIRECTION"))
-		return;
-	alListener3f(AL_VELOCITY, velocity.X, velocity.Y, velocity.Z);
-	if (checkALError("setListenerPosition::alListenerfv:AL_VELOCITY"))
-		return;
+			alListener3f(AL_POSITION, position.X, position.Y, position.Z);
+			if (checkALError("setListenerPosition::alListenerfv:AL_POSITION"))
+				return;
+			alListenerfv(AL_ORIENTATION, lorientation);
+			if (checkALError("setListenerPosition::alListenerfv:AL_DIRECTION"))
+				return;
+			alListener3f(AL_VELOCITY, velocity.X, velocity.Y, velocity.Z);
+			if (checkALError("setListenerPosition::alListenerfv:AL_VELOCITY"))
+				return;
+		}
+	}
 }
 
 void OpenALSoundDriver::setDopplerFactor(float dopplerFactor)

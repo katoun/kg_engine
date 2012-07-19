@@ -107,8 +107,6 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void registerDefaultFactoriesImpl();
-	void removeDefaultFactoriesImpl();
 
 	std::string mVersion;
 	std::string mVersionString;
