@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <render/Viewport.h>
 #include <resource/LoadEvent.h>
 #include <engine/EngineManager.h>
-#include <Win32Window.h>
+#include <win32/Win32Window.h>
 
 namespace render
 {
@@ -38,7 +38,6 @@ Win32Window::Win32Window()
 	mHWnd = 0;
 	mGlrc = 0;
 	mActive = false;
-	mClosed = false;
 	mDisplayFrequency = 0;
 }
 
@@ -50,9 +49,10 @@ Win32Window::~Win32Window()
 void Win32Window::create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId)
 {
 	// Destroy current window if any
-	if (mHWnd) destroy();
+	if (mHWnd)
+		destroy();
 	
-	HINSTANCE hInst = GetModuleHandle("RenderSystem_GL.dll");
+	HINSTANCE hInst = GetModuleHandle(NULL);
 
 	char name[255];
 	sprintf_s(name, "K_Game OpenGL window%d", mID);
@@ -60,7 +60,6 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	mHWnd = 0;
 	mIsFullScreen = fullScreen;
 	mIsExternal = false;
-	mClosed = false;
 
 	// load window defaults
 	mWidth = width;
@@ -98,7 +97,7 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		WNDCLASS wndClass;
 
 		wndClass.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;				// Redraw On Size, And Own DC For Window.
-		wndClass.lpfnWndProc	= (WNDPROC) WndProc;								// WndProc Handles Messages
+		wndClass.lpfnWndProc	= (WNDPROC)WndProc;									// WndProc Handles Messages
 		wndClass.cbClsExtra		= 0;												// No Extra Window Data
 		wndClass.cbWndExtra		= 4;												// No Extra Window Data
 		wndClass.hInstance		= hInst;											// Set The Instance
@@ -177,26 +176,28 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 
 		if (mIsFullScreen)
 		{
-			DEVMODE DevMode;
-			DevMode.dmSize = sizeof(DevMode);
-			DevMode.dmBitsPerPel = mColorDepth;
-			DevMode.dmPelsWidth = mWidth;
-			DevMode.dmPelsHeight = mHeight;
-			DevMode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+			DEVMODE displayDeviceMode;
+
+			memset(&displayDeviceMode, 0, sizeof(displayDeviceMode));
+			displayDeviceMode.dmSize = sizeof(DEVMODE);
+			displayDeviceMode.dmBitsPerPel = mColorDepth;
+			displayDeviceMode.dmPelsWidth = mWidth;
+			displayDeviceMode.dmPelsHeight = mHeight;
+			displayDeviceMode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 			if (mDisplayFrequency)
 			{
-				DevMode.dmDisplayFrequency = mDisplayFrequency;
-				DevMode.dmFields |= DM_DISPLAYFREQUENCY;
+				displayDeviceMode.dmDisplayFrequency = mDisplayFrequency;
+				displayDeviceMode.dmFields |= DM_DISPLAYFREQUENCY;
 
-				if(ChangeDisplaySettings(&DevMode, CDS_FULLSCREEN | CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
+				if(ChangeDisplaySettings(&displayDeviceMode, CDS_FULLSCREEN | CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
 				{
 					MessageBox(NULL, "ChangeDisplaySettings with user display frequency failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
-					DevMode.dmFields ^= DM_DISPLAYFREQUENCY;
+					displayDeviceMode.dmFields ^= DM_DISPLAYFREQUENCY;
 				}	
 			}
 
-			if(ChangeDisplaySettings(&DevMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			if(ChangeDisplaySettings(&displayDeviceMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
 				MessageBox(NULL, "ChangeDisplaySettings failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 			}
@@ -267,7 +268,10 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		return;
 	}
 
-	//wglSwapIntervalEXT(vsync? 1 : 0);
+	// Don't use wglew as if this is the first window, we won't have initialised yet
+	/*PFNWGLSWAPINTERVALEXTPROC _wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+	if (_wglSwapIntervalEXT)
+		_wglSwapIntervalEXT(vsync? 1 : 0);*/
 
 	mActive = true;
 }
@@ -341,12 +345,132 @@ void Win32Window::setFullscreen(bool fullScreen, unsigned int width, unsigned in
 			int left = (screenw - winWidth) / 2;
 			int top = (screenh - winHeight) / 2;
 
-
 			SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
 			SetWindowPos(mHWnd, HWND_NOTOPMOST, left, top, winWidth, winHeight,
 				SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 			mWidth = width;
 			mHeight = height;
+
+			windowMovedOrResized();
+		}
+	}
+}
+
+bool Win32Window::isVisible() const
+{
+	return (mHWnd && !IsIconic(mHWnd)) ? true : false;
+}
+
+void Win32Window::setActive(bool state)
+{
+	mActive = state;
+
+	if (mIsFullScreen)
+	{
+		if (!state)
+		{
+			//Restore Desktop
+			ChangeDisplaySettings(NULL, 0);
+			ShowWindow(mHWnd, SW_SHOWMINNOACTIVE);
+		}
+		else
+		{
+			//Restore App
+			ShowWindow(mHWnd, SW_SHOWNORMAL);
+
+			DEVMODE dm;
+			dm.dmSize = sizeof(DEVMODE);
+			dm.dmBitsPerPel = mColorDepth;
+			dm.dmPelsWidth = mWidth;
+			dm.dmPelsHeight = mHeight;
+			dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+			if (mDisplayFrequency)
+			{
+				dm.dmDisplayFrequency = mDisplayFrequency;
+				dm.dmFields |= DM_DISPLAYFREQUENCY;
+			}
+			ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
+		}
+	}
+}
+
+void Win32Window::reposition(signed int top, signed int left)
+{	
+	if (mHWnd && !mIsFullScreen)
+	{
+		SetWindowPos(mHWnd, 0, left, top, 0, 0,
+			SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+}
+
+void Win32Window::resize(unsigned int width, unsigned int height)
+{	
+	if (mHWnd && !mIsFullScreen)
+	{
+		RECT rc = { 0, 0, width, height };
+		AdjustWindowRect(&rc, GetWindowLong(mHWnd, GWL_STYLE), false);
+		width = rc.right - rc.left;
+		height = rc.bottom - rc.top;
+		SetWindowPos(mHWnd, 0, 0, 0, width, height,
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+}
+
+void Win32Window::setCaption(const std::string& text)
+{
+	SetWindowText(mHWnd, text.c_str());
+}
+
+void Win32Window::windowMovedOrResized()
+{
+	if (!mHWnd || IsIconic(mHWnd))
+		return;
+
+	RECT rc;
+	BOOL result;
+
+	// Update top left parameters
+	result = GetWindowRect(mHWnd, &rc);
+	if (result == FALSE)
+	{
+		mTop = 0;
+		mLeft = 0;
+		mWidth = 0;
+		mHeight = 0;
+		return;
+	}
+
+	mTop = rc.top;
+	mLeft = rc.left;
+
+	// width and height represent drawable area only
+	result = GetClientRect(mHWnd, &rc);
+	if (result == FALSE)
+	{
+		mTop = 0;
+		mLeft = 0;
+		mWidth = 0;
+		mHeight = 0;
+		return;
+	}
+	unsigned int width = rc.right - rc.left;
+	unsigned int height = rc.bottom - rc.top;
+
+	// Case window resized.
+	if (width != mWidth || height != mHeight)
+	{
+		mWidth  = rc.right - rc.left;
+		mHeight = rc.bottom - rc.top;
+
+		// Notify viewports of resize
+		std::list<Viewport*>::const_iterator i;
+		for (i = mViewports.begin(); i != mViewports.end(); ++i)
+		{
+			Viewport* pViewport = (*i);
+			if (pViewport != NULL)
+			{
+				pViewport->setDimenionsChanged();
+			}
 		}
 	}
 }
@@ -402,123 +526,13 @@ void Win32Window::destroy()
 	mHDC = 0;
 	mGlrc = 0;
 	mActive = false;
-	mClosed = true;
 }
 
-bool Win32Window::isVisible() const
+void Win32Window::updateImpl(float elapsedTime)
 {
-	return (mHWnd && !IsIconic(mHWnd)) ? true : false;
-}
+	RenderWindow::updateImpl(elapsedTime);
 
-bool Win32Window::isClosed() const
-{
-	return mClosed;
-}
-
-void Win32Window::reposition(signed int left, signed int top)
-{	
-	if (mHWnd && !mIsFullScreen)
-	{
-		SetWindowPos(mHWnd, 0, left, top, 0, 0,
-			SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-}
-
-void Win32Window::resize(unsigned int width, unsigned int height)
-{	
-	if (mHWnd && !mIsFullScreen)
-	{
-		RECT rc = { 0, 0, width, height };
-		AdjustWindowRect(&rc, GetWindowLong(mHWnd, GWL_STYLE), false);
-		width = rc.right - rc.left;
-		height = rc.bottom - rc.top;
-		SetWindowPos(mHWnd, 0, 0, 0, width, height,
-			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-}
-
-void Win32Window::windowMovedOrResized()
-{
-	if(!isVisible())
-		return;
-
-	RECT rc;
-	// top and left represent outer window position
-	GetWindowRect(mHWnd, &rc);
-	mTop = rc.top;
-	mLeft = rc.left;
-	// width and height represent drawable area only
-	GetClientRect(mHWnd, &rc);
-
-	if (mWidth == rc.right && mHeight == rc.bottom)
-		return;
-
-	mWidth = rc.right;
-	mHeight = rc.bottom;
-
-	// Notify viewports of resize
-	std::list<Viewport*>::const_iterator i;
-	for (i = mViewports.begin(); i != mViewports.end(); ++i)
-	{
-		Viewport* pViewport = (*i);
-		if (pViewport != NULL)
-		{
-			pViewport->setDimenionsChanged();
-		}
-	}
-}
-
-void Win32Window::swapBuffers(bool waitForVSync)
-{
 	SwapBuffers(mHDC);
-}
-
-void Win32Window::setCaption(const std::string& text)
-{
-	SetWindowText(mHWnd, text.c_str());
-}
-
-void Win32Window::setActive(bool state)
-{
-	mActive = state;
-
-	if (mIsFullScreen)
-	{
-		if (!state)
-		{
-			//Restore Desktop
-			ChangeDisplaySettings(NULL, 0);
-			ShowWindow(mHWnd, SW_SHOWMINNOACTIVE);
-		}
-		else
-		{
-			//Restore App
-			ShowWindow(mHWnd, SW_SHOWNORMAL);
-
-			DEVMODE dm;
-			dm.dmSize = sizeof(DEVMODE);
-			dm.dmBitsPerPel = mColorDepth;
-			dm.dmPelsWidth = mWidth;
-			dm.dmPelsHeight = mHeight;
-			dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-			if (mDisplayFrequency)
-			{
-				dm.dmDisplayFrequency = mDisplayFrequency;
-				dm.dmFields |= DM_DISPLAYFREQUENCY;
-			}
-			ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
-		}
-	}
-}
-
-HWND Win32Window::getWindowHandle() const
-{
-	return mHWnd;
-}
-
-HDC Win32Window::getHDC() const
-{
-	return mHDC;
 }
 
 // Window procedure callback
@@ -534,9 +548,11 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	}
 
 	// look up window instance
-	RenderWindow* win = (RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	if (!win)
+	Win32Window* win = (Win32Window*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	if (win == NULL)
+	{
 		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
 
 	switch (message)
 	{

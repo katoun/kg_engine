@@ -62,6 +62,7 @@ public:
 	RenderTarget* getTarget();
 	//! Retrieves a pointer to the camera for this viewport.
 	Camera* getCamera();
+
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
 	float getLeft();
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
@@ -70,6 +71,7 @@ public:
 	float getWidth();
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
 	float getHeight();
+
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
 	signed int getActualLeft();
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
@@ -104,9 +106,6 @@ public:
 	//! Determines if the viewport is cleared before every frame.
 	bool getClearEveryFrame();
 
-	//! Access to actual dimensions (based on target size).
-	void getActualDimensions(signed int& left, signed int& top, signed int& width, signed int& height);
-
 	void setVisible(bool enabled);
 	bool isVisible();
 
@@ -125,8 +124,8 @@ protected:
 	Camera* mCamera;
 	RenderTarget* mTarget;
 
-	//! Flag indicating derived transform was modified.
-	bool mModifiedDimentions;
+	//! Flag indicating dimentions needs an update.
+	bool mDimentionsNeedsUpdate;
 
 	// Relative dimensions, irrespective of target dimensions (0..1)
 	float mRelLeft, mRelTop, mRelWidth, mRelHeight;

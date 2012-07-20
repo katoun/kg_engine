@@ -49,7 +49,7 @@ Viewport::Viewport(Camera* camera, RenderTarget* target, float left, float top, 
 
 	mShowOverlays = true;
 
-	mModifiedDimentions = true;
+	mDimentionsNeedsUpdate = true;
 }
 
 Viewport::~Viewport() {}
@@ -139,12 +139,11 @@ void Viewport::setDimensions(float left, float top, float width, float height)
 	mRelWidth = width;
 	mRelHeight = height;
 
-	mModifiedDimentions = true;
-
-	//updateDimensions();
+	mDimentionsNeedsUpdate = true;
 }
 void Viewport::setDimenionsChanged()
 {
+	mDimentionsNeedsUpdate = true;
 }
 
 void Viewport::setBackgroundColor(Color& color)
@@ -167,17 +166,9 @@ bool Viewport::getClearEveryFrame()
 	return mClearEveryFrame;
 }
 
-void Viewport::getActualDimensions(signed int& left, signed int& top, signed int& width, signed int& height)
-{
-	left = mActLeft;
-	top = mActTop;
-	width = mActWidth;
-	height = mActHeight;
-}
-
 void Viewport::update(float elapsedTime)
 {
-	if (mModifiedDimentions)
+	if (mDimentionsNeedsUpdate)
 	{
 		if (mTarget != NULL)
 		{
@@ -192,13 +183,12 @@ void Viewport::update(float elapsedTime)
 
 		// This allows cameras to be used to render to many viewports,
 		// which can have their own dimensions and aspect ratios.
-
 		if (mCamera != NULL) 
 		{
 			mCamera->setAspectRatio((float)mActWidth / (float)mActHeight);
 		}
 
-		mModifiedDimentions = false;
+		mDimentionsNeedsUpdate = false;
 	}
 }
 

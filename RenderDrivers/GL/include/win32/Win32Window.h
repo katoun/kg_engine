@@ -43,32 +43,27 @@ public:
 	void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = NULL);
 	void setFullscreen(bool fullScreen, unsigned int width, unsigned int height);
 
-	void destroy();
 	bool isVisible() const;
-	bool isClosed() const;
-	void reposition(signed int left, signed int top);
+	void setActive(bool state);
+	
+	void reposition(signed int top, signed int left);
 	void resize(unsigned int width, unsigned int height);
-	void swapBuffers(bool waitForVSync);
 	void setCaption(const std::string& text);
-
-	HWND getWindowHandle() const;
-	HDC getHDC() const;
 
 	//! Method for dealing with resize / move & 3d library.
 	void windowMovedOrResized();
-	
-	//! Used to set the active state of the render target.
-	void setActive(bool state);
+
+	void destroy();
 
 protected:
+
+	void updateImpl(float elapsedTime);
 
 	HWND	mHWnd;					// Win32 Window handle
 	HDC		mHDC;
 	HGLRC	mGlrc;
 	bool    mIsExternal;
 	int     mDisplayFrequency;      // fullscreen only, to restore display
-
-	bool mClosed;
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };

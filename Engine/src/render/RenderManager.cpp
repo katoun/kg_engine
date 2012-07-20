@@ -777,11 +777,6 @@ float RenderManager::getVerticalTexelOffset()
 
 void RenderManager::initializeImpl()
 {
-	engine::EngineSettings& engineOptions = engine::EngineSettings::getInstance();
-
-
-	mMainWindow = createRenderWindow(engineOptions.getWidth(), engineOptions.getHeight(), engineOptions.getBitdepth(), engineOptions.getFullscreen(), 0, 0, true, engineOptions.getMainWindowId());
-
 	mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
 	mSolidRenderables.reserve(1024);

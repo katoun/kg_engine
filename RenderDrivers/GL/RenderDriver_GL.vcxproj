@@ -145,7 +145,7 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
     <ClCompile Include="src\GLTexture.cpp" />
     <ClCompile Include="src\GLTextureFactory.cpp" />
     <ClCompile Include="src\GLVertexBuffer.cpp" />
-    <ClCompile Include="src\Win32Window.cpp" />
+    <ClCompile Include="src\win32\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GLConfig.h" />
@@ -157,7 +157,7 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
     <ClInclude Include="include\GLTexture.h" />
     <ClInclude Include="include\GLTextureFactory.h" />
     <ClInclude Include="include\GLVertexBuffer.h" />
-    <ClInclude Include="include\Win32Window.h" />
+    <ClInclude Include="include\win32\Win32Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

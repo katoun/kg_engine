@@ -54,6 +54,8 @@ namespace render
 class ENGINE_PUBLIC_EXPORT RenderWindow: public RenderTarget
 {
 public:
+
+	RenderWindow();
 	
 	//! Creates & displays the new window.
 	//! \param width: The width of the window in pixels.
@@ -66,21 +68,27 @@ public:
 	//! \param windowId: Specify the windowID of the external window if needed.
 	virtual void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = NULL) = 0;
 
+	//! Retrieve information about the render window.
+	virtual unsigned int getTop() const;
+	virtual unsigned int getLeft() const;
+	
+	//! Returns true if window is running in fullscreen mode.
+	virtual bool isFullScreen();
+	
 	//! Alter fullscreen mode options. 
 	//! \param fullScreen: Whether to use fullscreen mode or not. 
 	//! \param width: The new width to use
 	//! \param height: The new height to use
 	virtual void setFullscreen(bool fullScreen, unsigned int width, unsigned int height);
 
-	//! Destroys the window.
-	virtual void destroy() = 0;
+	//! Reposition the window.
+	virtual void reposition(signed int top, signed int left) = 0;
 
 	//! Alter the size of the window.
 	virtual void resize(unsigned int width, unsigned int height) = 0;
 
-	//! Reposition the window.
-	virtual void reposition(signed int left, signed int top) = 0;
-
+	virtual bool isActive() const;
+	
 	//! Determine if the window is visible (not minimized or obscured).
 	//!
 	//! This method returns true if the window is active
@@ -95,41 +103,7 @@ public:
 	//! Set the visibility state.
 	virtual void setVisible(bool visible);
 
-	virtual bool isActive() const;
-
-	//! Indicates whether the window has been closed by the user.
-	virtual bool isClosed() const = 0;
-
-	//! Swaps the frame buffers to display the next frame.
-	//!
-	//! All render windows are double-buffered so that no
-	//! 'in-progress' versions of the scene are displayed
-	//! during rendering. Once rendering has completed (to
-	//! an off-screen version of the window) the buffers
-	//! are swapped to display the new frame.
-	//! \param waitForVSync: If true, the system waits for the
-	//! next vertical blank period (when the CRT beam turns off
-	//! as it travels from bottom-right to top-left at the
-	//! end of the pass) before flipping. If false, flipping
-	//! occurs no matter what the beam position. Waiting for
-	//! a vertical blank can be slower (and limits the
-	//! framerate to the monitor refresh rate) but results
-	//! in a steadier image with no 'tearing' (a flicker
-	//! resulting from flipping buffers when the beam is
-	//! in the progress of drawing the last frame).
-	virtual void swapBuffers(bool waitForVSync = true) = 0;
-
 	virtual void setCaption(const std::string& text) = 0;
-
-	//! Notify that the window has been resized.
-	virtual void windowMovedOrResized();
-
-	//! Returns true if window is running in fullscreen mode.
-	virtual bool isFullScreen();
-
-	//! Overloaded version of getMetrics from RenderTarget, including extra details
-	//! specific to windowing systems.
-	virtual void getMetrics(unsigned int& width, unsigned int& height, unsigned int& colorDepth, signed int& left, signed int& top);
 
 protected:
 
@@ -137,10 +111,8 @@ protected:
 
 	bool mIsFullScreen;
 
-	signed int mLeft;
 	signed int mTop;
-
-	void* mWindowId;
+	signed int mLeft;
 };
 
 } // end namespace render

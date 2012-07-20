@@ -5,6 +5,9 @@
       <UniqueIdentifier>{67fe48c3-48e5-44c7-9a09-b4a412f5ee2d}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
     </Filter>
+    <Filter Include="Source Files\win32">
+      <UniqueIdentifier>{a03ea044-d3fd-4b1c-9259-8cb429c4aa48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GLPixelFormat.cpp">
@@ -17,9 +20,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GLTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Win32Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GLRenderDll.cpp">
@@ -36,6 +36,9 @@
     </ClCompile>
     <ClCompile Include="src\GLVertexBuffer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\win32\Win32Window.cpp">
+      <Filter>Source Files\win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,9 +57,6 @@
     <ClInclude Include="include\GLTexture.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Win32Window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GLShaderFactory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -68,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="include\GLVertexBuffer.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\win32\Win32Window.h">
+      <Filter>Source Files\win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

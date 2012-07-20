@@ -31,6 +31,27 @@ THE SOFTWARE.
 namespace render
 {
 
+RenderWindow::RenderWindow()
+{
+	mTop = -1;
+	mLeft = -1;
+}
+
+unsigned int RenderWindow::getTop() const
+{
+	return mTop;
+}
+
+unsigned int RenderWindow::getLeft() const
+{
+	return mLeft;
+}
+
+bool RenderWindow::isFullScreen()
+{
+	return mIsFullScreen;
+}
+
 void RenderWindow::setFullscreen(bool fullScreen, unsigned int width, unsigned int height) {}
 
 bool RenderWindow::isVisible() const
@@ -45,29 +66,10 @@ bool RenderWindow::isActive() const
 	return (mActive && isVisible());
 }
 
-void RenderWindow::windowMovedOrResized() {}
-
-bool RenderWindow::isFullScreen()
-{
-	return mIsFullScreen;
-}
-
-void RenderWindow::getMetrics(unsigned int& width, unsigned int& height, unsigned int& colorDepth, signed int& left, signed int& top)
-{
-	width = mWidth;
-	height = mHeight;
-	colorDepth = mColorDepth;
-	left = mLeft;
-	top = mTop;
-}
-
 void RenderWindow::updateImpl(float elapsedTime)
 {
 	// call superclass
 	RenderTarget::updateImpl(elapsedTime);
-
-	// Swap buffers
-	swapBuffers(engine::EngineSettings::getInstance().getVSync());
 }
 
 } // end namespace render

@@ -72,8 +72,6 @@ public:
 	virtual unsigned int getHeight() const;
 	virtual unsigned int getColorDepth() const;
 
-	void update(float elapsedTime);
-
 	//! Create a viewport to the rendering target.
 	//!
 	//!	A viewport is the rectangle into which redering output is sent. This method adds
@@ -113,21 +111,13 @@ public:
 	//! Resets saved frame-rate statistices.
 	virtual void resetStatistics();
 
-	//! Sets the priority of this render target in relation to the others.
-	//!
-	//! This can be used in order to schedule render target updates. Lower
-	//! priorities will be rendered first. Note that the priority must be set
-	//! at the time the render target is attached to the render system, changes
-	//! afterwards will not affect the ordering.
-	virtual void setPriority(unsigned int priority);
-	//! Gets the priority of a render target.
-	virtual unsigned int getPriority() const;
-
 	//! Used to retrieve or set the active state of the render target.
 	virtual bool isActive() const;
 
 	//! Used to set the active state of the render target.
 	virtual void setActive(bool state);
+
+	void update(float elapsedTime);
 
 	void addRenderTargetEventReceiver(RenderTargetEventReceiver* newEventReceiver);
 	void removeRenderTargetEventReceiver(RenderTargetEventReceiver* oldEventReceiver);
@@ -146,9 +136,6 @@ protected:
 	//! Central list of viewports - for easy memory management and lookup.
 	std::list<Viewport*> mViewports;
 
-	// The priority of the render target.
-	unsigned int mPriority;
-
 	unsigned int mWidth;
 	unsigned int mHeight;
 	unsigned int mColorDepth;
@@ -162,7 +149,6 @@ protected:
 	Poco::Timestamp mCurrentTimeStamp;
 
 	bool mActive;
-	bool mAutoUpdate;
 
 	RenderTargetEvent* mRenderTargetEvent;
 

@@ -139,11 +139,6 @@ protected:
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
 
-	// check if the GL system has already been initialized
-	bool mGLInitialized;
-	// Initialize GL system and capabilities
-	void initializeGL();
-
 	CGcontext mCgContext;
 
 	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);

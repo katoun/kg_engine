@@ -77,11 +77,6 @@ unsigned int RenderTarget::getColorDepth() const
 	return mColorDepth;
 }
 
-void RenderTarget::update(float elapsedTime)
-{
-	updateImpl(elapsedTime);
-}
-
 Viewport* RenderTarget::createViewport(Camera* cam, float left, float top , float width , float height)
 {
 	Viewport* newViewport = new Viewport(cam, this, left, top, width, height);
@@ -160,16 +155,6 @@ void RenderTarget::resetStatistics()
 	mLastTimeStamp.update();
 }
 
-void RenderTarget::setPriority(unsigned int priority)
-{
-	mPriority = priority;
-}
-
-unsigned int RenderTarget::getPriority() const
-{
-	return mPriority;
-}
-
 bool RenderTarget::isActive() const
 {
 	return mActive;
@@ -178,6 +163,11 @@ bool RenderTarget::isActive() const
 void RenderTarget::setActive(bool state)
 {
 	mActive = state;
+}
+
+void RenderTarget::update(float elapsedTime)
+{
+	updateImpl(elapsedTime);
 }
 
 void RenderTarget::addRenderTargetEventReceiver(RenderTargetEventReceiver* newEventReceiver)

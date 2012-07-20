@@ -41,9 +41,12 @@ THE SOFTWARE.
 #include <GLRenderDriver.h>
 #include <GLTexture.h>
 #include <GLShader.h>
-#include <Win32Window.h>
 #include <GLVertexBuffer.h>
 #include <GLIndexBuffer.h>
+
+#if ENGINE_PLATFORM == PLATFORM_WIN32
+#include <win32/Win32Window.h>
+#endif
 
 #define VBO_BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -54,7 +57,6 @@ namespace render
 
 GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver")
 {
-	mGLInitialized = false;
 	mCgContext = NULL;
 }
 
@@ -63,16 +65,18 @@ GLRenderDriver::~GLRenderDriver() {}
 RenderWindow* GLRenderDriver::createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left, signed int top, bool depthBuffer, void* windowId)
 {
 	// Create the window
-	RenderWindow* win = new Win32Window();
-	win->create(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
+	RenderWindow* pRenderWindow = NULL;
 
-	if (!mGLInitialized)
+#if ENGINE_PLATFORM == PLATFORM_WIN32
+	pRenderWindow = new Win32Window();
+#endif
+
+	if (pRenderWindow != NULL)
 	{
-		// Initialize GL after the first window has been created
-		initializeGL();
+		pRenderWindow->create(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
 	}
 
-	return win;
+	return pRenderWindow;
 }
 
 VertexBuffer* GLRenderDriver::createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
@@ -1035,103 +1039,6 @@ GLenum GLRenderDriver::getGLUsage(resource::BufferUsage usage)
 	};
 }
 
-void GLRenderDriver::initializeGL()
-{
-	GLenum err = glewInit();
-
-	if (GLEW_OK != err)
-	{
-		MessageBox(NULL, "Can't Initialize GLew.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		return;
-	}
-
-	// Check for hardware mipmapping support.
-	if(GLEW_VERSION_1_4 || GLEW_SGIS_generate_mipmap)
-	{
-		//setCapability(RSC_AUTOMIPMAP);
-	}
-
-	// Check for blending support
-	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_env_combine || GLEW_EXT_texture_env_combine)
-	{
-		//setCapability(RSC_BLENDING);
-	}
-
-	// Check for Anisotropy support
-	if(GLEW_EXT_texture_filter_anisotropic)
-	{
-		//setCapability(RSC_ANISOTROPY);
-	}
-
-	// Check for DOT3 support
-	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_env_dot3 ||	GLEW_EXT_texture_env_dot3)
-	{
-		//setCapability(RSC_DOT3);
-	}
-
-	// Check for cube mapping
-	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_cube_map || GLEW_EXT_texture_cube_map)
-	{
-		//setCapability(RSC_CUBEMAPPING);
-	}
-
-	// Point sprites
-	if (GLEW_VERSION_2_0 ||	GLEW_ARB_point_sprite)
-	{
-		//setCapability(RSC_POINT_SPRITES);
-	}
-	// Check for point parameters
-	if(GLEW_VERSION_1_4 || GLEW_ARB_point_parameters || GLEW_EXT_point_parameters)
-	{
-		//setCapability(RSC_POINT_EXTENDED_PARAMETERS);
-	}
-
-	// Check for VBO support
-	if(GLEW_VERSION_1_5 || GLEW_ARB_vertex_buffer_object)
-	{
-		// Some buggy driver claim that it is GL 1.5 compliant and
-		// not support ARB_vertex_buffer_object
-		if (!GLEW_ARB_vertex_buffer_object)
-		{
-			// Assign ARB functions same to GL 1.5 version since
-			// interface identical
-			glBindBufferARB = glBindBuffer;
-			glBufferDataARB = glBufferData;
-			glBufferSubDataARB = glBufferSubData;
-			glDeleteBuffersARB = glDeleteBuffers;
-			glGenBuffersARB = glGenBuffers;
-			glGetBufferParameterivARB = glGetBufferParameteriv;
-			glGetBufferPointervARB = glGetBufferPointerv;
-			glGetBufferSubDataARB = glGetBufferSubData;
-			glIsBufferARB = glIsBuffer;
-			glMapBufferARB = glMapBuffer;
-			glUnmapBufferARB = glUnmapBuffer;
-		}
-
-		//setCapability(RSC_VBO);
-	}
-
-	mCgContext = cgCreateContext();
-	
-	CGerror error = cgGetError();
-	if (error != CG_NO_ERROR)
-	{
-		std::string message = "Unable to destroy Cg context: " + std::string(cgGetErrorString(error));
-		if (error == CG_COMPILER_ERROR)
-		{
-			// Get listing with full compile errors
-			message += "\n" + std::string(cgGetLastListing(mCgContext));
-		}
-		core::Log::getInstance().logMessage("RenderSystem", message, core::LOG_LEVEL_ERROR);
-
-		return;
-	}
-	cgSetParameterSettingMode(mCgContext, CG_DEFERRED_PARAMETER_SETTING);
-	cgGLSetManageTextureParameters(mCgContext,  true);
-
-	mGLInitialized = true;
-}
-
 void GLRenderDriver::makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 {
 	gl_matrix[ 0] = m[ 0];
@@ -1252,8 +1159,97 @@ void GLRenderDriver::setGLLightPositionDirection(unsigned int index, Light* ligh
 
 void GLRenderDriver::initializeImpl()
 {
-	//The main start
-	RenderDriver::initializeImpl();
+	GLenum err = glewInit();
+
+	if (GLEW_OK != err)
+	{
+		MessageBox(NULL, "Can't Initialize GLew.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}
+
+	// Check for hardware mipmapping support.
+	if(GLEW_VERSION_1_4 || GLEW_SGIS_generate_mipmap)
+	{
+		//setCapability(RSC_AUTOMIPMAP);
+	}
+
+	// Check for blending support
+	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_env_combine || GLEW_EXT_texture_env_combine)
+	{
+		//setCapability(RSC_BLENDING);
+	}
+
+	// Check for Anisotropy support
+	if(GLEW_EXT_texture_filter_anisotropic)
+	{
+		//setCapability(RSC_ANISOTROPY);
+	}
+
+	// Check for DOT3 support
+	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_env_dot3 ||	GLEW_EXT_texture_env_dot3)
+	{
+		//setCapability(RSC_DOT3);
+	}
+
+	// Check for cube mapping
+	if(GLEW_VERSION_1_3 || GLEW_ARB_texture_cube_map || GLEW_EXT_texture_cube_map)
+	{
+		//setCapability(RSC_CUBEMAPPING);
+	}
+
+	// Point sprites
+	if (GLEW_VERSION_2_0 ||	GLEW_ARB_point_sprite)
+	{
+		//setCapability(RSC_POINT_SPRITES);
+	}
+	// Check for point parameters
+	if(GLEW_VERSION_1_4 || GLEW_ARB_point_parameters || GLEW_EXT_point_parameters)
+	{
+		//setCapability(RSC_POINT_EXTENDED_PARAMETERS);
+	}
+
+	// Check for VBO support
+	if(GLEW_VERSION_1_5 || GLEW_ARB_vertex_buffer_object)
+	{
+		// Some buggy driver claim that it is GL 1.5 compliant and
+		// not support ARB_vertex_buffer_object
+		if (!GLEW_ARB_vertex_buffer_object)
+		{
+			// Assign ARB functions same to GL 1.5 version since
+			// interface identical
+			glBindBufferARB = glBindBuffer;
+			glBufferDataARB = glBufferData;
+			glBufferSubDataARB = glBufferSubData;
+			glDeleteBuffersARB = glDeleteBuffers;
+			glGenBuffersARB = glGenBuffers;
+			glGetBufferParameterivARB = glGetBufferParameteriv;
+			glGetBufferPointervARB = glGetBufferPointerv;
+			glGetBufferSubDataARB = glGetBufferSubData;
+			glIsBufferARB = glIsBuffer;
+			glMapBufferARB = glMapBuffer;
+			glUnmapBufferARB = glUnmapBuffer;
+		}
+
+		//setCapability(RSC_VBO);
+	}
+
+	mCgContext = cgCreateContext();
+	
+	CGerror error = cgGetError();
+	if (error != CG_NO_ERROR)
+	{
+		std::string message = "Unable to destroy Cg context: " + std::string(cgGetErrorString(error));
+		if (error == CG_COMPILER_ERROR)
+		{
+			// Get listing with full compile errors
+			message += "\n" + std::string(cgGetLastListing(mCgContext));
+		}
+		core::Log::getInstance().logMessage("RenderSystem", message, core::LOG_LEVEL_ERROR);
+
+		return;
+	}
+	cgSetParameterSettingMode(mCgContext, CG_DEFERRED_PARAMETER_SETTING);
+	cgGLSetManageTextureParameters(mCgContext,  true);
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 

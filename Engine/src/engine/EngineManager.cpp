@@ -116,12 +116,18 @@ void EngineManager::initializeImpl()
 	// Load plugins
 	PluginManager::getInstance().initialize();
 
+	engine::EngineSettings& engineOptions = engine::EngineSettings::getInstance();
+
+	//create the main window
+	render::RenderWindow* pMainWindow = render::RenderManager::getInstance().createRenderWindow(engineOptions.getWidth(), engineOptions.getHeight(), engineOptions.getBitdepth(), engineOptions.getFullscreen(), 0, 0, true, engineOptions.getMainWindowId());
+	render::RenderManager::getInstance().setMainWindow(pMainWindow);
+
 	// the order is important
 	platform::PlatformManager::getInstance().initialize();
 	resource::ResourceManager::getInstance().initialize();
-	render::RenderManager::getInstance().initialize();
 	input::InputManager::getInstance().initialize();
 
+	render::RenderManager::getInstance().initialize();
 	physics::PhysicsManager::getInstance().initialize();
 	sound::SoundManager::getInstance().initialize();
 	scene::SceneManager::getInstance().initialize();
