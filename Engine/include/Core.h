@@ -29,7 +29,9 @@ THE SOFTWARE.
 
 #include <core/Singleton.h>
 #include <core/Log.h>
+#include <core/LogDefines.h>
 #include <core/System.h>
+#include <core/SystemDefines.h>
 #include <core/SystemDriver.h>
 
 #include <core/Math.h>

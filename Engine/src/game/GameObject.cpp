@@ -107,16 +107,6 @@ void GameObject::setParent(GameObject* parent)
 
 	//notify components that parent game object has changed!!!
 	sendMessage(MESSAGE_PARENT_CHANGED);
-	/*std::map<unsigned int, Component*>::iterator i;
-	for (i = mComponents.begin(); i != mComponents.end(); ++i)
-	{
-		Component* pComponent = i->second;
-
-		if (pComponent != NULL)
-		{
-			pComponent->onParentChanged(parent);
-		}
-	}*/
 }
 
 std::map<unsigned int, GameObject*>& GameObject::getChildren()
@@ -137,16 +127,6 @@ void GameObject::addChild(GameObject* child)
 	
 	//notify child components that parent game object has changed!!!
 	sendMessage(MESSAGE_PARENT_CHANGED);
-	/*std::map<unsigned int, Component*>::iterator i;
-	for (i = mComponents.begin(); i != mComponents.end(); ++i)
-	{
-		Component* pComponent = i->second;
-
-		if (pComponent != NULL)
-		{
-			pComponent->onParentChanged(this);
-		}
-	}*/
 }
 
 void GameObject::removeChild(GameObject* child)

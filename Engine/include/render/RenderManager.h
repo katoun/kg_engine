@@ -152,59 +152,15 @@ public:
 	//! Removes all cameras from the rendering
 	void removeAllCameras();
 
-	//!  Creates a renderable to be managed by this scene manager.
-	Renderable* createRenderable(scene::Node* parent = NULL);
-	Renderable* createRenderable(const std::string& name, scene::Node* parent = NULL);
-
-	//! Retrieves a pointer to a renderable by id.
-	Renderable* getRenderable(const unsigned int& id);
-
-	//! Retrieves the total number of created renderables.
-	unsigned int getNumberOfRenderables() const;
-
-	//! Removes a renderable from the rendering.
-	void removeRenderable(Renderable *renderable);
-	//! Removes a renderable from the rendering.
-	void removeRenderable(const unsigned int& id);
-	//! Removes (and destroys) all renderables from the rendering.
-	void removeAllRenderables();
-
-	//! Creates a mesh to be managed by rendering manager.
-	Model* createModel(const std::string& meshFilename, scene::Node* parent = NULL);
-	Model* createModel(const std::string& name, const std::string& meshFilename, scene::Node* parent = NULL);
-
-	//! Creates a mesh to be managed by rendering manager.
-	Model* createModel(MeshData* meshData, scene::Node* parent = NULL);
-	Model* createModel(const std::string& name, MeshData* meshData, scene::Node* parent = NULL);
-
-	//! Retrieves a pointer to a mesh by id.
-	Model* getModel(const unsigned int& id);
+	//!  Adds a model to be managed by this scene manager.
+	void addModel(Model* model);
 
 	//! Removes a mesh from the rendering.
-	void removeModel(Model *model);
+	void removeModel(Model* model);
 	//! Removes a mesh from the rendering.
 	void removeModel(const unsigned int& id);
-
-	//! Creates an panel overlay to be managed by rendering manager.
-	PanelOverlay* createPanelOverlay();
-	PanelOverlay* createPanelOverlay(const std::string& name);
-
-	//! Creates an text overlay to be managed by rendering manager.
-	TextOverlay* createTextOverlay();
-	TextOverlay* createTextOverlay(const std::string& name);
-
-	//! Retrieves a pointer to an overlay by id.
-	Overlay* getOverlay(const unsigned int& id);
-
-	//! Retrieves the total number of created overlays.
-	unsigned int getNumberOfOverlays() const;
-
-	//! Removes an ovelay from the rendering.
-	void removeOverlay(Overlay *overlay);
-	//! Removes an overlay from the rendering.
-	void removeOverlay(const unsigned int& id);
-	//! Removes (and destroys) all overlays from the rendering.
-	void removeAllOverlays();
+	//! Removes all models from the rendering
+	void removeAllModels();
 
 	//!  Creates a font to be managed by this render manager.
 	Font* createFont(const std::string& fontFilename);
@@ -304,6 +260,7 @@ protected:
 
 	game::ComponentFactory* mDefaultCameraFactory;
 	game::ComponentFactory* mDefaultLightFactory;
+	game::ComponentFactory* mDefaultModelFactory;
 
 	RenderDriver* mRenderDriver;
 
@@ -316,11 +273,8 @@ protected:
 	//! Central list of lights - for easy memory management and lookup.
 	std::map<unsigned int, Light*> mLights;
 
-	//! Central list of renderables - for easy memory management and lookup.
-	std::map<unsigned int, Renderable*> mRenderables;
-
-	//! Central list of overlays - for easy memory management and lookup.
-	std::map<unsigned int, Overlay*> mOverlays;
+	//! Central list of models - for easy memory management and lookup.
+	std::map<unsigned int, Model*> mModels;
 
 	//! Central list of fonts - for easy memory management and lookup.
 	std::map<unsigned int, Font*> mFonts;
@@ -336,37 +290,37 @@ protected:
 	std::list<VertexBuffer*> mVertexBuffers;
 	std::list<IndexBuffer*> mIndexBuffers;
 
-	struct SolidRenderable
+	struct SolidModel
 	{
-		SolidRenderable()
+		SolidModel()
 		{
-			renderable = NULL;
+			model = NULL;
 			materialID = 0;
 		}
 
-		bool operator < (const SolidRenderable& other) const
+		bool operator < (const SolidModel& other) const
 		{
 			return (materialID < other.materialID);
 		}
 
-		Renderable* renderable;
+		Model* model;
 		unsigned int materialID;//Renderable material ID
 	};
 
-	struct TransparentRenderable
+	struct TransparentModel
 	{
-		TransparentRenderable()
+		TransparentModel()
 		{
-			renderable = NULL;
+			model = NULL;
 			distance = 0;
 		}
 
-		bool operator < (const TransparentRenderable& other) const
+		bool operator < (const TransparentModel& other) const
 		{
 			return (distance > other.distance);
 		}
 
-		Renderable* renderable;
+		Model* model;
 		float distance;//Renderable distance to camera
 	};
 
@@ -387,8 +341,8 @@ protected:
 		float distance;//Light distance to renderable
 	};
 	
-	std::vector<SolidRenderable> mSolidRenderables;
-	std::vector<TransparentRenderable> mTransparentRenderables;
+	std::vector<SolidModel> mSolidModels;
+	std::vector<TransparentModel> mTransparentModels;
 	std::vector<DistanceLight> mDistanceLights;
 
 	std::list<Light*> mLightsAffectingFrustum;
@@ -426,7 +380,7 @@ protected:
 
 	void beginGeometryCount();
 
-	void addGeometruCount(Renderable* renderable);
+	void addGeometruCount(Model* model);
 
 	unsigned int getVertexCount();
 
@@ -442,16 +396,13 @@ protected:
 
 	void findLightsAffectingFrustum(Camera* camera);
 
-	void findLightsAffectingRenderables(Renderable* renderable);
+	void findLightsAffectingModel(Model* model);
 
-	void findVisibleRenderables(Camera* camera);
+	void findVisibleModels(Camera* camera);
 
-	void renderVisibleRenderables();
+	void renderVisibleModels();
 
-	void renderVisibleOverlays(Camera* camera, Viewport* viewport);
-	void renderSingleOverlay(Overlay* overlay, Camera* camera, Viewport* viewport);
-
-	void renderSingleRenderable(Renderable* renderable);
+	void renderSingleModel(Model* model);
 
 	void setMaterial(Material* material);
 

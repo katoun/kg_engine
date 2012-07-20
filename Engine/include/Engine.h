@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include <Render.h>
 #include <Sound.h>
 #include <Physics.h>
-#include <Scene.h>
 
 #include <engine/Object.h>
 #include <engine/ObjectDefines.h>

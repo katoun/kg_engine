@@ -27,6 +27,12 @@ THE SOFTWARE.
 #include <render/Model.h>
 #include <render/MeshData.h>
 #include <render/Material.h>
+#include <game/GameObject.h>
+#include <game/Transform.h>
+#include <game/ComponentDefines.h>
+#include <game/MessageDefines.h>
+#include <render/RenderDefines.h>
+#include <render/VertexIndexData.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 #include <core/Utils.h>
@@ -34,44 +40,27 @@ THE SOFTWARE.
 namespace render
 {
 
-unsigned int Model::msNextGeneratedModelIndex = 0;
-
-Model::Model(MeshData* meshData): Renderable("Model_" + core::intToString(msNextGeneratedModelIndex++))
+Model::Model(): game::Component()
 {
-	mRenderableType = RENDERABLE_TYPE_MODEL;
+	mType = game::COMPONENT_TYPE_MODEL;
 
 	// Init matrix
 	mWorldMatrix = core::matrix4::IDENTITY;
 
-	mModifiedWorldTransform = true;
+	mModelNeedsUpdate = true;
+
+	mMeshData = NULL;
 
 	mMaterial = NULL;
 
-	assert(meshData != NULL);
-	if (meshData == NULL)
-		return;
-	
-	mMeshData = meshData;
-	mMeshData->addResourceEventReceiver(this);
-}
+	mVisibleBoundingBox = false;
+	mVisibleBoundingSphere = false;
 
-Model::Model(const std::string& name, MeshData* meshData): Renderable(name)
-{
-	mRenderableType = RENDERABLE_TYPE_MODEL;
-
-	// Init matrix
 	mWorldMatrix = core::matrix4::IDENTITY;
 
-	mModifiedWorldTransform = true;
-
-	mMaterial = NULL;
-
-	assert(meshData != NULL);
-	if (meshData == NULL)
-		return;
-
-	mMeshData = meshData;
-	mMeshData->addResourceEventReceiver(this);
+	mRenderOperationType = ROT_TRIANGLE_LIST;
+	mVertexData = NULL;
+	mIndexData = NULL;
 }
 
 Model::~Model()
@@ -94,9 +83,9 @@ void Model::setMeshData(const std::string& filename)
 	if (mMeshData != NULL)
 	{
 		mMeshData->removeResourceEventReceiver(this);
-	}
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mMeshData = newMeshData;
 	mMeshData->addResourceEventReceiver(this);
@@ -110,9 +99,9 @@ void Model::setMeshData(MeshData* meshData)
 	if (mMeshData != NULL)
 	{
 		mMeshData->removeResourceEventReceiver(this);
-	}
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mMeshData = meshData;
 	mMeshData->addResourceEventReceiver(this);
@@ -150,6 +139,56 @@ void Model::setMaterial(Material* material)
 Material* Model::getMaterial() const
 {
 	return mMaterial;
+}
+
+bool Model::getVisibleBoundingBox()
+{
+	return mVisibleBoundingBox;
+}
+
+void Model::setVisibleBoundingBox(bool visible)
+{
+	mVisibleBoundingBox = visible;
+}
+
+bool Model::getVisibleBoundingSphere()
+{
+	return mVisibleBoundingSphere;
+}
+
+void Model::setVisibleBoundingSphere(bool visible)
+{
+	mVisibleBoundingSphere = visible;
+}
+
+const core::matrix4& Model::getWorldMatrix()
+{
+	return mWorldMatrix;
+}
+
+const core::aabox3d& Model::getBoundingBox()
+{
+	return mBoundingBox;
+}
+
+const core::sphere3d& Model::getBoundingSphere()
+{
+	return mBoundingSphere;
+}
+
+const RenderOperationType& Model::getRenderOperationType()
+{
+	return mRenderOperationType;
+}
+
+VertexData* Model::getVertexData()
+{
+	return mVertexData;
+}
+
+IndexData* Model::getIndexData()
+{
+	return mIndexData;
 }
 
 void Model::resourceLoaded(const resource::ResourceEvent& evt)
@@ -196,62 +235,62 @@ void Model::resourceUnloaded(const resource::ResourceEvent& evt)
 
 void Model::updateImpl(float elapsedTime)
 {
-	mModifiedWorldTransform = mModifiedAbsoluteTransform;
-	
-	Node::updateImpl(elapsedTime);
+	if (mModelNeedsUpdate)
+	{
+		if (mGameObject != NULL)
+		{
+			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			if (pTransform != NULL)
+			{
+				core::vector3d pos = pTransform->getAbsolutePosition();
+				core::quaternion orientation = pTransform->getAbsoluteOrientation();
+				core::vector3d scale = pTransform->getAbsoluteScale();
+				
+				
+				mWorldMatrix = core::matrix4::IDENTITY;
+				// Ordering:
+				//    1. Scale
+				//    2. Rotate
+				//    3. Translate
 
-	// Update bounding box
-	mBoundingBox = mMeshData->getBoundingBox();
-	// Scale and translate the Bounding Box.
-	core::matrix4 trans = core::matrix4::IDENTITY;
-	core::matrix4 rot = mAbsoluteOrientation.toRotationMatrix();
-	core::matrix4 scale;
-	scale.setScale(mAbsoluteScale);
-	trans = rot * scale;
-	trans.setTranslation(mAbsolutePosition);
+				// Own scale is applied before rotation
+				core::matrix4 rotM = orientation.toRotationMatrix();
+				core::matrix4 scaleM;
+				scaleM.setScale(scale);
+				mWorldMatrix = rotM * scaleM;
+				mWorldMatrix.setTranslation(pos);
 
-	trans.transformBox(mBoundingBox);
+				// Update bounding box
+				if (mMeshData != NULL)
+				{
+					mBoundingBox = mMeshData->getBoundingBox();
 
-	// Update bounding sphere
-	float maxscale = core::max(mAbsoluteScale.X, mAbsoluteScale.Y, mAbsoluteScale.Z);
-	mBoundingSphere.Radius = mMeshData->getBoundingSphereRadius();
-	mBoundingSphere.Radius *= maxscale;
+					mWorldMatrix.transformBox(mBoundingBox);
 
-	mBoundingSphere.Center = mAbsolutePosition;
+					// Update bounding sphere
+					float maxscale = core::max(scale.X, scale.Y, scale.Z);
+					mBoundingSphere.Radius = mMeshData->getBoundingSphereRadius();
+					mBoundingSphere.Radius *= maxscale;
+
+					mBoundingSphere.Center = pos;
 
 #ifdef _DEBUG
-	//std::cout<<"Center: "<<mBoundingSphere.Center<<std::endl;
-	//std::cout<<"Radius: "<<mBoundingSphere.Radius<<std::endl;
-#endif
-	
-	updateWorldTransform();
+					//std::cout<<"Center: "<<mBoundingSphere.Center<<std::endl;
+					//std::cout<<"Radius: "<<mBoundingSphere.Radius<<std::endl;
+#endif	
+				}
+			}
+		}
+		
+		mModelNeedsUpdate = false;
+	}
 }
 
-void Model::updateWorldTransform()
+void Model::onMessageImpl(unsigned int messageID)
 {
-	if(mModifiedWorldTransform)
+	if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
 	{
-		updateTransformImpl();
-
-		mWorldMatrix = core::matrix4::IDENTITY;
-		// Ordering:
-		//    1. Scale
-		//    2. Rotate
-		//    3. Translate
-
-		// Own scale is applied before rotation
-		core::matrix4 rot = mAbsoluteOrientation.toRotationMatrix();
-		core::matrix4 scale;
-		scale.setScale(mAbsoluteScale);
-		mWorldMatrix = rot * scale;
-		mWorldMatrix.setTranslation(mAbsolutePosition);
-		
-#ifdef _DEBUG
-		//std::cout<<"Pos: "<<mPosition<<std::endl;
-		//std::cout<<"Orientation: "<<mOrientation<<std::endl;
-		//std::cout<<"Scale: "<<mScale<<std::endl;
-#endif
-		mModifiedWorldTransform = false;
+		mModelNeedsUpdate = true;
 	}
 }
 

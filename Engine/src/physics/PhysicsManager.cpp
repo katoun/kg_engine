@@ -36,7 +36,10 @@ THE SOFTWARE.
 #include <physics/Joint.h>
 #include <physics/JointFactory.h>
 #include <physics/Material.h>
-#include <scene/SceneManager.h>
+#include <game/GameObject.h>
+#include <game/ComponentDefines.h>
+#include <game/ComponentFactory.h>
+#include <game/GameManager.h>
 
 template<> physics::PhysicsManager& core::Singleton<physics::PhysicsManager>::ms_Singleton = physics::PhysicsManager();
 
@@ -51,6 +54,7 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 	mDefaultBodyDataFactory = new BodyDataFactory();
 
 	mPhysicsDriver = NULL;
+	mDefaultBodyFactory = NULL;
 
 	mHardware = true;
 	mCollisionAccuracy = 1.0f;
@@ -60,7 +64,6 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 
 	mCollisionEvent = new CollisionEvent();
 
-	mBodyFactory = NULL;
 	mShapeFactory = NULL;
 	mJointFactory = NULL;
 }
@@ -109,98 +112,12 @@ void PhysicsManager::setGravity(const core::vector3d& gravity)
 		mPhysicsDriver->setGravity(gravity);
 }
 
-Body* PhysicsManager::createBody(const std::string& bodyFilename, scene::Node* parent)
+void PhysicsManager::addBody(Body* body)
 {
-	if (mBodyFactory == NULL)
-		return NULL;
+	if (body == NULL)
+		return;
 
-	BodyData* newBodyData = static_cast<BodyData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_BODY_DATA, bodyFilename));
-	if (newBodyData == NULL)
-		return NULL;
-
-	Body* newBody = NULL;
-	newBody = mBodyFactory->createBody(newBodyData);
-	if (newBody == NULL)
-		return NULL;
-
-	mBodies[newBody->getID()] = newBody;
-
-	scene::SceneManager::getInstance().addNode(newBody, parent);
-
-	return newBody;
-}
-
-Body* PhysicsManager::createBody(const std::string& name, const std::string& bodyFilename, scene::Node* parent)
-{
-	if (mBodyFactory == NULL)
-		return NULL;
-
-	BodyData* newBodyData = static_cast<BodyData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_BODY_DATA, bodyFilename));
-	if (newBodyData == NULL)
-		return NULL;
-
-	Body* newBody = NULL;
-	newBody = mBodyFactory->createBody(name, newBodyData);
-	if (newBody == NULL)
-		return NULL;
-
-	mBodies[newBody->getID()] = newBody;
-
-	scene::SceneManager::getInstance().addNode(newBody, parent);
-
-	return newBody;
-}
-
-Body* PhysicsManager::createBody(BodyData* bodyData, scene::Node* parent)
-{
-	if (mBodyFactory == NULL)
-		return NULL;
-	if (bodyData == NULL)
-		return NULL;
-
-	Body* newBody = NULL;
-	newBody = mBodyFactory->createBody(bodyData);
-	if (newBody == NULL)
-		return NULL;
-
-	mBodies[newBody->getID()] = newBody;
-
-	scene::SceneManager::getInstance().addNode(newBody, parent);
-
-	return newBody;
-}
-
-Body* PhysicsManager::createBody(const std::string& name, BodyData* bodyData, scene::Node* parent)
-{
-	if (mBodyFactory == NULL)
-		return NULL;
-	if (bodyData == NULL)
-		return NULL;
-
-	Body* newBody = NULL;
-	newBody = mBodyFactory->createBody(name, bodyData);
-	if (newBody == NULL)
-		return NULL;
-
-	mBodies[newBody->getID()] = newBody;
-
-	scene::SceneManager::getInstance().addNode(newBody, parent);
-
-	return newBody;
-}
-
-Body* PhysicsManager::getBody(const unsigned int& id)
-{
-	std::map<unsigned int, Body*>::const_iterator i = mBodies.find(id);
-	if (i != mBodies.end())
-		return i->second;
-
-	return NULL;
-}
-
-unsigned int PhysicsManager::getNumberOfBodies() const
-{
-	return mBodies.size();
+	mBodies[body->getID()] = body;
 }
 
 void PhysicsManager::removeBody(Body *actor)
@@ -216,16 +133,10 @@ void PhysicsManager::removeBody(const unsigned int& id)
 	std::map<unsigned int, Body*>::iterator i = mBodies.find(id);
 	if (i != mBodies.end())
 		mBodies.erase(i);
-
-	scene::SceneManager::getInstance().removeNode(id);
 }
 
 void PhysicsManager::removeAllBodies()
 {
-	std::map<unsigned int, Body*>::const_iterator i;
-	for (i = mBodies.begin(); i != mBodies.end(); ++i)
-		scene::SceneManager::getInstance().removeNode(i->second->getID());
-
 	mBodies.clear();
 }
 
@@ -345,15 +256,14 @@ void PhysicsManager::removeCollisionEventReceiver(CollisionEventReceiver* oldEve
 	}
 }
 
-
-void PhysicsManager::setBodyFactory(BodyFactory* factory)
+void PhysicsManager::setDefaultBodyFactory(game::ComponentFactory* factory)
 {
-	mBodyFactory = factory;
+	mDefaultBodyFactory = factory;
 }
 
-void PhysicsManager::removeBodyFactory()
+void PhysicsManager::removeDefaultBodyFactory()
 {
-	mBodyFactory = NULL;
+	mDefaultBodyFactory = NULL;
 }
 
 void PhysicsManager::setShapeFactory(ShapeFactory* factory)
@@ -459,11 +369,15 @@ void PhysicsManager::removeSystemDriverImpl()
 void PhysicsManager::registerDefaultFactoriesImpl()
 {
 	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_BODY_DATA, mDefaultBodyDataFactory);
+
+	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_BODY, mDefaultBodyFactory);
 }
 
 void PhysicsManager::removeDefaultFactoriesImpl()
 {
 	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_BODY_DATA);
+
+	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_BODY);
 }
 
 PhysicsManager& PhysicsManager::getInstance()

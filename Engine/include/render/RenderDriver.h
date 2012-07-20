@@ -55,14 +55,10 @@ namespace render
 class Frustum;
 class Light;
 class Camera;
+class Model;
 class MeshData;
-class Overlay;
-class PanelOverlay;
-class TextOverlay;
 class Font;
-class MeshData;
 class Viewport;
-class Renderable;
 class RenderWindow;
 class FrameEventReceiver;
 struct FrameEvent;
@@ -110,16 +106,8 @@ public:
 	//! several times per complete frame if multiple viewports exist.
 	virtual void beginFrame(Viewport *vp) = 0;
 
-	//! Render something to the active viewport.
-	//!
-	//! Low-level rendering interface to perform rendering
-	//! operations. Unlikely to be used directly by client
-	//! applications, since the SceneManager and various support
-	//! classes will be responsible for calling this method.
-	//! Can only be called between _beginScene and _endScene
-	//! \param op: A rendering operation instance, which contains
-	//!	details of the operation to be performed.
-	virtual void render(Renderable* renderable) = 0;
+	//! Render a model to the active viewport.
+	virtual void renderModel(Model* model) = 0;
 
 	virtual void renderGridPlane(unsigned int zfar) = 0;
 

@@ -24,82 +24,36 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _TEXT_OVERLAY_H_
-#define _TEXT_OVERLAY_H_
-
-#include <core/Config.h>
-#include <render/Overlay.h>
-
-#include <string>
+#include <render/ModelFactory.h>
+#include <render/Model.h>
+#include <render/RenderManager.h>
 
 namespace render
 {
 
-class Font;
-	
-enum Alignment
+ModelFactory::ModelFactory(): game::ComponentFactory()
 {
-	A_LEFT,
-	A_RIGHT,
-	A_CENTER
-};
+	mName = "Model";
+}
 
-//! Represents a text overlay which is rendered on top of the 'normal' scene contents.
-class ENGINE_PUBLIC_EXPORT TextOverlay: public Overlay
+game::Component* ModelFactory::createComponent()
 {
-public:
+	Model* pModel = new Model();
 
-	TextOverlay();
-	TextOverlay(const std::string& name);
+	RenderManager::getInstance().addModel(pModel);
 
-	~TextOverlay();
+	return pModel;
+}
 
-	//! Sets the the Font which this overlay will use.
-	void setFont(const std::string& name);
-	void setFont(Font* font);
+void ModelFactory::destroyComponent(game::Component* component)
+{
+	Model* pModel = static_cast<Model*>(component);
 
-	Material* getMaterial() const;
+	RenderManager::getInstance().removeModel(pModel);
 
-	void setCaption(const std::string& caption);
-	const std::string& getCaption() const;
+	assert(pModel != NULL);
+	if (pModel != NULL)
+		delete pModel;
+}
 
-	void setAlignment(Alignment a);
-	
-	Alignment getAlignment() const;
-
-	void setCharHeight(float height);
-	float getCharHeight() const;
-
-	void setSpaceWidth(float width);
-	float getSpaceWidth() const;
-
-protected:
-
-	void initializeImpl();
-	void updateTransformImpl();
-
-	Font* mFont;
-
-	std::string mCaption;
-
-	/// The text alignment
-	Alignment mAlignment;
-
-	float mCharHeight;
-	float mPixelCharHeight;
-	float mSpaceWidth;
-	float mPixelSpaceWidth;
-	unsigned int mAllocSize;
-	float mViewportAspectCoef;
-
-	// Internal method to allocate memory, only reallocates when necessary
-	void allocateMemory(unsigned int numChars);
-
-	void updatePositionBinding();
-
-	void updateTextureBinding();
-};
-
-} //namespace render
-
-#endif
+} // end namespace game

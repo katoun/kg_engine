@@ -28,23 +28,16 @@ THE SOFTWARE.
 #define _BODY_FACTORY_H_
 
 #include <core/Config.h>
+#include <game/ComponentFactory.h>
 
 namespace physics
 {
 
-class Body;
-class BodyData;
-
-class ENGINE_PUBLIC_EXPORT BodyFactory
+class ENGINE_PUBLIC_EXPORT BodyFactory: public game::ComponentFactory
 {
 public:
 
-	//! Creates a new body object.
-	virtual Body* createBody(BodyData* bodyData) = 0;
-	virtual Body* createBody(const std::string& name, BodyData* bodyData) = 0;
-
-	//! Destroys a body object which was created by this factory.
-	virtual void destroyBody(Body* body) = 0;
+	BodyFactory();
 };
 
 } // end namespace physics

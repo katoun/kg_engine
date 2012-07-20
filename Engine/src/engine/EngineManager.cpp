@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include <render/RenderManager.h>
 #include <sound/SoundManager.h>
 #include <physics/PhysicsManager.h>
-#include <scene/SceneManager.h>
 
 template<> engine::EngineManager& core::Singleton<engine::EngineManager>::ms_Singleton = engine::EngineManager();
 
@@ -130,7 +129,6 @@ void EngineManager::initializeImpl()
 	render::RenderManager::getInstance().initialize();
 	physics::PhysicsManager::getInstance().initialize();
 	sound::SoundManager::getInstance().initialize();
-	scene::SceneManager::getInstance().initialize();
 
 	game::GameManager::getInstance().initialize();
 
@@ -144,7 +142,6 @@ void EngineManager::uninitializeImpl()
 	physics::PhysicsManager::getInstance().uninitialize();
 	sound::SoundManager::getInstance().uninitialize();
 	render::RenderManager::getInstance().uninitialize();
-	scene::SceneManager::getInstance().uninitialize();
 	
 	resource::ResourceManager::getInstance().uninitialize();
 	input::InputManager::getInstance().uninitialize();
@@ -167,7 +164,6 @@ void EngineManager::startImpl()
 	input::InputManager::getInstance().start();
 	
 	game::GameManager::getInstance().start();
-	scene::SceneManager::getInstance().start();
 	render::RenderManager::getInstance().start();
 	physics::PhysicsManager::getInstance().start();
 	sound::SoundManager::getInstance().start();
@@ -183,7 +179,6 @@ void EngineManager::stopImpl()
 	sound::SoundManager::getInstance().stop();
 	physics::PhysicsManager::getInstance().stop();	
 	render::RenderManager::getInstance().stop();
-	scene::SceneManager::getInstance().stop();
 	game::GameManager::getInstance().stop();
 	
 	input::InputManager::getInstance().stop();
@@ -201,7 +196,6 @@ void EngineManager::updateImpl(float elapsedTime)
 	input::InputManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
 	
 	game::GameManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	scene::SceneManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
 	render::RenderManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
 	physics::PhysicsManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
 	sound::SoundManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);

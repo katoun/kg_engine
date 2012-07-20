@@ -44,10 +44,10 @@ public:
 
 	CameraFactory();
 
-	//! Creates a new transform component.
+	//! Creates a new camera component.
 	game::Component* createComponent();
 
-	//! Destroys a transform component which was created by this factory.
+	//! Destroys a camera component which was created by this factory.
 	void destroyComponent(game::Component* component);
 };
 

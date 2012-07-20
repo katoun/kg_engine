@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 #include <render/RenderDriver.h>
 #include <render/TextureUnit.h>
-#include <render/Renderable.h>
 #include <render/Shader.h>
 
 namespace render

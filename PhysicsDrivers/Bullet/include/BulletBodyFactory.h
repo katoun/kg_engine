@@ -33,17 +33,15 @@ THE SOFTWARE.
 namespace physics
 {
 
-class Body;
-class BodyData;
-
 class BULLET_PUBLIC_EXPORT BulletBodyFactory: public BodyFactory
 {
 public:
 
-	Body* createBody(BodyData* bodyData);
-	Body* createBody(const std::string& name, BodyData* bodyData);
+	//! Creates a new body component.
+	game::Component* createComponent();
 
-	void destroyBody(Body* body);
+	//! Destroys a body component which was created by this factory.
+	void destroyComponent(game::Component* component);
 };
 
 } // end namespace physics

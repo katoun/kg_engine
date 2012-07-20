@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _BODY_H_
 
 #include <core/Config.h>
-#include <scene/Node.h>
+#include <core/Vector3d.h>
+#include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
 
 #include <string>
@@ -44,13 +45,11 @@ enum BodyType;
 //! Defines an actor in the physics world.
 //! Author: Kat'Oun
 //! version: 1.0
-class ENGINE_PUBLIC_EXPORT Body: public scene::Node, public resource::ResourceEventReceiver
+class ENGINE_PUBLIC_EXPORT Body: public game::Component, public resource::ResourceEventReceiver
 {
 public:
 
-	Body(BodyData* bodyData);
-	Body(const std::string& name, BodyData* bodyData);
-
+	Body();
 	virtual ~Body();
 
 	void setBodyType(BodyType type);
@@ -139,10 +138,7 @@ public:
 
 protected:
 
-	// Incremented count for next index
-	static unsigned int msNextGeneratedActorIndex;
-
-	virtual void updateTransformImpl();
+	virtual void setBodyDataImpl(BodyData* bodyData);
 
 	BodyData* mBodyData;
 

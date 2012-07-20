@@ -52,11 +52,6 @@ namespace resource
 class ResourceManager;
 }
 
-namespace scene
-{
-class SceneManager;
-}
-
 namespace render
 {
 class RenderManager;

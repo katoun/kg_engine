@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include <core/Aabox3d.h>
 #include <resource/Resource.h>
 #include <render/Color.h>
-#include <render/RenderableDefines.h>
+#include <render/RenderDefines.h>
 
 #include <string>
 

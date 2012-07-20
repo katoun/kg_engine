@@ -39,7 +39,7 @@ namespace render
 
 class Light;
 class Camera;
-class Renderable;
+class Model;
 class Viewport;
 
 class ENGINE_PUBLIC_EXPORT ShaderParamData
@@ -49,7 +49,7 @@ public:
 	ShaderParamData();
 
 	void setWorldMatrices(const core::matrix4& m);
-	void setCurrentRenderable(Renderable* rend);
+	void setCurrentModel(Model* model);
 	void setCurrentCamera(Camera* cam);
 	void setCurrentViewport(Viewport* viewport);
 	void setCurrentLight(Light* light);
@@ -155,7 +155,7 @@ protected:
 	bool mCameraPositionDirty;
 	bool mCameraPositionObjectSpaceDirty;
 
-	Renderable* mCurrentRenderable;
+	Model* mCurrentModel;
 	Camera* mCurrentCamera;
 	Light* mCurrentLight;
 	Viewport* mCurrentViewport;

@@ -33,8 +33,10 @@ THE SOFTWARE.
 #include <physics/BodyDataFactory.h>
 #include <physics/Material.h>
 #include <physics/Shape.h>
+#include <physics/ShapeDefines.h>
 #include <physics/ShapeFactory.h>
 #include <physics/Joint.h>
+#include <physics/JointDefines.h>
 #include <physics/JointFactory.h>
 #include <physics/CollisionPoint.h>
 #include <physics/CollisionEvent.h>

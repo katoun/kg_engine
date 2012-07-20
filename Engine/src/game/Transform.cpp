@@ -82,6 +82,15 @@ const core::quaternion& Transform::getOrientation()
 	return mOrientation;
 }
 
+void Transform::setOrientation(float x, float y, float z, float w)
+{
+	mOrientation.X = x;
+	mOrientation.Y = y;
+	mOrientation.Z = z;
+	mOrientation.W = w;
+	mTransformNeedsUpdate = true;
+}
+
 void Transform::setOrientation(const core::quaternion& q)
 {
 	mOrientation = q;
@@ -105,11 +114,6 @@ void Transform::setScale(const core::vector3d& scale)
 {
 	mScale = scale;
 	mTransformNeedsUpdate = true;
-}
-
-bool Transform::isAbsoluteTransformModified()
-{
-	return mTransformNeedsUpdate;
 }
 
 bool Transform::getInheritOrientation()
@@ -323,6 +327,10 @@ void Transform::updateImpl(float elapsedTime)
 void Transform::onMessageImpl(unsigned int messageID)
 {
 	if (messageID == MESSAGE_PARENT_CHANGED)
+	{
+		mTransformNeedsUpdate = true;
+	}
+	else if (messageID == MESSAGE_TRANSFORM_NEEDS_UPDATE)
 	{
 		mTransformNeedsUpdate = true;
 	}

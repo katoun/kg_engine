@@ -10,9 +10,6 @@
     <Filter Include="render">
       <UniqueIdentifier>{a221175f-4a30-4123-8ca5-f70d93cde169}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene">
-      <UniqueIdentifier>{19864768-31ea-47cc-913f-986d925ed172}</UniqueIdentifier>
-    </Filter>
     <Filter Include="platform">
       <UniqueIdentifier>{f9d4ff47-72ba-424c-b7c9-f658f6fa89e9}</UniqueIdentifier>
     </Filter>
@@ -132,18 +129,6 @@
     <ClInclude Include="include\render\Model.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\Overlay.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\PanelOverlay.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\Renderable.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\RenderableDefines.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\RenderManager.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -171,9 +156,6 @@
     <ClInclude Include="include\render\ShaderParamData.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\TextOverlay.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Texture.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -191,15 +173,6 @@
     </ClInclude>
     <ClInclude Include="include\render\Viewport.h">
       <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\Node.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\NodeDefines.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\SceneManager.h">
-      <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="include\platform\PlatformManager.h">
       <Filter>platform</Filter>
@@ -325,7 +298,6 @@
     <ClInclude Include="include\Platform.h" />
     <ClInclude Include="include\Render.h" />
     <ClInclude Include="include\Resource.h" />
-    <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\input\InputDeviceDefines.h">
       <Filter>input</Filter>
@@ -445,6 +417,12 @@
     <ClInclude Include="include\render\LightFactory.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\RenderDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ModelFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -534,15 +512,6 @@
     <ClCompile Include="src\render\Model.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\Overlay.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\PanelOverlay.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Renderable.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\RenderManager.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -564,9 +533,6 @@
     <ClCompile Include="src\render\ShaderParamData.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\TextOverlay.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\Texture.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -581,12 +547,6 @@
     </ClCompile>
     <ClCompile Include="src\render\Viewport.cpp">
       <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene\Node.cpp">
-      <Filter>scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene\SceneManager.cpp">
-      <Filter>scene</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\PlatformManager.cpp">
       <Filter>platform</Filter>
@@ -768,6 +728,12 @@
     </ClCompile>
     <ClCompile Include="src\sound\SoundFactory.cpp">
       <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\BodyFactory.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ModelFactory.cpp">
+      <Filter>render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

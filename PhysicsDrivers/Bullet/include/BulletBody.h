@@ -39,8 +39,7 @@ class BulletBody : public Body
 {
 public:
 
-	BulletBody(BodyData* bodyRes);
-	BulletBody(const std::string& name, BodyData* bodyRes);
+	BulletBody();
 	~BulletBody();
 
 	void setEnabled(bool enabled);
@@ -65,13 +64,15 @@ protected:
 
 	void initializeImpl();
 	void uninitializeImpl();
+	void updateImpl(float elapsedTime);
+	void onMessageImpl(unsigned int messageID);
 
-	void updateTransformImpl();
+	btCollisionShape* addBulletShape(Shape* shape);
 
 	btRigidBody*			mRigidBody;
 	btDefaultMotionState*	mMotionState;
 
-	btCollisionShape* addBulletShape(Shape* shape);
+	bool mBodyNeedsUpdate;
 };
 
 } // end namespace game

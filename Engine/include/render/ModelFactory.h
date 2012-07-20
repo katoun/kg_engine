@@ -24,24 +24,33 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _NODE_DEFINES_H_
-#define _NODE_DEFINES_H_
+#ifndef _MODEL_FACTORY_H_
+#define _MODEL_FACTORY_H_
 
-namespace scene
+#include <core/Config.h>
+#include <game/ComponentFactory.h>
+
+namespace game
+{
+class Component;
+}
+
+namespace render
 {
 
-enum NodeType
+class ENGINE_PUBLIC_EXPORT ModelFactory: public game::ComponentFactory
 {
-	NT_UNDEFINED,
-	NT_ROOT,
-	NT_GROUP,
-	NT_RENDERABLE,
-	NT_LIGHT,
-	NT_SOUND,
-	NT_BODY,
-	NT_COUNT
+public:
+
+	ModelFactory();
+
+	//! Creates a new model component.
+	game::Component* createComponent();
+
+	//! Destroys a model component which was created by this factory.
+	void destroyComponent(game::Component* component);
 };
 
-} // end namespace scene
+} // end namespace render
 
 #endif

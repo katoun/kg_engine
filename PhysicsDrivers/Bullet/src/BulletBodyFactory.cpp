@@ -26,26 +26,30 @@ THE SOFTWARE.
 
 #include <BulletBodyFactory.h>
 #include <BulletBody.h>
+#include <physics/PhysicsManager.h>
 
 namespace physics
 {
 
-Body* BulletBodyFactory::createBody(BodyData* bodyData)
+
+game::Component* BulletBodyFactory::createComponent()
 {
-	return new BulletBody(bodyData);
+	BulletBody* pBody = new BulletBody();
+
+	PhysicsManager::getInstance().addBody(pBody);
+
+	return pBody;
 }
 
-Body* BulletBodyFactory::createBody(const std::string& name, BodyData* bodyData)
+void BulletBodyFactory::destroyComponent(game::Component* component)
 {
-	return new BulletBody(name, bodyData);
-}
+	BulletBody* pBody = static_cast<BulletBody*>(component);
 
-void BulletBodyFactory::destroyBody(Body* body)
-{
-	BulletBody* bulletBody = static_cast<BulletBody*>(body);
+	PhysicsManager::getInstance().removeBody(pBody);
 
-	assert(bulletBody != NULL);
-	if (bulletBody != NULL) delete bulletBody;
+	assert(pBody != NULL);
+	if (pBody != NULL)
+		delete pBody;
 }
 
 } // end namespace physics

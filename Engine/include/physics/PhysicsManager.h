@@ -44,6 +44,11 @@ namespace scene
 class Node;
 }
 
+namespace game
+{
+class ComponentFactory;
+}
+
 namespace physics
 {
 
@@ -86,22 +91,11 @@ public:
 
 	void setGravity(const core::vector3d& gravity);
 
-	//! Creates a body to be managed by physics manager.
-	Body* createBody(const std::string& bodyFilename, scene::Node* parent = NULL);
-	Body* createBody(const std::string& name, const std::string& bodyFilename, scene::Node* parent = NULL);
-
-	//! Creates a body to be managed by physics manager.
-	Body* createBody(BodyData* bodyData, scene::Node* parent = NULL);
-	Body* createBody(const std::string& name, BodyData* bodyData, scene::Node* parent = NULL);
-
-	//! Retrieves a pointer to a body by id.
-	Body* getBody(const unsigned int& id);
-
-	//! Retrieves the total number of created bodies.
-	unsigned int getNumberOfBodies() const;
+	//!  Adds a boy to be managed by this physics manager.
+	void addBody(Body* body);
 
 	//! Removes a body.
-	void removeBody(Body *actor);
+	void removeBody(Body* body);
 	//! Removes a body.
 	void removeBody(const unsigned int& id);
 	//! Removes (and destroys) all bodies.
@@ -134,6 +128,9 @@ public:
 	void setBodyFactory(BodyFactory* factory);
 	void removeBodyFactory();
 
+	void setDefaultBodyFactory(game::ComponentFactory* factory);
+	void removeDefaultBodyFactory();
+
 	void setShapeFactory(ShapeFactory* factory);
 	void removeShapeFactory();
 
@@ -164,6 +161,7 @@ protected:
 	void removeDefaultFactoriesImpl();
 
 	BodyDataFactory* mDefaultBodyDataFactory;
+	game::ComponentFactory* mDefaultBodyFactory;
 	
 	PhysicsDriver* mPhysicsDriver;
 
@@ -179,7 +177,6 @@ protected:
 	//! Central list of materials - for easy memory management and lookup.
 	std::map<unsigned int, Material*> mMaterials;
 
-	BodyFactory* mBodyFactory;
 	ShapeFactory* mShapeFactory;
 	JointFactory* mJointFactory;
 

@@ -31,28 +31,27 @@ THE SOFTWARE.
 #include <render/RenderDriver.h>
 #include <render/Frustum.h>
 #include <render/Light.h>
+#include <render/LightFactory.h>
 #include <render/Camera.h>
-#include <render/Renderable.h>
+#include <render/CameraFactory.h>
+#include <render/Material.h>
+#include <render/MaterialFactory.h>
 #include <render/Model.h>
-#include <render/Overlay.h>
-#include <render/PanelOverlay.h>
-#include <render/TextOverlay.h>
+#include <render/ModelFactory.h>
+#include <render/RenderDefines.h>
+#include <render/VertexBuffer.h>
+#include <render/IndexBuffer.h>
+#include <render/VertexIndexData.h>
+#include <render/MeshData.h>
+#include <render/MeshDataFactory.h>
+#include <render/Shader.h>
 #include <render/Font.h>
+#include <render/FontFactory.h>
 #include <render/Viewport.h>
 #include <render/RenderWindow.h>
 #include <render/FrameEventReceiver.h>
-#include <render/Shader.h>
-#include <render/VertexBuffer.h>
-#include <render/IndexBuffer.h>
-#include <render/MeshData.h>
-#include <render/FontFactory.h>
-#include <render/MaterialFactory.h>
-#include <render/MeshDataFactory.h>
-#include <render/CameraFactory.h>
-#include <render/LightFactory.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
-#include <scene/SceneManager.h>
 #include <game/GameObject.h>
 #include <game/ComponentDefines.h>
 #include <game/ComponentFactory.h>
@@ -76,6 +75,7 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mDefaultMeshDataFactory = new MeshDataFactory();
 	mDefaultCameraFactory = new CameraFactory();
 	mDefaultLightFactory = new LightFactory();
+	mDefaultModelFactory = new ModelFactory();
 
 	mMainWindow = NULL;
 	mRenderDriver = NULL;
@@ -121,6 +121,10 @@ RenderManager::~RenderManager()
 	if (mDefaultLightFactory != NULL)
 	{
 		delete mDefaultLightFactory;
+	}
+	if (mDefaultModelFactory != NULL)
+	{
+		delete mDefaultModelFactory;
 	}
 }
 
@@ -267,224 +271,32 @@ void RenderManager::removeAllCameras()
 	mCameras.clear();
 }
 
-Renderable* RenderManager::createRenderable(scene::Node* parent)
-{
-	Renderable* newRenderable = new Renderable();
-	mRenderables[newRenderable->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newRenderable, parent);
-
-	return newRenderable;
-}
-
-Renderable* RenderManager::createRenderable(const std::string& name, scene::Node* parent)
-{
-	Renderable* newRenderable = new Renderable(name);
-	mRenderables[newRenderable->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newRenderable, parent);
-
-	return newRenderable;
-}
-
-Renderable* RenderManager::getRenderable(const unsigned int& id)
-{
-	std::map<unsigned int, Renderable*>::const_iterator i = mRenderables.find(id);
-	if (i != mRenderables.end())
-		return i->second;
-
-	return NULL;
-}
-
-unsigned int RenderManager::getNumberOfRenderables() const
-{
-	return mRenderables.size();
-}
-
-void RenderManager::removeRenderable(const unsigned int& id)
-{
-	std::map<unsigned int, Renderable*>::iterator i = mRenderables.find(id);
-	if (i != mRenderables.end())
-		mRenderables.erase(i);
-
-	scene::SceneManager::getInstance().removeNode(id);
-}
-
-void RenderManager::removeRenderable(Renderable *renderable)
-{
-	if (renderable == NULL)
-		return;
-
-	removeRenderable(renderable->getID());
-}
-
-void RenderManager::removeAllRenderables()
-{
-	std::map<unsigned int, Renderable*>::const_iterator i;
-	for (i = mRenderables.begin(); i != mRenderables.end(); ++i)
-		scene::SceneManager::getInstance().removeNode(i->second->getID());
-
-	mRenderables.clear();
-}
-
-Model* RenderManager::createModel(const std::string& meshFilename, scene::Node* parent)
-{
-	MeshData* newMeshData = static_cast<MeshData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_MESH_DATA, meshFilename));
-	if (newMeshData == NULL) return NULL;
-
-	Model* newModel = new Model(newMeshData);
-	Renderable* newRenderable = static_cast<Renderable*>(newModel);
-	if (newRenderable == NULL) return NULL;
-
-	mRenderables[newModel->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newModel, parent);
-
-	return newModel;
-}
-
-Model* RenderManager::createModel(const std::string& name, const std::string& meshFilename, scene::Node* parent)
-{
-	MeshData* newMeshData = static_cast<MeshData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_MESH_DATA, meshFilename));
-	if (newMeshData == NULL)	return NULL;
-
-	Model* newModel = new Model(name, newMeshData);
-	Renderable* newRenderable = static_cast<Renderable*>(newModel);
-	if (newRenderable == NULL) return NULL;
-
-	mRenderables[newModel->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newModel, parent);
-
-	return newModel;
-}
-
-Model* RenderManager::createModel(MeshData* meshData, scene::Node* parent)
-{
-	if (meshData == NULL) return NULL;
-
-	Model* newModel = new Model(meshData);
-	Renderable* newRenderable = static_cast<Renderable*>(newModel);
-	if (newRenderable == NULL) return NULL;
-
-	mRenderables[newModel->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newModel, parent);
-
-	return newModel;
-}
-
-Model* RenderManager::createModel(const std::string& name, MeshData* meshData, scene::Node* parent)
-{
-	if (meshData == NULL) return NULL;
-
-	Model* newModel = new Model(name, meshData);
-	Renderable* newRenderable = static_cast<Renderable*>(newModel);
-	if (newRenderable == NULL) return NULL;
-
-	mRenderables[newModel->getID()] = newRenderable;
-
-	scene::SceneManager::getInstance().addNode(newModel, parent);
-
-	return newModel;
-}
-
-Model* RenderManager::getModel(const unsigned int& id)
-{
-	std::map<unsigned int, Renderable*>::const_iterator i = mRenderables.find(id);
-	if (i != mRenderables.end())
-		return static_cast<Model*>(i->second);
-
-	return NULL;
-}
-
-void RenderManager::removeModel(Model *model)
+void RenderManager::addModel(Model* model)
 {
 	if (model == NULL)
 		return;
 
-	removeRenderable(model->getID());
+	mModels[model->getID()] = model;
+}
+
+void RenderManager::removeModel(Model* model)
+{
+	if (model == NULL)
+		return;
+
+	removeModel(model->getID());
 }
 
 void RenderManager::removeModel(const unsigned int& id)
 {
-	removeRenderable(id);
+	std::map<unsigned int, Model*>::iterator i = mModels.find(id);
+	if (i != mModels.end())
+		mModels.erase(i);
 }
 
-PanelOverlay* RenderManager::createPanelOverlay()
+void RenderManager::removeAllModels()
 {
-	Overlay* newOverlay = new PanelOverlay();
-	mOverlays[newOverlay->getID()] = newOverlay;
-
-	return static_cast<PanelOverlay*>(newOverlay);
-}
-
-PanelOverlay* RenderManager::createPanelOverlay(const std::string& name)
-{
-	Overlay* newOverlay = new PanelOverlay(name);
-	mOverlays[newOverlay->getID()] = newOverlay;
-
-	return static_cast<PanelOverlay*>(newOverlay);
-}
-
-TextOverlay* RenderManager::createTextOverlay()
-{
-	Overlay* newOverlay = new TextOverlay();
-	mOverlays[newOverlay->getID()] = newOverlay;
-
-	return static_cast<TextOverlay*>(newOverlay);
-}
-
-TextOverlay* RenderManager::createTextOverlay(const std::string& name)
-{
-	Overlay* newOverlay = new TextOverlay(name);
-	mOverlays[newOverlay->getID()] = newOverlay;
-
-	return static_cast<TextOverlay*>(newOverlay);
-}
-
-Overlay* RenderManager::getOverlay(const unsigned int& id)
-{
-	std::map<unsigned int, Overlay*>::const_iterator i = mOverlays.find(id);
-	if (i != mOverlays.end())
-		return i->second;
-
-	return NULL;
-}
-
-unsigned int RenderManager::getNumberOfOverlays() const
-{
-	return mOverlays.size();
-}
-
-void RenderManager::removeOverlay(Overlay *overlay)
-{
-	if (overlay == NULL)
-		return;
-
-	removeOverlay(overlay->getID());
-}
-
-void RenderManager::removeOverlay(const unsigned int& id)
-{
-	std::map<unsigned int, Overlay*>::iterator i = mOverlays.find(id);
-	if (i != mOverlays.end())
-	{
-		delete i->second;
-		mOverlays.erase(i);
-	}
-}
-
-void RenderManager::removeAllOverlays()
-{
-	std::map<unsigned int, Overlay*>::iterator i;
-	for (i = mOverlays.begin(); i != mOverlays.end(); ++i)
-	{
-		delete i->second;
-		i->second = NULL;
-	}
-
-	mOverlays.clear();
+	mModels.clear();
 }
 
 Font* RenderManager::createFont(const std::string& fontFilename)
@@ -779,8 +591,8 @@ void RenderManager::initializeImpl()
 {
 	mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
-	mSolidRenderables.reserve(1024);
-	mTransparentRenderables.reserve(1024);
+	mSolidModels.reserve(1024);
+	mTransparentModels.reserve(1024);
 	mDistanceLights.reserve(512);
 }
 
@@ -792,11 +604,8 @@ void RenderManager::uninitializeImpl()
 	// Remove all Cameras
 	removeAllCameras();
 
-	// Remove all Renderables
-	removeAllRenderables();
-
-	// Remove all Overlays
-	removeAllOverlays();
+	// Remove all Models
+	removeAllModels();
 
 	// Remove all Fonts
 	removeAllFonts();
@@ -817,9 +626,9 @@ void RenderManager::uninitializeImpl()
 	removeAllIndexBuffers();
 
 	// Remove SolidModels
-	mSolidRenderables.clear();
+	mSolidModels.clear();
 	// Remove TransparentModels
-	mTransparentRenderables.clear();
+	mTransparentModels.clear();
 	// Remove DistanceLights
 	mDistanceLights.clear();
 
@@ -845,18 +654,6 @@ void RenderManager::updateImpl(float elapsedTime)
 
 	// Update all render elements
 
-	//// Update Overlays
-	std::map<unsigned int, Overlay*>::const_iterator i;
-	for (i = mOverlays.begin(); i != mOverlays.end(); ++i)
-	{
-		Overlay* overlay = i->second;
-		if (overlay != NULL) overlay->update(elapsedTime);
-	}
-
-	//std::map<unsigned int, Overlay*>::const_iterator oit;
-	//for (oit = mOverlays2.begin(); oit != mOverlays2.end(); ++oit)
-	//	oit->second->update();
-
 	// Update RenderWindows
 	std::map<unsigned int, RenderWindow*>::const_iterator j;
 	for (j = mRenderWindows.begin(); j != mRenderWindows.end(); ++j)
@@ -876,7 +673,7 @@ void RenderManager::updateImpl(float elapsedTime)
 					render(pViewport->getCamera(), pViewport);
 			}
 		}
-	}	
+	}
 
 	fireFrameEnded();
 }
@@ -899,6 +696,7 @@ void RenderManager::registerDefaultFactoriesImpl()
 
 	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mDefaultCameraFactory);
 	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mDefaultLightFactory);
+	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_MODEL, mDefaultModelFactory);
 }
 
 void RenderManager::removeDefaultFactoriesImpl()
@@ -909,6 +707,7 @@ void RenderManager::removeDefaultFactoriesImpl()
 
 	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_CAMERA);
 	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_LIGHT);
+	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_MODEL);
 }
 
 void RenderManager::fireFrameStarted()
@@ -937,15 +736,18 @@ void RenderManager::beginGeometryCount()
 	mFaceCount = 0;
 }
 
-void RenderManager::addGeometruCount(Renderable* renderable)
+void RenderManager::addGeometruCount(Model* model)
 {
+	if (model == NULL)
+		return;
+	
 	// Update stats
-	if (renderable->getVertexData() == NULL || renderable->getIndexData() == NULL)
+	if (model->getVertexData() == NULL || model->getIndexData() == NULL)
 		return;
 
-	unsigned int val = renderable->getIndexData()->indexCount;
+	unsigned int val = model->getIndexData()->indexCount;
 	
-	switch(renderable->getRenderOperationType())
+	switch(model->getRenderOperationType())
 	{
 	case ROT_TRIANGLE_LIST:
 		mFaceCount += val / 3;
@@ -960,7 +762,7 @@ void RenderManager::addGeometruCount(Renderable* renderable)
 		break;
 	}
 
-	mVertexCount += renderable->getVertexData()->vertexCount;
+	mVertexCount += model->getVertexData()->vertexCount;
 }
 
 unsigned int RenderManager::getVertexCount()
@@ -998,7 +800,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	findLightsAffectingFrustum(camera);
 
-	findVisibleRenderables(camera);
+	findVisibleModels(camera);
 
 	beginGeometryCount();
 
@@ -1095,9 +897,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 		}
 	}
 	
-	renderVisibleRenderables();
-
-	renderVisibleOverlays(camera, viewport);
+	renderVisibleModels();
 
 	mRenderDriver->setViewMatrix(core::matrix4::IDENTITY);
 	
@@ -1177,9 +977,9 @@ void RenderManager::findLightsAffectingFrustum(Camera* camera)
 	}
 }
 
-void RenderManager::findLightsAffectingRenderables(Renderable* renderable)
+void RenderManager::findLightsAffectingModel(Model* model)
 {
-	if (renderable == NULL)
+	if (model == NULL)
 		return;
 	
 	mDistanceLights.clear();
@@ -1202,19 +1002,21 @@ void RenderManager::findLightsAffectingRenderables(Renderable* renderable)
 			{
 				// Calculate squared distance
 				float distance = 0.0f;
-				game::Transform* pTransform = NULL;
-				if (pLight->getGameObject() != NULL)
+				game::Transform* pLightTransform = NULL;
+				game::Transform* pModelTransform = NULL;
+				if (pLight->getGameObject() != NULL && model->getGameObject() != NULL)
 				{
-					pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					if (pTransform != NULL)
+					pLightTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+					pModelTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+					if (pLightTransform != NULL && pModelTransform)
 					{
-						distance = (pTransform->getAbsolutePosition() - renderable->getAbsolutePosition()).getLengthSQ();
+						distance = (pLightTransform->getAbsolutePosition() - pModelTransform->getAbsolutePosition()).getLengthSQ();
 					}
 				}
 
 				// only add in-range lights
 				float range = pLight->getAttenuationRange();
-				float maxDist = range + renderable->getBoundingSphere().Radius;
+				float maxDist = range + model->getBoundingSphere().Radius;
 				//if (distance <= (maxDist * maxDist))//Katoun TEMP REM for testing!!!
 				{
 					DistanceLight newLight;
@@ -1229,226 +1031,150 @@ void RenderManager::findLightsAffectingRenderables(Renderable* renderable)
 	std::sort(mDistanceLights.begin(), mDistanceLights.end());
 }
 
-void RenderManager::findVisibleRenderables(Camera* camera)
+void RenderManager::findVisibleModels(Camera* camera)
 {
 	if (camera == NULL)
 		return;
 
-	mSolidRenderables.clear();
-	mTransparentRenderables.clear();
+	mSolidModels.clear();
+	mTransparentModels.clear();
 
 	mFrustum = camera->getFrustum();
 
-	// Go through all the renderables
-	std::map<unsigned int, Renderable*>::const_iterator mi;
-	for (mi = mRenderables.begin(); mi != mRenderables.end(); ++mi)
+	// Go through all the models
+	std::map<unsigned int, Model*>::const_iterator i;
+	for (i = mModels.begin(); i != mModels.end(); ++i)
 	{
-		if (mFrustum->isVisible(mi->second->getBoundingSphere()) && mFrustum->isVisible(mi->second->getBoundingBox()))
+		Model* pModel = i->second;
+		if (pModel != NULL)
 		{
-			Material* material = mi->second->getMaterial();
-
-			if (material != NULL)
+			if (mFrustum->isVisible(pModel->getBoundingSphere()) && mFrustum->isVisible(pModel->getBoundingBox()))
 			{
-				if (material->isTransparent())
+				Material* pMaterial = pModel->getMaterial();
+
+				if (pMaterial != NULL)
 				{
-					TransparentRenderable newRenderable;
-					newRenderable.renderable = mi->second;
-					newRenderable.distance = 0.0f;
-
-					game::Transform* pTransform = NULL;
-					if (camera->getGameObject() != NULL)
+					if (pMaterial->isTransparent())
 					{
-						pTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-						if (pTransform != NULL)
-						{
-							// Calculate squared distance
-							newRenderable.distance = (mi->second->getAbsolutePosition() - pTransform->getAbsolutePosition()).getLengthSQ();
-						}
-					}
+						TransparentModel newTransparentModel;
+						newTransparentModel.model = pModel;
+						newTransparentModel.distance = 0.0f;
 
-					mTransparentRenderables.push_back(newRenderable);
+						game::Transform* pCameraTransform = NULL;
+						game::Transform* pModelTransform = NULL;
+						if (camera->getGameObject() != NULL && pModel->getGameObject() != NULL)
+						{
+							pCameraTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+							pModelTransform = static_cast<game::Transform*>(pModel->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+							if (pCameraTransform != NULL && pModelTransform != NULL)
+							{
+								// Calculate squared distance
+								newTransparentModel.distance = (pModelTransform->getAbsolutePosition() - pCameraTransform->getAbsolutePosition()).getLengthSQ();
+							}
+						}
+
+						mTransparentModels.push_back(newTransparentModel);
+					}
+					else
+					{
+						SolidModel newSolidModel;
+						newSolidModel.model = pModel;
+						newSolidModel.materialID = mDefaultMaterial->getID();
+						mSolidModels.push_back(newSolidModel);
+					}
 				}
 				else
 				{
-					SolidRenderable newRenderable;
-					newRenderable.renderable = mi->second;
-					newRenderable.materialID = material->getID();
-					mSolidRenderables.push_back(newRenderable);
+					SolidModel newSolidModel;
+					newSolidModel.model = pModel;
+					newSolidModel.materialID = mDefaultMaterial->getID();
+					mSolidModels.push_back(newSolidModel);
 				}
-			}
-			else
-			{
-					SolidRenderable newRenderable;
-					newRenderable.renderable = mi->second;
-					newRenderable.materialID = mDefaultMaterial->getID();
-					mSolidRenderables.push_back(newRenderable);
 			}
 		}
 	}
 
-	std::sort(mSolidRenderables.begin(), mSolidRenderables.end());
-	std::sort(mTransparentRenderables.begin(), mTransparentRenderables.end());
+	std::sort(mSolidModels.begin(), mSolidModels.end());
+	std::sort(mTransparentModels.begin(), mTransparentModels.end());
 }
 
-void RenderManager::renderVisibleRenderables()
+void RenderManager::renderVisibleModels()
 {
-	// Go through all the solid meshes	
-	for (unsigned int i = 0; i < mSolidRenderables.size(); ++i)
+	// Go through all the solid models	
+	for (unsigned int i = 0; i < mSolidModels.size(); ++i)
 	{
-		renderSingleRenderable(mSolidRenderables[i].renderable);
+		renderSingleModel(mSolidModels[i].model);
 	}
 
-	// Go through all the transparent meshes
-	for (unsigned int i = 0; i < mTransparentRenderables.size(); ++i)
+	// Go through all the transparent models
+	for (unsigned int i = 0; i < mTransparentModels.size(); ++i)
 	{
-		renderSingleRenderable(mTransparentRenderables[i].renderable);
+		renderSingleModel(mTransparentModels[i].model);
 	}
 }
 
-void RenderManager::renderSingleRenderable(Renderable* renderable)
+void RenderManager::renderSingleModel(Model* model)
 {
-	if (renderable == NULL)
+	if (model == NULL)
 		return;
 
-	if (renderable->getVisibleAxis() || renderable->getVisibleBoundingBox() || renderable->getVisibleBoundingSphere())
+	if (model->getGameObject() != NULL)
 	{
-		mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-		mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-		mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-		mRenderDriver->setDepthBufferCheckEnabled(true);
-		mRenderDriver->setDepthBufferWriteEnabled(true);
-		mRenderDriver->disableTextureUnitsFrom(0);
-		mRenderDriver->setLightingEnabled(false);
-		mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-		mRenderDriver->setFog(FM_NONE);
-
-		mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-		if (renderable->getVisibleAxis())
-			mRenderDriver->renderAxes(renderable->getAbsolutePosition(), renderable->getAbsoluteOrientation());
-		if (renderable->getVisibleBoundingBox())
-			mRenderDriver->renderBoundingSphere(renderable->getBoundingSphere());
-		if (renderable->getVisibleBoundingSphere())
-			mRenderDriver->renderBoundingBox(renderable->getBoundingBox());
-
-	}
-
-	findLightsAffectingRenderables(renderable);
-
-	// Create local light list for faster light iteration setup
-	static std::vector<Light*> localLightList;
-
-	for (unsigned int i = 0; i < mDistanceLights.size(); ++i)
-	{
-		localLightList.push_back(mDistanceLights[i].light);
-	}
-
-	mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-	mRenderDriver->setLights(localLightList);
-			
-	mRenderDriver->setWorldMatrix(renderable->getWorldMatrix());
-
-	mShaderParamData.setCurrentRenderable(renderable);
-	if (mDistanceLights.size() != 0) mShaderParamData.setCurrentLight(mDistanceLights[0].light);
-
-	localLightList.clear();
-
-	if (renderable->getMaterial() != NULL)
-		setMaterial(renderable->getMaterial());
-	else
-		setMaterial(mDefaultMaterial);
-
-	addGeometruCount(renderable);
-	mRenderDriver->render(renderable);
-}
-
-void RenderManager::renderVisibleOverlays(Camera* camera, Viewport* viewport)
-{
-	if (camera == NULL)
-		return;
-
-	if (viewport == NULL)
-		return;
-	
-	if (viewport->getShowOverlays())
-	{
-		//Go through the overlays of this viewport
-		std::map<unsigned int, Overlay*>::const_iterator it;
-		for (it = mOverlays.begin(); it != mOverlays.end(); ++it)
+		game::Transform* pTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
 		{
-			if (!it->second->isVisible())
-				continue;
-			
-			core::matrix4 proj, world;
-			switch(it->second->getMetricsMode())
-			{	
-				case MM_PIXELS :
-					proj.buildProjectionMatrixOrtho(viewport->getActualWidth() * 2.0f, viewport->getActualHeight() * 2.0f, -1.0f, 1.0f);
-					break;
-				case MM_RELATIVE_ASPECT_ADJUSTED :
-				case MM_RELATIVE :
-					proj.buildProjectionMatrixOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-					break;
+			if (pTransform->getVisibleAxis() || model->getVisibleBoundingBox() || model->getVisibleBoundingSphere())
+			{
+				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
+				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
+				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
+
+				mRenderDriver->setDepthBufferCheckEnabled(true);
+				mRenderDriver->setDepthBufferWriteEnabled(true);
+				mRenderDriver->disableTextureUnitsFrom(0);
+				mRenderDriver->setLightingEnabled(false);
+				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
+				mRenderDriver->setFog(FM_NONE);
+
+				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
+
+				if (pTransform->getVisibleAxis())
+					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
+				if (model->getVisibleBoundingBox())
+					mRenderDriver->renderBoundingSphere(model->getBoundingSphere());
+				if (model->getVisibleBoundingSphere())
+					mRenderDriver->renderBoundingBox(model->getBoundingBox());
 			}
-			world = it->second->getWorldMatrix();
-			world.setTranslation(world.getTranslation() + core::vector3d(0, 0, camera->getNearClipDistance() - 1));
 
-			mRenderDriver->setProjectionMatrix(proj);
-			mRenderDriver->setWorldMatrix(world);
+			findLightsAffectingModel(model);
 
-			if (it->second->getMaterial() != NULL)
-				setMaterial(it->second->getMaterial());
+			// Create local light list for faster light iteration setup
+			static std::vector<Light*> localLightList;
+
+			for (unsigned int i = 0; i < mDistanceLights.size(); ++i)
+			{
+				localLightList.push_back(mDistanceLights[i].light);
+			}
+
+			mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
+			mRenderDriver->setLights(localLightList);
+			
+			mRenderDriver->setWorldMatrix(model->getWorldMatrix());
+
+			mShaderParamData.setCurrentModel(model);
+			if (mDistanceLights.size() != 0) mShaderParamData.setCurrentLight(mDistanceLights[0].light);
+
+			localLightList.clear();
+
+			if (model->getMaterial() != NULL)
+				setMaterial(model->getMaterial());
 			else
 				setMaterial(mDefaultMaterial);
 
-			mRenderDriver->setLightingEnabled(false);
-			mRenderDriver->setFog(FM_NONE);
-
-			addGeometruCount(it->second);
-			mRenderDriver->render(it->second);
+			addGeometruCount(model);
+			mRenderDriver->renderModel(model);
 		}
 	}
-}
-
-void RenderManager::renderSingleOverlay(Overlay* overlay, Camera* camera, Viewport* viewport)
-{
-	if (overlay == NULL)
-		return;
-	
-	if (camera == NULL)
-		return;
-
-	if (viewport == NULL)
-		return;
-	
-	core::matrix4 proj, world;
-	switch(overlay->getMetricsMode())
-	{	
-	case MM_PIXELS :
-		proj.buildProjectionMatrixOrtho(viewport->getActualWidth() * 2.0f, viewport->getActualHeight() * 2.0f, -1.0f, 1.0f);
-		break;
-	case MM_RELATIVE_ASPECT_ADJUSTED :
-	case MM_RELATIVE :
-		proj.buildProjectionMatrixOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-		break;
-	}
-	world = overlay->getWorldMatrix();
-	world.setTranslation(world.getTranslation() + core::vector3d(0, 0, camera->getNearClipDistance() - 1));
-
-	mRenderDriver->setProjectionMatrix(proj);
-	mRenderDriver->setWorldMatrix(world);
-
-	if (overlay->getMaterial() != NULL)
-		setMaterial(overlay->getMaterial());
-	else
-		setMaterial(mDefaultMaterial);
-
-	mRenderDriver->setLightingEnabled(false);
-	mRenderDriver->setFog(FM_NONE);
-
-	addGeometruCount(overlay);
-	mRenderDriver->render(overlay);
 }
 
 void RenderManager::setMaterial(Material* material)

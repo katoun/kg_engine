@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _ENGINE_RESOURCE_H_
 
 #include <resource/Resource.h>
+#include <resource/ResourceDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceEventReceiver.h>
 #include <resource/Buffer.h>

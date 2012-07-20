@@ -30,15 +30,19 @@ THE SOFTWARE.
 #include <input/Cursor.h>
 #include <input/InputEvent.h>
 #include <input/InputDevice.h>
+#include <input/InputDeviceDefines.h>
+#include <input/Mouse.h>
+#include <input/MouseDefines.h>
 #include <input/MouseEvent.h>
 #include <input/MouseEventReceiver.h>
-#include <input/Mouse.h>
+#include <input/Keyboard.h>
+#include <input/KeyboardDefines.h>
 #include <input/KeyEvent.h>
 #include <input/KeyEventReceiver.h>
-#include <input/Keyboard.h>
+#include <input/Joystick.h>
+#include <input/JoystickDefines.h>
 #include <input/JoystickEvent.h>
 #include <input/JoystickEventReceiver.h>
-#include <input/Joystick.h>
 #include <input/InputDriver.h>
 #include <input/InputManager.h>
 

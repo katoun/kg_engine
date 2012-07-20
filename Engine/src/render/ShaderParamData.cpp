@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <render/ShaderParamData.h>
 #include <render/Light.h>
 #include <render/Camera.h>
-#include <render/Renderable.h>
+#include <render/Model.h>
 #include <game/GameObject.h>
 #include <game/ComponentDefines.h>
 #include <game/Transform.h>
@@ -79,7 +79,7 @@ ShaderParamData::ShaderParamData()
 	mCameraPositionDirty = true;
 	mCameraPositionObjectSpaceDirty = true;
 
-	mCurrentRenderable = NULL;
+	mCurrentModel = NULL;
 	mCurrentCamera = NULL;
 	mCurrentLight = NULL;
 	mCurrentViewport = NULL;
@@ -93,9 +93,9 @@ void ShaderParamData::setWorldMatrices(const core::matrix4& m)
 	mWorldMatrixDirty = true;
 }
 
-void ShaderParamData::setCurrentRenderable(Renderable* rend)
+void ShaderParamData::setCurrentModel(Model* model)
 {
-	mCurrentRenderable = rend;
+	mCurrentModel = model;
 	
 	mWorldMatrixDirty = true;
 	mViewMatrixDirty = true;
@@ -305,7 +305,10 @@ const core::matrix4& ShaderParamData::getWorldMatrix()
 {
 	if (mWorldMatrixDirty)
 	{
-		if (mCurrentRenderable)	mWorldMatrix = mCurrentRenderable->getWorldMatrix();
+		if (mCurrentModel != NULL)
+		{
+			mWorldMatrix = mCurrentModel->getWorldMatrix();
+		}
 		mWorldMatrixDirty = false;
 	}
 
@@ -316,7 +319,10 @@ const core::matrix4& ShaderParamData::getViewMatrix()
 {
 	 if (mViewMatrixDirty)
 	 {
-		if (mCurrentCamera) mViewMatrix = mCurrentCamera->getViewMatrix();
+		if (mCurrentCamera != NULL)
+		{
+			mViewMatrix = mCurrentCamera->getViewMatrix();
+		}
 		mViewMatrixDirty = false;
 	 }
 
@@ -327,7 +333,10 @@ const core::matrix4& ShaderParamData::getProjectionMatrix()
 {
 	if (mProjMatrixDirty)
 	{
-		if (mCurrentCamera) mProjectionMatrix = mCurrentCamera->getProjectionMatrixRS();
+		if (mCurrentCamera != NULL)
+		{
+			mProjectionMatrix = mCurrentCamera->getProjectionMatrixRS();
+		}
 		mProjMatrixDirty = false;
 	}
 	

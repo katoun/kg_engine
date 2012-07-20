@@ -24,10 +24,14 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _ENGINE_SCENE_H_
-#define _ENGINE_SCENE_H_
+#include <physics/BodyFactory.h>
 
-#include <scene/Node.h>
-#include <scene/SceneManager.h>
+namespace physics
+{
 
-#endif // _GAMESCENE_H_
+BodyFactory::BodyFactory(): game::ComponentFactory()
+{
+	mName = "Body";
+}
+
+} // end namespace physics

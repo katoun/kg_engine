@@ -26,6 +26,10 @@ THE SOFTWARE.
 
 #include <physics/BodyData.h>
 #include <physics/Material.h>
+#include <game/GameObject.h>
+#include <game/Transform.h>
+#include <game/ComponentDefines.h>
+#include <game/MessageDefines.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 #include <platform/PlatformManager.h>
@@ -38,16 +42,12 @@ THE SOFTWARE.
 namespace physics
 {
 
-BulletBody::BulletBody(BodyData* bodyRes): Body(bodyRes)
+BulletBody::BulletBody(): Body()
 {
 	mRigidBody = NULL;
 	mMotionState = NULL;
-}
 
-BulletBody::BulletBody(const std::string& name, BodyData* bodyRes): Body(name, bodyRes)
-{
-	mRigidBody = NULL;
-	mMotionState = NULL;
+	mBodyNeedsUpdate = true;
 }
 
 BulletBody::~BulletBody() {}
@@ -197,8 +197,19 @@ void BulletBody::initializeImpl()
 
 	btTransform trans;
 	trans.setIdentity();
-	trans.setOrigin(btVector3(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsolutePosition.Z));
-	trans.setRotation(btQuaternion(mAbsoluteOrientation.X, mAbsoluteOrientation.Y, mAbsoluteOrientation.Z, mAbsoluteOrientation.W));
+	
+	if (mGameObject != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			core::vector3d position = pTransform->getAbsolutePosition();
+			core::quaternion orientation = pTransform->getAbsoluteOrientation();
+
+			trans.setOrigin(btVector3(position.X, position.Y, position.Z));
+			trans.setRotation(btQuaternion(orientation.X, orientation.Y, orientation.Z, orientation.W));
+		}
+	}
 
 	mMotionState = new btDefaultMotionState(trans);
 
@@ -311,43 +322,60 @@ void BulletBody::uninitializeImpl()
 	}
 }
 
-void BulletBody::updateTransformImpl()
+void BulletBody::updateImpl(float elapsedTime)
 {
-	if (mRigidBody != NULL)
+	if (mRigidBody == NULL)
+		return;
+
+	/*if (mBodyNeedsUpdate)//TODO: who has priority?!!!
 	{
-		if (mModifiedAbsoluteTransform)
+		btTransform trans;
+		trans.setIdentity();
+		
+		if (mGameObject != NULL)
 		{
-			Body::updateTransformImpl();
+			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			if (pTransform != NULL)
+			{
+				core::vector3d position = pTransform->getAbsolutePosition();
+				core::quaternion orientation = pTransform->getAbsoluteOrientation();
 
-			btTransform trans;
-			trans.setIdentity();
-			trans.setOrigin(btVector3(mAbsolutePosition.X, mAbsolutePosition.Y, mAbsolutePosition.Z));
-			trans.setRotation(btQuaternion(mAbsoluteOrientation.X, mAbsoluteOrientation.Y, mAbsoluteOrientation.Z, mAbsoluteOrientation.W));
-	
-			mRigidBody->setWorldTransform(trans);
+				trans.setOrigin(btVector3(position.X, position.Y, position.Z));
+				trans.setRotation(btQuaternion(orientation.X, orientation.Y, orientation.Z, orientation.W));
+			}
 		}
-		else if (mRigidBody->isActive())
+	
+		mRigidBody->setWorldTransform(trans);
+
+		mBodyNeedsUpdate = false;
+	}
+	else */if (mRigidBody->isActive())
+	{
+		btTransform trans;
+		mRigidBody->getMotionState()->getWorldTransform(trans);
+
+		btVector3 globalPos = trans.getOrigin();
+		btQuaternion globalOrient = trans.getRotation();
+
+		if (mGameObject != NULL)
 		{
-			btTransform trans;
-			mRigidBody->getMotionState()->getWorldTransform(trans);
+			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			if (pTransform != NULL)
+			{
+				pTransform->setPosition(globalPos.getX(), globalPos.getY(), globalPos.getZ());
 
-			btVector3 globalPos = trans.getOrigin();
-			btQuaternion globalOrient = trans.getRotation();
-
-			mPosition.X = globalPos.getX();
-			mPosition.Y = globalPos.getY();
-			mPosition.Z = globalPos.getZ();
-
-			mOrientation.X = globalOrient.getX();
-			mOrientation.Y = globalOrient.getY();
-			mOrientation.Z = globalOrient.getZ();
-			mOrientation.W = globalOrient.getW();
-
-			mModifiedAbsoluteTransform = true;
-
-			Body::updateTransformImpl();
+				pTransform->setOrientation(globalOrient.getX(), globalOrient.getY(), globalOrient.getZ(), globalOrient.getY());
+			}
 		}
 	}
+}
+
+void BulletBody::onMessageImpl(unsigned int messageID)
+{
+	/*if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
+	{
+		mBodyNeedsUpdate = true;
+	}*/
 }
 
 btCollisionShape* BulletBody::addBulletShape(Shape* shape)

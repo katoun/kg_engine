@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <core/Aabox3d.h>
 #include <core/Sphere3d.h>
 #include <render/Color.h>
-#include <render/Renderable.h>
+#include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
 
 #include <string>
@@ -45,18 +45,19 @@ struct ResourceEvent;
 namespace render
 {
 
+class VertexData;
+class IndexData;
 class Material;
 class MeshData;
 class MeshProperties;
+enum RenderOperationType;
 
 //! Representation of a model in the render world.
-class ENGINE_PUBLIC_EXPORT Model: public Renderable, public resource::ResourceEventReceiver
+class ENGINE_PUBLIC_EXPORT Model: public game::Component, public resource::ResourceEventReceiver
 {
 public:
 
-	Model(MeshData* meshData);
-	Model(const std::string& name, MeshData* meshData);
-
+	Model();
 	~Model();
 
 	//! Sets the mesh data this mesh will use.
@@ -72,21 +73,58 @@ public:
 	//! Gets the material which this mesh uses.
 	Material* getMaterial() const;
 
+	bool getVisibleBoundingBox();
+	void setVisibleBoundingBox(bool visible);
+
+	bool getVisibleBoundingSphere();
+	void setVisibleBoundingSphere(bool visible);
+
+	const core::matrix4& getWorldMatrix();
+
+	const core::aabox3d& getBoundingBox();
+
+	const core::sphere3d& getBoundingSphere();
+
+	const RenderOperationType& getRenderOperationType();
+
+	VertexData* getVertexData();
+
+	IndexData* getIndexData();
+
 	void resourceLoaded(const resource::ResourceEvent& evt);
 	void resourceUnloaded(const resource::ResourceEvent& evt);
 
 protected:
 
-	// Incremented count for next Index
-	static unsigned int msNextGeneratedModelIndex;
+	void updateImpl(float elapsedTime);
+	void onMessageImpl(unsigned int messageID);
 
 	MeshData* mMeshData;
 
 	Material* mMaterial;
 
-	void updateImpl(float elapsedTime);
+	bool mVisibleBoundingBox;
+	bool mVisibleBoundingSphere;
 
-	bool mModifiedWorldTransform;
+	// world matrix
+	core::matrix4 mWorldMatrix;
+
+	//! Bounding box that 'contains' this object.
+	core::aabox3d mBoundingBox;
+
+	//! Bounding sphere that 'contains' this object.
+	core::sphere3d mBoundingSphere;
+
+	//! The type of rendering operation.
+	RenderOperationType mRenderOperationType;
+
+	//! Vertex source data.
+	VertexData* mVertexData;
+
+	//! Index data - only valid if useIndexes is true.
+	IndexData* mIndexData;
+
+	bool mModelNeedsUpdate;
 
 	void updateWorldTransform();
 };

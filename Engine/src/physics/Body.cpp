@@ -29,6 +29,9 @@ THE SOFTWARE.
 #include <physics/Material.h>
 #include <physics/Joint.h>
 #include <physics/PhysicsManager.h>
+#include <game/GameObject.h>
+#include <game/Transform.h>
+#include <game/ComponentDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 #include <core/Utils.h>
@@ -36,13 +39,13 @@ THE SOFTWARE.
 namespace physics
 {
 
-unsigned int Body::msNextGeneratedActorIndex = 0;
-
-Body::Body(BodyData* bodyData): scene::Node("Body_" + core::intToString(msNextGeneratedActorIndex++))
+Body::Body(): game::Component()
 {
-	mNodeType = scene::NT_BODY;
+	mType = game::COMPONENT_TYPE_BODY;
 
 	mBodyType = BT_STATIC;
+
+	mBodyData = NULL;
 
 	mSleeping = false;
 
@@ -68,52 +71,6 @@ Body::Body(BodyData* bodyData): scene::Node("Body_" + core::intToString(msNextGe
 	mAngularImpulse = core::vector3d::ORIGIN_3D;
 
 	mJoint = NULL;
-
-	assert(bodyData != NULL);
-	if (bodyData == NULL)
-		return;
-
-	mBodyData = bodyData;
-	mBodyData->addResourceEventReceiver(this);
-}
-
-Body::Body(const std::string& name, BodyData* bodyData): scene::Node(name)
-{
-	mNodeType = scene::NT_BODY;
-
-	mBodyType = BT_STATIC;
-
-	mSleeping = false;
-
-	mSleepiness = 0.0f;
-
-	mMass = 0.0f;
-
-	mLinearDamping = 0.0f;
-
-	mAngularDamping = 0.0f;
-
-	mLinearVelocity = core::vector3d::ORIGIN_3D;
-
-	mAngularVelocity = core::vector3d::ORIGIN_3D;
-
-	mMaterial = NULL;
-
-	mEnabled = false;
-
-	mForce = core::vector3d::ORIGIN_3D;
-	mTorque = core::vector3d::ORIGIN_3D;
-	mLinearImpulse = core::vector3d::ORIGIN_3D;
-	mAngularImpulse = core::vector3d::ORIGIN_3D;
-
-	mJoint = NULL;
-
-	assert(bodyData != NULL);
-	if (bodyData == NULL)
-		return;
-
-	mBodyData = bodyData;
-	mBodyData->addResourceEventReceiver(this);
 }
 
 Body::~Body()
@@ -144,12 +101,14 @@ void Body::setBodyData(const std::string& filename)
 	if (mBodyData != NULL)
 	{
 		mBodyData->removeResourceEventReceiver(this);
-	}
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mBodyData = newBodyData;
 	mBodyData->addResourceEventReceiver(this);
+
+	setBodyDataImpl(mBodyData);
 }
 
 void Body::setBodyData(BodyData* bodyData)
@@ -161,12 +120,14 @@ void Body::setBodyData(BodyData* bodyData)
 	if (mBodyData != NULL)
 	{
 		mBodyData->removeResourceEventReceiver(this);
-	}
 
-	uninitialize();
+		uninitialize();
+	}
 
 	mBodyData = bodyData;
 	mBodyData->addResourceEventReceiver(this);
+
+	setBodyDataImpl(mBodyData);
 }
 
 BodyData* Body::getBodyData() const
@@ -289,22 +250,43 @@ const core::vector3d Body::getAngularVelocity()
 
 void Body::applyForce(const core::vector3d& force)
 {
-	mForce = mOrientation * force;
+	if (mGameObject != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			mForce = pTransform->getOrientation() * force;
+		}
+	}
 }
 
 void Body::applyTorque(const core::vector3d& torque)
 {
-	mTorque = mOrientation * torque;
+	
 }
 
 void Body::applyLinearImpulse(const core::vector3d& linearImpulse)
 {
-	mLinearImpulse = mOrientation * linearImpulse;
+	if (mGameObject != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			mLinearImpulse = pTransform->getOrientation() * linearImpulse;
+		}
+	}
 }
 
 void Body::applyAngularImpulse(const core::vector3d& angularImpulse)
 {
-	mAngularImpulse = mOrientation * angularImpulse;
+	if (mGameObject != NULL)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != NULL)
+		{
+			mAngularImpulse = pTransform->getOrientation() * angularImpulse;
+		}
+	}
 }
 
 void Body::setJoint(Joint* joint)
@@ -390,9 +372,7 @@ void Body::resourceUnloaded(const resource::ResourceEvent& evt)
 	}
 }
 
-void Body::updateTransformImpl()
-{
-	Node::updateTransformImpl();
-}
+void Body::setBodyDataImpl(BodyData* bodyData) {}
+
 
 } // end namespace physics

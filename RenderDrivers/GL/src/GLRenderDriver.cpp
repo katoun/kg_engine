@@ -29,10 +29,12 @@ THE SOFTWARE.
 #include <core/Sphere3d.h>
 #include <core/Aabox3d.h>
 #include <core/LogDefines.h>
+#include <render/RenderDefines.h>
 #include <render/Light.h>
+#include <render/Model.h>
 #include <render/Viewport.h>
 #include <render/Shader.h>
-#include <render/Renderable.h>
+#include <render/VertexIndexData.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 #include <game/GameObject.h>
@@ -126,23 +128,23 @@ void GLRenderDriver::beginFrame(Viewport* vp)
 	}
 }
 
-void GLRenderDriver::render(Renderable* renderable)
+void GLRenderDriver::renderModel(Model* model)
 {
-	if (renderable == NULL)
+	if (model == NULL)
 		return;
 
-	if (renderable->getVertexData() == NULL || renderable->getIndexData() == NULL)
+	if (model->getVertexData() == NULL || model->getIndexData() == NULL)
 		return;
 	
 	void* pBufferData = NULL;
 
-	const std::list<VertexElement*>& elems = renderable->getVertexData()->vertexDeclaration->getElements();
+	const std::list<VertexElement*>& elems = model->getVertexData()->vertexDeclaration->getElements();
 	std::list<VertexElement*>::const_iterator i;
 	for (i = elems.begin(); i != elems.end(); ++i)
 	{
 		VertexElement* elem = (*i);
 
-		VertexBuffer* vertexBuffer = renderable->getVertexData()->vertexBufferBinding->getBuffer(elem->getSource());
+		VertexBuffer* vertexBuffer = model->getVertexData()->vertexBufferBinding->getBuffer(elem->getSource());
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
 		pBufferData = VBO_BUFFER_OFFSET(elem->getOffset());
@@ -203,7 +205,7 @@ void GLRenderDriver::render(Renderable* renderable)
 
 	// Find the correct type to render
 	GLint primType = GL_TRIANGLES;
-	switch (renderable->getRenderOperationType())
+	switch (model->getRenderOperationType())
 	{
 	case render::ROT_POINT_LIST:
 		primType = GL_POINTS;
@@ -225,12 +227,12 @@ void GLRenderDriver::render(Renderable* renderable)
 		break;
 	}
 
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ((GLIndexBuffer*)(renderable->getIndexData()->indexBuffer))->getGLBufferId());
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
 	pBufferData = VBO_BUFFER_OFFSET(0);
 	
-	GLenum indexType = (renderable->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+	GLenum indexType = (model->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	
-	glDrawElements(primType, renderable->getIndexData()->indexCount, indexType, pBufferData);
+	glDrawElements(primType, model->getIndexData()->indexCount, indexType, pBufferData);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	for (unsigned int j = 0; j < ENGINE_MAX_TEXTURE_COORD_SETS; ++j)

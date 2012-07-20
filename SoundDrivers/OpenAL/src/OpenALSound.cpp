@@ -241,7 +241,7 @@ void OpenALSound::updateImpl(float elapsedTime)
 		if (mGameObject != NULL)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL && pTransform->isAbsoluteTransformModified())
+			if (pTransform != NULL)
 			{
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;

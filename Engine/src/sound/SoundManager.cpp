@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include <sound/ListenerFactory.h>
 #include <sound/SoundFactory.h>
 #include <sound/SoundDriver.h>
-#include <scene/SceneManager.h>
 #include <game/GameObject.h>
 #include <game/ComponentDefines.h>
 #include <game/ComponentFactory.h>
@@ -83,16 +82,10 @@ void SoundManager::removeSound(const unsigned int& id)
 	std::map<unsigned int, Sound*>::iterator i = mSounds.find(id);
 	if (i != mSounds.end())
 		mSounds.erase(i);
-
-	scene::SceneManager::getInstance().removeNode(id);
 }
 
 void SoundManager::removeAllSounds()
 {
-	std::map<unsigned int, Sound*>::const_iterator i;
-	for (i = mSounds.begin(); i != mSounds.end(); ++i)
-		scene::SceneManager::getInstance().removeNode(i->second->getID());
-
 	mSounds.clear();
 }
 

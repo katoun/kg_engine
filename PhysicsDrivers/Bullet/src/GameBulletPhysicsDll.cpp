@@ -49,9 +49,10 @@ extern "C" void BULLET_PUBLIC_EXPORT loadPlugin() throw()
 	bulletShapeFactory = new BulletShapeFactory();
 	bulletJointFactory = new BulletJointFactory();
 	PhysicsManager::getInstance().setSystemDriver(bulletPhysicsDriver);
-	PhysicsManager::getInstance().setBodyFactory(bulletBodyFactory);
-	PhysicsManager::getInstance().setShapeFactory(bulletShapeFactory);
+	PhysicsManager::getInstance().setDefaultBodyFactory(bulletBodyFactory);
 	PhysicsManager::getInstance().setJointFactory(bulletJointFactory);
+
+	PhysicsManager::getInstance().setShapeFactory(bulletShapeFactory);
 
 	bulletMaterialFactory = new BulletMaterialFactory();
 	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL, bulletMaterialFactory);
@@ -61,20 +62,28 @@ extern "C" void BULLET_PUBLIC_EXPORT loadPlugin() throw()
 extern "C" void BULLET_PUBLIC_EXPORT unloadPlugin()
 {
 	PhysicsManager::getInstance().removeSystemDriver();
-	PhysicsManager::getInstance().removeBodyFactory();
-	PhysicsManager::getInstance().removeShapeFactory();
+	PhysicsManager::getInstance().removeDefaultBodyFactory();
 	PhysicsManager::getInstance().removeJointFactory();
+	PhysicsManager::getInstance().removeShapeFactory();
 
 	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL);
 
 	if (bulletBodyFactory != NULL)
+	{
 		delete bulletBodyFactory;
+	}
 	if (bulletShapeFactory != NULL)
+	{
 		delete bulletShapeFactory;
+	}
 	if (bulletJointFactory != NULL)
+	{
 		delete bulletJointFactory;
+	}
 	if (bulletMaterialFactory != NULL)
+	{
 		delete bulletMaterialFactory;
+	}
 }
 
 } // end namespace game

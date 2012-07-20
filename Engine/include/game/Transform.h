@@ -62,6 +62,7 @@ public:
 	const core::quaternion& getOrientation();
 
 	//!Sets the orientation.
+	virtual void setOrientation(float x, float y, float z, float w);
 	virtual void setOrientation(const core::quaternion& q);
 
 	//!Gets the scaling factor.
@@ -70,8 +71,6 @@ public:
 	//!Sets the scaling factor.
 	void setScale(float x, float y, float z);
 	void setScale(const core::vector3d& scale);
-
-	bool isAbsoluteTransformModified();
 
 	//! Returns true if is affected by orientation applied to the parent.
 	bool getInheritOrientation();

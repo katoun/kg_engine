@@ -27,6 +27,7 @@ THE SOFTWARE.
 #ifndef _ENGINE_PLATFORM_H_
 #define _ENGINE_PLATFORM_H_
 
+#include <platform/PlatformDefines.h>
 #include <platform/PlatformDriver.h>
 #include <platform/PlatformManager.h>
 

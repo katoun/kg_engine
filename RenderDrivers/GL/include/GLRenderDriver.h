@@ -64,7 +64,7 @@ public:
 
 	void beginFrame(Viewport* vp);
 
-	void render(Renderable* renderable);
+	void renderModel(Model* model);
 
 	void renderGridPlane(unsigned int zfar);
 

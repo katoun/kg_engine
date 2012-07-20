@@ -24,38 +24,20 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _PANEL_OVERLAY_H_
-#define _PANEL_OVERLAY_H_
-
-#include <core/Config.h>
-#include <render/Overlay.h>
-
-#include <string>
+#ifndef _RENDER_DEFINES_H_
+#define _RENDER_DEFINES_H_
 
 namespace render
 {
 
-//! Represents a panel overlay which is rendered on top of the 'normal' scene contents.
-class ENGINE_PUBLIC_EXPORT PanelOverlay: public Overlay
+enum RenderOperationType 
 {
-public:
-
-	PanelOverlay();
-	PanelOverlay(const std::string& name);
-
-	~PanelOverlay();
-
-	//! Sets the the Material which this overlay will use.
-	void setMaterial(const std::string& filename);
-	void setMaterial(Material* material);
-
-protected:
-
-	void initializeImpl();
-
-	void updatePositionBinding();
-
-	void updateTextureBinding();
+	ROT_POINT_LIST,
+	ROT_LINE_LIST,
+	ROT_LINE_STRIP,
+	ROT_TRIANGLE_LIST,
+	ROT_TRIANGLE_STRIP,
+	ROT_TRIANGLE_FAN
 };
 
 } //namespace render

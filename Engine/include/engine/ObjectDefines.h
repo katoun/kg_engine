@@ -33,8 +33,6 @@ namespace engine
 enum ObjectType
 {
 	OT_UNDEFINED,
-	OT_NODE,
-	OT_BODY,
 	OT_JOINT,
 	OT_COUNT
 };

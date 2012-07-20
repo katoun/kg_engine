@@ -198,10 +198,8 @@
     <ClInclude Include="include\render\MeshData.h" />
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
-    <ClInclude Include="include\render\Overlay.h" />
-    <ClInclude Include="include\render\PanelOverlay.h" />
-    <ClInclude Include="include\render\Renderable.h" />
-    <ClInclude Include="include\render\RenderableDefines.h" />
+    <ClInclude Include="include\render\ModelFactory.h" />
+    <ClInclude Include="include\render\RenderDefines.h" />
     <ClInclude Include="include\render\RenderManager.h" />
     <ClInclude Include="include\render\RenderDriver.h" />
     <ClInclude Include="include\render\RenderTarget.h" />
@@ -211,7 +209,6 @@
     <ClInclude Include="include\render\Shader.h" />
     <ClInclude Include="include\render\ShaderDefines.h" />
     <ClInclude Include="include\render\ShaderParamData.h" />
-    <ClInclude Include="include\render\TextOverlay.h" />
     <ClInclude Include="include\render\Texture.h" />
     <ClInclude Include="include\render\TextureDefines.h" />
     <ClInclude Include="include\render\TextureUnit.h" />
@@ -221,9 +218,6 @@
     <ClInclude Include="include\resource\ResourceEvent.h" />
     <ClInclude Include="include\resource\ResourceEventReceiver.h" />
     <ClInclude Include="include\resource\ResourceFactory.h" />
-    <ClInclude Include="include\scene\Node.h" />
-    <ClInclude Include="include\scene\NodeDefines.h" />
-    <ClInclude Include="include\scene\SceneManager.h" />
     <ClInclude Include="include\platform\PlatformManager.h" />
     <ClInclude Include="include\platform\PlatformDriver.h" />
     <ClInclude Include="include\input\Cursor.h" />
@@ -272,7 +266,6 @@
     <ClInclude Include="include\Platform.h" />
     <ClInclude Include="include\Render.h" />
     <ClInclude Include="include\Resource.h" />
-    <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Sound.h" />
   </ItemGroup>
   <ItemGroup>
@@ -306,6 +299,7 @@
     <ClCompile Include="src\game\Transform.cpp" />
     <ClCompile Include="src\game\TransformFactory.cpp" />
     <ClCompile Include="src\physics\BodyDataFactory.cpp" />
+    <ClCompile Include="src\physics\BodyFactory.cpp" />
     <ClCompile Include="src\physics\CollisionEvent.cpp" />
     <ClCompile Include="src\physics\CollisionPoint.cpp" />
     <ClCompile Include="src\render\BlendMode.cpp" />
@@ -324,9 +318,7 @@
     <ClCompile Include="src\render\MeshData.cpp" />
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />
-    <ClCompile Include="src\render\Overlay.cpp" />
-    <ClCompile Include="src\render\PanelOverlay.cpp" />
-    <ClCompile Include="src\render\Renderable.cpp" />
+    <ClCompile Include="src\render\ModelFactory.cpp" />
     <ClCompile Include="src\render\RenderManager.cpp" />
     <ClCompile Include="src\render\RenderDriver.cpp" />
     <ClCompile Include="src\render\RenderTarget.cpp" />
@@ -335,7 +327,6 @@
     <ClCompile Include="src\render\RenderWindow.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\ShaderParamData.cpp" />
-    <ClCompile Include="src\render\TextOverlay.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\render\TextureUnit.cpp" />
     <ClCompile Include="src\render\VertexBuffer.cpp" />
@@ -344,8 +335,6 @@
     <ClCompile Include="src\resource\LoadEvent.cpp" />
     <ClCompile Include="src\resource\ResourceEvent.cpp" />
     <ClCompile Include="src\resource\ResourceEventReceiver.cpp" />
-    <ClCompile Include="src\scene\Node.cpp" />
-    <ClCompile Include="src\scene\SceneManager.cpp" />
     <ClCompile Include="src\platform\PlatformManager.cpp" />
     <ClCompile Include="src\platform\PlatformDriver.cpp" />
     <ClCompile Include="src\input\Cursor.cpp" />
