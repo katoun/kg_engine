@@ -74,8 +74,8 @@ public:
 
 	Component* getComponent(unsigned int type);
 
-	void sendMessage(unsigned int messageID);
-	void onMessage(unsigned int messageID);
+	void sendMessage(Component* source, unsigned int messageID);
+	void sendMessage(GameObject* source, unsigned int messageID);
 
 	void update(float elapsedTime);
 

@@ -106,7 +106,7 @@ void GameObject::setParent(GameObject* parent)
 	mParent->mChildren[mID] = this;
 
 	//notify components that parent game object has changed!!!
-	sendMessage(MESSAGE_PARENT_CHANGED);
+	sendMessage(this, MESSAGE_PARENT_CHANGED);
 }
 
 std::map<unsigned int, GameObject*>& GameObject::getChildren()
@@ -126,7 +126,7 @@ void GameObject::addChild(GameObject* child)
 	child->mParent = this;
 	
 	//notify child components that parent game object has changed!!!
-	sendMessage(MESSAGE_PARENT_CHANGED);
+	sendMessage(this, MESSAGE_PARENT_CHANGED);
 }
 
 void GameObject::removeChild(GameObject* child)
@@ -207,12 +207,33 @@ Component* GameObject::getComponent(unsigned int type)
 	return NULL;
 }
 
-void GameObject::sendMessage(unsigned int messageID)
+void GameObject::sendMessage(Component* source, unsigned int messageID)
 {
-	onMessage(messageID);
+	//Send to components first
+	std::map<unsigned int, Component*>::iterator i;
+	for (i = mComponents.begin(); i != mComponents.end(); ++i)
+	{
+		Component* pComponent = i->second;
+
+		if (pComponent != NULL && pComponent != source)
+		{
+			pComponent->onMessage(messageID);
+		}
+	}
+
+	//Sent to childer second
+	std::map<unsigned int, GameObject*>::iterator j;
+	for (j = mChildren.begin(); j != mChildren.end(); ++j)
+	{
+		GameObject* pGameObject = j->second;
+		if (pGameObject != NULL)
+		{
+			pGameObject->sendMessage(source, messageID);
+		}
+	}
 }
 
-void GameObject::onMessage(unsigned int messageID)
+void GameObject::sendMessage(GameObject* source, unsigned int messageID)
 {
 	//Send to components first
 	std::map<unsigned int, Component*>::iterator i;
@@ -231,9 +252,9 @@ void GameObject::onMessage(unsigned int messageID)
 	for (j = mChildren.begin(); j != mChildren.end(); ++j)
 	{
 		GameObject* pGameObject = j->second;
-		if (pGameObject != NULL)
+		if (pGameObject != NULL && pGameObject != source)
 		{
-			pGameObject->onMessage(messageID);
+			pGameObject->sendMessage(source, messageID);
 		}
 	}
 }

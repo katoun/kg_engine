@@ -253,7 +253,7 @@ void Transform::updateImpl(float elapsedTime)
 	{
 		if (mGameObject != NULL)
 		{
-			mGameObject->sendMessage(MESSAGE_TRANSFORM_NEEDS_UPDATE);
+			mGameObject->sendMessage(this, MESSAGE_TRANSFORM_NEEDS_UPDATE);
 
 			GameObject* pParent = mGameObject->getParent();
 			if (pParent != NULL)

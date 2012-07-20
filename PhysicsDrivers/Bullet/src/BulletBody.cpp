@@ -327,7 +327,28 @@ void BulletBody::updateImpl(float elapsedTime)
 	if (mRigidBody == NULL)
 		return;
 
-	/*if (mBodyNeedsUpdate)//TODO: who has priority?!!!
+	if (mRigidBody->isActive())
+	{
+		btTransform trans;
+		mRigidBody->getMotionState()->getWorldTransform(trans);
+
+		btVector3 globalPos = trans.getOrigin();
+		btQuaternion globalOrient = trans.getRotation();
+
+		if (mGameObject != NULL)
+		{
+			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			if (pTransform != NULL)
+			{
+				pTransform->setPosition(globalPos.getX(), globalPos.getY(), globalPos.getZ());
+
+				pTransform->setOrientation(globalOrient.getX(), globalOrient.getY(), globalOrient.getZ(), globalOrient.getY());
+			}
+		}
+
+		mBodyNeedsUpdate = false;
+	}
+	else if (mBodyNeedsUpdate)//you can manualy set the transform of the game object only if the body is inactive!
 	{
 		btTransform trans;
 		trans.setIdentity();
@@ -349,33 +370,14 @@ void BulletBody::updateImpl(float elapsedTime)
 
 		mBodyNeedsUpdate = false;
 	}
-	else */if (mRigidBody->isActive())
-	{
-		btTransform trans;
-		mRigidBody->getMotionState()->getWorldTransform(trans);
-
-		btVector3 globalPos = trans.getOrigin();
-		btQuaternion globalOrient = trans.getRotation();
-
-		if (mGameObject != NULL)
-		{
-			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
-			{
-				pTransform->setPosition(globalPos.getX(), globalPos.getY(), globalPos.getZ());
-
-				pTransform->setOrientation(globalOrient.getX(), globalOrient.getY(), globalOrient.getZ(), globalOrient.getY());
-			}
-		}
-	}
 }
 
 void BulletBody::onMessageImpl(unsigned int messageID)
 {
-	/*if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
+	if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
 	{
 		mBodyNeedsUpdate = true;
-	}*/
+	}
 }
 
 btCollisionShape* BulletBody::addBulletShape(Shape* shape)
