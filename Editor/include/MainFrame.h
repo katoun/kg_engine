@@ -29,6 +29,10 @@ THE SOFTWARE.
 
 #include <EditorConfig.h>
 
+class PropertiesPanel;
+class SceneExplorerPanel;
+class SceneViewPanel;
+
 class MainFrame : public wxFrame
 {
 public:
@@ -37,15 +41,22 @@ public:
 		
 	~MainFrame();
 
+	SceneViewPanel* GetSceneViewPanel();
+
 protected:
 
-	wxTreeCtrl* m_sceneExplorer;
-	wxPropertyGrid* m_propertyWindow;
+	PropertiesPanel* mPropertiesPanel;
+	SceneExplorerPanel* mSceneExplorerPanel;
+	SceneViewPanel* mSceneViewPanel;
 	
-	wxStatusBar* m_statusBar;
-	wxMenuBar* m_menubar;
-	wxMenu* m_menuFile;
-	wxMenu* m_menuEdit;
+	wxStatusBar* mStatusBar;
+	wxMenuBar* mMenubar;
+	wxMenu* mMenuFile;
+	wxMenu* mMenuEdit;
+
+	void CreateMenus();
+	void CreatePanels();
+	void CreateStatusbar();
 
 	void OnMenuFileNew(wxCommandEvent& event);
 	void OnMenuFileOpen(wxCommandEvent& event);

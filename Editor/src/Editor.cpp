@@ -26,6 +26,10 @@ THE SOFTWARE.
 
 #include <Editor.h>
 #include <MainFrame.h>
+#include <SceneViewPanel.h>
+#include <engine/EngineManager.h>
+#include <engine/EngineSettings.h>
+#include <render/RenderManager.h>
 
 IMPLEMENT_APP(EditorApp);
 
@@ -33,29 +37,39 @@ bool EditorApp::OnInit()
 {
 	wxApp::OnInit();
 
-	MainFrame* frame = new MainFrame(NULL);
-	frame->SetIcon(wxICON(amain));
-	frame->Show();
+	m_MainFrame = new MainFrame(NULL);
+	m_MainFrame->SetIcon(wxICON(amain));
+	m_MainFrame->Show();
+	m_MainFrame->UpdateWindowUI(wxUPDATE_UI_FROMIDLE);
 
-	//engine::EngineSettings::getInstance().setMainWindowID((HWND)frame->GetHandle());//TODO!!!
+	Connect(wxEVT_IDLE, wxIdleEventHandler(EditorApp::OnIdle));
 
-	engine::EngineManager::getInstance().initialize();
-	engine::EngineManager::getInstance().start();
+	SetTopWindow(m_MainFrame);
+
+	SceneViewPanel* pSceneViewPanel = m_MainFrame->GetSceneViewPanel();
+	if (pSceneViewPanel != NULL)
+	{
+		engine::EngineSettings::getInstance().setMainWindowID((HWND)pSceneViewPanel->GetHandle());
+		engine::EngineManager::getInstance().initialize();
+		pSceneViewPanel->SetRenderWindow(render::RenderManager::getInstance().getMainWindow());
+
+		engine::EngineManager::getInstance().start();
+	}
 
 	return true;
 }
 
-int EditorApp::OnRun()
+void EditorApp::OnIdle(wxIdleEvent& event)
 {
 	if (engine::EngineManager::getInstance().isRunning())
 		engine::EngineManager::getInstance().update(0);
-
-	return wxApp::OnRun();
 }
 
 int EditorApp::OnExit()
 {
 	engine::EngineManager::getInstance().uninitialize();
+
+	Disconnect(wxEVT_IDLE, wxIdleEventHandler(EditorApp::OnIdle));
 
 	return wxApp::OnExit();
 }

@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
+KG game engine (https://github.com/katoun/kg_engine) is made available under the MIT License.
 
 Copyright (c) 2006-2012 Catalin Alexandru Nastase
 
@@ -24,28 +24,56 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _EDITOR_H_
-#define _EDITOR_H_
+#ifndef _SCENE_VIEW_PANEL_H_
+#define _SCENE_VIEW_PANEL_H_
 
 #include <EditorConfig.h>
 
-class MainFrame;
+namespace game
+{
+class GameObject;
+class Transform;
+}
 
-class EditorApp : public wxApp
+namespace render
+{
+class RenderWindow;
+class Camera;
+class Viewport;
+}
+
+class SceneViewPanel : public wxPanel
 {
 public:
 
-	virtual bool OnInit();
+	SceneViewPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxSUNKEN_BORDER | wxTAB_TRAVERSAL);
 
-	virtual int OnExit();
+	~SceneViewPanel();
 
-public:
+	void OnSize(wxSizeEvent& InEvent);
 
-	void OnIdle(wxIdleEvent& event);
+	void SetRenderWindow(render::RenderWindow* window);
 
-	MainFrame* m_MainFrame;
+protected:
+
+	void OnKeyDown(wxKeyEvent &evt);	
+	void OnKeyUp(wxKeyEvent &evt);
+	void OnMouseMove(wxMouseEvent &evt);
+	void OnMouseLeave(wxMouseEvent &evt);
+	void OnMouseLeftDown(wxMouseEvent &evt);
+	void OnMouseLeftUp(wxMouseEvent &evt);
+	void OnMouseRightDown(wxMouseEvent &evt);
+	void OnMouseMiddleDown(wxMouseEvent &evt);
+	void OnMouseMiddleUp(wxMouseEvent &evt);
+	void OnMouseRightUp(wxMouseEvent &evt);
+	void OnMouseWheel(wxMouseEvent &evt);
+
+	render::RenderWindow* mRenderWindow;
+
+	game::GameObject* mGameObject;
+	game::Transform* mTransform;
+	render::Camera* mCamera;
+	render::Viewport* mViewport;
 };
-
-DECLARE_APP(EditorApp)
 
 #endif

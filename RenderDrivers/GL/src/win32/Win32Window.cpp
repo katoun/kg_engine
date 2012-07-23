@@ -398,8 +398,9 @@ void Win32Window::reposition(signed int top, signed int left)
 {	
 	if (mHWnd && !mIsFullScreen)
 	{
-		SetWindowPos(mHWnd, 0, left, top, 0, 0,
-			SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+		SetWindowPos(mHWnd, 0, left, top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+		windowMovedOrResized();
 	}
 }
 
@@ -411,8 +412,9 @@ void Win32Window::resize(unsigned int width, unsigned int height)
 		AdjustWindowRect(&rc, GetWindowLong(mHWnd, GWL_STYLE), false);
 		width = rc.right - rc.left;
 		height = rc.bottom - rc.top;
-		SetWindowPos(mHWnd, 0, 0, 0, width, height,
-			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+		SetWindowPos(mHWnd, 0, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+		windowMovedOrResized();
 	}
 }
 

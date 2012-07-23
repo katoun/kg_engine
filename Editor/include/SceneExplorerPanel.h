@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
+KG game engine (https://github.com/katoun/kg_engine) is made available under the MIT License.
 
 Copyright (c) 2006-2012 Catalin Alexandru Nastase
 
@@ -24,46 +24,22 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _EDITOR_CONFIG_H_
-#define _EDITOR_CONFIG_H_
+#ifndef _SCENE_EXPLORER_PANEL_H_
+#define _SCENE_EXPLORER_PANEL_H_
 
-#include <core/Config.h>
+#include <EditorConfig.h>
 
-#ifdef _UNICODE
-#undef _UNICODE
-#endif
-
-#include <wx/wx.h>
-#include <wx/aui/aui.h>
-#include <wx/string.h>
-#include <wx/frame.h>
-#include <wx/treectrl.h>
-#include <wx/propgrid/propgrid.h>
-
-enum
+class SceneExplorerPanel : public wxPanel
 {
-	ID_SCENE_EXPLORER_PANEL,
-	ID_SCENE_EXPLORER_TREE_CTRL,
-	ID_PROPERTIES_PANEL,
-	ID_PROPERTIES_PANEL_PROPERTY_GRID,
-	ID_SCENE_VIEW_PANEL,
-	ID_STATUS_BAR,
-	ID_MENU_FILE_NEW,
-	ID_MENU_FILE_OPEN,
-	ID_MENU_FILE_SAVE,
-	ID_MENU_FILE_SAVE_AS,
-	ID_MENU_FILE_EXIT,
-	ID_MENU_EDIT_UNDO,
-	ID_MENU_EDIT_REDO,
-	ID_MENU_EDIT_DELETE,
-	ID_MENU_EDIT_CLONE,
-	ID_MENU_EDIT_HIDE,
-	ID_MENU_EDIT_UNHIDE_ALL,
-	ID_MENU_EDIT_SELECT_ALL,
-	ID_MENU_EDIT_SELECT_NONE,
-	ID_MENU_EDIT_SELECT_INVERT,
+public:
 
-	ID_COUNT
+	SceneExplorerPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxSUNKEN_BORDER | wxTAB_TRAVERSAL);
+
+	~SceneExplorerPanel();
+
+protected:
+
+	wxTreeCtrl* m_TreeCtrl;
 };
 
 #endif

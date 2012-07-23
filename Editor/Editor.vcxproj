@@ -14,10 +14,16 @@
     <ClInclude Include="include\Editor.h" />
     <ClInclude Include="include\EditorConfig.h" />
     <ClInclude Include="include\MainFrame.h" />
+    <ClInclude Include="include\PropertiesPanel.h" />
+    <ClInclude Include="include\SceneExplorerPanel.h" />
+    <ClInclude Include="include\SceneViewPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\MainFrame.cpp" />
+    <ClCompile Include="src\PropertiesPanel.cpp" />
+    <ClCompile Include="src\SceneExplorerPanel.cpp" />
+    <ClCompile Include="src\SceneViewPanel.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F4BF03F9-2FCD-4D43-8DE0-1F13199B096A}</ProjectGuid>

@@ -24,23 +24,21 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _RENDER_WINDOW_H_
-#define _RENDER_WINDOW_H_
+#include <SceneExplorerPanel.h>
 
-#include <EditorConfig.h>
-
-class RenderWindow : public wxWindow
+SceneExplorerPanel::SceneExplorerPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style): wxPanel()
 {
-public:
+	wxPanel::Create(parent, id, pos, size, style);
 
-	RenderWindow();
+	wxBoxSizer* bSizer = new wxBoxSizer(wxVERTICAL);
 
-	~RenderWindow();
+	m_TreeCtrl = new wxTreeCtrl(this, ID_SCENE_EXPLORER_TREE_CTRL, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE);
+	bSizer->Add(m_TreeCtrl, 0, wxALL | wxEXPAND, 0);
 
-	void OnSize(wxSizeEvent& InEvent);
+	SetSizer(bSizer);
+	Layout();
+}
 
-protected:
-
-};
-
-#endif
+SceneExplorerPanel::~SceneExplorerPanel()
+{
+}
