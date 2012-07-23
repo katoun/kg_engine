@@ -342,7 +342,7 @@ void BulletBody::updateImpl(float elapsedTime)
 			{
 				pTransform->setPosition(globalPos.getX(), globalPos.getY(), globalPos.getZ());
 
-				pTransform->setOrientation(globalOrient.getX(), globalOrient.getY(), globalOrient.getZ(), globalOrient.getY());
+				pTransform->setOrientation(globalOrient.getX(), globalOrient.getY(), globalOrient.getZ(), globalOrient.getW());
 			}
 		}
 
