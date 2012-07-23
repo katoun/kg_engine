@@ -281,6 +281,9 @@ void Sound::resourceUnloaded(const resource::ResourceEvent& evt)
 
 void Sound::updateImpl(float elapsedTime)
 {
+	if (elapsedTime == 0.0f)
+		return;
+
 	if (mGameObject != NULL)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));

@@ -28,6 +28,10 @@ THE SOFTWARE.
 #define _SCENE_VIEW_PANEL_H_
 
 #include <EditorConfig.h>
+#include <engine/EngineEvent.h>
+#include <engine/EngineEventReceiver.h>
+
+#include <bitset>
 
 namespace game
 {
@@ -42,7 +46,20 @@ class Camera;
 class Viewport;
 }
 
-class SceneViewPanel : public wxPanel
+enum ViewOperation
+{
+	VIEW_OPERATION_NONE,
+	VIEW_OPERATION_ROTATE,
+	VIEW_OPERATION_PAN,
+	VIEW_OPERATION_MOVE_FORWARD,
+	VIEW_OPERATION_MOVE_BACKWARD,
+	VIEW_OPERATION_MOVE_LEFT,
+	VIEW_OPERATION_MOVE_RIGHT,
+
+	VIEW_OPERATION_COUNT
+};
+
+class SceneViewPanel : public wxPanel, public engine::EngineEventReceiver
 {
 public:
 
@@ -54,19 +71,29 @@ public:
 
 	void SetRenderWindow(render::RenderWindow* window);
 
+	void engineUpdateStarted(const engine::EngineEvent& evt);
+
 protected:
 
 	void OnKeyDown(wxKeyEvent &evt);	
 	void OnKeyUp(wxKeyEvent &evt);
-	void OnMouseMove(wxMouseEvent &evt);
+	void OnMouseEnter(wxMouseEvent &evt);
 	void OnMouseLeave(wxMouseEvent &evt);
+	void OnMouseMove(wxMouseEvent &evt);
 	void OnMouseLeftDown(wxMouseEvent &evt);
 	void OnMouseLeftUp(wxMouseEvent &evt);
 	void OnMouseRightDown(wxMouseEvent &evt);
+	void OnMouseRightUp(wxMouseEvent &evt);
 	void OnMouseMiddleDown(wxMouseEvent &evt);
 	void OnMouseMiddleUp(wxMouseEvent &evt);
-	void OnMouseRightUp(wxMouseEvent &evt);
 	void OnMouseWheel(wxMouseEvent &evt);
+
+	std::bitset<VIEW_OPERATION_COUNT> mViewOperations;
+	wxPoint mDragStartPoint;
+	float moveMultiplier;
+	float rotMultiplier;
+	float mMoveScale;
+	float mRotScale;
 
 	render::RenderWindow* mRenderWindow;
 

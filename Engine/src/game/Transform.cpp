@@ -41,6 +41,7 @@ Transform::Transform(): Component()
 	mPosition = mAbsolutePosition = core::vector3d::ORIGIN_3D;
 	mOrientation = mAbsoluteOrientation = core::quaternion::IDENTITY;
 	mScale = mAbsoluteScale = core::vector3d::UNIT_SCALE;
+
 	mInheritOrientation = true;
 	mInheritScale = true;
 	mTransformNeedsUpdate = true;

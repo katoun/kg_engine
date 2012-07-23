@@ -242,23 +242,11 @@ void Model::updateImpl(float elapsedTime)
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != NULL)
 			{
-				core::vector3d pos = pTransform->getAbsolutePosition();
+				core::vector3d position = pTransform->getAbsolutePosition();
 				core::quaternion orientation = pTransform->getAbsoluteOrientation();
 				core::vector3d scale = pTransform->getAbsoluteScale();
-				
-				
-				mWorldMatrix = core::matrix4::IDENTITY;
-				// Ordering:
-				//    1. Scale
-				//    2. Rotate
-				//    3. Translate
 
-				// Own scale is applied before rotation
-				core::matrix4 rotM = orientation.toRotationMatrix();
-				core::matrix4 scaleM;
-				scaleM.setScale(scale);
-				mWorldMatrix = rotM * scaleM;
-				mWorldMatrix.setTranslation(pos);
+				mWorldMatrix.buildWorldMatrix(position, scale, orientation);
 
 				// Update bounding box
 				if (mMeshData != NULL)
@@ -272,7 +260,7 @@ void Model::updateImpl(float elapsedTime)
 					mBoundingSphere.Radius = mMeshData->getBoundingSphereRadius();
 					mBoundingSphere.Radius *= maxscale;
 
-					mBoundingSphere.Center = pos;
+					mBoundingSphere.Center = position;
 
 #ifdef _DEBUG
 					//std::cout<<"Center: "<<mBoundingSphere.Center<<std::endl;

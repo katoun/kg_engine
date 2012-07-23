@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <core/Math.h>
 #include <core/Vector3d.h>
 #include <core/Vector4d.h>
+#include <core/Quaternion.h>
 #include <core/Plane3d.h>
 #include <core/Aabox3d.h>
 
@@ -941,6 +942,36 @@ inline void matrix4::buildViewMatrix(const vector3d& position, const vector3d& t
 	M[13] = 0.0f;
 	M[14] = 0.0f;
 	M[15] = 1.0f;
+}
+
+void matrix4::buildWorldMatrix(const vector3d& position, const vector3d& scale, const quaternion& orientation)
+{
+	// Ordering:
+	//    1. Scale
+	//    2. Rotate
+	//    3. Translate
+
+	core::matrix4 rot = orientation.toRotationMatrix();
+
+	(*this)(0,0) = scale.X * rot(0,0);
+	(*this)(0,1) = scale.Y * rot(0,1);
+	(*this)(0,2) = scale.Z * rot(0,2);
+	(*this)(0,3) = position.X;
+
+	(*this)(1,0) = scale.X * rot(1,0);
+	(*this)(1,1) = scale.Y * rot(1,1);
+	(*this)(1,2) = scale.Z * rot(1,2);
+	(*this)(1,3) = position.Y;
+
+	(*this)(2,0) = scale.X * rot(2,0);
+	(*this)(2,1) = scale.Y * rot(2,1);
+	(*this)(2,2) = scale.Z * rot(2,2);
+	(*this)(2,3) = position.Z;
+
+	(*this)(3,0) = 0;
+	(*this)(3,1) = 0;
+	(*this)(3,2) = 0;
+	(*this)(3,3) = 1;
 }
 
 inline void matrix4::buildShadowMatrix(vector3d light, plane3d plane, float point)

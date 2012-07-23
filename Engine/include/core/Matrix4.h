@@ -34,6 +34,7 @@ namespace core
 
 class vector3d;
 class vector4d;
+class quaternion;
 class plane3d;
 class aabox3d;
 
@@ -201,6 +202,9 @@ public:
 
 	//! Builds a right-handed look-at matrix.
 	void buildViewMatrix(const vector3d& position, const vector3d& target, const vector3d& upVector);
+
+	//! Builds a right-handed world matrix.
+	void buildWorldMatrix(const vector3d& position, const vector3d& scale, const quaternion& orientation);
 
 	//! Builds a matrix that flattens geometry into a plane.
 	//! \param light: light source

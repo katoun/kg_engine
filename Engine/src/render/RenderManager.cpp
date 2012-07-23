@@ -1141,9 +1141,9 @@ void RenderManager::renderSingleModel(Model* model)
 				if (pTransform->getVisibleAxis())
 					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
 				if (model->getVisibleBoundingBox())
-					mRenderDriver->renderBoundingSphere(model->getBoundingSphere());
-				if (model->getVisibleBoundingSphere())
 					mRenderDriver->renderBoundingBox(model->getBoundingBox());
+				if (model->getVisibleBoundingSphere())
+					mRenderDriver->renderBoundingSphere(model->getBoundingSphere());
 			}
 
 			findLightsAffectingModel(model);
@@ -1162,7 +1162,10 @@ void RenderManager::renderSingleModel(Model* model)
 			mRenderDriver->setWorldMatrix(model->getWorldMatrix());
 
 			mShaderParamData.setCurrentModel(model);
-			if (mDistanceLights.size() != 0) mShaderParamData.setCurrentLight(mDistanceLights[0].light);
+			if (mDistanceLights.size() != 0)
+			{
+				mShaderParamData.setCurrentLight(mDistanceLights[0].light);
+			}
 
 			localLightList.clear();
 

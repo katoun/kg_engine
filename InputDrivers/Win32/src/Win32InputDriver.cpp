@@ -124,10 +124,10 @@ void Win32InputDriver::initializeImpl()
 	engine::EngineSettings& engineOptions = engine::EngineSettings::getInstance();
 
 	// Get HWND
-	if (engineOptions.getMainWindowId())
-		mHWnd = (HWND)engineOptions.getMainWindowId();
-	else
-		mHWnd = GetActiveWindow();
+	if (engineOptions.getMainWindowId())//if external window
+		return;
+	
+	mHWnd = GetActiveWindow();
 
 	if (IsWindow(mHWnd) == 0)
 	{

@@ -79,5 +79,4 @@ private:
 	wxAuiManager mAuiManager;
 };
 
-
 #endif
