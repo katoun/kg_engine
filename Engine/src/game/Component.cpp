@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <game/Component.h>
 #include <game/GameObject.h>
+#include <core/Utils.h>
 
 namespace game
 {
@@ -35,6 +36,8 @@ unsigned int Component::mIndexCounter = 0;
 Component::Component()
 {
 	mID = mIndexCounter++;
+
+	mName = "Component_" + core::intToString(mID);
 
 	mType = COMPONENT_TYPE_UNDEFINED;
 
@@ -54,6 +57,11 @@ Component::~Component()
 const unsigned int& Component::getID() const
 {
 	return mID;
+}
+
+const std::string& Component::getName() const
+{
+	return mName;
 }
 
 const unsigned int Component::getType() const

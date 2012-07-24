@@ -47,6 +47,8 @@ public:
 	//! Returns the id of the game object.
 	const unsigned int& getID() const;
 
+	const std::string& getName() const;
+
 	//! Gets object type.
 	const unsigned int getType() const;
 
@@ -72,6 +74,8 @@ public:
 protected:
 
 	unsigned int mID;
+
+	std::string mName;
 
 	static unsigned int mIndexCounter;
 

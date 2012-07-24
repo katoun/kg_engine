@@ -41,7 +41,7 @@ protected:
 
 	void OnMouseEnter(wxMouseEvent &evt);
 
-	wxPropertyGrid* m_PropertyGrid;
+	wxPropertyGrid* mPropertyGrid;
 };
 
 #endif

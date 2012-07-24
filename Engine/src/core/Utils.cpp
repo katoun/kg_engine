@@ -53,32 +53,26 @@ void stringToUpper(std::string& str)
 
 signed int stringToInt(std::string& str)
 {
-	//If the first sequence of non-whitespace characters in str is not a valid integral number,
-	//or if no such sequence exists because either str is empty or it contains only whitespace characters,
-	//no conversion is performed.
-	if (str.size() != 0)
-		return atoi(str.c_str());
+	signed int ret;
 
-	return 0;
+	std::stringstream ss(str);
+	ss >> ret;
+
+	return ret;
 }
 
 float stringToFloat(std::string& str)
 {
-	//If the first sequence of non-whitespace characters in str does not form a valid floating-point number as just defined,
-	//or if no such sequence exists because either str is empty or contains only whitespace characters,
-	//no conversion is performed.
-	if (str.size() != 0)
-		return (float)atof(str.c_str());
+	float ret;
 
-	return 0.0f;
+	std::stringstream ss(str);
+	ss >> ret;
+
+	return ret;
 }
 
 std::string intToString(unsigned int i)
 {
-	/*char str[256];
-	snprintf(str, 256, "%d", i);
-	std::string ret = str;*/
-
 	std::stringstream ss;
 	ss << i;
 
@@ -89,10 +83,6 @@ std::string intToString(unsigned int i)
 
 std::string intToString(signed int i)
 {
-	/*char str[256];
-	snprintf(str, 256, "%d", i);
-	std::string ret = str;*/
-
 	std::stringstream ss;
 	ss << i;
 
@@ -103,10 +93,6 @@ std::string intToString(signed int i)
 
 std::string floatToString(float f)
 {
-	/*char str[255];
-	snprintf(str, 255, "%f", f);
-	std::string ret = str;*/
-
 	std::stringstream ss;
 	ss << f;
 

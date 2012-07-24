@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 #include <SceneExplorerPanel.h>
 #include <MainFrame.h>
-#include <core/Utils.h>
 #include <game/GameObject.h>
 #include <game/Transform.h>
 #include <game/ComponentDefines.h>
@@ -103,9 +102,9 @@ void SceneExplorerPanel::engineStarted()
 			game::GameObject* pGameObject = i->second;
 			if (pGameObject != NULL)
 			{
-				std::string gameobjectName = pGameObject->getName();
+				std::string name = pGameObject->getName();
 
-				wxTreeItemId gameobjectItem = mTreeCtrl->AppendItem(mTreeCtrl->GetRootItem(), wxString(gameobjectName), 1);
+				wxTreeItemId gameobjectItem = mTreeCtrl->AppendItem(mTreeCtrl->GetRootItem(), wxString(name), 1);
 
 				std::map<unsigned int, game::Component*> components = pGameObject->getComponents();
 				std::map<unsigned int, game::Component*>::const_iterator j;
@@ -114,8 +113,7 @@ void SceneExplorerPanel::engineStarted()
 					game::Component* pComponent = j->second;
 					if (pComponent != NULL)
 					{
-						std::string componentName = "Component_";
-						//componentName += core::intToString(pComponent->getID());//this causes a crash
+						std::string name = pComponent->getName();
 
 						int imageID = 2;
 						unsigned int type = pComponent->getType();
@@ -144,7 +142,7 @@ void SceneExplorerPanel::engineStarted()
 							break;
 						}
 
-						wxTreeItemId componentItem = mTreeCtrl->AppendItem(gameobjectItem, wxString(componentName), imageID);
+						wxTreeItemId componentItem = mTreeCtrl->AppendItem(gameobjectItem, wxString(name), imageID);
 					}
 				}
 			}

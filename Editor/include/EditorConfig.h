@@ -40,6 +40,7 @@ THE SOFTWARE.
 #include <wx/frame.h>
 #include <wx/treectrl.h>
 #include <wx/propgrid/propgrid.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/xml/xml.h>
 
 enum

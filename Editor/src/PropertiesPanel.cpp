@@ -32,24 +32,30 @@ PropertiesPanel::PropertiesPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 
 	wxBoxSizer* bSizer = new wxBoxSizer(wxVERTICAL);
 
-	m_PropertyGrid = new wxPropertyGrid(this, ID_PROPERTIES_PANEL_PROPERTY_GRID, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | wxPGMAN_DEFAULT_STYLE);
-
-	bSizer->Add(m_PropertyGrid, 1, wxEXPAND, 0);
+	mPropertyGrid = new wxPropertyGrid(this, ID_PROPERTIES_PANEL_PROPERTY_GRID, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | wxPGMAN_DEFAULT_STYLE);
+	
+	bSizer->Add(mPropertyGrid, 1, wxEXPAND, 0);
 	
 	SetSizer(bSizer);
 	Layout();
 
-	if (m_PropertyGrid != NULL)
+	if (mPropertyGrid != NULL)
 	{
-		m_PropertyGrid->Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
+		mPropertyGrid->Append(new wxPropertyCategory("Category A1"));
+
+		mPropertyGrid->Append(new wxIntProperty("Number", wxPG_LABEL, 1));
+
+		mPropertyGrid->Append(new wxColourProperty("Colour", wxPG_LABEL, *wxWHITE));
+
+		mPropertyGrid->Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
 	}
 }
 
 PropertiesPanel::~PropertiesPanel()
 {
-	if (m_PropertyGrid != NULL)
+	if (mPropertyGrid != NULL)
 	{
-		m_PropertyGrid->Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
+		mPropertyGrid->Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
 	}
 }
 
