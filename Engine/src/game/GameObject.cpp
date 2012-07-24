@@ -109,11 +109,6 @@ void GameObject::setParent(GameObject* parent)
 	sendMessage(this, MESSAGE_PARENT_CHANGED);
 }
 
-std::map<unsigned int, GameObject*>& GameObject::getChildren()
-{
-	return mChildren;
-}
-
 void GameObject::addChild(GameObject* child)
 {
 	if (child == NULL)
@@ -205,6 +200,11 @@ Component* GameObject::getComponent(unsigned int type)
 	}
 
 	return NULL;
+}
+
+const std::map<unsigned int, Component*>& GameObject::getComponents()
+{
+	return mComponents;
 }
 
 void GameObject::sendMessage(Component* source, unsigned int messageID)

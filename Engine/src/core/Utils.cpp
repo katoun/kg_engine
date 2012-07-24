@@ -27,6 +27,8 @@ THE SOFTWARE.
 #include <core/Utils.h>
 
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 namespace core
 {
@@ -73,27 +75,42 @@ float stringToFloat(std::string& str)
 
 std::string intToString(unsigned int i)
 {
-	char str[256];
+	/*char str[256];
 	snprintf(str, 256, "%d", i);
-	std::string ret = str;
+	std::string ret = str;*/
+
+	std::stringstream ss;
+	ss << i;
+
+	std::string ret = ss.str();
 
 	return ret;
 }
 
 std::string intToString(signed int i)
 {
-	char str[256];
+	/*char str[256];
 	snprintf(str, 256, "%d", i);
-	std::string ret = str;
+	std::string ret = str;*/
+
+	std::stringstream ss;
+	ss << i;
+
+	std::string ret = ss.str();
 
 	return ret;
 }
 
 std::string floatToString(float f)
 {
-	char str[255];
+	/*char str[255];
 	snprintf(str, 255, "%f", f);
-	std::string ret = str;
+	std::string ret = str;*/
+
+	std::stringstream ss;
+	ss << f;
+
+	std::string ret = ss.str();
 
 	return ret;
 }

@@ -61,6 +61,8 @@ public:
 
 	void removeAllGameObjects();
 
+	const std::map<unsigned int, GameObject*>& getGameObjects();
+
 	//! Creates a component.
 	Component* createComponent(unsigned int type);
 

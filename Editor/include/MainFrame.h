@@ -43,6 +43,8 @@ public:
 
 	SceneViewPanel* GetSceneViewPanel();
 
+	static wxString GetDataPath();
+
 protected:
 
 	PropertiesPanel* mPropertiesPanel;
@@ -53,6 +55,9 @@ protected:
 	wxMenuBar* mMenubar;
 	wxMenu* mMenuFile;
 	wxMenu* mMenuEdit;
+
+	void ReadConfig();
+	void SaveConfig();
 
 	void CreateMenus();
 	void CreatePanels();
@@ -77,6 +82,8 @@ protected:
 private:
 
 	wxAuiManager mAuiManager;
+
+	static wxString mDataPath;
 };
 
 #endif

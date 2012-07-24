@@ -29,11 +29,45 @@ THE SOFTWARE.
 #include <PropertiesPanel.h>
 #include <SceneViewPanel.h>
 
+#include <string>
+
+wxString MainFrame::mDataPath = "";
+
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style)
 {
 	mSceneViewPanel = NULL;
 	mPropertiesPanel = NULL;
 	mSceneExplorerPanel = NULL;
+
+	///////////////////////////////////////////
+	wxString configFile;
+#ifdef _DEBUG
+	configFile = wxT("Editor_d.xml");
+#else
+	configFile = wxT("Editor.xml");
+#endif
+
+	wxXmlDocument config;
+	if (config.Load(configFile))
+	{
+		if (config.GetRoot()->GetName() == wxT("Editor"))
+		{
+			wxXmlNode* pChild = config.GetRoot()->GetChildren();
+			while (pChild != NULL)
+			{
+				 if (pChild->GetName() == wxT("DataPath"))
+				 {
+					 if (pChild->HasAttribute(wxT("value")))
+					 {
+						mDataPath = pChild->GetAttribute(wxT("value"), wxT(""));
+					 }
+				 }
+
+				pChild = pChild->GetNext();
+			}
+		}
+	}
+	///////////////////////////////////////////
 	
 	mAuiManager.SetManagedWindow(this);
 
@@ -99,6 +133,11 @@ MainFrame::~MainFrame()
 SceneViewPanel* MainFrame::GetSceneViewPanel()
 {
 	return mSceneViewPanel;
+}
+
+wxString MainFrame::GetDataPath()
+{
+	return mDataPath;
 }
 
 void MainFrame::CreateMenus()

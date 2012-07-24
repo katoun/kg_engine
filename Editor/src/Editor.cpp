@@ -37,6 +37,8 @@ bool EditorApp::OnInit()
 {
 	wxApp::OnInit();
 
+	wxImage::AddHandler(new wxPNGHandler);
+
 	m_MainFrame = new MainFrame(NULL);
 	m_MainFrame->SetIcon(wxICON(amain));
 	m_MainFrame->Show();

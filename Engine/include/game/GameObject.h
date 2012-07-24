@@ -58,8 +58,6 @@ public:
 	//! Sets this GameObject's parent.
 	void setParent(GameObject* parent);
 
-	std::map<unsigned int, GameObject*>& getChildren();
-
 	//! Adds a child to this GameObject.
 	void addChild(GameObject* child);
 
@@ -68,11 +66,15 @@ public:
 
 	void removeAllChildren();
 
+	const std::map<unsigned int, GameObject*>& getChildren();
+
 	void attachComponent(Component* component);
 
 	void detachComponent(Component* component);
 
 	Component* getComponent(unsigned int type);
+
+	const std::map<unsigned int, Component*>& getComponents();
 
 	void sendMessage(Component* source, unsigned int messageID);
 	void sendMessage(GameObject* source, unsigned int messageID);

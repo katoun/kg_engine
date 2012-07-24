@@ -108,6 +108,11 @@ void GameManager::removeAllGameObjects()
 	mGameObjects.clear();
 }
 
+const std::map<unsigned int, GameObject*>& GameManager::getGameObjects()
+{
+	return mGameObjects;
+}
+
 Component* GameManager::createComponent(unsigned int type)
 {
 	std::map<unsigned int, ComponentFactory*>::iterator i = mComponentFactories.find(type);

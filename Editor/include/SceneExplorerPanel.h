@@ -28,8 +28,10 @@ THE SOFTWARE.
 #define _SCENE_EXPLORER_PANEL_H_
 
 #include <EditorConfig.h>
+#include <engine/EngineEvent.h>
+#include <engine/EngineEventReceiver.h>
 
-class SceneExplorerPanel : public wxPanel
+class SceneExplorerPanel : public wxPanel, public engine::EngineEventReceiver
 {
 public:
 
@@ -37,9 +39,18 @@ public:
 
 	~SceneExplorerPanel();
 
+	void engineInitialized();
+
+	void engineUninitialized();
+
+	void engineStarted();
+
 protected:
 
-	wxTreeCtrl* m_TreeCtrl;
+	void OnMouseEnter(wxMouseEvent &evt);
+
+	wxImageList* mTreeImages;
+	wxTreeCtrl* mTreeCtrl;
 };
 
 #endif
