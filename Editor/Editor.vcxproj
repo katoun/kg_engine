@@ -25,6 +25,9 @@
     <ClCompile Include="src\SceneExplorerPanel.cpp" />
     <ClCompile Include="src\SceneViewPanel.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F4BF03F9-2FCD-4D43-8DE0-1F13199B096A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

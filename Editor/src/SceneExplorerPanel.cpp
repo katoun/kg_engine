@@ -47,31 +47,37 @@ SceneExplorerPanel::SceneExplorerPanel(wxWindow* parent, wxWindowID id, const wx
 	SetSizer(bSizer);
 	Layout();
 
-	mTreeImages = new wxImageList(16, 16, true, 9);
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_root.png"), wxBITMAP_TYPE_PNG));			//Index 0
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_gameobject.png"), wxBITMAP_TYPE_PNG));	//Index 1
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_transform.png"), wxBITMAP_TYPE_PNG));	//Index 2
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_light.png"), wxBITMAP_TYPE_PNG));		//Index 3
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_camera.png"), wxBITMAP_TYPE_PNG));		//Index 4
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_model.png"), wxBITMAP_TYPE_PNG));		//Index 5
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_sound.png"), wxBITMAP_TYPE_PNG));		//Index 6
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_listener.png"), wxBITMAP_TYPE_PNG));		//Index 7
-	mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_body.png"), wxBITMAP_TYPE_PNG));			//Index 8
+	if (mTreeCtrl != NULL)
+	{
+		mTreeImages = new wxImageList(16, 16, true, 9);
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_root.png"), wxBITMAP_TYPE_PNG));			//Index 0
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_gameobject.png"), wxBITMAP_TYPE_PNG));	//Index 1
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_transform.png"), wxBITMAP_TYPE_PNG));	//Index 2
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_light.png"), wxBITMAP_TYPE_PNG));		//Index 3
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_camera.png"), wxBITMAP_TYPE_PNG));		//Index 4
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_model.png"), wxBITMAP_TYPE_PNG));		//Index 5
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_sound.png"), wxBITMAP_TYPE_PNG));		//Index 6
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_listener.png"), wxBITMAP_TYPE_PNG));		//Index 7
+		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_body.png"), wxBITMAP_TYPE_PNG));			//Index 8
 
-	mTreeCtrl->AssignImageList(mTreeImages);
+		mTreeCtrl->AssignImageList(mTreeImages);
 
-	//Insert root item
-	wxTreeItemId item = mTreeCtrl->AddRoot(wxString("Scene"), 0);
-	mTreeCtrl->SetItemBold(item);
+		//Insert root item
+		wxTreeItemId item = mTreeCtrl->AddRoot(wxString("Scene"), 0);
+		mTreeCtrl->SetItemBold(item);
 
-	Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this );
+		mTreeCtrl->Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this);
+	}
 }
 
 SceneExplorerPanel::~SceneExplorerPanel()
 {
 	engine::EngineManager::getInstance().removeEngineEventReceiver(this);
 
-	Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this );
+	if (mTreeCtrl != NULL)
+	{
+		mTreeCtrl->Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this);
+	}
 }
 
 void SceneExplorerPanel::engineInitialized()

@@ -39,12 +39,18 @@ PropertiesPanel::PropertiesPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 	SetSizer(bSizer);
 	Layout();
 
-	Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this );
+	if (m_PropertyGrid != NULL)
+	{
+		m_PropertyGrid->Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
+	}
 }
 
 PropertiesPanel::~PropertiesPanel()
 {
-	Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this );
+	if (m_PropertyGrid != NULL)
+	{
+		m_PropertyGrid->Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(PropertiesPanel::OnMouseEnter), NULL, this);
+	}
 }
 
 void PropertiesPanel::OnMouseEnter(wxMouseEvent &evt)

@@ -55,8 +55,8 @@ SceneViewPanel::SceneViewPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
 	Connect(wxEVT_KEY_DOWN,			wxKeyEventHandler(SceneViewPanel::OnKeyDown), NULL, this);
 	Connect(wxEVT_KEY_UP,			wxKeyEventHandler(SceneViewPanel::OnKeyUp), NULL, this);
 	Connect(wxEVT_MOTION,			wxMouseEventHandler(SceneViewPanel::OnMouseMove), NULL, this);
-	Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(SceneViewPanel::OnMouseEnter), NULL, this );
-	Connect(wxEVT_LEAVE_WINDOW,		wxMouseEventHandler(SceneViewPanel::OnMouseLeave), NULL, this );
+	Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(SceneViewPanel::OnMouseEnter), NULL, this);
+	Connect(wxEVT_LEAVE_WINDOW,		wxMouseEventHandler(SceneViewPanel::OnMouseLeave), NULL, this);
 	Connect(wxEVT_LEFT_DOWN,		wxMouseEventHandler(SceneViewPanel::OnMouseLeftDown), NULL, this);
 	Connect(wxEVT_LEFT_UP,			wxMouseEventHandler(SceneViewPanel::OnMouseLeftUp), NULL, this);
 	Connect(wxEVT_RIGHT_DOWN,		wxMouseEventHandler(SceneViewPanel::OnMouseRightDown), NULL, this);

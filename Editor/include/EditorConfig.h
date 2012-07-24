@@ -34,6 +34,7 @@ THE SOFTWARE.
 #endif
 
 #include <wx/wx.h>
+#include <wx/icon.h>
 #include <wx/aui/aui.h>
 #include <wx/string.h>
 #include <wx/frame.h>
