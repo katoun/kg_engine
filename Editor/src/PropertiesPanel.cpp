@@ -34,7 +34,7 @@ PropertiesPanel::PropertiesPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 
 	m_PropertyGrid = new wxPropertyGrid(this, ID_PROPERTIES_PANEL_PROPERTY_GRID, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | wxPGMAN_DEFAULT_STYLE);
 
-	bSizer->Add(m_PropertyGrid, 0, wxEXPAND, 0);
+	bSizer->Add(m_PropertyGrid, 1, wxEXPAND, 0);
 	
 	SetSizer(bSizer);
 	Layout();

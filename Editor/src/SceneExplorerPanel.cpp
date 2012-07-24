@@ -42,7 +42,7 @@ SceneExplorerPanel::SceneExplorerPanel(wxWindow* parent, wxWindowID id, const wx
 	wxBoxSizer* bSizer = new wxBoxSizer(wxVERTICAL);
 
 	mTreeCtrl = new wxTreeCtrl(this, ID_SCENE_EXPLORER_TREE_CTRL, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE);
-	bSizer->Add(mTreeCtrl, 0, wxALL | wxEXPAND, 0);
+	bSizer->Add(mTreeCtrl, 1, wxALL | wxEXPAND, 0);
 
 	SetSizer(bSizer);
 	Layout();

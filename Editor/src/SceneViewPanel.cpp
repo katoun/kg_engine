@@ -48,7 +48,7 @@ SceneViewPanel::SceneViewPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
 
 	mRenderWindow = NULL;
 
-	//SetBackgroundColour(wxColour(0, 0, 0));
+	SetBackgroundColour(wxColour(0, 0, 0));
 
 	Connect(wxEVT_SIZE, wxSizeEventHandler(SceneViewPanel::OnSize), NULL, this);
 
