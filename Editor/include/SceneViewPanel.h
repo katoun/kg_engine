@@ -48,7 +48,6 @@ class Viewport;
 
 enum ViewOperation
 {
-	VIEW_OPERATION_NONE,
 	VIEW_OPERATION_ROTATE,
 	VIEW_OPERATION_PAN,
 	VIEW_OPERATION_MOVE_FORWARD,
@@ -89,11 +88,13 @@ protected:
 	void OnMouseWheel(wxMouseEvent &evt);
 
 	std::bitset<VIEW_OPERATION_COUNT> mViewOperations;
-	wxPoint mDragStartPoint;
+	wxPoint mDragLastPoint;
 	float moveMultiplier;
-	float rotMultiplier;
+	float rotateMultiplier;
+	float panMultiplier;
 	float mMoveScale;
 	float mRotScale;
+	float mPanScale;
 
 	render::RenderWindow* mRenderWindow;
 

@@ -176,27 +176,35 @@ void MainFrame::CreatePanels()
 {
 	wxAuiPaneInfo paneInfo;
 	///////////////////////////////////////////
-	mSceneExplorerPanel = new SceneExplorerPanel(this, ID_SCENE_EXPLORER_PANEL, wxDefaultPosition, wxSize(150,-1), wxTAB_TRAVERSAL);
+	mSceneExplorerPanel = new SceneExplorerPanel(this, ID_SCENE_EXPLORER_PANEL, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
 	paneInfo.Caption(wxT("Scene Explorer"));
 	paneInfo.Left();
+	paneInfo.BestSize(wxSize(200, 30));
+	paneInfo.FloatingSize(wxSize(200, 450));
+	paneInfo.MinSize(wxSize(200, 20));
+	paneInfo.Resizable(true);
 	paneInfo.PinButton(true);
 	paneInfo.Dock();
-	paneInfo.Resizable();
-	paneInfo.FloatingSize(wxDefaultSize);
 	paneInfo.DockFixed(false);
-	
+	paneInfo.TopDockable(false);
+	paneInfo.BottomDockable(false);
+
 	mAuiManager.AddPane(mSceneExplorerPanel, paneInfo);
 	///////////////////////////////////////////
-	mPropertiesPanel = new PropertiesPanel(this, ID_PROPERTIES_PANEL, wxDefaultPosition, wxSize(150,-1), wxTAB_TRAVERSAL);
+	mPropertiesPanel = new PropertiesPanel(this, ID_PROPERTIES_PANEL, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
 	paneInfo.Caption(wxT("Properties"));
 	paneInfo.Right();
+	paneInfo.BestSize(wxSize(200, 30));
+	paneInfo.FloatingSize(wxSize(200, 450));
+	paneInfo.MinSize(wxSize(200, 20));
+	paneInfo.Resizable(true);
 	paneInfo.PinButton(true);
 	paneInfo.Dock();
-	paneInfo.Resizable();
-	paneInfo.FloatingSize(wxDefaultSize);
 	paneInfo.DockFixed(false);
+	paneInfo.TopDockable(false);
+	paneInfo.BottomDockable(false);
 	
 	mAuiManager.AddPane(mPropertiesPanel, paneInfo);
 	///////////////////////////////////////////

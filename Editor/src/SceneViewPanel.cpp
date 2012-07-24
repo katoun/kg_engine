@@ -39,10 +39,12 @@ SceneViewPanel::SceneViewPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
 	wxPanel::Create(parent, id, pos, size, style);
 
 	engine::EngineManager::getInstance().addEngineEventReceiver(this);
-	moveMultiplier	= 0.5f;
-	rotMultiplier	= 0.5f;
-	mMoveScale		= 1.0f;
-	mRotScale		= 1.0f;
+	moveMultiplier		= 1.0f;
+	rotateMultiplier	= 1.0f;
+	panMultiplier		= 1.0f;
+	mMoveScale			= 0.0f;
+	mRotScale			= 0.0f;
+	mPanScale			= 0.0f;
 
 	mRenderWindow = NULL;
 
@@ -113,10 +115,12 @@ void SceneViewPanel::SetRenderWindow(render::RenderWindow* window)
 
 void SceneViewPanel::engineUpdateStarted(const engine::EngineEvent& evt)
 {
-	// Move about 1 units per second,
-	mMoveScale = 1.0f * evt.timeSinceLastUpdate * moveMultiplier;
+	// Move about 10 units per second,
+	mMoveScale = 10.0f * evt.timeSinceLastUpdate * moveMultiplier;
 	// Take about 10 seconds for full rotation
-	mRotScale = 36.0f * evt.timeSinceLastUpdate * rotMultiplier;
+	mRotScale = 36.0f * evt.timeSinceLastUpdate * rotateMultiplier;
+	// Pan about 10 units per second,
+	mPanScale = 10.0f * evt.timeSinceLastUpdate * panMultiplier;
 
 	if (mTransform != NULL)
 	{
@@ -163,6 +167,13 @@ void SceneViewPanel::OnMouseEnter(wxMouseEvent &evt)
 
 void SceneViewPanel::OnMouseLeave(wxMouseEvent &evt)
 {
+	mViewOperations.reset(VIEW_OPERATION_MOVE_FORWARD);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_BACKWARD);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_LEFT);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_RIGHT);
+	
+	mViewOperations.reset(VIEW_OPERATION_ROTATE);
+	mViewOperations.reset(VIEW_OPERATION_PAN);
 }
 
 void SceneViewPanel::OnMouseMove(wxMouseEvent &evt)
@@ -170,23 +181,26 @@ void SceneViewPanel::OnMouseMove(wxMouseEvent &evt)
 	if (mTransform == NULL || mCamera == NULL)
 		return;
 	
-	wxPoint delta = evt.GetPosition() - mDragStartPoint;
+	float DeltaX = (evt.GetPosition().x - mDragLastPoint.x);
+	float DeltaY = (evt.GetPosition().y - mDragLastPoint.y);
 
 	if (mViewOperations[VIEW_OPERATION_ROTATE])
 	{
-		mTransform->rotateX((float)delta.y * mRotScale);
+		mTransform->rotateX(DeltaY * mRotScale);
 
 		if (mCamera->getFixedUp())
-			mTransform->rotate((float)delta.x * mRotScale, mCamera->getFixedUpAxis(), game::TRANSFORM_SPACE_WORLD);
+			mTransform->rotate(DeltaX * mRotScale, mCamera->getFixedUpAxis(), game::TRANSFORM_SPACE_WORLD);
 		else
-			mTransform->rotateY((float)delta.x * mRotScale);
+			mTransform->rotateY(DeltaX * mRotScale);
 	}
 
 	if (mViewOperations[VIEW_OPERATION_PAN])
 	{
-		mTransform->translate(core::vector3d(0, (float)delta.y * mMoveScale, 0));
-		mTransform->translate(core::vector3d(-(float)delta.x * mMoveScale, 0, 0));
+		mTransform->translate(core::vector3d(0, DeltaY * mPanScale, 0));
+		mTransform->translate(core::vector3d(-DeltaX * mPanScale, 0, 0));
 	}
+
+	mDragLastPoint = evt.GetPosition();
 }
 
 void SceneViewPanel::OnMouseLeftDown(wxMouseEvent &evt)
@@ -202,7 +216,7 @@ void SceneViewPanel::OnMouseRightDown(wxMouseEvent &evt)
 {
 	mViewOperations.set(VIEW_OPERATION_ROTATE);
 
-	mDragStartPoint = evt.GetPosition();
+	mDragLastPoint = evt.GetPosition();
 }
 
 void SceneViewPanel::OnMouseRightUp(wxMouseEvent &evt)
@@ -214,7 +228,7 @@ void SceneViewPanel::OnMouseMiddleDown(wxMouseEvent &evt)
 {
 	mViewOperations.set(VIEW_OPERATION_PAN);
 
-	mDragStartPoint = evt.GetPosition();
+	mDragLastPoint = evt.GetPosition();
 }
 
 void SceneViewPanel::OnMouseMiddleUp(wxMouseEvent &evt)
