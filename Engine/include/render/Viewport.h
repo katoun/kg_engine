@@ -52,10 +52,7 @@ public:
 	//! The standard constructor.
 	//! \param camera: Pointer to a camera to be the source for the image.
 	//! \param target: Pointer to the render target to be the destination for the rendering.
-	//! \param left/top/width/height: Dimensions of the viewport, expressed as decimals
-	//! between 0 and 1. This allows the dimensions to apply irrespective of changes in the target's
-	//! size: e.g. to fill the whole area, values of 0,0,1,1 are appropriate.
-	Viewport(Camera* camera, RenderTarget* target, float left, float top, float width, float height);
+	Viewport(Camera* camera, RenderTarget* target);
 	~Viewport();
 
 	//! Retrieves a pointer to the render target for this viewport.
@@ -64,13 +61,22 @@ public:
 	Camera* getCamera();
 
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
-	float getLeft();
-	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
 	float getTop();
+	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
+	float getLeft();
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
 	float getWidth();
 	//! Gets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
 	float getHeight();
+
+	//! Sets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
+	void setTop(float top);
+	//! Sets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
+	void setLeft(float left);
+	//! Sets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
+	void setWidth(float width);
+	//! Sets one of the relative dimensions of the viewport, a value between 0.0 and 1.0.
+	void setHeight(float height);
 
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
 	signed int getActualLeft();
@@ -81,13 +87,6 @@ public:
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
 	signed int getActualHeight();
 	
-	//!	Sets the dimensions (after creation).
-
-	//!	\param left/top/width/height: Dimensions relative to the size of the
-	//!	target, represented as real values between 0 and 1. E.g. the full target
-	//!	area is 0,0,1,1.
-	void setDimensions(float left, float top, float width, float height);
-
 	void setDimenionsChanged();
 
 	//! Sets the initial background color of the viewport (before rendering).
@@ -128,9 +127,15 @@ protected:
 	bool mDimentionsNeedsUpdate;
 
 	// Relative dimensions, irrespective of target dimensions (0..1)
-	float mRelLeft, mRelTop, mRelWidth, mRelHeight;
+	float mRelativeTop;
+	float mRelativeLeft;
+	float mRelativeWidth;
+	float mRelativeHeight;
 	// Actual dimensions, based on target dimensions
-	signed int mActLeft, mActTop, mActWidth, mActHeight;
+	signed int mActualTop;
+	signed int mActualLeft;
+	signed int mActualWidth;
+	signed int mActualHeight;
 	
 	// Stored number of visible faces in the last render
 	unsigned int mRenderedFaces;

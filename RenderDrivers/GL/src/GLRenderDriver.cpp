@@ -575,19 +575,21 @@ void GLRenderDriver::endFrame()
 	glDisable(GL_SCISSOR_TEST);
 }
 
-void GLRenderDriver::setViewport(Viewport* vp)
+void GLRenderDriver::setViewport(Viewport* viewport)
 {
-	// XXX Rendering target stuff?
+	if (viewport == NULL)
+		return;
+
 	GLsizei x, y, w, h;
 
 	RenderTarget* target;
-	target = vp->getTarget();
+	target = viewport->getTarget();
 
 	// Calculate the "lower-left" corner of the viewport
-	w = vp->getActualWidth();
-	h = vp->getActualHeight();
-	x = vp->getActualLeft();
-	y = target->getHeight() - vp->getActualTop() - h;
+	w = viewport->getActualWidth();
+	h = viewport->getActualHeight();
+	x = viewport->getActualLeft();
+	y = target->getHeight() - viewport->getActualTop() - h;
 
 	glViewport(x, y, w, h);
 

@@ -162,6 +162,9 @@ public:
 	//! Removes all models from the rendering
 	void removeAllModels();
 
+	//!  Adds an updated viewport to be managed by this scene manager.
+	void addUpdatedViewport(Viewport* viewport);
+
 	//!  Creates a font to be managed by this render manager.
 	Font* createFont(const std::string& fontFilename);
 
@@ -356,8 +359,9 @@ protected:
 	//! The default material.
 	Material* mDefaultMaterial;
 
-	//! Current viewport (dest for current rendering operations).
+	//! Current viewport (destination for current rendering operations).
 	Viewport* mCurrentViewport;
+	std::list<Viewport*> mUpdatedViewports;
 
 	Frustum* mFrustum;
 

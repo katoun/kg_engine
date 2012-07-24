@@ -27,20 +27,21 @@ THE SOFTWARE.
 #include <render/Viewport.h>
 #include <render/Camera.h>
 #include <render/RenderTarget.h>
+#include <render/RenderManager.h>
 #include <core/Utils.h>
 
 namespace render
 {
 
-Viewport::Viewport(Camera* camera, RenderTarget* target, float left, float top, float width, float height)
+Viewport::Viewport(Camera* camera, RenderTarget* target)
 {
 	mCamera = camera;
 	mTarget = target;
 
-	mRelLeft = left;
-	mRelTop = top;
-	mRelWidth = width;
-	mRelHeight = height;
+	mRelativeTop = 0.0f;
+	mRelativeLeft = 0.0f;
+	mRelativeWidth = 1.0f;
+	mRelativeHeight = 1.0f;
 
 	mBackColor = render::Color::Black;
 	mClearEveryFrame = true;
@@ -92,55 +93,70 @@ Camera* Viewport::getCamera()
 	return mCamera;
 }
 
-float Viewport::getLeft()
-{
-	return mRelLeft;
-}
-
 float Viewport::getTop()
 {
-	return mRelTop;
+	return mRelativeTop;
+}
+
+float Viewport::getLeft()
+{
+	return mRelativeLeft;
 }
 
 float Viewport::getWidth()
 {
-	return mRelWidth;
+	return mRelativeWidth;
 }
 
 float Viewport::getHeight()
 {
-	return mRelHeight;
+	return mRelativeHeight;
+}
+
+void Viewport::setTop(float top)
+{
+	mRelativeTop = top;
+	mDimentionsNeedsUpdate = true;
+}
+
+void Viewport::setLeft(float left)
+{
+	mRelativeLeft = left;
+	mDimentionsNeedsUpdate = true;
+}
+
+void Viewport::setWidth(float width)
+{
+	mRelativeWidth = width;
+	mDimentionsNeedsUpdate = true;
+}
+
+void Viewport::setHeight(float height)
+{
+	mRelativeHeight = height;
+	mDimentionsNeedsUpdate = true;
 }
 
 signed int Viewport::getActualLeft()
 {
-	return mActLeft;
+	return mActualLeft;
 }
 
 signed int Viewport::getActualTop()
 {
-	return mActTop;
+	return mActualTop;
 }
 
 signed int Viewport::getActualWidth()
 {
-	return mActWidth;
+	return mActualWidth;
 }
 
 signed int Viewport::getActualHeight()
 {
-	return mActHeight;
+	return mActualHeight;
 }
 
-void Viewport::setDimensions(float left, float top, float width, float height)
-{
-	mRelLeft = left;
-	mRelTop = top;
-	mRelWidth = width;
-	mRelHeight = height;
-
-	mDimentionsNeedsUpdate = true;
-}
 void Viewport::setDimenionsChanged()
 {
 	mDimentionsNeedsUpdate = true;
@@ -172,21 +188,24 @@ void Viewport::update(float elapsedTime)
 	{
 		if (mTarget != NULL)
 		{
-			signed int height = mTarget->getHeight();
-			signed int width = mTarget->getWidth();
+			float width = (float)mTarget->getWidth();
+			float height = (float)mTarget->getHeight();
 
-			mActLeft = (signed int)(mRelLeft * width);
-			mActTop = (signed int)(mRelTop * height);
-			mActWidth = (signed int)(mRelWidth * width);
-			mActHeight = (signed int)(mRelHeight * height);
+			mActualLeft = (signed int)(mRelativeLeft * width);
+			mActualTop = (signed int)(mRelativeTop * height);
+			mActualWidth = (signed int)(mRelativeWidth * width);
+			mActualHeight = (signed int)(mRelativeHeight * height);
 		}
 
 		// This allows cameras to be used to render to many viewports,
 		// which can have their own dimensions and aspect ratios.
 		if (mCamera != NULL) 
 		{
-			mCamera->setAspectRatio((float)mActWidth / (float)mActHeight);
+			mCamera->setAspectRatio((float)mActualWidth / (float)mActualHeight);
 		}
+
+		//Add this viewport to the render manager to be counted as a viewport state change
+		RenderManager::getInstance().addUpdatedViewport(this);
 
 		mDimentionsNeedsUpdate = false;
 	}

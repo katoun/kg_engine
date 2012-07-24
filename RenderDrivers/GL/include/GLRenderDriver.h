@@ -80,7 +80,7 @@ public:
 
 	void endFrame();
 
-	void setViewport(Viewport *vp);
+	void setViewport(Viewport* viewport);
 
 	void setWorldMatrix(const core::matrix4 &m);
 

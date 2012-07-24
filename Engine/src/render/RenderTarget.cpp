@@ -77,12 +77,20 @@ unsigned int RenderTarget::getColorDepth() const
 	return mColorDepth;
 }
 
-Viewport* RenderTarget::createViewport(Camera* cam, float left, float top , float width , float height)
+Viewport* RenderTarget::createViewport(Camera* cam, float top, float left, float width , float height)
 {
-	Viewport* newViewport = new Viewport(cam, this, left, top, width, height);
-	mViewports.push_back(newViewport);
+	Viewport* pViewport = new Viewport(cam, this);
+	if (pViewport == NULL)
+		return NULL;
 
-	return newViewport;
+	pViewport->setTop(top);
+	pViewport->setLeft(left);
+	pViewport->setWidth(width);
+	pViewport->setHeight(height);
+	
+	mViewports.push_back(pViewport);
+
+	return pViewport;
 }
 
 void RenderTarget::removeViewport(Viewport* viewport)

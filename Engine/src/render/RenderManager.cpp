@@ -299,6 +299,14 @@ void RenderManager::removeAllModels()
 	mModels.clear();
 }
 
+void RenderManager::addUpdatedViewport(Viewport* viewport)
+{
+	if (viewport == NULL)
+		return;
+
+	mUpdatedViewports.push_back(viewport);
+}
+
 Font* RenderManager::createFont(const std::string& fontFilename)
 {
 	// Get font (load if required)
@@ -785,7 +793,6 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 	if (viewport == NULL)
 		return;
 
-	// Set the current viewport
 	setCurrentViewport(viewport);
 
 	mShaderParamData.setCurrentViewport(viewport);
@@ -919,8 +926,29 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 	if (viewport == NULL)
 		return;
 
+	bool viewportChanged = false;
+
 	// Check if viewport is different
-	if (viewport != mCurrentViewport)
+	if (viewport == mCurrentViewport)
+	{
+		std::list<Viewport*>::const_iterator i;
+		for (i = mUpdatedViewports.begin(); i != mUpdatedViewports.end(); ++i)
+		{
+			Viewport* pViewport = (*i);
+			if (pViewport != NULL && pViewport == viewport)
+			{
+				mUpdatedViewports.erase(i);
+				viewportChanged = true;
+				break;
+			}
+		}
+	}
+	else
+	{
+		viewportChanged = true;
+	}
+	
+	if (viewportChanged)
 	{
 		mCurrentViewport = viewport;
 

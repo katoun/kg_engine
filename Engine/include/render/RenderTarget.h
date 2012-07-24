@@ -83,11 +83,11 @@ public:
 	//! \param cam: The camera from which the viewport contents will be rendered (mandatory)
 	//!	viewports i.e. picture-in-picture). Higher ZOrders are on top of lower ones. The actual number
 	//!	is irrelevant, only the relative ZOrder matters (you can leave gaps in the numbering)
-	//! \param left: The relative position of the left of the viewport on the target, as a value between 0 and 1.
 	//! \param top: The relative position of the top of the viewport on the target, as a value between 0 and 1.
+	//! \param left: The relative position of the left of the viewport on the target, as a value between 0 and 1.
 	//! \param width: The relative width of the viewport on the target, as a value between 0 and 1.
 	//! \param height: The relative height of the viewport on the target, as a value between 0 and 1.
-	virtual Viewport* createViewport(Camera* cam, float left = 0.0f, float top = 0.0f , float width = 1.0f, float height = 1.0f);
+	virtual Viewport* createViewport(Camera* cam, float top = 0.0f, float left = 0.0f, float width = 1.0f, float height = 1.0f);
 	
 	//! Removes a viewport from the rendering target.
 	virtual void removeViewport(Viewport* viewport);
