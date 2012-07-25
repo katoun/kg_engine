@@ -56,4 +56,18 @@ void LightFactory::destroyComponent(game::Component* component)
 		delete pLight;
 }
 
+void LightFactory::addComponent(game::Component* component) 
+{
+	Light* pLight = static_cast<Light*>(component);
+
+	RenderManager::getInstance().addLight(pLight);
+}
+
+void LightFactory::removeComponent(game::Component* component)
+{
+	Light* pLight = static_cast<Light*>(component);
+
+	RenderManager::getInstance().removeLight(pLight);
+}
+
 } // end namespace game

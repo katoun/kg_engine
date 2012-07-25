@@ -49,6 +49,12 @@ public:
 
 	//! Destroys a transform component which was created by this factory.
 	void destroyComponent(game::Component* component);
+
+	//! Adds listener component to the sound manager.
+	void addComponent(game::Component* component);
+
+	//! Removes listener component from the sound manager.
+	void removeComponent(game::Component* component);
 };
 
 } // end namespace sound

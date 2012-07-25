@@ -56,4 +56,18 @@ void CameraFactory::destroyComponent(game::Component* component)
 		delete pCamera;
 }
 
+void CameraFactory::addComponent(game::Component* component) 
+{
+	Camera* pCamera = static_cast<Camera*>(component);
+
+	RenderManager::getInstance().addCamera(pCamera);
+}
+
+void CameraFactory::removeComponent(game::Component* component)
+{
+	Camera* pCamera = static_cast<Camera*>(component);
+
+	RenderManager::getInstance().removeCamera(pCamera);
+}
+
 } // end namespace game

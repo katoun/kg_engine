@@ -56,4 +56,18 @@ void ModelFactory::destroyComponent(game::Component* component)
 		delete pModel;
 }
 
+void ModelFactory::addComponent(game::Component* component) 
+{
+	Model* pModel = static_cast<Model*>(component);
+
+	RenderManager::getInstance().addModel(pModel);
+}
+
+void ModelFactory::removeComponent(game::Component* component)
+{
+	Model* pModel = static_cast<Model*>(component);
+
+	RenderManager::getInstance().removeModel(pModel);
+}
+
 } // end namespace game

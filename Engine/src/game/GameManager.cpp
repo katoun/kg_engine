@@ -115,7 +115,7 @@ void GameManager::removeCurrentScene()
 	}
 }
 
-GameObject* GameManager::createGameObject()
+GameObject* GameManager::createGameObject(Scene* scene)
 {
 	GameObject* pGameObject = new GameObject();
 	if (pGameObject == NULL)
@@ -126,7 +126,7 @@ GameObject* GameManager::createGameObject()
 	return pGameObject;
 }
 
-GameObject* GameManager::createGameObject(const std::string& name)
+GameObject* GameManager::createGameObject(const std::string& name, Scene* scene)
 {
 	GameObject* pGameObject = new GameObject(name);
 	if (pGameObject == NULL)

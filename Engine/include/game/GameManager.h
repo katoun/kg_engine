@@ -69,8 +69,8 @@ public:
 	void removeCurrentScene();
 
 	//! Creates a game object.
-	GameObject* createGameObject();
-	GameObject* createGameObject(const std::string& name);
+	GameObject* createGameObject(Scene* scene = NULL);
+	GameObject* createGameObject(const std::string& name, Scene* scene = NULL);
 
 	//! Remove a game object from the managed list.
 	void removeGameObject(GameObject* gameObject);

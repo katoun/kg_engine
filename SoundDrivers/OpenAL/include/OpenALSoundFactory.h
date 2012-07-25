@@ -47,6 +47,12 @@ public:
 
 	//! Destroys a sound component which was created by this factory.
 	void destroyComponent(game::Component* component);
+
+	//! Adds sound component to the sound manager.
+	void addComponent(game::Component* component);
+
+	//! Removes sound component from the sound manager.
+	void removeComponent(game::Component* component);
 };
 
 } // end namespace sound
