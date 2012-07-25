@@ -137,6 +137,7 @@
     <ClCompile Include="src\MaterialSerializer.cpp" />
     <ClCompile Include="src\MeshSerializer.cpp" />
     <ClCompile Include="src\ResourceDll.cpp" />
+    <ClCompile Include="src\SceneSerializer.cpp" />
     <ClCompile Include="src\TextureSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="include\FontSerializer.h" />
     <ClInclude Include="include\MaterialSerializer.h" />
     <ClInclude Include="include\MeshSerializer.h" />
+    <ClInclude Include="include\SceneSerializer.h" />
     <ClInclude Include="include\TextureSerializer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

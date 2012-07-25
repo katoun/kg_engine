@@ -29,10 +29,6 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 
-#ifdef _UNICODE
-#undef _UNICODE
-#endif
-
 #include <wx/wx.h>
 #include <wx/icon.h>
 #include <wx/aui/aui.h>

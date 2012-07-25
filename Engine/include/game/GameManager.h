@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include <core/Config.h>
 #include <core/Singleton.h>
 #include <core/System.h>
+#include <resource/ResourceEventReceiver.h>
 
 #include <string>
 #include <map>
@@ -37,12 +38,13 @@ THE SOFTWARE.
 namespace game
 {
 
+class Scene;
 class GameObject;
 class Component;
 class ComponentFactory;
 class TransformFactory;
 
-class ENGINE_PUBLIC_EXPORT GameManager: public core::System, public core::Singleton<GameManager>
+class ENGINE_PUBLIC_EXPORT GameManager: public core::System, public resource::ResourceEventReceiver, public core::Singleton<GameManager>
 {
 public:
 	//! Constructor
@@ -50,6 +52,21 @@ public:
 
 	//! Destructor
 	~GameManager();
+
+	//! Creates a scene to be managed by this game manager.
+	Scene* createScene(const std::string& filename);
+
+	//!  Removes a scene from the game manager.
+	void removeScene(Scene* scene);
+	//!  Removes a scene from the game manager.
+	void removeScene(const unsigned int& id);
+	//! Removes all scenes from the game manager
+	void removeAllScenes();
+
+	Scene* getCurrentScene();
+
+	void setCurrentScene(Scene* scene);
+	void removeCurrentScene();
 
 	//! Creates a game object.
 	GameObject* createGameObject();
@@ -75,6 +92,9 @@ public:
 	void registerComponentFactory(unsigned int type, ComponentFactory* factory);
 	void removeComponentFactory(unsigned int type);
 
+	void resourceLoaded(const resource::ResourceEvent& evt);
+	void resourceUnloaded(const resource::ResourceEvent& evt);
+
 	static GameManager& getInstance();
 	static GameManager* getInstancePtr();
 
@@ -88,6 +108,9 @@ protected:
 	void registerDefaultFactoriesImpl();
 	void removeDefaultFactoriesImpl();
 
+	Scene* mCurrentScene;
+
+	std::map<unsigned int, Scene*> mScenes;
 	std::map<unsigned int, GameObject*> mGameObjects;
 	std::map<unsigned int, Component*> mComponents;
 	std::map<unsigned int, ComponentFactory*> mComponentFactories;

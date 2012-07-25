@@ -50,7 +50,7 @@ class ENGINE_PUBLIC_EXPORT Texture : public resource::Resource
 {
 public:
 
-	Texture(const std::string& name, resource::Serializer* serializer);
+	Texture(const std::string& filename, resource::Serializer* serializer);
 	virtual ~Texture();
 
 	//! Sets the type of texture,

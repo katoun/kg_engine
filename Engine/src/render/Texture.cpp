@@ -31,7 +31,7 @@ THE SOFTWARE.
 namespace render
 {
 
-Texture::Texture(const std::string& name, resource::Serializer* serializer): resource::Resource(name, serializer)
+Texture::Texture(const std::string& filename, resource::Serializer* serializer): resource::Resource(filename, serializer)
 {
 	mResourceType = resource::RESOURCE_TYPE_TEXTURE;
 

@@ -25,6 +25,9 @@
     <ClCompile Include="src\TextureSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodySerializer.h">
@@ -43,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TextureSerializer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneSerializer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

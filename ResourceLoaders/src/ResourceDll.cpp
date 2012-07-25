@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <MaterialSerializer.h>
 #include <MeshSerializer.h>
 #include <BodySerializer.h>
+#include <SceneSerializer.h>
 
 namespace resource
 {
@@ -41,6 +42,7 @@ Serializer* pTextureSerializer = NULL;
 Serializer* pMaterialSerializer = NULL;
 Serializer* pMeshSerializer = NULL;
 Serializer* pBodySerializer = NULL;
+Serializer* pSceneSerializer = NULL;
 
 extern "C" void RESOURCE_PUBLIC_EXPORT loadPlugin()
 {	
@@ -49,6 +51,7 @@ extern "C" void RESOURCE_PUBLIC_EXPORT loadPlugin()
 	pMaterialSerializer = new MaterialSerializer();
 	pMeshSerializer = new MeshSerializer();
 	pBodySerializer = new BodySerializer();
+	pSceneSerializer = new SceneSerializer();
 
 	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_FONT, pFontSerializer);
 	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_TEXTURE, pTextureSerializer);
@@ -56,6 +59,7 @@ extern "C" void RESOURCE_PUBLIC_EXPORT loadPlugin()
 	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL, pMaterialSerializer);
 	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_MESH_DATA, pMeshSerializer);
 	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_BODY_DATA, pBodySerializer);
+	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_SCENE, pSceneSerializer);
 }
 
 /// Destroys
@@ -67,17 +71,32 @@ extern "C" void RESOURCE_PUBLIC_EXPORT unloadPlugin()
 	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL);
 	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_MESH_DATA);
 	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_BODY_DATA);
+	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_SCENE);
 
 	if (pFontSerializer != NULL)
+	{
 		delete pFontSerializer;
+	}
 	if (pTextureSerializer != NULL)
+	{
 		delete pTextureSerializer;
+	}
 	if (pMaterialSerializer != NULL)
+	{
 		delete pMaterialSerializer;
+	}
 	if (pMeshSerializer != NULL)
+	{
 		delete pMeshSerializer;
+	}
 	if (pBodySerializer != NULL)
+	{
 		delete pBodySerializer;
+	}
+	if (pSceneSerializer != NULL)
+	{
+		delete pSceneSerializer;
+	}
 }
 
 } // end namespace resource

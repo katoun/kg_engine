@@ -24,65 +24,36 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <core/Log.h>
-#include <core/Utils.h>
-#include <core/LogDefines.h>
-#include <game/Scene.h>
-#include <game/GameObject.h>
-#include <game/Component.h>
-#include <game/ComponentDefines.h>
-#include <game/GameManager.h>
-#include <resource/ResourceManager.h>
-#include <SceneSerializer.h>
+#ifndef _SCENE_SERIALIZER_H_
+#define _SCENE_SERIALIZER_H_
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <Config.h>
+#include <resource/Serializer.h>
 
 #include <string>
 
 namespace resource
 {
 
-SceneSerializer::SceneSerializer()
+//! Class for serialising scene data.
+class SceneSerializer: public Serializer
 {
-	// Version number
-	mVersion = "[SceneSerializer_v1.00]";
-}
+public:
 
-SceneSerializer::~SceneSerializer() {}
+	SceneSerializer();
+	virtual ~SceneSerializer();
 
-bool SceneSerializer::importResource(Resource* dest, const std::string& filename)
-{
-	assert(dest != NULL);
-	if (dest == NULL)
-		return false;
+	//! Imports a Scene from an .xml file.
+	bool importResource(Resource* dest, const std::string& filename);
 
-	if (dest->getResourceType() != RESOURCE_TYPE_SCENE)
-	{
-		core::Log::getInstance().logMessage("SceneSerializer", "Unable to load scene - invalid resource pointer.", core::LOG_LEVEL_ERROR);
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	std::string filePath = ResourceManager::getInstance().getPath(filename);
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-
-	return true;
-}
-
-bool SceneSerializer::exportResource(Resource* source, const std::string& filename)
-{
-	return false;
-}
+	//! Exports a Scene to the file specified. 
+	//!
+	//! This method takes an externally created Scene, and exports it to a .xml file.
+	//! \param meshData: Pointer to the MeshData to export
+	//! \param filename: The destination filename.
+	bool exportResource(Resource* source, const std::string& filename);
+};
 
 }// end namespace resource
+
+#endif

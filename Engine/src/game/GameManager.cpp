@@ -24,10 +24,14 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 #include <game/GameManager.h>
+#include <game/Scene.h>
 #include <game/GameObject.h>
 #include <game/Component.h>
 #include <game/ComponentFactory.h>
 #include <game/TransformFactory.h>
+#include <resource/Resource.h>
+#include <resource/ResourceEvent.h>
+#include <resource/ResourceManager.h>
 
 template<> game::GameManager& core::Singleton<game::GameManager>::ms_Singleton = game::GameManager();
 
@@ -44,6 +48,70 @@ GameManager::~GameManager()
 	if (mDefaultTransformFactory != NULL)
 	{
 		delete mDefaultTransformFactory;
+	}
+}
+
+Scene* GameManager::createScene(const std::string& filename)
+{
+	Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SCENE, filename));
+	if (pScene == NULL)
+		return NULL;
+
+	mScenes[pScene->getID()] = pScene;
+
+	return pScene;
+}
+
+void GameManager::removeScene(Scene* scene)
+{
+	if (scene == NULL)
+		return;
+
+	removeScene(scene->getID());
+}
+
+void GameManager::removeScene(const unsigned int& id)
+{
+	std::map<unsigned int, Scene*>::iterator i = mScenes.find(id);
+	if (i != mScenes.end())
+		mScenes.erase(i);
+}
+
+void GameManager::removeAllScenes()
+{
+	mScenes.clear();
+}
+
+Scene* GameManager::getCurrentScene()
+{
+	return mCurrentScene;
+}
+
+void GameManager::setCurrentScene(Scene* scene)
+{
+	if (mCurrentScene != scene)
+	{
+		if (scene != NULL)
+		{
+			scene->removeResourceEventReceiver(this);
+		}
+
+		mCurrentScene = scene;
+
+		if (mCurrentScene != NULL)
+		{
+			mCurrentScene->addResourceEventReceiver(this);
+		}
+	}
+}
+
+void GameManager::removeCurrentScene()
+{
+	if (mCurrentScene != NULL)
+	{
+		mCurrentScene->addResourceEventReceiver(this);
+
+		mCurrentScene = NULL;
 	}
 }
 
@@ -213,6 +281,28 @@ void GameManager::removeComponentFactory(unsigned int type)
 	if (i != mComponentFactories.end())
 	{
 		mComponentFactories.erase(i);
+	}
+}
+
+void GameManager::resourceLoaded(const resource::ResourceEvent& evt)
+{
+	if (evt.source && evt.source == mCurrentScene)
+	{
+		// Remove all Components
+		removeAllComponents();
+
+		// Remove all GameObjects
+		removeAllGameObjects();
+
+		//TODO add all the game objects and components form the loaded scene
+	}
+}
+
+void GameManager::resourceUnloaded(const resource::ResourceEvent& evt)
+{
+	if (evt.source && evt.source == mCurrentScene)
+	{
+		//TODO add all the game objects and components form the loaded scene
 	}
 }
 

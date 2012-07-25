@@ -41,7 +41,6 @@ class Color;
 namespace resource
 {
 
-// Forward declarations for loading DDS data.
 enum PixelFormat;
 class DataStream;
 

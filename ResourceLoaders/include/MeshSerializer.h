@@ -35,10 +35,7 @@ THE SOFTWARE.
 namespace resource
 {
 
-//! Class for serialising mesh data to/from an .mesh file.
-//!
-//! This class allows exporters to write .mesh files easily, and allows the
-//! engine to import .mesh files into instatiated Meshes.
+//! Class for serialising mesh data.
 class MeshSerializer: public Serializer
 {
 public:
@@ -51,7 +48,7 @@ public:
 
 	//! Exports a mesh to the file specified. 
 	//!
-	//! This method takes an externally created MeshData, and exports it to a .mesh file.
+	//! This method takes an externally created MeshData, and exports it to a .xml file.
 	//! \param meshData: Pointer to the MeshData to export
 	//! \param filename: The destination filename.
 	bool exportResource(Resource* source, const std::string& filename);

@@ -24,65 +24,42 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <core/Log.h>
-#include <core/Utils.h>
-#include <core/LogDefines.h>
 #include <game/Scene.h>
 #include <game/GameObject.h>
-#include <game/Component.h>
-#include <game/ComponentDefines.h>
 #include <game/GameManager.h>
-#include <resource/ResourceManager.h>
-#include <SceneSerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
-
-#include <string>
-
-namespace resource
+namespace game
 {
 
-SceneSerializer::SceneSerializer()
+Scene::Scene(const std::string& filename, resource::Serializer* serializer): resource::Resource(filename, serializer)
 {
-	// Version number
-	mVersion = "[SceneSerializer_v1.00]";
+	mResourceType = resource::RESOURCE_TYPE_SCENE;
 }
 
-SceneSerializer::~SceneSerializer() {}
+Scene::~Scene() {}
 
-bool SceneSerializer::importResource(Resource* dest, const std::string& filename)
+void Scene::addGameObject(GameObject* gameObject)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
-		return false;
+	if (gameObject == NULL)
+		return;
 
-	if (dest->getResourceType() != RESOURCE_TYPE_SCENE)
-	{
-		core::Log::getInstance().logMessage("SceneSerializer", "Unable to load scene - invalid resource pointer.", core::LOG_LEVEL_ERROR);
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	std::string filePath = ResourceManager::getInstance().getPath(filename);
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-
-	return true;
+	mGameObjects.push_back(gameObject);
 }
 
-bool SceneSerializer::exportResource(Resource* source, const std::string& filename)
+const std::list<GameObject*>& Scene::getGameObjects()
 {
-	return false;
+	return mGameObjects;
 }
 
-}// end namespace resource
+void Scene::removeAllGameObjects()
+{
+	mGameObjects.clear();
+}
+
+void Scene::unloadImpl()
+{
+	// Remove all GameObjects
+	removeAllGameObjects();
+}
+
+} // end namespace game

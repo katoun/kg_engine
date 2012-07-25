@@ -36,7 +36,7 @@ THE SOFTWARE.
 namespace resource
 {
 
-//! Class for serializing Bodies to / from a .body script.
+//! Class for serializing Bodies.
 class BodySerializer : public Serializer
 {
 public:

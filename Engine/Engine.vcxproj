@@ -165,6 +165,7 @@
     <ClInclude Include="include\game\GameManager.h" />
     <ClInclude Include="include\game\GameObject.h" />
     <ClInclude Include="include\game\MessageDefines.h" />
+    <ClInclude Include="include\game\Scene.h" />
     <ClInclude Include="include\game\Transform.h" />
     <ClInclude Include="include\game\TransformDefines.h" />
     <ClInclude Include="include\game\TransformFactory.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="src\game\ComponentFactory.cpp" />
     <ClCompile Include="src\game\GameManager.cpp" />
     <ClCompile Include="src\game\GameObject.cpp" />
+    <ClCompile Include="src\game\Scene.cpp" />
     <ClCompile Include="src\game\Transform.cpp" />
     <ClCompile Include="src\game\TransformFactory.cpp" />
     <ClCompile Include="src\physics\BodyDataFactory.cpp" />

@@ -166,19 +166,13 @@ public:
 	void addUpdatedViewport(Viewport* viewport);
 
 	//!  Creates a font to be managed by this render manager.
-	Font* createFont(const std::string& fontFilename);
-
-	//! Retrieves a pointer to a font by id.
-	Font* getFont(const unsigned int& id);
-
-	//! Retrieves the total number of created fonts.
-	unsigned int getNumberOfFonts() const;
+	Font* createFont(const std::string& filename);
 
 	//!  Removes a font from the rendering.
-	void removeFont(Font *fnt);
+	void removeFont(Font* font);
 	//!  Removes a font from the rendering.
 	void removeFont(const unsigned int& id);
-	//! Removes (and destroys) all fonts from the rendering
+	//! Removes all fonts from the rendering
 	void removeAllFonts();
 
 	//! Creates a shader to be managed by script manager.

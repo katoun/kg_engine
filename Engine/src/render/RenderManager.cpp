@@ -307,10 +307,9 @@ void RenderManager::addUpdatedViewport(Viewport* viewport)
 	mUpdatedViewports.push_back(viewport);
 }
 
-Font* RenderManager::createFont(const std::string& fontFilename)
+Font* RenderManager::createFont(const std::string& filename)
 {
-	// Get font (load if required)
-	Font* newFont = static_cast<Font*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_FONT, fontFilename));
+	Font* newFont = static_cast<Font*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_FONT, filename));
 	if (newFont == NULL)
 		return NULL;
 
@@ -319,26 +318,12 @@ Font* RenderManager::createFont(const std::string& fontFilename)
 	return newFont;
 }
 
-Font* RenderManager::getFont(const unsigned int& id)
+void RenderManager::removeFont(Font* font)
 {
-	std::map<unsigned int, Font*>::const_iterator i = mFonts.find(id);
-	if (i != mFonts.end())
-		return i->second;
-
-	return NULL;
-}
-
-unsigned int RenderManager::getNumberOfFonts() const
-{
-	return mFonts.size();
-}
-
-void RenderManager::removeFont(Font *fnt)
-{
-	if (fnt == NULL)
+	if (font == NULL)
 		return;
 
-	removeFont(fnt->getID());
+	removeFont(font->getID());
 }
 
 void RenderManager::removeFont(const unsigned int& id)

@@ -36,7 +36,7 @@ THE SOFTWARE.
 namespace resource
 {
 
-//! Class for serializing Materials to / from a .material script.
+//! Class for serializing Materials.
 class MaterialSerializer : public Serializer
 {
 public:
