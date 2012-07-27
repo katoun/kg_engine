@@ -48,34 +48,40 @@ EngineSettings::EngineSettings()
 	mBitdepth = 16;
 	mFullscreen = false;
 	mVSync = false;
+	mDataPath = "";
 	mMainWindowId = NULL;
 }
 
 EngineSettings::~EngineSettings() {}
 
-unsigned int EngineSettings::getWidth()
+const unsigned int EngineSettings::getWidth()
 {
 	return mWidth;
 }
 
-unsigned int EngineSettings::getHeight()
+const unsigned int EngineSettings::getHeight()
 {
 	return mHeight;
 }
 
-unsigned int EngineSettings::getBitdepth()
+const unsigned int EngineSettings::getBitdepth()
 {
 	return mBitdepth;
 }
 
-bool EngineSettings::getFullscreen()
+const bool EngineSettings::getFullscreen()
 {
 	return mFullscreen;
 }
 
-bool EngineSettings::getVSync()
+const bool EngineSettings::getVSync()
 {
 	return mVSync;
+}
+
+const std::string& EngineSettings::getDataPath()
+{
+	return mDataPath;
 }
 
 void* EngineSettings::getMainWindowId()
@@ -113,6 +119,12 @@ void EngineSettings::setVSync(bool vsync)
 	mOptionsModified = true;
 }
 
+void EngineSettings::setDataPath(const std::string& dataPath)
+{
+	mDataPath = dataPath;
+	mOptionsModified = true;
+}
+
 void EngineSettings::setMainWindowID(void* windowId)
 {
 	mMainWindowId = windowId;
@@ -132,20 +144,23 @@ void EngineSettings::loadOptions(const std::string& optionsfile)
 		return;
 	}
 
-	if (pConf->has("VideoSize.Width"))
-		mWidth = pConf->getInt("VideoSize.Width");
+	if (pConf->has("VideoSize.Width[@value]"))
+		mWidth = pConf->getInt("VideoSize.Width[@value]");
 
-	if (pConf->has("VideoSize.Height"))
-		mHeight = pConf->getInt("VideoSize.Height");
+	if (pConf->has("VideoSize.Height[@value]"))
+		mHeight = pConf->getInt("VideoSize.Height[@value]");
 
-	if (pConf->has("Bitdepth"))
-		mBitdepth = pConf->getInt("Bitdepth");
+	if (pConf->has("Bitdepth[@value]"))
+		mBitdepth = pConf->getInt("Bitdepth[@value]");
 
-	if (pConf->has("Fullscreen"))
-		mFullscreen = pConf->getBool("Fullscreen");
+	if (pConf->has("Fullscreen[@value]"))
+		mFullscreen = pConf->getBool("Fullscreen[@value]");
 
-	if (pConf->has("VSync"))
-		mVSync = pConf->getBool("VSync");
+	if (pConf->has("VSync[@value]"))
+		mVSync = pConf->getBool("VSync[@value]");
+
+	if (pConf->has("DataPath[@value]"))
+		mDataPath = pConf->getString("DataPath[@value]");
 }
 
 void EngineSettings::saveOptions(const std::string& optionsfile)
@@ -180,9 +195,8 @@ void EngineSettings::saveOptions(const std::string& optionsfile)
 
 	//pBitdepth
 	Poco::AutoPtr<Poco::XML::Element> pBitdepth = pDoc->createElement("Bitdepth");
-	
-	Poco::AutoPtr<Poco::XML::Text> pBitdepthText = pDoc->createTextNode(core::intToString(mBitdepth));
-	pBitdepth->appendChild(pBitdepthText);
+
+	pBitdepth->setAttribute("value", core::intToString(mBitdepth));
 	
 	pRoot->appendChild(pBitdepth);
 	//pBitdepth
@@ -190,8 +204,7 @@ void EngineSettings::saveOptions(const std::string& optionsfile)
 	//Fullscreen
 	Poco::AutoPtr<Poco::XML::Element> pFullscreen = pDoc->createElement("Fullscreen");
 	
-	Poco::AutoPtr<Poco::XML::Text> pFullscreenText = pDoc->createTextNode(mFullscreen ? "Yes" : "No");
-	pFullscreen->appendChild(pFullscreenText);
+	pFullscreen->setAttribute("value", mFullscreen ? "Yes" : "No");
 	
 	pRoot->appendChild(pFullscreen);
 	//Fullscreen
@@ -199,11 +212,18 @@ void EngineSettings::saveOptions(const std::string& optionsfile)
 	//VSync
 	Poco::AutoPtr<Poco::XML::Element> pVSync = pDoc->createElement("VSync");
 	
-	Poco::AutoPtr<Poco::XML::Text> pVSyncText = pDoc->createTextNode(mVSync ? "Yes" : "No");
-	pVSync->appendChild(pVSyncText);
+	pVSync->setAttribute("value", mVSync ? "Yes" : "No");
 	
 	pRoot->appendChild(pVSync);
 	//VSync
+
+	//DataPath
+	Poco::AutoPtr<Poco::XML::Element> pDataPath = pDoc->createElement("DataPath");
+	
+	pDataPath->setAttribute("value", mDataPath);
+	
+	pRoot->appendChild(pDataPath);
+	//DataPath
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration(pDoc));
 

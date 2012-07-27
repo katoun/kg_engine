@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _RESOURCE_MANAGER_H_
 
 #include <core/Config.h>
+#include <core/Utils.h>
 #include <core/System.h>
 #include <core/Singleton.h>
 #include <core/Math.h>
@@ -60,8 +61,6 @@ public:
 	ResourceManager();
 	~ResourceManager();
 
-	void setResourcesFile(const std::string& resourcesFile);
-
 	//! Creates a resource.
 	Resource* createResource(const ResourceType& type, const std::string& filename);
 
@@ -73,6 +72,7 @@ public:
 	bool loadResource(Resource* resource);
 	void unloadResource(Resource* resource);
 	bool reloadResource(Resource* resource);
+	bool saveResource(Resource* resource, const std::string& filename = core::STRING_BLANK);
 
 	//! Remove a Resource from the managed resources list, calling it's unload() method.
 	void removeResource(Resource *resource);
@@ -86,13 +86,7 @@ public:
 	void registerSerializer(const ResourceType& type, Serializer* serializer);
 	void removeSerializer(const ResourceType& type);
 
-	//! Adds a relative path to search for resources.
-	void addPath(const std::string& path);
-
-	//! Removes a relative path to search for resources.
-	void removePath(const std::string& path);
-
-	const std::string getPath(const std::string& filename);
+	const std::string& getDataPath();
 
 	void addLoadEventReceiver(LoadEventReceiver* newEventReceiver);
 	void removeLoadEventReceiver(LoadEventReceiver* oldEventReceiver);
@@ -111,13 +105,9 @@ protected:
 	void stopImpl();
 	void updateImpl(float elapsedTime);
 
-	void addFiles(const std::string& subpath, const std::string& path);
-
-	std::string mResourcesFile;
-
 	std::list<LoadEventReceiver*> mLoadEventReceivers;
-	
-	std::map<std::string, std::string> mFiles;
+
+	std::string mDataPath;
 
 	//! Central lists of resources for loading created in order of type.
 	std::vector<std::list<Resource*>> mLoadResources;

@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _RESOURCE_H_
 
 #include <core/Config.h>
+#include <core/Utils.h>
 #include <resource/ResourceDefines.h>
 
 #include <string>
@@ -75,6 +76,8 @@ public:
 
 	bool reload();
 
+	bool save(const std::string& filename = core::STRING_BLANK);
+
 	void updateSize();
 
 	void checkAlreadyLoaded();
@@ -92,6 +95,7 @@ protected:
 
 	virtual bool loadImpl();
 	virtual void unloadImpl();
+	virtual bool saveImpl(const std::string& filename);
 
 	std::string mFilename;
 	Serializer* mSerializer;

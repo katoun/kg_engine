@@ -42,11 +42,12 @@ public:
 	EngineSettings();
 	~EngineSettings();
 
-	unsigned int getWidth();
-	unsigned int getHeight();
-	unsigned int getBitdepth();
-	bool getFullscreen();
-	bool getVSync();
+	const unsigned int getWidth();
+	const unsigned int getHeight();
+	const unsigned int getBitdepth();
+	const bool getFullscreen();
+	const bool getVSync();
+	const std::string& getDataPath();
 	void* getMainWindowId();
 
 	void setWidth(unsigned int width);
@@ -54,6 +55,7 @@ public:
 	void setBitdepth(unsigned int bitdepth);
 	void setFullscreen(bool fullscreen);
 	void setVSync(bool vsync);
+	void setDataPath(const std::string& dataPath);
 	void setMainWindowID(void* windowId);
 
 	//! Method reads a game configuration file and instantiates all options.
@@ -77,6 +79,7 @@ protected:
 	unsigned int mBitdepth;
 	bool mFullscreen;
 	bool mVSync;
+	std::string mDataPath;
 
 	void* mMainWindowId;
 };

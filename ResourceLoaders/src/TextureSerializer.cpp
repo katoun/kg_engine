@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <TextureSerializer.h>
 
 #include <FreeImage.h>
+#include <Poco/Path.h>
 
 namespace resource
 {
@@ -81,7 +82,9 @@ bool TextureSerializer::importResource(Resource* dest, const std::string& filena
 		return false;
 	}
 
-	std::string filePath = ResourceManager::getInstance().getPath(filename);
+	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
+	path.append(filename);
+	std::string filePath = path.toString();
 
 	FREE_IMAGE_FORMAT fi_format = FreeImage_GetFileType(filePath.c_str());
 	FIBITMAP *fi_bitmap = FreeImage_Load(fi_format, filePath.c_str());

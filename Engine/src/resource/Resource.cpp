@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <resource/ResourceEventReceiver.h>
 #include <resource/ResourceManager.h>
 
+#include <Poco/Path.h>
 #include <Poco/File.h>
 
 namespace resource
@@ -124,9 +125,16 @@ bool Resource::reload()
 	return load();
 }
 
+bool Resource::save(const std::string& filename)
+{
+	return saveImpl(filename);
+}
+
 void Resource::updateSize()
 {
-	std::string filePath = ResourceManager::getInstance().getPath(mFilename);
+	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
+	path.append(mFilename);
+	std::string filePath = path.toString();
 	
 	if (filePath == core::STRING_BLANK)
 		return;
@@ -194,6 +202,19 @@ bool Resource::loadImpl()
 }
 
 void Resource::unloadImpl() {}
+
+bool Resource::saveImpl(const std::string& filename)
+{
+	if (filename != core::STRING_BLANK)
+		mFilename = filename;
+	
+	if (mSerializer != NULL)
+	{
+		return mSerializer->exportResource(this, mFilename);
+	}
+
+	return false;
+}
 
 void Resource::fireLoaded()
 {

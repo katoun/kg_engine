@@ -25,7 +25,6 @@ THE SOFTWARE.
 */
 
 #include <core/Log.h>
-#include <core/Utils.h>
 #include <resource/ResourceManager.h>
 #include <resource/Serializer.h>
 #include <resource/Resource.h>
@@ -33,6 +32,7 @@ THE SOFTWARE.
 #include <resource/LoadEvent.h>
 #include <resource/LoadEventReceiver.h>
 #include <platform/PlatformManager.h>
+#include <engine/EngineSettings.h>
 
 #include <Poco/File.h>
 #include <Poco/Path.h>
@@ -56,6 +56,8 @@ ResourceManager::ResourceManager(): core::System("ResourceManager")
 		mResourceFactories[i] = NULL;
 		mSerializers[i] = NULL;
 	}
+
+	mDataPath = core::STRING_BLANK;
 	
 	mMemoryUsage = 0;
 
@@ -63,8 +65,6 @@ ResourceManager::ResourceManager(): core::System("ResourceManager")
 	mLoadedSize = 0;
 
 	mLoadEvent = new LoadEvent();
-
-	mResourcesFile = "Resources.xml";	
 }
 
 ResourceManager::~ResourceManager()
@@ -73,11 +73,6 @@ ResourceManager::~ResourceManager()
 
 	// Update memory usage
 	mMemoryUsage = 0;
-}
-
-void ResourceManager::setResourcesFile(const std::string& resourcesFile)
-{
-	mResourcesFile = resourcesFile;
 }
 
 Resource* ResourceManager::createResource(const ResourceType& type, const std::string& filename)
@@ -178,9 +173,11 @@ void ResourceManager::unloadResources()
 bool ResourceManager::loadResource(Resource* resource)
 {
 	assert(resource != NULL);
-	if (resource == NULL) return false;
+	if (resource == NULL)
+		return false;
 
-	if (!resource->load()) return false;
+	if (!resource->load())
+		return false;
 
 	// Update memory usage
 	mMemoryUsage += resource->getSize();//in bytes
@@ -217,13 +214,40 @@ void ResourceManager::unloadResource(Resource* resource)
 bool ResourceManager::reloadResource(Resource* resource)
 {
 	assert(resource != NULL);
-	if (resource == NULL) return false;
+	if (resource == NULL)
+		return false;
 
-	if (!resource->reload()) return false;
+	if (!resource->reload())
+		return false;
 
 	fireLoadUpdate();
 
 	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " reloaded.";
+	core::Log::getInstance().logMessage("ResourceManager", message);
+
+	return true;
+}
+
+bool ResourceManager::saveResource(Resource* resource, const std::string& filename)
+{
+	assert(resource != NULL);
+	if (resource == NULL)
+		return false;
+
+	if (filename != core::STRING_BLANK)
+	{
+		std::map<std::string, Resource*>::iterator i = mResourcesByFilename.find(filename);
+		if (i != mResourcesByFilename.end())
+		{
+			mResourcesByFilename.erase(i);
+			mResourcesByFilename[filename] = resource;
+		}
+	}
+
+	if (!resource->save(filename))
+		return false;
+
+	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " saved.";
 	core::Log::getInstance().logMessage("ResourceManager", message);
 
 	return true;
@@ -326,41 +350,9 @@ void ResourceManager::removeSerializer(const ResourceType& type)
 	mSerializers[(unsigned int)(type)] = NULL;
 }
 
-void ResourceManager::addPath(const std::string& path)
+const std::string& ResourceManager::getDataPath()
 {
-	std::string rootPath = Poco::Path(path).toString();
-	addFiles(rootPath, rootPath);
-}
-
-void ResourceManager::removePath(const std::string& path)
-{
-	if (path == core::STRING_BLANK)
-		return;
-	
-	std::string rootPath = Poco::Path(path).toString();
-
-	std::map<std::string, std::string>::iterator i;
-	for (i = mFiles.begin(); i != mFiles.end();)
-	{
-		if (i->second == rootPath)
-			i = mFiles.erase(i);
-		else
-			++i;
-	}
-}
-
-const std::string ResourceManager::getPath(const std::string& filename)
-{
-	Poco::Path filePath(filename);
-	std::map<std::string, std::string>::iterator i = mFiles.find(filePath.toString());
-	if (i != mFiles.end())
-	{
-		Poco::Path path(i->second);
-		path.append(filePath);
-		return path.toString();
-	}
-
-	return core::STRING_BLANK;
+	return mDataPath;
 }
 
 void ResourceManager::addLoadEventReceiver(LoadEventReceiver* newEventReceiver)
@@ -422,30 +414,9 @@ unsigned int ResourceManager::getMemoryUsage() const
 
 void ResourceManager::initializeImpl()
 {
-	//Set paths
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(mResourcesFile);
-	}
-	catch(...)
-	{
-		return;
-	}
+	std::string dataPath = engine::EngineSettings::getInstance().getDataPath();
 
-	//paths
-	unsigned int i = 0;
-	std::string key = "Path[" + core::intToString(i) + "]";
-	while (pConf->has(key))
-	{
-		std::string path;
-		if (pConf->has(key + "[@value]"))
-			path = pConf->getString(key + "[@value]");
-
-		addPath(path);
-
-		key = "Path[" + core::intToString(++i) + "]";
-	}
+	mDataPath = Poco::Path(dataPath).toString();
 }
 
 void ResourceManager::uninitializeImpl()
@@ -454,8 +425,6 @@ void ResourceManager::uninitializeImpl()
 	removeAllResources();
 
 	mResourcesByFilename.clear();
-
-	mFiles.clear();
 
 	mLoadResources.clear();
 
@@ -480,44 +449,6 @@ void ResourceManager::updateImpl(float elapsedTime)
 		Resource* resource = i->second;
 		if (resource != NULL)
 			resource->checkAlreadyLoaded();
-	}
-}
-
-void ResourceManager::addFiles(const std::string& subpath, const std::string& path)
-{
-	if (subpath == core::STRING_BLANK || path == core::STRING_BLANK)
-		return;
-
-	bool rootDir = false;
-	if (Poco::Path(subpath).toString() == Poco::Path(path).toString())
-		rootDir = true;
-
-	Poco::Path dirPath = rootDir ? Poco::Path(path) : Poco::Path(Poco::Path(path), subpath);
-
-	Poco::File dirFile(dirPath);
-	if (!dirFile.exists())
-		return;
-
-	if (!dirFile.isDirectory())
-		return;
-
-	std::vector<std::string> files;
-	dirFile.list(files);
-
-	for (unsigned int i = 0; i < files.size(); ++i)
-	{
-		Poco::Path filePath(dirPath, files[i]);
-
-		Poco::File file(filePath);
-		if (!file.exists())
-			continue;
-
-		std::string filename = rootDir ? Poco::Path(files[i]).toString() : Poco::Path(Poco::Path(subpath), files[i]).toString();
-		
-		if (file.isFile())
-			mFiles[filename] = path;
-		else if (file.isDirectory())
-			addFiles(filename, path);
 	}
 }
 

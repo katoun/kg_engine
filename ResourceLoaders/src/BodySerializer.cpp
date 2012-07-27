@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <BodySerializer.h>
 
 #include <Poco/AutoPtr.h>
+#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -66,7 +67,10 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 	if (pBodyData == NULL) return false;
 
 	//////////////////////////////////////////////////////////////////////////
-	std::string filePath = ResourceManager::getInstance().getPath(filename);
+	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
+	path.append(filename);
+	std::string filePath = path.toString();
+
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
 	{

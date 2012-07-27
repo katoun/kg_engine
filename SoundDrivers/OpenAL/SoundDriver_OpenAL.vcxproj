@@ -73,9 +73,9 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engined.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engined.lib;PocoFoundationd.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\poco\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>

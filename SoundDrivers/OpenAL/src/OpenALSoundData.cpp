@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <OpenALSoundData.h>
 
+#include <Poco/Path.h>
+
 namespace sound
 {
 
@@ -76,7 +78,9 @@ bool OpenALSoundData::loadImpl()
 
 	extention = mFilename.substr(pos + 1, mFilename.size() - pos);
 
-	std::string filePath = resource::ResourceManager::getInstance().getPath(mFilename);
+	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
+	path.append(mFilename);
+	std::string filePath = path.toString();
 
 	if (extention == "wav" || extention == "ogg")
 	{

@@ -1,9 +1,10 @@
 <Engine>
-	<Bitdepth>32</Bitdepth>
-	<Fullscreen>No</Fullscreen>
-	<VSync>No</VSync>
+	<Bitdepth value="32"/>
+	<Fullscreen value="No"/>
+	<VSync value="No"/>
 	<VideoSize>
-		<Width>1024</Width>
-		<Height>768</Height>
+		<Width value="1024"/>
+		<Height value="768"/>
 	</VideoSize>
+	<DataPath value="../media"/>
 </Engine>

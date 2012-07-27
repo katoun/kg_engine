@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include <game/ComponentFactory.h>
 #include <game/TransformFactory.h>
 #include <resource/Resource.h>
-#include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 
 template<> game::GameManager& core::Singleton<game::GameManager>::ms_Singleton = game::GameManager();
@@ -40,6 +39,7 @@ namespace game
 
 GameManager::GameManager(): core::System("GameManager")
 {
+	mNewSceneName = "NewScene";
 	mDefaultTransformFactory = new TransformFactory();
 }
 
@@ -51,71 +51,55 @@ GameManager::~GameManager()
 	}
 }
 
-Scene* GameManager::createScene(const std::string& filename)
-{
-	Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SCENE, filename));
-	if (pScene == NULL)
-		return NULL;
-
-	mScenes[pScene->getID()] = pScene;
-
-	return pScene;
-}
-
-void GameManager::removeScene(Scene* scene)
-{
-	if (scene == NULL)
-		return;
-
-	removeScene(scene->getID());
-}
-
-void GameManager::removeScene(const unsigned int& id)
-{
-	std::map<unsigned int, Scene*>::iterator i = mScenes.find(id);
-	if (i != mScenes.end())
-		mScenes.erase(i);
-}
-
-void GameManager::removeAllScenes()
-{
-	mScenes.clear();
-}
-
-Scene* GameManager::getCurrentScene()
+Scene* GameManager::getScene()
 {
 	return mCurrentScene;
 }
 
-void GameManager::setCurrentScene(Scene* scene)
+void GameManager::createScene()
 {
-	if (mCurrentScene != scene)
+	Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SCENE, mNewSceneName));
+	if (pScene == NULL)
+		return;
+
+	if (mCurrentScene != NULL)
 	{
-		if (scene != NULL)
-		{
-			scene->removeResourceEventReceiver(this);
-		}
-
-		mCurrentScene = scene;
-
-		if (mCurrentScene != NULL)
-		{
-			mCurrentScene->addResourceEventReceiver(this);
-		}
+		resource::ResourceManager::getInstance().removeResource(mCurrentScene->getID());
 	}
+
+	mCurrentScene = pScene;
 }
 
-void GameManager::removeCurrentScene()
+void GameManager::openScene(const std::string& filename)
+{
+	Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SCENE, filename));
+	if (pScene == NULL)
+		return;
+
+	removeScene();
+
+	mCurrentScene = pScene;
+}
+
+void GameManager::saveScene()
+{
+	resource::ResourceManager::getInstance().saveResource(mCurrentScene);
+}
+
+void GameManager::saveAsScene(const std::string& filename)
+{
+	resource::ResourceManager::getInstance().saveResource(mCurrentScene, filename);
+}
+
+void GameManager::removeScene()
 {
 	if (mCurrentScene != NULL)
 	{
-		mCurrentScene->addResourceEventReceiver(this);
-
-		mCurrentScene = NULL;
+		resource::ResourceManager::getInstance().removeResource(mCurrentScene->getID());
 	}
 }
 
-GameObject* GameManager::createGameObject(Scene* scene)
+GameObject* GameManager::createGameObject()
 {
 	GameObject* pGameObject = new GameObject();
 	if (pGameObject == NULL)
@@ -126,7 +110,7 @@ GameObject* GameManager::createGameObject(Scene* scene)
 	return pGameObject;
 }
 
-GameObject* GameManager::createGameObject(const std::string& name, Scene* scene)
+GameObject* GameManager::createGameObject(const std::string& name)
 {
 	GameObject* pGameObject = new GameObject(name);
 	if (pGameObject == NULL)
@@ -281,28 +265,6 @@ void GameManager::removeComponentFactory(unsigned int type)
 	if (i != mComponentFactories.end())
 	{
 		mComponentFactories.erase(i);
-	}
-}
-
-void GameManager::resourceLoaded(const resource::ResourceEvent& evt)
-{
-	if (evt.source && evt.source == mCurrentScene)
-	{
-		// Remove all Components
-		removeAllComponents();
-
-		// Remove all GameObjects
-		removeAllGameObjects();
-
-		//TODO add all the game objects and components form the loaded scene
-	}
-}
-
-void GameManager::resourceUnloaded(const resource::ResourceEvent& evt)
-{
-	if (evt.source && evt.source == mCurrentScene)
-	{
-		//TODO add all the game objects and components form the loaded scene
 	}
 }
 

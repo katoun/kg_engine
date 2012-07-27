@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <render/Texture.h>
 #include <resource/ResourceManager.h>
 
+#include <Poco/Path.h>
 #include <Poco/File.h>
 #include <Poco/FileStream.h>
 
@@ -377,7 +378,9 @@ void Shader::setAutoParameter(const std::string& name, ShaderAutoParameterType t
 
 bool Shader::loadImpl()
 {
-	std::string filePath = resource::ResourceManager::getInstance().getPath(mFilename);
+	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
+	path.append(mFilename);
+	std::string filePath = path.toString();
 	
 	Poco::FileInputStream fileInputStream(filePath);
 	if (!fileInputStream.good())
