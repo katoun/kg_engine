@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
+KG game engine (https://github.com/katoun/kg_engine) is made available under the MIT License.
 
 Copyright (c) 2006-2012 Catalin Alexandru Nastase
 
@@ -24,18 +24,12 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _EDITOR_CONFIG_H_
-#define _EDITOR_CONFIG_H_
+#include <Properties.h>
 
-//#include <core/Config.h>
+PropertiesWidget::PropertiesWidget(QWidget *parent): QWidget(parent)
+{
+	//TODO!!!
+}
 
-#include <QtCore/QFile>
-#include <QtGui/QApplication>
-#include <QtGui/QMainWindow>
-#include <QtGui/QStatusBar>
-#include <QtGui/QMenuBar>
-#include <QtGui/QWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QTreeWidget>
+PropertiesWidget::~PropertiesWidget() {}
 
-#endif

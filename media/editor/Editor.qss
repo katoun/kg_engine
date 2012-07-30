@@ -1,0 +1,88 @@
+#ToolsRibbon {
+    background-color: #BEDAFE;
+    min-width: 100%;
+}
+pane {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(223, 232, 244, 255), stop:1 rgba(224, 241, 253, 255));
+    border: 1px solid #90B5E4;
+    border-radius: 5px;
+    padding: 1px;
+}
+Form{
+    background-color: #BEDAFE;
+    min-width: 100%;
+    left: 0px;
+    right: 0px;
+}
+tab-bar {
+    left: 5px;
+    right: 5px;
+    background-color: #BEDAFE;
+    min-width: 100%;
+}
+QTabBar::tab {
+    margin-top: 2px;
+    min-width: 80px;
+    background-color: #BEDAFE;
+    height: 18px;
+    border: 1px solid black;
+    color: #4B7CB4;
+    border-bottom: 0px solid #BEDAFE;
+    margin-left: 2px;
+    margin-right: 2px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+QTabBar::tab:selected{
+    border: 1px solid #90B5E4;
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 255), stop:0.1 rgba(239, 244, 251, 255), stop:1 rgba(231, 239, 249, 255));
+    border-bottom: 1px solid #E1EAF5;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #4B7CB4;
+}
+QTabBar::tab:hover{
+    border: 1px solid #99BBE8;
+    background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.75, fx:0.5, fy:-0.5, stop:0 #BEDAFE, stop:0.5 #BEDAFE, stop:1 rgba(255, 197, 115, 168));
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #4B7CB4;
+    border-bottom: 0px solid rgba(255, 197, 115, 168);
+}
+QTabBar::tab:selected:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 255), stop:0.1 rgba(239, 244, 251, 255), stop:1 rgba(231, 239, 249, 255));
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(255, 197, 115, 150);
+    border-bottom: 1px solid #E1EAF5;
+}
+QTabBar::tab:first {
+    margin-left: 4px;
+}
+QTabBar::tab:last {
+    margin-right: 4px;
+}
+QToolBar {
+	border : none;
+}
+QGroupBox::title {
+    position: absolute;
+    subcontrol-origin: padding;
+    subcontrol-position: bottom center;
+    min-width: 10000%;
+    max-width: 10000%;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border: 1px solid #B6C8D8;
+    border-top-style: none;
+    border-bottom-style: none;
+    color: #4B7CB4;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #C0D7EF, stop: 1 #BFD7EE);
+}
+QGroupBox {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(218, 229, 242, 255), stop:0.1 rgba(218, 229, 242, 255), stop:0.101 rgba(198, 215, 236, 255), stop:1 rgba(213, 229, 243, 255));
+    border: 1px solid #B6C8D8;
+    border-radius: 3px;
+}

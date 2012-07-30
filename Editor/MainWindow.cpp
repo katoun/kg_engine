@@ -35,17 +35,15 @@ THE SOFTWARE.
 #include <Poco/AutoPtr.h>
 #include <Poco/Util/XMLConfiguration.h>
 
-std::string MainWindow::mDataPath = "";
+QString MainWindow::mDataPath = "";
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags)
 {
-	mSceneViewPanel = NULL;
-	mPropertiesPanel = NULL;
-	mSceneExplorerPanel = NULL;
+	mSceneViewWidget = NULL;
+	mPropertiesWidget = NULL;
+	mSceneExplorerWidget = NULL;
 
-	QIcon icon;
-    icon.addPixmap(QPixmap(QString::fromUtf8(":/icons/Editor.png")), QIcon::Normal, QIcon::Off);
-    setWindowIcon(icon);
+	mDataPath = "";
 
 	///////////////////////////////////////////
 	std::string configFile;
@@ -55,8 +53,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	configFile = "Editor.xml";
 #endif
 
-	mDataPath = "";
-
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
 	{
@@ -65,12 +61,28 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	catch(...) {}
 
 	if (pConf->has("DataPath[@value]"))
-		mDataPath = pConf->getString("DataPath[@value]");
+	{
+		std::string path = pConf->getString("DataPath[@value]");
+		mDataPath = QString::fromStdString(path);
+	}
 
 	///////////////////////////////////////////
+
+	QIcon icon;
+    icon.addPixmap(QPixmap(mDataPath + "/Editor.png"), QIcon::Normal, QIcon::Off);
+    setWindowIcon(icon);
+
+	QFile file(mDataPath + "/Editor.qss");
+	file.open(QFile::ReadOnly);
+	QString styleSheet = QLatin1String(file.readAll());
+	setStyleSheet(styleSheet);
+
+	///////////////////////////////////////////
+
+	resize(800, 600);
 	
 	CreateMenus();
-	CreatePanels();
+	CreateWidgets();
 	CreateStatusbar();
 
 	repaint();
@@ -87,12 +99,12 @@ MainWindow::~MainWindow()
 	// Disconnect Events
 }
 
-SceneViewPanel* MainWindow::GetSceneViewPanel()
+SceneViewWidget* MainWindow::GetSceneViewWidget()
 {
-	return mSceneViewPanel;
+	return mSceneViewWidget;
 }
 
-std::string MainWindow::GetDataPath()
+QString MainWindow::GetDataPath()
 {
 	return mDataPath;
 }
@@ -103,16 +115,128 @@ void MainWindow::CreateMenus()
 	mMenuBar->setObjectName(QString::fromUtf8("mMenuBar"));
 	mMenuBar->setGeometry(QRect(0, 0, 616, 22));
 
+	// Menu File
 	menuFile = new QMenu(tr("File"), mMenuBar);
 	menuFile->setObjectName(QString::fromUtf8("menuFile"));
 	mMenuBar->addAction(menuFile->menuAction());
 
-	//TODO!!
+	actNew = new QAction(tr("New"), this);
+	actNew->setShortcuts(QKeySequence::New);
+	actNew->setStatusTip(tr("Create a new scene"));
+	actNew->setIcon(QIcon(mDataPath + "/filenew.png"));
+	menuFile->addAction(actNew);
+
+	actOpen = new QAction(tr("Open"), this);
+	actOpen->setShortcuts(QKeySequence::Open);
+	actOpen->setStatusTip(tr("Open a scene"));
+	actOpen->setIcon(QIcon(mDataPath + "/fileopen.png"));
+	menuFile->addAction(actOpen);
+
+	actSave = new QAction(tr("Save"), this);
+	actSave->setShortcuts(QKeySequence::Save);
+	actSave->setStatusTip(tr("Save scene"));
+	actSave->setIcon(QIcon(mDataPath + "/filesave.png"));
+	menuFile->addAction(actSave);
+
+	actSaveAs = new QAction(tr("Save As"), this);
+	actSaveAs->setShortcuts(QKeySequence::SaveAs);
+	actSaveAs->setStatusTip(tr("Save scene As"));
+	actSaveAs->setIcon(QIcon(mDataPath + "/filesaveas.png"));
+	menuFile->addAction(actSaveAs);
+
+	actExit = new QAction(tr("Exit"), this);
+	actExit->setShortcuts(QKeySequence::Quit);
+	actExit->setStatusTip(tr("Exit Application"));
+	actExit->setIcon(QIcon(mDataPath + "/exit.png"));
+	menuFile->addAction(actExit);
+	// Menu File
+
+	// Menu Edit
+	menuEdit = new QMenu(tr("Edit"), mMenuBar);
+	menuEdit->setObjectName(QString::fromUtf8("menuFile"));
+	mMenuBar->addAction(menuEdit->menuAction());
+
+	actUndo = new QAction(tr("Undo"), this);
+	actUndo->setShortcuts(QKeySequence::Undo);
+	actUndo->setStatusTip(tr("Undo"));
+	actUndo->setIcon(QIcon(mDataPath + "/undo.png"));
+	menuEdit->addAction(actUndo);
+
+	actRedo = new QAction(tr("Redo"), this);
+	actRedo->setShortcuts(QKeySequence::Redo);
+	actRedo->setStatusTip(tr("Redo"));
+	actRedo->setIcon(QIcon(mDataPath + "/redo.png"));
+	menuEdit->addAction(actRedo);
+
+	menuEdit->addSeparator();
+
+	actDelete = new QAction(tr("Delete"), this);
+	//actDelete->setShortcuts(QKeySequence::Delete);
+	actDelete->setStatusTip(tr("Delete"));
+	//actDelete->setIcon(QIcon(mDataPath + "/delete.png"));
+	menuEdit->addAction(actDelete);
+
+	actClone = new QAction(tr("Clone"), this);
+	//actClone->setShortcuts(QKeySequence::Clone);
+	actClone->setStatusTip(tr("Clone"));
+	//actClone->setIcon(QIcon(mDataPath + "/clone.png"));
+	menuEdit->addAction(actClone);
+
+	menuEdit->addSeparator();
+
+	actHide = new QAction(tr("Hide"), this);
+	//actHide->setShortcuts(QKeySequence::Hide);
+	actHide->setStatusTip(tr("Hide"));
+	//actHide->setIcon(QIcon(mDataPath + "/hide.png"));
+	menuEdit->addAction(actHide);
+
+	actUnhideAll = new QAction(tr("Unhide All"), this);
+	//actUnhideAll->setShortcuts(QKeySequence::UnhideAll);
+	actUnhideAll->setStatusTip(tr("Unhide All"));
+	//actUnhideAll->setIcon(QIcon(mDataPath + "/unhide_all.png"));
+	menuEdit->addAction(actUnhideAll);
+
+	menuEdit->addSeparator();
+
+	actSelectAll = new QAction(tr("Select All"), this);
+	//actSelectAll->setShortcuts(QKeySequence::SelectAll);
+	actSelectAll->setStatusTip(tr("Select All"));
+	//actSelectAll->setIcon(QIcon(mDataPath + "/select_all.png"));
+	menuEdit->addAction(actSelectAll);
+
+	actSelectNone = new QAction(tr("Select None"), this);
+	//actSelectNone->setShortcuts(QKeySequence::SelectNone);
+	actSelectNone->setStatusTip(tr("Select None"));
+	//actSelectNone->setIcon(QIcon(mDataPath + "/select_none.png"));
+	menuEdit->addAction(actSelectNone);
+
+	actSelectInvert = new QAction(tr("Select Invert"), this);
+	//actSelectInvert->setShortcuts(QKeySequence::SelectInvert);
+	actSelectInvert->setStatusTip(tr("Select Invert"));
+	//actSelectInvert->setIcon(QIcon(mDataPath + "/select_invert.png"));
+	menuEdit->addAction(actSelectInvert);
+	// Menu Edit
 
 	setMenuBar(mMenuBar);
+
+	connect(actNew, SIGNAL(triggered()), this, SLOT(OnMenuFileNew()));
+	connect(actOpen, SIGNAL(triggered()), this, SLOT(OnMenuFileOpen()));
+	connect(actSave, SIGNAL(triggered()), this, SLOT(OnMenuFileSave()));
+	connect(actSaveAs, SIGNAL(triggered()), this, SLOT(OnMenuFileSaveAs()));
+	connect(actExit, SIGNAL(triggered()), this, SLOT(close()));
+
+	connect(actUndo, SIGNAL(triggered()), this, SLOT(OnMenuEditUndo()));
+	connect(actRedo, SIGNAL(triggered()), this, SLOT(OnMenuEditRedo()));
+	connect(actDelete, SIGNAL(triggered()), this, SLOT(OnMenuEditDelete()));
+	connect(actClone, SIGNAL(triggered()), this, SLOT(OnMenuEditClone()));
+	connect(actHide, SIGNAL(triggered()), this, SLOT(OnMenuEditHide()));
+	connect(actUnhideAll, SIGNAL(triggered()), this, SLOT(OnMenuEditUnhideAll()));
+	connect(actSelectAll, SIGNAL(triggered()), this, SLOT(OnMenuEditSelectAll()));
+	connect(actSelectNone, SIGNAL(triggered()), this, SLOT(OnMenuEditSelectNone()));
+	connect(actSelectInvert, SIGNAL(triggered()), this, SLOT(OnMenuEditSelectInvert()));
 }
 
-void MainWindow::CreatePanels()
+void MainWindow::CreateWidgets()
 {
 	//TODO!!!
 }
@@ -120,9 +244,9 @@ void MainWindow::CreatePanels()
 void MainWindow::CreateStatusbar()
 {
 	mStatusBar = new QStatusBar(this);
-    mStatusBar->setObjectName(QString::fromUtf8("mStatusBar"));
+	mStatusBar->setObjectName(QString::fromUtf8("mStatusBar"));
 
-    setStatusBar(mStatusBar);
+	setStatusBar(mStatusBar);
 }
 
 void MainWindow::OnMenuFileNew()
@@ -141,11 +265,6 @@ void MainWindow::OnMenuFileSave()
 }
 
 void MainWindow::OnMenuFileSaveAs()
-{
-	//TODO!!!
-}
-
-void MainWindow::OnMenuFileExit()
 {
 	//TODO!!!
 }

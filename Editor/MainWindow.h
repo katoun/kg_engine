@@ -31,43 +31,61 @@ THE SOFTWARE.
 
 #include <string>
 
-class PropertiesPanel;
-class SceneExplorerPanel;
-class SceneViewPanel;
+class PropertiesWidget;
+class SceneExplorerWidget;
+class SceneViewWidget;
 
 class MainWindow : public QMainWindow
 {
+	Q_OBJECT
+
 public:
 
 	MainWindow(QWidget *parent = NULL, Qt::WFlags flags = 0);
 	~MainWindow();
 
-	SceneViewPanel* GetSceneViewPanel();
+	SceneViewWidget* GetSceneViewWidget();
 
-	static std::string GetDataPath();
+	static QString GetDataPath();
 
 protected:
 
-	PropertiesPanel* mPropertiesPanel;
-	SceneExplorerPanel* mSceneExplorerPanel;
-	SceneViewPanel* mSceneViewPanel;
+	PropertiesWidget* mPropertiesWidget;
+	SceneExplorerWidget* mSceneExplorerWidget;
+	SceneViewWidget* mSceneViewWidget;
 	
 	//TODO!!!
 	QMenuBar* mMenuBar;
 	QStatusBar* mStatusBar;
 
 	QMenu* menuFile;
+	QMenu* menuEdit;
+
+	QAction* actNew;
+	QAction* actOpen;
+	QAction* actSave;
+	QAction* actSaveAs;
+	QAction* actExit;
+
+	QAction* actUndo;
+	QAction* actRedo;
+	QAction* actDelete;
+	QAction* actClone;
+	QAction* actHide;
+	QAction* actUnhideAll;
+	QAction* actSelectAll;
+	QAction* actSelectNone;
+	QAction* actSelectInvert;
 	
 	void CreateMenus();
-	void CreatePanels();
+	void CreateWidgets();
 	void CreateStatusbar();
 
-	//Signal handlers:
+public Q_SLOTS:
 	void OnMenuFileNew();
 	void OnMenuFileOpen();
 	void OnMenuFileSave();
 	void OnMenuFileSaveAs();
-	void OnMenuFileExit();
 
 	void OnMenuEditUndo();
 	void OnMenuEditRedo();
@@ -81,7 +99,7 @@ protected:
 
 private:
 
-	static std::string mDataPath;
+	static QString mDataPath;
 };
 
 #endif
