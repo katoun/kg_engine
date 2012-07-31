@@ -77,9 +77,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	QString styleSheet = QLatin1String(file.readAll());
 	setStyleSheet(styleSheet);
 
-	setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::North);
-	setTabPosition(Qt::RightDockWidgetArea, QTabWidget::North);
-
 	setWindowTitle(QApplication::translate("MainWindow", "Editor", 0, QApplication::UnicodeUTF8));
 
 	///////////////////////////////////////////
