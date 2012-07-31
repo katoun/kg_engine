@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene>
+	<game_object>
+		<component type="transform">
+			<position x="0" y="0" z="0"/>
+		<component/>
+		<component type="model">
+			<resource value="meshes/Sphere1m.xml"/>
+		<component/>
+	</game_object>	
+</scene>

@@ -44,6 +44,32 @@ THE SOFTWARE.
 namespace resource
 {
 
+game::ComponentType convertComponentType(const std::string& param)
+{
+	if (param == "transform")
+		return game::COMPONENT_TYPE_TRANSFORM;
+	else if (param == "light")
+		return game::COMPONENT_TYPE_LIGHT;
+	else if (param == "camera")
+		return game::COMPONENT_TYPE_CAMERA;
+	else if (param == "model")
+		return game::COMPONENT_TYPE_MODEL;
+	else if (param == "body")
+		return game::COMPONENT_TYPE_BODY;
+	else if (param == "joint")
+		return game::COMPONENT_TYPE_JOINT;
+	else if (param == "sound")
+		return game::COMPONENT_TYPE_SOUND;
+	else if (param == "listener")
+		return game::COMPONENT_TYPE_LISTENER;
+	else
+	{
+		core::Log::getInstance().logMessage("SceneSerializer", "Invalid component type, using default.", core::LOG_LEVEL_ERROR);
+
+		return game::COMPONENT_TYPE_UNDEFINED;
+	}
+}
+
 SceneSerializer::SceneSerializer()
 {
 	// Version number
@@ -77,6 +103,35 @@ bool SceneSerializer::importResource(Resource* dest, const std::string& filename
 	catch(...)
 	{
 		return false;
+	}
+
+	//game objects
+	unsigned int i = 0;
+	std::string key = "game_object[" + core::intToString(i) + "]";
+	while (pConf->has(key))
+	{
+		if (pConf->has(key + "[@name]"))
+		{
+			std::string name = pConf->getString(key + "[@name]");
+		}
+
+		//components
+		unsigned int j = 0;
+		std::string ckey = key + "component[" + core::intToString(j) + "]";
+		while (pConf->has(ckey))
+		{
+			if (pConf->has(ckey + "[@type]"))
+			{
+				std::string type = pConf->getString(ckey + "[@type]");
+
+
+			}
+
+			ckey = key + "component[" + core::intToString(++j) + "]";
+		}
+
+
+		key = "game_object[" + core::intToString(++i) + "]";
 	}
 
 	//////////////////////////////////////////////////////////////////////////
