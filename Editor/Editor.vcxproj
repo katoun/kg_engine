@@ -68,7 +68,7 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)GeneratedFiles;$(ProjectDir);$(ProjectDir)..\dependencies\Qt\include;.\GeneratedFiles\$(ConfigurationName);$(ProjectDir)..\dependencies\Qt\include\QtCore;$(ProjectDir)..\dependencies\Qt\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)GeneratedFiles;$(ProjectDir)GeneratedFiles\$(ConfigurationName);$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;$(ProjectDir)..\dependencies\Qt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -77,10 +77,14 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\Qt\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\lib;$(ProjectDir)..\dependencies\poco\lib;$(ProjectDir)..\dependencies\Qt\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;PocoFoundation.lib;PocoUtil.lib;PocoXML.lib;qtmain.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+	<PostBuildEvent>
+      <Command>copy "$(ProjectDir)..\dependencies\Qt\bin\QtCore4.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\Qt\bin\QtGui4.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">

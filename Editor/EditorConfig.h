@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _EDITOR_CONFIG_H_
 #define _EDITOR_CONFIG_H_
 
-//#include <core/Config.h>
+#include <core/Config.h>
 
 #include <QtCore/QFile>
 #include <QtGui/QApplication>

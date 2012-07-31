@@ -69,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	///////////////////////////////////////////
 
 	QIcon icon;
-    icon.addPixmap(QPixmap(mDataPath + "/Editor.png"), QIcon::Normal, QIcon::Off);
-    setWindowIcon(icon);
+	icon.addPixmap(QPixmap(mDataPath + "/Editor.png"), QIcon::Normal, QIcon::Off);
+	setWindowIcon(icon);
 
 	QFile file(mDataPath + "/Editor.qss");
 	file.open(QFile::ReadOnly);
@@ -83,35 +83,23 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 
 	resize(800, 600);
 
-	verticalLayout = new QVBoxLayout(this);
-    verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-    verticalLayout->setSpacing(0);
-    verticalLayout->setMargin(0);
+	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
+	setSizePolicy(sizePolicy);
 
-	mMainWindow = new QMainWindow(this);
-    mMainWindow->setWindowFlags(Qt::Widget);
-    mMainWindow->setObjectName(QString::fromUtf8("mMainWindow"));
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(mMainWindow->sizePolicy().hasHeightForWidth());
-    mMainWindow->setSizePolicy(sizePolicy);
-	
 	CreateMenus();
-	CreateDockWidgets(mMainWindow);
+	CreateDockWidgets(this);
 	CreateStatusbar();
 
-	mSceneViewWidget = new SceneViewWidget(mMainWindow);
-    mSceneViewWidget->setSizePolicy(sizePolicy);
+	mSceneViewWidget = new SceneViewWidget(this);
+	//mSceneViewWidget->setSizePolicy(sizePolicy);
 
-	mMainWindow->setCentralWidget(mSceneViewWidget);
-
-	verticalLayout->addWidget(mMainWindow);
+	setCentralWidget(mSceneViewWidget);
 
 	repaint();
 
-	// Set editor default theme
-	//TODO!!!
 	///////////////////////////////////////////
 
 	// Connect Events
