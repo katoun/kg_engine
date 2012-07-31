@@ -48,6 +48,10 @@ SceneViewWidget::SceneViewWidget(QWidget *parent): QWidget(parent, Qt::MSWindows
 	engine::EngineManager::getInstance().addEngineEventReceiver(this);
 
 	setAttribute(Qt::WA_NoBackground);
+
+	setFocusPolicy(Qt::WheelFocus);
+	setAcceptDrops(true);
+    setMouseTracking(true);
 }
 
 SceneViewWidget::~SceneViewWidget()
@@ -105,4 +109,143 @@ void SceneViewWidget::engineUpdateStarted(const engine::EngineEvent& evt)
 	}
 }
 
+void SceneViewWidget::resizeEvent(QResizeEvent* evt)
+{
+	if (mRenderWindow != NULL)
+	{
+		mRenderWindow->resize(width(), height());
+	}
+}
 
+void SceneViewWidget::focusOutEvent(QFocusEvent *evt)
+{
+	//TODO!!!
+
+	 evt->setAccepted(true);
+}
+
+void SceneViewWidget::focusInEvent(QFocusEvent *evt)
+{
+	//TODO!!!
+
+	 evt->setAccepted(true);
+}
+
+void SceneViewWidget::keyPressEvent(QKeyEvent *evt)
+{
+	if (evt->key() == Qt::Key_W)
+	{
+		mViewOperations.set(VIEW_OPERATION_MOVE_FORWARD);
+	}
+	if (evt->key() == Qt::Key_S)
+	{
+		mViewOperations.set(VIEW_OPERATION_MOVE_BACKWARD);
+	}
+	if (evt->key() == Qt::Key_A)
+	{
+		mViewOperations.set(VIEW_OPERATION_MOVE_LEFT);
+	}
+	if (evt->key() == Qt::Key_D)
+	{
+		mViewOperations.set(VIEW_OPERATION_MOVE_RIGHT);
+	}
+}
+
+void SceneViewWidget::keyReleaseEvent(QKeyEvent *evt)
+{
+	if (evt->key() == Qt::Key_W)
+	{
+		mViewOperations.reset(VIEW_OPERATION_MOVE_FORWARD);
+	}
+	if (evt->key() == Qt::Key_S)
+	{
+		mViewOperations.reset(VIEW_OPERATION_MOVE_BACKWARD);
+	}
+	if (evt->key() == Qt::Key_A)
+	{
+		mViewOperations.reset(VIEW_OPERATION_MOVE_LEFT);
+	}
+	if (evt->key() == Qt::Key_D)
+	{
+		mViewOperations.reset(VIEW_OPERATION_MOVE_RIGHT);
+	}
+}
+
+void SceneViewWidget::mouseMoveEvent(QMouseEvent *evt)
+{
+	if (mTransform == NULL || mCamera == NULL)
+		return;
+
+	float DeltaX = (evt->x() - mDragLastX);
+	float DeltaY = (evt->y() - mDragLastY);
+
+	if (mViewOperations[VIEW_OPERATION_ROTATE])
+	{
+		mTransform->rotateX(DeltaY * mRotScale);
+
+		if (mCamera->getFixedUp())
+			mTransform->rotate(DeltaX * mRotScale, mCamera->getFixedUpAxis(), game::TRANSFORM_SPACE_WORLD);
+		else
+			mTransform->rotateY(DeltaX * mRotScale);
+	}
+
+	if (mViewOperations[VIEW_OPERATION_PAN])
+	{
+		mTransform->translate(core::vector3d(0, DeltaY * mPanScale, 0));
+		mTransform->translate(core::vector3d(-DeltaX * mPanScale, 0, 0));
+	}
+
+	mDragLastX = evt->x();
+	mDragLastY = evt->y();
+}
+
+void SceneViewWidget::mousePressEvent(QMouseEvent *evt)
+{
+	if(evt->button() == Qt::LeftButton)
+	{
+		mViewOperations.set(VIEW_OPERATION_ROTATE);
+
+		mDragLastX = evt->x();
+		mDragLastY = evt->y();
+	}
+
+	if(evt->button() == Qt::MidButton)
+	{
+		mViewOperations.set(VIEW_OPERATION_PAN);
+
+		mDragLastX = evt->x();
+		mDragLastY = evt->y();
+	}
+}
+
+void SceneViewWidget::mouseReleaseEvent(QMouseEvent *evt)
+{
+	if(evt->button() == Qt::LeftButton)
+	{
+		mViewOperations.reset(VIEW_OPERATION_ROTATE);
+	}
+
+	if(evt->button() == Qt::MidButton)
+	{
+		mViewOperations.reset(VIEW_OPERATION_PAN);
+	}
+}
+
+void SceneViewWidget::wheelEvent(QWheelEvent *evt)
+{
+	if (mTransform != NULL && !mViewOperations[VIEW_OPERATION_PAN])
+	{
+		mTransform->translate(core::vector3d(0, 0, (float)evt->delta()));
+	}
+}
+
+void SceneViewWidget::leaveEvent(QEvent *evt)
+{
+	mViewOperations.reset(VIEW_OPERATION_MOVE_FORWARD);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_BACKWARD);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_LEFT);
+	mViewOperations.reset(VIEW_OPERATION_MOVE_RIGHT);
+	
+	mViewOperations.reset(VIEW_OPERATION_ROTATE);
+	mViewOperations.reset(VIEW_OPERATION_PAN);
+}

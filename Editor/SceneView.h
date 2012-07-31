@@ -67,8 +67,7 @@ public:
 	SceneViewWidget(QWidget *parent = NULL);
 	~SceneViewWidget();
 
-	// Override QWidget::paintEngine to return NULL
-    QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
+	QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the SceneView widget.
 
 	void SetRenderWindow(render::RenderWindow* window);
 
@@ -76,8 +75,22 @@ public:
 
 protected:
 
+	void resizeEvent(QResizeEvent* evt);
+	void focusOutEvent(QFocusEvent *evt);
+	void focusInEvent(QFocusEvent *evt);
+
+	void keyPressEvent(QKeyEvent *evt);
+	void keyReleaseEvent(QKeyEvent *evt);
+	void mouseMoveEvent(QMouseEvent *evt);
+	void mousePressEvent(QMouseEvent *evt);
+	void mouseReleaseEvent(QMouseEvent *evt);
+	void wheelEvent(QWheelEvent *evt);
+
+	void leaveEvent(QEvent *evt);
+
 	std::bitset<VIEW_OPERATION_COUNT> mViewOperations;
-	//Point mDragLastPoint;
+	int mDragLastX;
+	int mDragLastY;
 	float moveMultiplier;
 	float rotateMultiplier;
 	float panMultiplier;

@@ -42,41 +42,29 @@ SceneExplorerWidget::SceneExplorerWidget(QWidget *parent): QWidget(parent)
 	boxlayout->setMargin(0);
 	boxlayout->addWidget(mTreeWidget);
 
-	//add root node here!!!
+	QString dataPath = MainWindow::GetDataPath();
+
+	mIconList.push_back(dataPath + "/scene_root.png");			//Index 0
+	mIconList.push_back(dataPath + "/scene_gameobject.png");	//Index 1
+	mIconList.push_back(dataPath + "/scene_transform.png");		//Index 2
+	mIconList.push_back(dataPath + "/scene_light.png");			//Index 3
+	mIconList.push_back(dataPath + "/scene_camera.png");		//Index 4
+	mIconList.push_back(dataPath + "/scene_model.png");			//Index 5
+	mIconList.push_back(dataPath + "/scene_sound.png");			//Index 6
+	mIconList.push_back(dataPath + "/scene_listener.png");		//Index 7
+	mIconList.push_back(dataPath + "/scene_body.png");			//Index 8
+
+	QTreeWidgetItem* item = new QTreeWidgetItem((QTreeWidget*)NULL, QStringList(QString("Scene")));
+	item->setIcon(0, QIcon( mIconList[0]));
+    item->font(0).setBold(true);
+    mTreeWidget->insertTopLevelItem(0, item);
 
 	connect(mTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
-
-	/*if (mTreeCtrl != NULL)
-	{
-		mTreeImages = new wxImageList(16, 16, true, 9);
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_root.png"), wxBITMAP_TYPE_PNG));			//Index 0
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_gameobject.png"), wxBITMAP_TYPE_PNG));	//Index 1
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_transform.png"), wxBITMAP_TYPE_PNG));	//Index 2
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_light.png"), wxBITMAP_TYPE_PNG));		//Index 3
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_camera.png"), wxBITMAP_TYPE_PNG));		//Index 4
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_model.png"), wxBITMAP_TYPE_PNG));		//Index 5
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_sound.png"), wxBITMAP_TYPE_PNG));		//Index 6
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_listener.png"), wxBITMAP_TYPE_PNG));		//Index 7
-		mTreeImages->Add(wxBitmap(MainFrame::GetDataPath() + wxT("/") + wxT("scene_body.png"), wxBITMAP_TYPE_PNG));			//Index 8
-
-		mTreeCtrl->AssignImageList(mTreeImages);
-
-		//Insert root item
-		wxTreeItemId item = mTreeCtrl->AddRoot(wxString("Scene"), 0);
-		mTreeCtrl->SetItemBold(item);
-
-		mTreeCtrl->Connect(wxEVT_ENTER_WINDOW,		wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this);
-	}*/
 }
 
 SceneExplorerWidget::~SceneExplorerWidget()
 {
 	engine::EngineManager::getInstance().removeEngineEventReceiver(this);
-
-	/*if (mTreeCtrl != NULL)
-	{
-		mTreeCtrl->Disconnect(wxEVT_ENTER_WINDOW,	wxMouseEventHandler(SceneExplorerPanel::OnMouseEnter), NULL, this);
-	}*/
 }
 
 void SceneExplorerWidget::engineInitialized()
@@ -93,7 +81,7 @@ void SceneExplorerWidget::engineUninitialized()
 
 void SceneExplorerWidget::engineStarted()
 {
-	/*if (mTreeCtrl != NULL)
+	if (mTreeWidget != NULL)
 	{
 		std::map<unsigned int, game::GameObject*> gameObjects = game::GameManager::getInstance().getGameObjects();
 		std::map<unsigned int, game::GameObject*>::const_iterator i;
@@ -104,7 +92,9 @@ void SceneExplorerWidget::engineStarted()
 			{
 				std::string name = pGameObject->getName();
 
-				wxTreeItemId gameobjectItem = mTreeCtrl->AppendItem(mTreeCtrl->GetRootItem(), wxString(name), 1);
+				QTreeWidgetItem* gameobjectItem = new QTreeWidgetItem((QTreeWidget*)NULL, QStringList(QString::fromStdString(name)));
+				gameobjectItem->setIcon(0, QIcon( mIconList[1]));
+				mTreeWidget->topLevelItem(0)->addChild(gameobjectItem);
 
 				std::map<unsigned int, game::Component*> components = pGameObject->getComponents();
 				std::map<unsigned int, game::Component*>::const_iterator j;
@@ -142,12 +132,14 @@ void SceneExplorerWidget::engineStarted()
 							break;
 						}
 
-						wxTreeItemId componentItem = mTreeCtrl->AppendItem(gameobjectItem, wxString(name), imageID);
+						QTreeWidgetItem* componentItem = new QTreeWidgetItem((QTreeWidget*)NULL, QStringList(QString::fromStdString(name)));
+						componentItem->setIcon(0, QIcon( mIconList[imageID]));
+						gameobjectItem->addChild(componentItem);
 					}
 				}
 			}
 		}
-	}*/
+	}
 }
 
 void SceneExplorerWidget::selectionChanged()

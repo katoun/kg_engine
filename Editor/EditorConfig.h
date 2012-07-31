@@ -29,7 +29,12 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 
+#include <QtCore/QEvent>
+#include <QtCore/QTimer>
 #include <QtCore/QFile>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QFocusEvent>
+#include <QtGui/QKeyEvent>
 #include <QtGui/QApplication>
 #include <QtGui/QMainWindow>
 #include <QtGui/QStatusBar>

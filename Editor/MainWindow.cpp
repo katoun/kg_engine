@@ -28,6 +28,9 @@ THE SOFTWARE.
 #include <Properties.h>
 #include <SceneExplorer.h>
 #include <SceneView.h>
+#include <engine/EngineManager.h>
+#include <engine/EngineSettings.h>
+#include <render/RenderManager.h>
 
 #include <string>
 
@@ -83,26 +86,32 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 
 	resize(800, 600);
 
-	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	sizePolicy.setHorizontalStretch(0);
-	sizePolicy.setVerticalStretch(0);
-	sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
-	setSizePolicy(sizePolicy);
+	setDockNestingEnabled(true);
 
 	CreateMenus();
 	CreateDockWidgets(this);
 	CreateStatusbar();
 
 	mSceneViewWidget = new SceneViewWidget(this);
-	//mSceneViewWidget->setSizePolicy(sizePolicy);
-
 	setCentralWidget(mSceneViewWidget);
 
 	repaint();
 
 	///////////////////////////////////////////
 
-	// Connect Events
+	mTimer = new QTimer(this);
+	mTimer->setInterval(0);
+	connect(mTimer, SIGNAL(timeout()), this, SLOT(OnTimerLoop()));
+	mTimer->start();
+
+	if (mSceneViewWidget != NULL)
+	{
+		engine::EngineSettings::getInstance().setMainWindowID((HWND)mSceneViewWidget->winId());
+		engine::EngineManager::getInstance().initialize();
+		mSceneViewWidget->SetRenderWindow(render::RenderManager::getInstance().getMainWindow());
+
+		engine::EngineManager::getInstance().start();
+	}
 }
 
 MainWindow::~MainWindow()
@@ -278,6 +287,17 @@ void MainWindow::CreateStatusbar()
 	mStatusBar->setObjectName(QString::fromUtf8("mStatusBar"));
 
 	setStatusBar(mStatusBar);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	engine::EngineManager::getInstance().uninitialize();
+}
+
+void MainWindow::OnTimerLoop()
+{
+	if (engine::EngineManager::getInstance().isRunning())
+		engine::EngineManager::getInstance().update(0);
 }
 
 void MainWindow::OnMenuFileNew()

@@ -52,6 +52,7 @@ public Q_SLOTS:
 protected:
 
 	QTreeWidget* mTreeWidget;
+	QStringList mIconList;
 };
 
 #endif

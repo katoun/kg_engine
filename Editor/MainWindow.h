@@ -50,9 +50,6 @@ public:
 
 protected:
 
-	QMainWindow* mMainWindow;
-	QVBoxLayout* verticalLayout;
-
 	PropertiesWidget* mPropertiesWidget;
 	SceneExplorerWidget* mSceneExplorerWidget;
 	SceneViewWidget* mSceneViewWidget;
@@ -60,7 +57,6 @@ protected:
 	QDockWidget* sceneExplorerDockWidget;
 	QDockWidget* propertiesDockWidget;
 	
-	//TODO!!!
 	QMenuBar* mMenuBar;
 	QStatusBar* mStatusBar;
 
@@ -87,7 +83,10 @@ protected:
 	void CreateDockWidgets(QMainWindow* parent);
 	void CreateStatusbar();
 
+	void closeEvent(QCloseEvent *event);
+
 public Q_SLOTS:
+	void OnTimerLoop();
 	void OnMenuFileNew();
 	void OnMenuFileOpen();
 	void OnMenuFileSave();
@@ -104,6 +103,8 @@ public Q_SLOTS:
 	void OnMenuEditSelectInvert();
 
 private:
+
+	QTimer *mTimer;
 
 	static QString mDataPath;
 };
