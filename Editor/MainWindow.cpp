@@ -77,6 +77,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	QString styleSheet = QLatin1String(file.readAll());
 	setStyleSheet(styleSheet);
 
+	setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::North);
+	setTabPosition(Qt::RightDockWidgetArea, QTabWidget::North);
+
 	setWindowTitle(QApplication::translate("MainWindow", "Editor", 0, QApplication::UnicodeUTF8));
 
 	///////////////////////////////////////////
@@ -258,7 +261,6 @@ void MainWindow::CreateDockWidgets(QMainWindow* parent)
 	sceneExplorerDockWidget->setMinimumSize(QSize(150, 38));
 	sceneExplorerDockWidget->setWidget(mSceneExplorerWidget);
 	addDockWidget(static_cast<Qt::DockWidgetArea>(1), sceneExplorerDockWidget);
-
 
 	mPropertiesWidget = new PropertiesWidget(parent);
 
