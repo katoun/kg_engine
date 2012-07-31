@@ -25,9 +25,9 @@ THE SOFTWARE.
 */
 
 #include <MainWindow.h>
-//#include <SceneExplorerPanel.h>
-//#include <PropertiesPanel.h>
-//#include <SceneViewPanel.h>
+#include <Properties.h>
+#include <SceneExplorer.h>
+#include <SceneView.h>
 
 #include <string>
 
@@ -77,13 +77,36 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	QString styleSheet = QLatin1String(file.readAll());
 	setStyleSheet(styleSheet);
 
+	setWindowTitle(QApplication::translate("MainWindow", "Editor", 0, QApplication::UnicodeUTF8));
+
 	///////////////////////////////////////////
 
 	resize(800, 600);
+
+	verticalLayout = new QVBoxLayout(this);
+    verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+    verticalLayout->setSpacing(0);
+    verticalLayout->setMargin(0);
+
+	mMainWindow = new QMainWindow(this);
+    mMainWindow->setWindowFlags(Qt::Widget);
+    mMainWindow->setObjectName(QString::fromUtf8("mMainWindow"));
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(mMainWindow->sizePolicy().hasHeightForWidth());
+    mMainWindow->setSizePolicy(sizePolicy);
 	
 	CreateMenus();
-	CreateWidgets();
+	CreateDockWidgets(mMainWindow);
 	CreateStatusbar();
+
+	mSceneViewWidget = new SceneViewWidget(mMainWindow);
+    mSceneViewWidget->setSizePolicy(sizePolicy);
+
+	mMainWindow->setCentralWidget(mSceneViewWidget);
+
+	verticalLayout->addWidget(mMainWindow);
 
 	repaint();
 
@@ -236,8 +259,29 @@ void MainWindow::CreateMenus()
 	connect(actSelectInvert, SIGNAL(triggered()), this, SLOT(OnMenuEditSelectInvert()));
 }
 
-void MainWindow::CreateWidgets()
+void MainWindow::CreateDockWidgets(QMainWindow* parent)
 {
+	mSceneExplorerWidget = new SceneExplorerWidget(parent);
+
+	sceneExplorerDockWidget = new QDockWidget(parent);
+	sceneExplorerDockWidget->setWindowTitle(QApplication::translate("MainWindow", "Scene Explorer", 0, QApplication::UnicodeUTF8));
+	sceneExplorerDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	sceneExplorerDockWidget->setObjectName(QString::fromUtf8("sceneExplorerDockWidget"));
+	sceneExplorerDockWidget->setMinimumSize(QSize(150, 38));
+	sceneExplorerDockWidget->setWidget(mSceneExplorerWidget);
+	addDockWidget(static_cast<Qt::DockWidgetArea>(1), sceneExplorerDockWidget);
+
+
+	mPropertiesWidget = new PropertiesWidget(parent);
+
+	propertiesDockWidget = new QDockWidget(parent);
+	propertiesDockWidget->setWindowTitle(QApplication::translate("MainWindow", "Properties", 0, QApplication::UnicodeUTF8));
+	propertiesDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	propertiesDockWidget->setObjectName(QString::fromUtf8("propertiesDockWidget"));
+	propertiesDockWidget->setMinimumSize(QSize(150, 38));
+	propertiesDockWidget->setWidget(mPropertiesWidget);
+	addDockWidget(static_cast<Qt::DockWidgetArea>(2), propertiesDockWidget);
+
 	//TODO!!!
 }
 

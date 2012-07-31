@@ -50,9 +50,15 @@ public:
 
 protected:
 
+	QMainWindow* mMainWindow;
+	QVBoxLayout* verticalLayout;
+
 	PropertiesWidget* mPropertiesWidget;
 	SceneExplorerWidget* mSceneExplorerWidget;
 	SceneViewWidget* mSceneViewWidget;
+
+	QDockWidget* sceneExplorerDockWidget;
+	QDockWidget* propertiesDockWidget;
 	
 	//TODO!!!
 	QMenuBar* mMenuBar;
@@ -78,7 +84,7 @@ protected:
 	QAction* actSelectInvert;
 	
 	void CreateMenus();
-	void CreateWidgets();
+	void CreateDockWidgets(QMainWindow* parent);
 	void CreateStatusbar();
 
 public Q_SLOTS:

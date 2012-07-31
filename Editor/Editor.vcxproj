@@ -89,7 +89,10 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
     <ClCompile Include="GeneratedFiles\Debug\moc_SceneExplorer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Debug\moc_Properties.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_Properties.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+	<ClCompile Include="GeneratedFiles\Debug\moc_SceneView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_Editor.cpp">
@@ -104,13 +107,17 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
     <ClCompile Include="GeneratedFiles\Release\moc_SceneExplorer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Release\moc_Properties.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_Properties.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+	<ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Properties.cpp" />
     <ClCompile Include="SceneExplorer.cpp" />
+    <ClCompile Include="SceneView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainWindow.h">
@@ -144,6 +151,18 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(ProjectDir)..\dependencies\Qt\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB "-I.\GeneratedFiles" "-I." "-I$(ProjectDir)..\dependencies\Qt\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(ProjectDir)..\dependencies\Qt\include\QtCore" "-I$(ProjectDir)..\dependencies\Qt\include\QtGui"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\dependencies\Qt\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Properties.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(ProjectDir)..\dependencies\Qt\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-I.\GeneratedFiles" "-I." "-I$(ProjectDir)..\dependencies\Qt\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(ProjectDir)..\dependencies\Qt\include\QtCore" "-I$(ProjectDir)..\dependencies\Qt\include\QtGui"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="SceneView.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\dependencies\Qt\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing SceneView.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(ProjectDir)..\dependencies\Qt\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB "-I.\GeneratedFiles" "-I." "-I$(ProjectDir)..\dependencies\Qt\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(ProjectDir)..\dependencies\Qt\include\QtCore" "-I$(ProjectDir)..\dependencies\Qt\include\QtGui"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\dependencies\Qt\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing SceneView.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(ProjectDir)..\dependencies\Qt\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-I.\GeneratedFiles" "-I." "-I$(ProjectDir)..\dependencies\Qt\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(ProjectDir)..\dependencies\Qt\include\QtCore" "-I$(ProjectDir)..\dependencies\Qt\include\QtGui"</Command>
     </CustomBuild>

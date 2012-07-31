@@ -55,13 +55,22 @@
     <ClCompile Include="SceneExplorer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Release\moc_Properties.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_Properties.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Properties.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+	<ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SceneView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,12 +84,15 @@
     <CustomBuild Include="SceneExplorer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Properties.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Properties.h">
+    <ClInclude Include="SceneView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

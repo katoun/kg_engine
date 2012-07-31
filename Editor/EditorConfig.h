@@ -37,5 +37,6 @@ THE SOFTWARE.
 #include <QtGui/QWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QTreeWidget>
+#include <QtGui/QDockWidget>
 
 #endif
