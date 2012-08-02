@@ -43,17 +43,52 @@ void Scene::addGameObject(GameObject* gameObject)
 	if (gameObject == NULL)
 		return;
 
-	mGameObjects.push_back(gameObject);
+	mGameObjects[gameObject->getID()] = gameObject;
 }
 
-const std::list<GameObject*>& Scene::getGameObjects()
+void Scene::removeGameObject(GameObject* gameObject)
 {
-	return mGameObjects;
+	if (gameObject == NULL)
+		return;
+
+	removeGameObject(gameObject->getID());
+}
+
+void Scene::removeGameObject(const unsigned int& id)
+{
+	std::map<unsigned int, GameObject*>::iterator i = mGameObjects.find(id);
+	if (i != mGameObjects.end())
+	{
+		GameObject* pGameObject = i->second;
+		if (pGameObject != NULL)
+		{
+			delete pGameObject;
+			i->second = NULL;
+		}
+
+		mGameObjects.erase(i);
+	}
 }
 
 void Scene::removeAllGameObjects()
 {
+	std::map<unsigned int, GameObject*>::iterator i;
+	for (i = mGameObjects.begin(); i != mGameObjects.end(); ++i)
+	{
+		GameObject* pGameObject = i->second;
+		if (pGameObject != NULL)
+		{
+			delete pGameObject;
+			i->second = NULL;
+		}
+	}
+	
 	mGameObjects.clear();
+}
+
+const std::map<unsigned int, GameObject*>& Scene::getGameObjects()
+{
+	return mGameObjects;
 }
 
 void Scene::unloadImpl()

@@ -64,7 +64,7 @@
     <ClCompile Include="Properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_SceneView.cpp">
@@ -87,12 +87,12 @@
     <CustomBuild Include="Properties.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SceneView.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -100,5 +100,10 @@
     <None Include="Editor.ico">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -70,6 +70,11 @@ Model::~Model()
 		mMeshData->removeResourceEventReceiver(this);
 	}
 
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
+
 	uninitialize();
 }
 
@@ -114,8 +119,12 @@ MeshData* Model::getMeshData() const
 
 void Model::setMaterial(const std::string& filename)
 {
-	std::string materialname = filename;
-	mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, materialname));
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
+
+	mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, filename));
 
 	if (mMaterial != NULL)
 	{
@@ -127,6 +136,11 @@ void Model::setMaterial(Material* material)
 {
 	if (material == NULL)
 		return;
+
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
 
 	mMaterial = material;
 

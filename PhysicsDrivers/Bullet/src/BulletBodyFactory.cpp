@@ -52,18 +52,4 @@ void BulletBodyFactory::destroyComponent(game::Component* component)
 		delete pBody;
 }
 
-void BulletBodyFactory::addComponent(game::Component* component) 
-{
-	BulletBody* pBody = static_cast<BulletBody*>(component);
-
-	PhysicsManager::getInstance().addBody(pBody);
-}
-
-void BulletBodyFactory::removeComponent(game::Component* component)
-{
-	BulletBody* pBody = static_cast<BulletBody*>(component);
-
-	PhysicsManager::getInstance().removeBody(pBody);
-}
-
 } // end namespace physics

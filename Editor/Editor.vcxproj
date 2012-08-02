@@ -81,7 +81,7 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGuid4.dll" "$(OutDir)"</Command>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>Engine.lib;PocoFoundation.lib;PocoUtil.lib;PocoXML.lib;qtmain.lib;QtCore4.lib;QtGui4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-	<PostBuildEvent>
+    <PostBuildEvent>
       <Command>copy "$(ProjectDir)..\dependencies\Qt\bin\QtCore4.dll" "$(OutDir)"
 copy "$(ProjectDir)..\dependencies\Qt\bin\QtGui4.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
@@ -96,7 +96,7 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGui4.dll" "$(OutDir)"</Command>
     <ClCompile Include="GeneratedFiles\Debug\moc_Properties.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Debug\moc_SceneView.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_SceneView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_Editor.cpp">
@@ -114,7 +114,7 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGui4.dll" "$(OutDir)"</Command>
     <ClCompile Include="GeneratedFiles\Release\moc_Properties.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-	<ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_SceneView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="main.cpp" />
@@ -189,6 +189,9 @@ copy "$(ProjectDir)..\dependencies\Qt\bin\QtGui4.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="Editor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

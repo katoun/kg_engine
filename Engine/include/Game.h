@@ -35,6 +35,7 @@ THE SOFTWARE.
 #include <game/TransformDefines.h>
 #include <game/MessageDefines.h>
 #include <game/Scene.h>
+#include <game/SceneFactory.h>
 #include <game/GameManager.h>
 
 #endif // _GAME_H_

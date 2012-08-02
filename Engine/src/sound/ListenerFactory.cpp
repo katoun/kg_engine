@@ -56,18 +56,4 @@ void ListenerFactory::destroyComponent(game::Component* component)
 		delete pListener;
 }
 
-void ListenerFactory::addComponent(game::Component* component) 
-{
-	Listener* pListener = static_cast<Listener*>(component);
-
-	SoundManager::getInstance().addListener(pListener);
-}
-
-void ListenerFactory::removeComponent(game::Component* component)
-{
-	Listener* pListener = static_cast<Listener*>(component);
-
-	SoundManager::getInstance().removeListener(pListener);
-}
-
 } // end namespace game

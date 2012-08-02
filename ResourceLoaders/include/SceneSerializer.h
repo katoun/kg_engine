@@ -28,9 +28,18 @@ THE SOFTWARE.
 #define _SCENE_SERIALIZER_H_
 
 #include <Config.h>
+#include <core/Utils.h>
 #include <resource/Serializer.h>
 
 #include <string>
+
+#include <Poco/AutoPtr.h>
+#include <Poco/Util/XMLConfiguration.h>
+
+namespace game
+{
+class GameObject;
+}
 
 namespace resource
 {
@@ -52,6 +61,10 @@ public:
 	//! \param meshData: Pointer to the MeshData to export
 	//! \param filename: The destination filename.
 	bool exportResource(Resource* source, const std::string& filename);
+
+private:
+
+	void importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfiguration>& config, std::string rootKey = core::STRING_BLANK, game::GameObject* parent = NULL);
 };
 
 }// end namespace resource

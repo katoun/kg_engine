@@ -34,10 +34,6 @@ ComponentFactory::ComponentFactory()
 	mName = "Undefined";
 }
 
-void ComponentFactory::addComponent(Component* component) {}
-
-void ComponentFactory::removeComponent(Component* component) {}
-
 const std::string& ComponentFactory::getName()
 {
 	return mName;

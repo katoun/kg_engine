@@ -42,12 +42,6 @@ public:
 
 	//! Destroys a body component which was created by this factory.
 	void destroyComponent(game::Component* component);
-
-	//! Adds body component to the physics manager.
-	void addComponent(game::Component* component);
-
-	//! Removes body component from the physics manager.
-	void removeComponent(game::Component* component);
 };
 
 } // end namespace physics

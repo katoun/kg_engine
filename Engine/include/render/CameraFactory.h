@@ -49,12 +49,6 @@ public:
 
 	//! Destroys a camera component which was created by this factory.
 	void destroyComponent(game::Component* component);
-
-	//! Adds camera component to the render manager.
-	void addComponent(game::Component* component);
-
-	//! Removes camera component from the render manager.
-	void removeComponent(game::Component* component);
 };
 
 } // end namespace render

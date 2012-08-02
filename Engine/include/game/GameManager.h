@@ -43,6 +43,7 @@ class GameObject;
 class Component;
 class ComponentFactory;
 class TransformFactory;
+class SceneFactory;
 
 class ENGINE_PUBLIC_EXPORT GameManager: public core::System, public core::Singleton<GameManager>
 {
@@ -72,8 +73,8 @@ public:
 	void removeScene();
 
 	//! Creates a game object.
-	GameObject* createGameObject();
-	GameObject* createGameObject(const std::string& name);
+	GameObject* createGameObject(GameObject* parent = NULL);
+	GameObject* createGameObject(const std::string& name, GameObject* parent = NULL);
 
 	//! Remove a game object from the managed list.
 	void removeGameObject(GameObject* gameObject);
@@ -114,6 +115,8 @@ protected:
 	std::map<unsigned int, GameObject*> mGameObjects;
 	std::map<unsigned int, Component*> mComponents;
 	std::map<unsigned int, ComponentFactory*> mComponentFactories;
+
+	SceneFactory* mDefaultSceneFactory;
 
 	TransformFactory* mDefaultTransformFactory;
 };

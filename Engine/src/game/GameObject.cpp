@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <game/GameObject.h>
 #include <game/Component.h>
 #include <game/MessageDefines.h>
+#include <game/GameManager.h>
 #include <core/Utils.h>
 
 namespace game
@@ -68,6 +69,8 @@ GameObject::~GameObject()
 		{
 			i->second = NULL;
 			pComponent->onDetach();
+
+			game::GameManager::getInstance().removeComponent(pComponent);
 		}
 	}
 

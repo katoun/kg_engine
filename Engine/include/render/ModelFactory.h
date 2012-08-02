@@ -49,12 +49,6 @@ public:
 
 	//! Destroys a model component which was created by this factory.
 	void destroyComponent(game::Component* component);
-
-	//! Adds model component to the render manager.
-	void addComponent(game::Component* component);
-
-	//! Removes model component from the render manager.
-	void removeComponent(game::Component* component);
 };
 
 } // end namespace render

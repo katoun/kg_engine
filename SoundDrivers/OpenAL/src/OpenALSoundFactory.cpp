@@ -51,18 +51,4 @@ void OpenALSoundFactory::destroyComponent(game::Component* component)
 		delete pSound;
 }
 
-void OpenALSoundFactory::addComponent(game::Component* component) 
-{
-	OpenALSound* pSound = static_cast<OpenALSound*>(component);
-
-	SoundManager::getInstance().addSound(pSound);
-}
-
-void OpenALSoundFactory::removeComponent(game::Component* component)
-{
-	OpenALSound* pSound = static_cast<OpenALSound*>(component);
-
-	SoundManager::getInstance().removeSound(pSound);
-}
-
 } // end namespace sound

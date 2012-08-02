@@ -426,6 +426,9 @@
     <ClInclude Include="include\game\Scene.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="include\game\SceneFactory.h">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -739,6 +742,9 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\game\Scene.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\SceneFactory.cpp">
       <Filter>game</Filter>
     </ClCompile>
   </ItemGroup>

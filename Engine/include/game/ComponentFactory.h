@@ -46,12 +46,6 @@ public:
 	//! Destroys a component which was created by this factory.
 	virtual void destroyComponent(Component* component) = 0;
 
-	//! Adds component to the coresponding manager.
-	virtual void addComponent(Component* component);
-
-	//! Removes component from the coresponding manager.
-	virtual void removeComponent(Component* component);
-
 	//! Return the name of the type of component this factory creates.
 	const std::string& getName();
 

@@ -1053,6 +1053,8 @@ void RenderManager::findVisibleModels(Camera* camera)
 	mTransparentModels.clear();
 
 	mFrustum = camera->getFrustum();
+	if (mFrustum == NULL)
+		return;
 
 	// Go through all the models
 	std::map<unsigned int, Model*>::const_iterator i;

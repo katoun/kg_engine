@@ -79,6 +79,11 @@ Body::~Body()
 	{
 		mBodyData->removeResourceEventReceiver(this);
 	}
+
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
 }
 
 void Body::setBodyType(BodyType type)
@@ -137,8 +142,12 @@ BodyData* Body::getBodyData() const
 
 void Body::setMaterial(const std::string& filename)
 {
-	std::string materialname = filename;
-	mMaterial = PhysicsManager::getInstance().createMaterial(materialname);
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
+
+	mMaterial = PhysicsManager::getInstance().createMaterial(filename);
 
 	if (mMaterial != NULL)
 	{
@@ -150,6 +159,11 @@ void Body::setMaterial(Material* material)
 {
 	if (material == NULL)
 		return;
+
+	if (mMaterial != NULL)
+	{
+		mMaterial->removeResourceEventReceiver(this);
+	}
 
 	mMaterial = material;
 

@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include <resource/Resource.h>
 
 #include <string>
-#include <list>
+#include <map>
 
 namespace resource
 {
@@ -53,15 +53,18 @@ public:
 
 	void addGameObject(GameObject* gameObject);
 
-	const std::list<GameObject*>& getGameObjects();
+	void removeGameObject(GameObject* gameObject);
+	void removeGameObject(const unsigned int& id);
 
 	void removeAllGameObjects();
+
+	const std::map<unsigned int, GameObject*>& getGameObjects();
 
 private:
 
 	void unloadImpl();
 
-	std::list<GameObject*> mGameObjects;
+	std::map<unsigned int, GameObject*> mGameObjects;
 };
 
 } // end namespace game
