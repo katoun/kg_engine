@@ -4,8 +4,8 @@
 		<shader value="shaders/Shader_vp.cg"/>
 		<entry_point value="main_vp"/>
 		<param_auto name="worldViewProjMatrix" type="worldviewproj_matrix"/>
-		<param_auto name="lightPosition" type="light_position"/>
-		<param_auto name="cameraPosition" type="camera_position"/>
+		<param_auto name="lightPosition" type="light_position_object_space"/>
+		<param_auto name="cameraPosition" type="camera_position_object_space"/>
 	</vertex_shader>
 	
 	<fragment_shader>
@@ -24,22 +24,5 @@
 	<texture_unit>
 		<texture value="textures/brick_s.tga"/>
 	</texture_unit>
-
-	<!--
-	<vertex_shader>
-		<shader value="shaders/BasicShader_vp.cg"/>
-		<entry_point value="main_vp"/>
-		<param_auto name="worldViewProjMatrix" type="worldviewproj_matrix"/>
-	</vertex_shader>
-	
-	<fragment_shader>
-		<shader value="shaders/BasicShader_fp.cg"/>
-		<entry_point value="main_fp"/>
-	</fragment_shader>
-	
-	<texture_unit>
-		<texture value="textures/Grid1x1m.tga"/>
-	</texture_unit>
-	-->
 
 </material>

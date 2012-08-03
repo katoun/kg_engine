@@ -542,14 +542,17 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 						pShader->setEntryPoint(entry_point);
 					}
 
-					if (pConf->has(key + ".param_named"))
+					//named params
+					unsigned int i = 0;
+					std::string nkey = key + ".param_named[" + core::intToString(i) + "]";
+					while (pConf->has(nkey))
 					{
 						std::string name;
-						if (pConf->has(key + ".param_named[@name]"))
-							name = pConf->getString(key + ".param_named[@name]");
+						if (pConf->has(nkey + "[@name]"))
+							name = pConf->getString(nkey + "[@name]");
 						std::string type;
-						if (pConf->has(key + ".param_named[@type]"))
-							type = pConf->getString(key + ".param_named[@type]");
+						if (pConf->has(nkey + "[@type]"))
+							type = pConf->getString(nkey + "[@type]");
 
 						if (type == "matrix4x4")
 						{
@@ -570,38 +573,38 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float m32 = 0.0f;
 							float m33 = 0.0f;
 
-							if (pConf->has(key + ".param_named[@m00]"))
-								m00 = (float)pConf->getDouble(key + ".param_named[@m00]");
-							if (pConf->has(key + ".param_named[@m01]"))
-								m01 = (float)pConf->getDouble(key + ".param_named[@m01]");
-							if (pConf->has(key + ".param_named[@m02]"))
-								m02 = (float)pConf->getDouble(key + ".param_named[@m02]");
-							if (pConf->has(key + ".param_named[@m03]"))
-								m03 = (float)pConf->getDouble(key + ".param_named[@m03]");
-							if (pConf->has(key + ".param_named[@m10]"))
-								m10 = (float)pConf->getDouble(key + ".param_named[@m10]");
-							if (pConf->has(key + ".param_named[@m11]"))
-								m11 = (float)pConf->getDouble(key + ".param_named[@m11]");
-							if (pConf->has(key + ".param_named[@m12]"))
-								m12 = (float)pConf->getDouble(key + ".param_named[@m12]");
-							if (pConf->has(key + ".param_named[@m13]"))
-								m13 = (float)pConf->getDouble(key + ".param_named[@m13]");
-							if (pConf->has(key + ".param_named[@m20]"))
-								m20 = (float)pConf->getDouble(key + ".param_named[@m20]");
-							if (pConf->has(key + ".param_named[@m21]"))
-								m21 = (float)pConf->getDouble(key + ".param_named[@m21]");
-							if (pConf->has(key + ".param_named[@m22]"))
-								m22 = (float)pConf->getDouble(key + ".param_named[@m22]");
-							if (pConf->has(key + ".param_named[@m23]"))
-								m23 = (float)pConf->getDouble(key + ".param_named[@m23]");
-							if (pConf->has(key + ".param_named[@m30]"))
-								m30 = (float)pConf->getDouble(key + ".param_named[@m30]");
-							if (pConf->has(key + ".param_named[@m31]"))
-								m31 = (float)pConf->getDouble(key + ".param_named[@m31]");
-							if (pConf->has(key + ".param_named[@m32]"))
-								m32 = (float)pConf->getDouble(key + ".param_named[@m32]");
-							if (pConf->has(key + ".param_named[@m33]"))
-								m33 = (float)pConf->getDouble(key + ".param_named[@m33]");
+							if (pConf->has(nkey + "[@m00]"))
+								m00 = (float)pConf->getDouble(nkey + "[@m00]");
+							if (pConf->has(nkey + "[@m01]"))
+								m01 = (float)pConf->getDouble(nkey + "[@m01]");
+							if (pConf->has(nkey + "[@m02]"))
+								m02 = (float)pConf->getDouble(nkey + "[@m02]");
+							if (pConf->has(nkey + "[@m03]"))
+								m03 = (float)pConf->getDouble(nkey + "[@m03]");
+							if (pConf->has(nkey + "[@m10]"))
+								m10 = (float)pConf->getDouble(nkey + "[@m10]");
+							if (pConf->has(nkey + "[@m11]"))
+								m11 = (float)pConf->getDouble(nkey + "[@m11]");
+							if (pConf->has(nkey + "[@m12]"))
+								m12 = (float)pConf->getDouble(nkey + "[@m12]");
+							if (pConf->has(nkey + "[@m13]"))
+								m13 = (float)pConf->getDouble(nkey + "[@m13]");
+							if (pConf->has(nkey + "[@m20]"))
+								m20 = (float)pConf->getDouble(nkey + "[@m20]");
+							if (pConf->has(nkey + "[@m21]"))
+								m21 = (float)pConf->getDouble(nkey + "[@m21]");
+							if (pConf->has(nkey + "[@m22]"))
+								m22 = (float)pConf->getDouble(nkey + "[@m22]");
+							if (pConf->has(nkey + "[@m23]"))
+								m23 = (float)pConf->getDouble(nkey + "[@m23]");
+							if (pConf->has(nkey + "[@m30]"))
+								m30 = (float)pConf->getDouble(nkey + "[@m30]");
+							if (pConf->has(nkey + "[@m31]"))
+								m31 = (float)pConf->getDouble(nkey + "[@m31]");
+							if (pConf->has(nkey + "[@m32]"))
+								m32 = (float)pConf->getDouble(nkey + "[@m32]");
+							if (pConf->has(nkey + "[@m33]"))
+								m33 = (float)pConf->getDouble(nkey + "[@m33]");
 
 							core::matrix4 m(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 							pShader->setParameter(name, m);
@@ -613,14 +616,14 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float b = 1.0f;
 							float a = 1.0f;
 
-							if (pConf->has(key + ".param_named[@r]"))
-								r = (float)pConf->getDouble(key + ".param_named[@r]");
-							if (pConf->has(key + ".param_named[@g]"))
-								g = (float)pConf->getDouble(key + ".param_named[@g]");
-							if (pConf->has(key + ".param_named[@b]"))
-								b = (float)pConf->getDouble(key + ".param_named[@b]");
-							if (pConf->has(key + ".param_named[@a]"))
-								a = (float)pConf->getDouble(key + ".param_named[@a]");
+							if (pConf->has(nkey + "[@r]"))
+								r = (float)pConf->getDouble(nkey + "[@r]");
+							if (pConf->has(nkey + "[@g]"))
+								g = (float)pConf->getDouble(nkey + "[@g]");
+							if (pConf->has(nkey + "[@b]"))
+								b = (float)pConf->getDouble(nkey + "[@b]");
+							if (pConf->has(nkey + "[@a]"))
+								a = (float)pConf->getDouble(nkey + "[@a]");
 
 							pShader->setParameter(name, render::Color(r,g,b,a));
 						}
@@ -629,10 +632,10 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float x = 0.0f;
 							float y = 0.0f;
 
-							if (pConf->has(key + ".param_named[@x]"))
-								x = (float)pConf->getDouble(key + ".param_named[@x]");
-							if (pConf->has(key + ".param_named[@y]"))
-								y = (float)pConf->getDouble(key + ".param_named[@y]");
+							if (pConf->has(nkey + ".param_named[@x]"))
+								x = (float)pConf->getDouble(nkey + ".param_named[@x]");
+							if (pConf->has(nkey + ".param_named[@y]"))
+								y = (float)pConf->getDouble(nkey + ".param_named[@y]");
 
 							pShader->setParameter(name, core::vector2d(x,y));
 			
@@ -643,12 +646,12 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float y = 0.0f;
 							float z = 0.0f;
 
-							if (pConf->has(key + ".param_named[@x]"))
-								x = (float)pConf->getDouble(key + ".param_named[@x]");
-							if (pConf->has(key + ".param_named[@y]"))
-								y = (float)pConf->getDouble(key + ".param_named[@y]");
-							if (pConf->has(key + ".param_named[@z]"))
-								z = (float)pConf->getDouble(key + ".param_named[@z]");
+							if (pConf->has(nkey + "[@x]"))
+								x = (float)pConf->getDouble(nkey + "[@x]");
+							if (pConf->has(nkey + "[@y]"))
+								y = (float)pConf->getDouble(nkey + "[@y]");
+							if (pConf->has(nkey + "[@z]"))
+								z = (float)pConf->getDouble(nkey + "[@z]");
 
 							pShader->setParameter(name, core::vector3d(x,y,z));
 						}
@@ -659,22 +662,22 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float z = 0.0f;
 							float w = 0.0f;
 
-							if (pConf->has(key + ".param_named[@x]"))
-								x = (float)pConf->getDouble(key + ".param_named[@x]");
-							if (pConf->has(key + ".param_named[@y]"))
-								y = (float)pConf->getDouble(key + ".param_named[@y]");
-							if (pConf->has(key + ".param_named[@z]"))
-								z = (float)pConf->getDouble(key + ".param_named[@z]");
-							if (pConf->has(key + ".param_named[@w]"))
-								w = (float)pConf->getDouble(key + ".param_named[@w]");
+							if (pConf->has(nkey + "[@x]"))
+								x = (float)pConf->getDouble(nkey + "[@x]");
+							if (pConf->has(nkey + "[@y]"))
+								y = (float)pConf->getDouble(nkey + "[@y]");
+							if (pConf->has(nkey + "[@z]"))
+								z = (float)pConf->getDouble(nkey + "[@z]");
+							if (pConf->has(nkey + "[@w]"))
+								w = (float)pConf->getDouble(nkey + "[@w]");
 
 							pShader->setParameter(name, core::vector4d(x,y,z,w));
 						}
 						else if (type == "float")
 						{
 							std::string value;
-							if (pConf->has(key + ".param_named[@value]"))
-								value = pConf->getString(key + ".param_named[@value]");
+							if (pConf->has(nkey + "[@value]"))
+								value = pConf->getString(nkey + "[@value]");
 
 							std::vector<std::string> vecparams = core::splitString(value, " \t");
 
@@ -689,8 +692,8 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 						else if (type == "int")
 						{
 							std::string value;
-							if (pConf->has(key + ".param_named[@value]"))
-								value = pConf->getString(key + ".param_named[@value]");
+							if (pConf->has(nkey + "[@value]"))
+								value = pConf->getString(nkey + "[@value]");
 
 							std::vector<std::string> vecparams = core::splitString(value, " \t");
 
@@ -707,21 +710,28 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							std::string message = "Invalid param_named attribute - unrecognized parameter type " + type + " .";
 							core::Log::getInstance().logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
 						}
+
+						nkey = key + ".param_named[" + core::intToString(++i) + "]";
 					}
 
-					if (pConf->has(key + ".param_auto"))
+					//auto params
+					unsigned int j = 0;
+					std::string akey = key + ".param_auto[" + core::intToString(j) + "]";
+					while (pConf->has(akey))
 					{
 						std::string name;
-						if (pConf->has(key + ".param_auto[@name]"))
-							name = pConf->getString(key + ".param_auto[@name]");
+						if (pConf->has(akey + "[@name]"))
+							name = pConf->getString(akey + "[@name]");
 
 						std::string type;
-						if (pConf->has(key + ".param_auto[@type]"))
-							type = pConf->getString(key + ".param_auto[@type]");
+						if (pConf->has(akey + "[@type]"))
+							type = pConf->getString(akey + "[@type]");
 
 						render::ShaderAutoParameterType paramAutoType =	convertAutoParameterType(type);
 
 						pShader->setAutoParameter(name, paramAutoType);
+
+						akey = key + ".param_auto[" + core::intToString(++j) + "]";
 					}
 				}
 			}
