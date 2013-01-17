@@ -27,13 +27,13 @@ THE SOFTWARE.
 #include <engine/EngineSettings.h>
 #include <core/Utils.h>
 
-#include <Poco/XML/XML.h>
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/Text.h>
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
-template<> engine::EngineSettings& core::Singleton<engine::EngineSettings>::ms_Singleton = engine::EngineSettings();
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#include <windows.h>
+#endif
+
+template<> engine::EngineSettings* core::Singleton<engine::EngineSettings>::m_Singleton = nullptr;
 
 namespace engine
 {
@@ -49,7 +49,29 @@ EngineSettings::EngineSettings()
 	mFullscreen = false;
 	mVSync = false;
 	mDataPath = "";
-	mMainWindowId = NULL;
+	mWorkPath = "";
+	mMainWindowId = nullptr;
+
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+	char fullPath[MAX_PATH_SIZE]; 
+	GetModuleFileName(NULL, fullPath, MAX_PATH_SIZE);
+
+	mWorkPath = fullPath;
+
+	size_t pos = mWorkPath.find_last_of('\\');
+	if (pos != std::string::npos)
+	{
+		mWorkPath = mWorkPath.substr(0, pos);
+	}
+
+	for(int i = 0; i < mWorkPath.length(); i++)
+	{
+		if (mWorkPath[i] == '\\')
+		{
+			mWorkPath[i] = '/';
+		}
+	}
+#endif
 }
 
 EngineSettings::~EngineSettings() {}
@@ -82,6 +104,11 @@ const bool EngineSettings::getVSync()
 const std::string& EngineSettings::getDataPath()
 {
 	return mDataPath;
+}
+
+const std::string& EngineSettings::getWorkPath()
+{
+	return mWorkPath;
 }
 
 void* EngineSettings::getMainWindowId()
@@ -132,35 +159,81 @@ void EngineSettings::setMainWindowID(void* windowId)
 
 void EngineSettings::loadOptions(const std::string& optionsfile)
 {
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(optionsfile);
-	}
-	catch(...)
-	{
-		mOptionsModified = true;
-		saveOptions(optionsfile);
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(optionsfile.c_str()) != tinyxml2::XML_SUCCESS)
 		return;
+
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("Engine");
+	if (pRoot != nullptr)
+	{
+		int ivalue = 0;
+		bool bvalue = false;
+		const char* svalue;
+		tinyxml2::XMLElement* pElement = nullptr;
+
+		pElement = pRoot->FirstChildElement("VideoSize");
+		if (pElement != nullptr)
+		{
+			tinyxml2::XMLElement* pSubElement = nullptr;
+
+			pSubElement = pElement->FirstChildElement("Width");
+			if (pSubElement != nullptr)
+			{
+				if (pSubElement->QueryIntAttribute("value", &ivalue) == tinyxml2::XML_SUCCESS)
+				{
+					mWidth = (unsigned int)ivalue;
+				}
+			}
+
+			pSubElement = pElement->FirstChildElement("Height");
+			if (pSubElement != nullptr)
+			{
+				if (pSubElement->QueryIntAttribute("value", &ivalue) == tinyxml2::XML_SUCCESS)
+				{
+					mHeight = (unsigned int)ivalue;
+				}
+			}
+		}
+
+		pElement = pRoot->FirstChildElement("Bitdepth");
+		if (pElement != nullptr)
+		{
+			if (pElement->QueryIntAttribute("value", &ivalue) == tinyxml2::XML_SUCCESS)
+			{
+				mBitdepth = (unsigned int)ivalue;
+			}
+		}
+
+		pElement = pRoot->FirstChildElement("Fullscreen");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				mFullscreen = (std::string(svalue) == "Yes") ? true : false;
+			}
+		}
+
+		pElement = pRoot->FirstChildElement("VSync");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				mVSync = (std::string(svalue) == "Yes") ? true : false;
+			}
+		}
+
+		pElement = pRoot->FirstChildElement("DataPath");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				mDataPath = svalue;
+			}
+		}
 	}
-
-	if (pConf->has("VideoSize.Width[@value]"))
-		mWidth = pConf->getInt("VideoSize.Width[@value]");
-
-	if (pConf->has("VideoSize.Height[@value]"))
-		mHeight = pConf->getInt("VideoSize.Height[@value]");
-
-	if (pConf->has("Bitdepth[@value]"))
-		mBitdepth = pConf->getInt("Bitdepth[@value]");
-
-	if (pConf->has("Fullscreen[@value]"))
-		mFullscreen = pConf->getBool("Fullscreen[@value]");
-
-	if (pConf->has("VSync[@value]"))
-		mVSync = pConf->getBool("VSync[@value]");
-
-	if (pConf->has("DataPath[@value]"))
-		mDataPath = pConf->getString("DataPath[@value]");
 }
 
 void EngineSettings::saveOptions(const std::string& optionsfile)
@@ -168,76 +241,78 @@ void EngineSettings::saveOptions(const std::string& optionsfile)
 	if (!mOptionsModified)
 		return;
 
-	Poco::AutoPtr<Poco::XML::Document> pDoc = new Poco::XML::Document;
-	
-	Poco::AutoPtr<Poco::XML::Element> pRoot = pDoc->createElement("Engine");
-	pDoc->appendChild(pRoot);
+	tinyxml2::XMLDocument doc;
 
-	//VideoSize
-	Poco::AutoPtr<Poco::XML::Element> pVideoSize = pDoc->createElement("VideoSize");
-	
-	Poco::AutoPtr<Poco::XML::Element> pWidth = pDoc->createElement("Width");
+	tinyxml2::XMLElement* pRoot = doc.NewElement("Engine");
+	if (pRoot != nullptr)
+	{
+		doc.InsertEndChild(pRoot);
 
-	Poco::AutoPtr<Poco::XML::Text> pWidthText = pDoc->createTextNode(core::intToString(mWidth));
-	pWidth->appendChild(pWidthText);
+		tinyxml2::XMLElement* pElement = nullptr;
 
-	pVideoSize->appendChild(pWidth);
+		pElement = doc.NewElement("VideoSize");
+		if (pElement != nullptr)
+		{
+			pRoot->InsertEndChild(pElement);
+			tinyxml2::XMLElement* pSubElement = nullptr;
+		
+			pSubElement = doc.NewElement("Width");
+			if (pSubElement != nullptr)
+			{
+				pElement->InsertEndChild(pSubElement);
 
-	Poco::AutoPtr<Poco::XML::Element> pHeight = pDoc->createElement("Height");
+				pSubElement->SetAttribute("value", (int)mWidth);
+			}
 
-	Poco::AutoPtr<Poco::XML::Text> pHeightText = pDoc->createTextNode(core::intToString(mHeight));
-	pHeight->appendChild(pHeightText);
+			pSubElement = doc.NewElement("Height");
+			if (pSubElement != nullptr)
+			{
+				pElement->InsertEndChild(pSubElement);
 
-	pVideoSize->appendChild(pHeight);
+				pSubElement->SetAttribute("value", (int)mHeight);
+			}
+		}
 
-	pRoot->appendChild(pVideoSize);
-	//VideoSize
+		pElement = doc.NewElement("Bitdepth");
+		if (pElement != nullptr)
+		{
+			pRoot->InsertEndChild(pElement);
 
-	//pBitdepth
-	Poco::AutoPtr<Poco::XML::Element> pBitdepth = pDoc->createElement("Bitdepth");
+			pElement->SetAttribute("value", (int)mBitdepth);
+		}
 
-	pBitdepth->setAttribute("value", core::intToString(mBitdepth));
-	
-	pRoot->appendChild(pBitdepth);
-	//pBitdepth
+		pElement = doc.NewElement("Fullscreen");
+		if (pElement != nullptr)
+		{
+			pRoot->InsertEndChild(pElement);
 
-	//Fullscreen
-	Poco::AutoPtr<Poco::XML::Element> pFullscreen = pDoc->createElement("Fullscreen");
-	
-	pFullscreen->setAttribute("value", mFullscreen ? "Yes" : "No");
-	
-	pRoot->appendChild(pFullscreen);
-	//Fullscreen
+			pElement->SetAttribute("value", mFullscreen ? "Yes" : "No");
+		}
 
-	//VSync
-	Poco::AutoPtr<Poco::XML::Element> pVSync = pDoc->createElement("VSync");
-	
-	pVSync->setAttribute("value", mVSync ? "Yes" : "No");
-	
-	pRoot->appendChild(pVSync);
-	//VSync
+		pElement = doc.NewElement("VSync");
+		if (pElement != nullptr)
+		{
+			pRoot->InsertEndChild(pElement);
 
-	//DataPath
-	Poco::AutoPtr<Poco::XML::Element> pDataPath = pDoc->createElement("DataPath");
-	
-	pDataPath->setAttribute("value", mDataPath);
-	
-	pRoot->appendChild(pDataPath);
-	//DataPath
+			pElement->SetAttribute("value", mVSync ? "Yes" : "No");
+		}
 
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration(pDoc));
+		pElement = doc.NewElement("DataPath");
+		if (pElement != nullptr)
+		{
+			pRoot->InsertEndChild(pElement);
 
-	pConf->save(optionsfile);
+			pElement->SetAttribute("value", mDataPath.c_str());
+		}
+	}
+
+	if (doc.SaveFile(optionsfile.c_str()) != tinyxml2::XML_SUCCESS)
+		return;
 }
 
-EngineSettings& EngineSettings::getInstance()
+EngineSettings* EngineSettings::getInstance()
 {
 	return core::Singleton<EngineSettings>::getInstance();
-}
-
-EngineSettings* EngineSettings::getInstancePtr()
-{
-	return core::Singleton<EngineSettings>::getInstancePtr();
 }
 
 } // end namespace engine

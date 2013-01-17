@@ -81,8 +81,7 @@ public:
 	//! Returns cache size in k-bytes.
 	unsigned int getCPUCacheSize(CacheLevel level);
 
-	static PlatformManager& getInstance();
-	static PlatformManager* getInstancePtr();
+	static PlatformManager* getInstance();
 
 protected:
 
@@ -95,6 +94,11 @@ protected:
 	void removeSystemDriverImpl();
 
 	PlatformDriver* mPlatformDriver;
+
+	std::string mCPUVendor;
+	std::string mCPUName;
+	std::string mCPUType;
+	std::string mCPUBrand;
 };
 
 } // end namespace platform

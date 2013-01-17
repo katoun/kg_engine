@@ -41,20 +41,20 @@ THE SOFTWARE.
 #include <game/ComponentFactory.h>
 #include <game/GameManager.h>
 
-template<> physics::PhysicsManager& core::Singleton<physics::PhysicsManager>::ms_Singleton = physics::PhysicsManager();
+template<> physics::PhysicsManager* core::Singleton<physics::PhysicsManager>::m_Singleton = nullptr;
 
 namespace physics
 {
 
-CollisionEvent* PhysicsManager::mCollisionEvent = NULL;
+CollisionEvent* PhysicsManager::mCollisionEvent = nullptr;
 std::list<CollisionEventReceiver*> PhysicsManager::mCollisionEventReceivers;
 
 PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 {
 	mDefaultBodyDataFactory = new BodyDataFactory();
 
-	mPhysicsDriver = NULL;
-	mDefaultBodyFactory = NULL;
+	mPhysicsDriver = nullptr;
+	mDefaultBodyFactory = nullptr;
 
 	mHardware = true;
 	mCollisionAccuracy = 1.0f;
@@ -64,17 +64,17 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 
 	mCollisionEvent = new CollisionEvent();
 
-	mShapeFactory = NULL;
-	mJointFactory = NULL;
+	mShapeFactory = nullptr;
+	mJointFactory = nullptr;
 }
 
 PhysicsManager::~PhysicsManager()
 {
-	if (mCollisionEvent != NULL)
+	if (mCollisionEvent != nullptr)
 	{
 		delete mCollisionEvent;
 	}
-	if (mDefaultBodyDataFactory != NULL)
+	if (mDefaultBodyDataFactory != nullptr)
 	{
 		delete mDefaultBodyDataFactory;
 	}
@@ -84,7 +84,7 @@ void PhysicsManager::setHardware(bool state)
 {
 	mHardware = state;
 	
-	if (mPhysicsDriver != NULL)
+	if (mPhysicsDriver != nullptr)
 		mPhysicsDriver->setHardware(state);
 }
 
@@ -92,7 +92,7 @@ void PhysicsManager::setCollisionAccuracy(float accuracy)
 {
 	mCollisionAccuracy = accuracy;
 
-	if (mPhysicsDriver != NULL)
+	if (mPhysicsDriver != nullptr)
 		mPhysicsDriver->setCollisionAccuracy(accuracy);
 }
 
@@ -100,7 +100,7 @@ void PhysicsManager::setSolverAccuracy(float accuracy)
 {
 	mSolverAccuracy = accuracy;
 
-	if (mPhysicsDriver != NULL)
+	if (mPhysicsDriver != nullptr)
 		mPhysicsDriver->setSolverAccuracy(accuracy);
 }
 
@@ -108,13 +108,13 @@ void PhysicsManager::setGravity(const core::vector3d& gravity)
 {
 	mGravity = gravity;
 
-	if (mPhysicsDriver != NULL)
+	if (mPhysicsDriver != nullptr)
 		mPhysicsDriver->setGravity(gravity);
 }
 
 void PhysicsManager::addBody(Body* body)
 {
-	if (body == NULL)
+	if (body == nullptr)
 		return;
 
 	mBodies[body->getID()] = body;
@@ -122,7 +122,7 @@ void PhysicsManager::addBody(Body* body)
 
 void PhysicsManager::removeBody(Body *actor)
 {
-	if (actor == NULL)
+	if (actor == nullptr)
 		return;
 
 	removeBody(actor->getID());
@@ -142,24 +142,24 @@ void PhysicsManager::removeAllBodies()
 
 Shape* PhysicsManager::createShape(ShapeType type)
 {
-	if (mShapeFactory == NULL)
-		return NULL;
+	if (mShapeFactory == nullptr)
+		return nullptr;
 		
 	return mShapeFactory->createShape(type);
 
-	return NULL;
+	return nullptr;
 }
 
 Joint* PhysicsManager::createJoint(JointType type)
 {
-	if (mJointFactory == NULL)
-		return NULL;
+	if (mJointFactory == nullptr)
+		return nullptr;
 
-	Joint* newJoint = NULL;
+	Joint* newJoint = nullptr;
 	newJoint = mJointFactory->createJoint(type);
 
-	if (newJoint == NULL)
-		return NULL;
+	if (newJoint == nullptr)
+		return nullptr;
 
 	mJoints[newJoint->getID()] = newJoint;
 
@@ -168,14 +168,14 @@ Joint* PhysicsManager::createJoint(JointType type)
 
 Joint* PhysicsManager::createJoint(const std::string& name, JointType type)
 {
-	if (mJointFactory == NULL)
-		return NULL;
+	if (mJointFactory == nullptr)
+		return nullptr;
 
-	Joint* newJoint = NULL;
+	Joint* newJoint = nullptr;
 	newJoint = mJointFactory->createJoint(name, type);
 
-	if (newJoint == NULL)
-		return NULL;
+	if (newJoint == nullptr)
+		return nullptr;
 
 	mJoints[newJoint->getID()] = newJoint;
 
@@ -188,7 +188,7 @@ Joint* PhysicsManager::getJoint(const unsigned int& id)
 	if (i != mJoints.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 unsigned int PhysicsManager::getNumberOfJoints() const
@@ -198,7 +198,7 @@ unsigned int PhysicsManager::getNumberOfJoints() const
 
 void PhysicsManager::removeJoint(Joint *joint)
 {
-	if (joint == NULL)
+	if (joint == nullptr)
 		return;
 
 	removeJoint(joint->getID());
@@ -227,15 +227,19 @@ void PhysicsManager::removeAllJoints()
 
 Material* PhysicsManager::createMaterial(const std::string& materialFilename)
 {
-	Material* newMaterial = NULL;
-	newMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_PHYSICS_MATERIAL, materialFilename));
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		Material*  newMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_PHYSICS_MATERIAL, materialFilename));
 	
-	if (newMaterial == NULL)
-		return NULL;
+		if (newMaterial == nullptr)
+			return nullptr;
 	
-	mMaterials[newMaterial->getID()] = newMaterial;
+		mMaterials[newMaterial->getID()] = newMaterial;
 
-	return newMaterial;
+		return newMaterial;
+	}
+
+	return nullptr;
 }
 
 void PhysicsManager::addCollisionEventReceiver(CollisionEventReceiver* newEventReceiver)
@@ -263,7 +267,7 @@ void PhysicsManager::setDefaultBodyFactory(game::ComponentFactory* factory)
 
 void PhysicsManager::removeDefaultBodyFactory()
 {
-	mDefaultBodyFactory = NULL;
+	mDefaultBodyFactory = nullptr;
 }
 
 void PhysicsManager::setShapeFactory(ShapeFactory* factory)
@@ -273,7 +277,7 @@ void PhysicsManager::setShapeFactory(ShapeFactory* factory)
 
 void PhysicsManager::removeShapeFactory()
 {
-	mShapeFactory = NULL;
+	mShapeFactory = nullptr;
 }
 
 void PhysicsManager::setJointFactory(JointFactory* factory)
@@ -283,7 +287,7 @@ void PhysicsManager::setJointFactory(JointFactory* factory)
 
 void PhysicsManager::removeJointFactory()
 {
-	mJointFactory = NULL;
+	mJointFactory = nullptr;
 }
 
 void PhysicsManager::fireCollisionStarted(Body* body1, Body* body2, const std::vector<CollisionPoint*>& points)
@@ -329,7 +333,7 @@ void PhysicsManager::fireCollisionEnded(Body* body1, Body* body2)
 
 void PhysicsManager::initializeImpl()
 {
-	if (mPhysicsDriver != NULL)
+	if (mPhysicsDriver != nullptr)
 	{
 		mPhysicsDriver->setHardware(mHardware);
 		mPhysicsDriver->setCollisionAccuracy(mCollisionAccuracy);
@@ -363,31 +367,30 @@ void PhysicsManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
 
 void PhysicsManager::removeSystemDriverImpl()
 {
-	mPhysicsDriver = NULL;
+	mPhysicsDriver = nullptr;
 }
 
 void PhysicsManager::registerDefaultFactoriesImpl()
 {
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_BODY_DATA, mDefaultBodyDataFactory);
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_BODY_DATA, mDefaultBodyDataFactory);
 
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_BODY, mDefaultBodyFactory);
+	if (game::GameManager::getInstance() != nullptr)
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_BODY, mDefaultBodyFactory);
 }
 
 void PhysicsManager::removeDefaultFactoriesImpl()
 {
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_BODY_DATA);
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_BODY_DATA);
 
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_BODY);
+	if (game::GameManager::getInstance() != nullptr)
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_BODY);
 }
 
-PhysicsManager& PhysicsManager::getInstance()
+PhysicsManager* PhysicsManager::getInstance()
 {
 	return core::Singleton<PhysicsManager>::getInstance();
-}
-
-PhysicsManager* PhysicsManager::getInstancePtr()
-{
-	return core::Singleton<PhysicsManager>::getInstancePtr();
 }
 
 } // end namespace physics

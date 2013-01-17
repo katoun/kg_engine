@@ -32,12 +32,12 @@ namespace physics
 
 Joint* BulletJointFactory::createJoint(JointType type)
 {
-	Joint* newJoint = NULL;
+	Joint* newJoint = nullptr;
 
 	switch(type)
 	{
 	case JOINT_TYPE_UNDEFINED:
-		newJoint = NULL;
+		newJoint = nullptr;
 		break;
 	case JOINT_TYPE_SPHERICAL:
 		newJoint = new BulletSphericalJoint();
@@ -55,7 +55,7 @@ Joint* BulletJointFactory::createJoint(JointType type)
 		newJoint = new BulletRigidJoint();
 		break;
 	default:
-		newJoint = NULL;
+		newJoint = nullptr;
 		break;	
 	}
 
@@ -64,12 +64,12 @@ Joint* BulletJointFactory::createJoint(JointType type)
 
 Joint* BulletJointFactory::createJoint(const std::string& name, JointType type)
 {
-	Joint* newJoint = NULL;
+	Joint* newJoint = nullptr;
 
 	switch(type)
 	{
 	case JOINT_TYPE_UNDEFINED:
-		newJoint = NULL;
+		newJoint = nullptr;
 		break;
 	case JOINT_TYPE_SPHERICAL:
 		newJoint = new BulletSphericalJoint(name);
@@ -87,7 +87,7 @@ Joint* BulletJointFactory::createJoint(const std::string& name, JointType type)
 		newJoint = new BulletRigidJoint(name);
 		break;
 	default:
-		newJoint = NULL;
+		newJoint = nullptr;
 		break;	
 	}
 
@@ -96,54 +96,54 @@ Joint* BulletJointFactory::createJoint(const std::string& name, JointType type)
 
 void BulletJointFactory::destroyJoint(Joint* joint)
 {
-	if (joint == NULL)
+	if (joint == nullptr)
 		return;
 
 	switch(joint->getJointType())
 	{
 	case JOINT_TYPE_UNDEFINED:
 		{
-			if (joint != NULL) delete joint;
+			if (joint != nullptr) delete joint;
 		}
 		break;
 	case JOINT_TYPE_SPHERICAL:
 		{
 			BulletSphericalJoint* bulletJoint = static_cast<BulletSphericalJoint*>(joint);
-			assert(bulletJoint != NULL);
-			if (bulletJoint != NULL) delete bulletJoint;
+			assert(bulletJoint != nullptr);
+			if (bulletJoint != nullptr) delete bulletJoint;
 		}
 		break;
 	case JOINT_TYPE_HINGE:
 		{
 			BulletHingeJoint* bulletJoint = static_cast<BulletHingeJoint*>(joint);
-			assert(bulletJoint != NULL);
-			if (bulletJoint != NULL) delete bulletJoint;
+			assert(bulletJoint != nullptr);
+			if (bulletJoint != nullptr) delete bulletJoint;
 		}
 		break;
 	case JOINT_TYPE_SLIDER:
 		{
 			BulletSliderJoint* bulletJoint = static_cast<BulletSliderJoint*>(joint);
-			assert(bulletJoint != NULL);
-			if (bulletJoint != NULL) delete bulletJoint;
+			assert(bulletJoint != nullptr);
+			if (bulletJoint != nullptr) delete bulletJoint;
 		}
 		break;
 	case JOINT_TYPE_GENERIC:
 		{
 			BulletGenericJoint* bulletJoint = static_cast<BulletGenericJoint*>(joint);
-			assert(bulletJoint != NULL);
-			if (bulletJoint != NULL) delete bulletJoint;
+			assert(bulletJoint != nullptr);
+			if (bulletJoint != nullptr) delete bulletJoint;
 		}
 		break;
 	case JOINT_TYPE_RIGID:
 		{
 			BulletRigidJoint* bulletJoint = static_cast<BulletRigidJoint*>(joint);
-			assert(bulletJoint != NULL);
-			if (bulletJoint != NULL) delete bulletJoint;
+			assert(bulletJoint != nullptr);
+			if (bulletJoint != nullptr) delete bulletJoint;
 		}
 		break;
 	default:
 		{
-			if (joint != NULL) delete joint;
+			if (joint != nullptr) delete joint;
 		}
 		break;	
 	}

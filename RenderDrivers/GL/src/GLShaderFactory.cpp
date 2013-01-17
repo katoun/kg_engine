@@ -39,8 +39,8 @@ void GLShaderFactory::destroyResource(resource::Resource* resource)
 {
 	GLShader* glShader = static_cast<GLShader*>(resource);
 
-	assert(glShader != NULL);
-	if (glShader != NULL) delete glShader;
+	assert(glShader != nullptr);
+	if (glShader != nullptr) delete glShader;
 }
 
 

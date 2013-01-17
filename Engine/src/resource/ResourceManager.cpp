@@ -34,12 +34,7 @@ THE SOFTWARE.
 #include <platform/PlatformManager.h>
 #include <engine/EngineSettings.h>
 
-#include <Poco/File.h>
-#include <Poco/Path.h>
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
-
-template<> resource::ResourceManager& core::Singleton<resource::ResourceManager>::ms_Singleton = resource::ResourceManager();
+template<> resource::ResourceManager* core::Singleton<resource::ResourceManager>::m_Singleton = nullptr;
 
 namespace resource
 {
@@ -53,11 +48,11 @@ ResourceManager::ResourceManager(): core::System("ResourceManager")
 	for (unsigned int i = RESOURCE_TYPE_UNDEFINED; i < RESOURCE_TYPE_COUNT; ++i)
 	{
 		mLoadResources[i] = std::list<Resource*>();
-		mResourceFactories[i] = NULL;
-		mSerializers[i] = NULL;
+		mResourceFactories[i] = nullptr;
+		mSerializers[i] = nullptr;
 	}
 
-	mDataPath = core::STRING_BLANK;
+	mDataPath = "";
 	
 	mMemoryUsage = 0;
 
@@ -77,11 +72,10 @@ ResourceManager::~ResourceManager()
 
 Resource* ResourceManager::createResource(const ResourceType& type, const std::string& filename)
 {
-	if (filename == core::STRING_BLANK)
-		return NULL;
+	if (filename.empty())
+		return nullptr;
 
-	std::string filePath = Poco::Path(filename).toString();
-	std::map<std::string, Resource*>::iterator i = mResourcesByFilename.find(filePath);
+	std::map<std::string, Resource*>::iterator i = mResourcesByFilename.find(filename);
 	if (i != mResourcesByFilename.end())
 	{
 		return i->second;
@@ -91,24 +85,24 @@ Resource* ResourceManager::createResource(const ResourceType& type, const std::s
 		ResourceFactory* resourceFactory = mResourceFactories[(unsigned int)(type)];
 		Serializer* serializer = mSerializers[(unsigned int)(type)];
 
-		if (resourceFactory == NULL)
-			return NULL;
+		if (resourceFactory == nullptr)
+			return nullptr;
 		
-		Resource* newResource = resourceFactory->createResource(filePath, serializer);
-		if (newResource == NULL)
-			return NULL;
+		Resource* newResource = resourceFactory->createResource(filename, serializer);
+		if (newResource == nullptr)
+			return nullptr;
 
 		mResources[newResource->getID()] = newResource;
 		mLoadResources[(unsigned int)(type)].push_back(newResource);
-		mResourcesByFilename[filePath] = newResource;
+		mResourcesByFilename[filename] = newResource;
 
 		std::string message = "Resource: " + newResource->getFilename() + " id: " + core::intToString(newResource->getID()) + " created.";
-		core::Log::getInstance().logMessage("ResourceManager", message);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", message);
 
 		return newResource;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ResourceManager::loadResources()
@@ -121,8 +115,8 @@ void ResourceManager::loadResources()
 		{
 			Resource* resource = (*j);
 
-			assert(resource != NULL);
-			if (resource == NULL)
+			assert(resource != nullptr);
+			if (resource == nullptr)
 				continue;
 
 			resource->updateSize();
@@ -148,7 +142,7 @@ void ResourceManager::loadResources()
 	mTotalLoadSize = 0;
 	mLoadedSize = 0;
 	
-	core::Log::getInstance().logMessage("ResourceManager", "Resources loaded.");
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", "Resources loaded.");
 }
 
 void ResourceManager::unloadResources()
@@ -167,13 +161,13 @@ void ResourceManager::unloadResources()
 	mTotalLoadSize = 0;
 	mLoadedSize = 0;
 
-	core::Log::getInstance().logMessage("ResourceManager", "Resources unloaded.");
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", "Resources unloaded.");
 }
 
 bool ResourceManager::loadResource(Resource* resource)
 {
-	assert(resource != NULL);
-	if (resource == NULL)
+	assert(resource != nullptr);
+	if (resource == nullptr)
 		return false;
 
 	if (!resource->load())
@@ -187,15 +181,15 @@ bool ResourceManager::loadResource(Resource* resource)
 	fireLoadUpdate();
 
 	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " loaded.";
-	core::Log::getInstance().logMessage("ResourceManager", message);
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", message);
 
 	return true;
 }
 
 void ResourceManager::unloadResource(Resource* resource)
 {
-	assert(resource != NULL);
-	if (resource == NULL)
+	assert(resource != nullptr);
+	if (resource == nullptr)
 		return;
 
 	resource->unload();
@@ -208,13 +202,13 @@ void ResourceManager::unloadResource(Resource* resource)
 	fireLoadUpdate();
 
 	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " unloaded.";
-	core::Log::getInstance().logMessage("ResourceManager", message);
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", message);
 }
 
 bool ResourceManager::reloadResource(Resource* resource)
 {
-	assert(resource != NULL);
-	if (resource == NULL)
+	assert(resource != nullptr);
+	if (resource == nullptr)
 		return false;
 
 	if (!resource->reload())
@@ -223,39 +217,39 @@ bool ResourceManager::reloadResource(Resource* resource)
 	fireLoadUpdate();
 
 	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " reloaded.";
-	core::Log::getInstance().logMessage("ResourceManager", message);
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", message);
 
 	return true;
 }
 
 bool ResourceManager::saveResource(Resource* resource, const std::string& filename)
 {
-	assert(resource != NULL);
-	if (resource == NULL)
+	assert(resource != nullptr);
+	if (resource == nullptr)
 		return false;
 
-	if (filename != core::STRING_BLANK)
+	if (filename.empty())
+		return false;
+	
+	std::map<std::string, Resource*>::iterator i = mResourcesByFilename.find(filename);
+	if (i != mResourcesByFilename.end())
 	{
-		std::map<std::string, Resource*>::iterator i = mResourcesByFilename.find(filename);
-		if (i != mResourcesByFilename.end())
-		{
-			mResourcesByFilename.erase(i);
-			mResourcesByFilename[filename] = resource;
-		}
+		mResourcesByFilename.erase(i);
+		mResourcesByFilename[filename] = resource;
 	}
 
 	if (!resource->save(filename))
 		return false;
 
 	std::string message = "Resource: " + resource->getFilename() + " id: " + core::intToString(resource->getID()) + " saved.";
-	core::Log::getInstance().logMessage("ResourceManager", message);
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("ResourceManager", message);
 
 	return true;
 }
 
 void ResourceManager::removeResource(Resource *resource)
 {
-	if (resource == NULL)
+	if (resource == nullptr)
 		return;
 
 	removeResource(resource->getID());
@@ -268,8 +262,8 @@ void ResourceManager::removeResource(const unsigned int& id)
 	{
 		Resource* resource = i->second;
 
-		assert(resource != NULL);
-		if (resource == NULL)
+		assert(resource != nullptr);
+		if (resource == nullptr)
 			return;
 
 		// Remove entry in map
@@ -312,15 +306,15 @@ void ResourceManager::removeAllResources()
 	{
 		Resource* resource = i->second;
 
-		assert(resource != NULL);
-		if (resource == NULL)
+		assert(resource != nullptr);
+		if (resource == nullptr)
 			continue;
 
 		unloadResource(resource);
 
 		ResourceFactory* resourceFactory = mResourceFactories[(unsigned int)(resource->getResourceType())];
 
-		if (resourceFactory != NULL)
+		if (resourceFactory != nullptr)
 			resourceFactory->destroyResource(resource);
 		else
 			delete resource;
@@ -337,7 +331,7 @@ void ResourceManager::registerResourceFactory(const ResourceType& type, Resource
 
 void ResourceManager::removeResourceFactory(const ResourceType& type)
 {
-	mResourceFactories[(unsigned int)type] = NULL;
+	mResourceFactories[(unsigned int)type] = nullptr;
 }
 
 void ResourceManager::registerSerializer(const ResourceType& type, Serializer* serializer)
@@ -347,7 +341,7 @@ void ResourceManager::registerSerializer(const ResourceType& type, Serializer* s
 
 void ResourceManager::removeSerializer(const ResourceType& type)
 {
-	mSerializers[(unsigned int)(type)] = NULL;
+	mSerializers[(unsigned int)(type)] = nullptr;
 }
 
 const std::string& ResourceManager::getDataPath()
@@ -414,9 +408,8 @@ unsigned int ResourceManager::getMemoryUsage() const
 
 void ResourceManager::initializeImpl()
 {
-	std::string dataPath = engine::EngineSettings::getInstance().getDataPath();
-
-	mDataPath = Poco::Path(dataPath).toString();
+	if (engine::EngineSettings::getInstance() != nullptr)
+		mDataPath =  engine::EngineSettings::getInstance()->getDataPath();
 }
 
 void ResourceManager::uninitializeImpl()
@@ -447,19 +440,13 @@ void ResourceManager::updateImpl(float elapsedTime)
 	for (i = mResources.begin(); i != mResources.end(); ++i)
 	{
 		Resource* resource = i->second;
-		if (resource != NULL)
+		if (resource != nullptr)
 			resource->checkAlreadyLoaded();
 	}
 }
 
-ResourceManager& ResourceManager::getInstance()
+ResourceManager* ResourceManager::getInstance()
 {
 	return core::Singleton<ResourceManager>::getInstance();
 }
-
-ResourceManager* ResourceManager::getInstancePtr()
-{
-	return core::Singleton<ResourceManager>::getInstancePtr();
-}
-
 }// end namespace resource

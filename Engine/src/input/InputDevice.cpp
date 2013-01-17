@@ -36,7 +36,7 @@ InputDevice::InputDevice()
 	mInputType = INPUT_TYPE_UNKNOWN;
 
 	mBuffered = false;
-	mVendor = core::STRING_BLANK;
+	mVendor = "";
 }
 
 InputDevice::~InputDevice() {}

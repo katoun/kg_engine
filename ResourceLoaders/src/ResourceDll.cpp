@@ -37,12 +37,12 @@ THE SOFTWARE.
 namespace resource
 {
 
-Serializer* pFontSerializer = NULL;
-Serializer* pTextureSerializer = NULL;
-Serializer* pMaterialSerializer = NULL;
-Serializer* pMeshSerializer = NULL;
-Serializer* pBodySerializer = NULL;
-Serializer* pSceneSerializer = NULL;
+Serializer* pFontSerializer = nullptr;
+Serializer* pTextureSerializer = nullptr;
+Serializer* pMaterialSerializer = nullptr;
+Serializer* pMeshSerializer = nullptr;
+Serializer* pBodySerializer = nullptr;
+Serializer* pSceneSerializer = nullptr;
 
 extern "C" void RESOURCE_PUBLIC_EXPORT loadPlugin()
 {	
@@ -53,50 +53,38 @@ extern "C" void RESOURCE_PUBLIC_EXPORT loadPlugin()
 	pBodySerializer = new BodySerializer();
 	pSceneSerializer = new SceneSerializer();
 
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_FONT, pFontSerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_TEXTURE, pTextureSerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_RENDER_MATERIAL, pMaterialSerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL, pMaterialSerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_MESH_DATA, pMeshSerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_BODY_DATA, pBodySerializer);
-	ResourceManager::getInstance().registerSerializer(RESOURCE_TYPE_SCENE, pSceneSerializer);
+	if (ResourceManager::getInstance() != nullptr)
+	{
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_FONT, pFontSerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_TEXTURE, pTextureSerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_RENDER_MATERIAL, pMaterialSerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL, pMaterialSerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_MESH_DATA, pMeshSerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_BODY_DATA, pBodySerializer);
+		ResourceManager::getInstance()->registerSerializer(RESOURCE_TYPE_SCENE, pSceneSerializer);
+	}
 }
 
 /// Destroys
 extern "C" void RESOURCE_PUBLIC_EXPORT unloadPlugin()
 {
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_FONT);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_TEXTURE);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_RENDER_MATERIAL);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_MESH_DATA);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_BODY_DATA);
-	ResourceManager::getInstance().removeSerializer(RESOURCE_TYPE_SCENE);
+	if (ResourceManager::getInstance() != nullptr)
+	{
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_FONT);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_TEXTURE);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_RENDER_MATERIAL);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_PHYSICS_MATERIAL);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_MESH_DATA);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_BODY_DATA);
+		ResourceManager::getInstance()->removeSerializer(RESOURCE_TYPE_SCENE);
+	}
 
-	if (pFontSerializer != NULL)
-	{
-		delete pFontSerializer;
-	}
-	if (pTextureSerializer != NULL)
-	{
-		delete pTextureSerializer;
-	}
-	if (pMaterialSerializer != NULL)
-	{
-		delete pMaterialSerializer;
-	}
-	if (pMeshSerializer != NULL)
-	{
-		delete pMeshSerializer;
-	}
-	if (pBodySerializer != NULL)
-	{
-		delete pBodySerializer;
-	}
-	if (pSceneSerializer != NULL)
-	{
-		delete pSceneSerializer;
-	}
+	SAFE_DELETE(pFontSerializer);
+	SAFE_DELETE(pTextureSerializer);
+	SAFE_DELETE(pMaterialSerializer);
+	SAFE_DELETE(pMeshSerializer);
+	SAFE_DELETE(pBodySerializer);
+	SAFE_DELETE(pSceneSerializer);
 }
 
 } // end namespace resource

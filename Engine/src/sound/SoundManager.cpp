@@ -36,26 +36,26 @@ THE SOFTWARE.
 #include <game/ComponentFactory.h>
 #include <game/GameManager.h>
 
-template<> sound::SoundManager& core::Singleton<sound::SoundManager>::ms_Singleton = sound::SoundManager();
+template<> sound::SoundManager* core::Singleton<sound::SoundManager>::m_Singleton = nullptr;
 
 namespace sound
 {
 
 SoundManager::SoundManager(): core::System("SoundManager")
 {
-	mSoundDriver = NULL;
-	mActiveListener = NULL;
+	mSoundDriver = nullptr;
+	mActiveListener = nullptr;
 
 	mDopplerFactor = 1.0f;
 	mSoundSpeed = 343.3f;
 
 	mDefaultListenerFactory = new ListenerFactory();
-	mDefaultSoundFactory = NULL;
+	mDefaultSoundFactory = nullptr;
 }
 
 SoundManager::~SoundManager()
 {
-	if (mDefaultListenerFactory != NULL)
+	if (mDefaultListenerFactory != nullptr)
 	{
 		delete mDefaultListenerFactory;
 	}
@@ -63,7 +63,7 @@ SoundManager::~SoundManager()
 
 void SoundManager::addSound(Sound* sound)
 {
-	if (sound == NULL)
+	if (sound == nullptr)
 		return;
 
 	mSounds[sound->getID()] = sound;
@@ -71,7 +71,7 @@ void SoundManager::addSound(Sound* sound)
 
 void SoundManager::removeSound(Sound* sound)
 {
-	if (sound == NULL)
+	if (sound == nullptr)
 		return;
 
 	removeSound(sound->getID());
@@ -91,7 +91,7 @@ void SoundManager::removeAllSounds()
 
 void SoundManager::setActiveListener(Listener* listener)
 {
-	if (listener = NULL)
+	if (listener = nullptr)
 		return;
 
 	mActiveListener = listener;
@@ -104,7 +104,7 @@ Listener* SoundManager::getActiveListener()
 
 void SoundManager::addListener(Listener* listener)
 {
-	if (listener == NULL)
+	if (listener == nullptr)
 		return;
 
 	mListeners[listener->getID()] = listener;
@@ -112,7 +112,7 @@ void SoundManager::addListener(Listener* listener)
 
 void SoundManager::removeListener(Listener* listener)
 {
-	if (listener == NULL)
+	if (listener == nullptr)
 		return;
 
 	removeListener(listener->getID());
@@ -137,7 +137,7 @@ void SoundManager::setDopplerFactor(float dopplerFactor)
 		return;
 
 	mDopplerFactor = dopplerFactor;
-	if (mSoundDriver != NULL)
+	if (mSoundDriver != nullptr)
 		mSoundDriver->setDopplerFactor(dopplerFactor);
 }
 
@@ -153,7 +153,7 @@ void SoundManager::setSoundSpeed(float soundSpeed)
 		return;
 
 	mSoundSpeed = soundSpeed;
-	if (mSoundDriver != NULL)
+	if (mSoundDriver != nullptr)
 		mSoundDriver->setSoundSpeed(soundSpeed);
 }
 
@@ -169,7 +169,7 @@ void SoundManager::setDefaultSoundFactory(game::ComponentFactory* factory)
 
 void SoundManager::removeDefaultSoundFactory()
 {
-	mDefaultSoundFactory = NULL;
+	mDefaultSoundFactory = nullptr;
 }
 
 void SoundManager::initializeImpl() {}
@@ -186,7 +186,7 @@ void SoundManager::stopImpl() {}
 
 void SoundManager::updateImpl(float elapsedTime)
 {
-	if (mSoundDriver != NULL && mActiveListener != NULL)
+	if (mSoundDriver != nullptr && mActiveListener != nullptr)
 	{
 		mSoundDriver->updateListener(mActiveListener);
 	}
@@ -199,29 +199,30 @@ void SoundManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
 
 void SoundManager::removeSystemDriverImpl()
 {
-	mSoundDriver = NULL;
+	mSoundDriver = nullptr;
 }
 
 void SoundManager::registerDefaultFactoriesImpl()
 {
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_LISTENER, mDefaultListenerFactory);
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_SOUND, mDefaultSoundFactory);
+	if (game::GameManager::getInstance() != nullptr)
+	{
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LISTENER, mDefaultListenerFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_SOUND, mDefaultSoundFactory);
+	}
 }
 
 void SoundManager::removeDefaultFactoriesImpl()
 {
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_LISTENER);
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_SOUND);
+	if (game::GameManager::getInstance() != nullptr)
+	{
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_LISTENER);
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_SOUND);
+	}
 }
 
-SoundManager& SoundManager::getInstance()
+SoundManager* SoundManager::getInstance()
 {
 	return core::Singleton<SoundManager>::getInstance();
-}
-
-SoundManager* SoundManager::getInstancePtr()
-{
-	return core::Singleton<SoundManager>::getInstancePtr();
 }
 
 } // end namespace sound

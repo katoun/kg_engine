@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#include <core/Log.h>
 #include <engine/EngineManager.h>
 #include <engine/EngineSettings.h>
 #include <engine/EngineEvent.h>
@@ -37,12 +38,12 @@ THE SOFTWARE.
 #include <sound/SoundManager.h>
 #include <physics/PhysicsManager.h>
 
-template<> engine::EngineManager& core::Singleton<engine::EngineManager>::ms_Singleton = engine::EngineManager();
+template<> engine::EngineManager* core::Singleton<engine::EngineManager>::m_Singleton = nullptr;
 
 namespace engine
 {
 
-EngineEvent* EngineManager::mEngineEvent = NULL;
+EngineEvent* EngineManager::mEngineEvent = nullptr;
 std::list<EngineEventReceiver*> EngineManager::mEngineEventReceivers;
 
 EngineManager::EngineManager(): core::System("EngineManager")
@@ -54,9 +55,21 @@ EngineManager::EngineManager(): core::System("EngineManager")
 
 	mEngineEvent = new EngineEvent();
 
-	mLastUpdateStartTimeStamp.update();
-	mLastUpdateEndTimeStamp.update();
-	mCurrentTimeStamp.update();
+	mLastUpdateStartTime	= 0;
+	mLastUpdateEndTime		= 0;
+
+	mLog						= new core::Log();
+	mSettings					= new EngineSettings();
+	mPluginManager				= new PluginManager();
+	mPlatformManager			= new platform::PlatformManager();
+	mInputManager				= new input::InputManager;
+	mResourceManager			= new resource::ResourceManager();
+	mRenderManager				= new render::RenderManager();
+	mSoundManager				= new sound::SoundManager();
+	mPhysicsManager				= new physics::PhysicsManager();
+	mGameManager				= new game::GameManager();
+
+	resetTimer();
 
 #ifdef _DEBUG
 	mOptionsFile = "Engine_d.xml";
@@ -67,11 +80,20 @@ EngineManager::EngineManager(): core::System("EngineManager")
 
 EngineManager::~EngineManager()
 {
-	if (mEngineEvent != NULL)
-		delete mEngineEvent;
+	SAFE_DELETE(mEngineEvent);
+
+	SAFE_DELETE(mLog);
+	SAFE_DELETE(mSettings);
+	SAFE_DELETE(mPlatformManager);
+	SAFE_DELETE(mInputManager);
+	SAFE_DELETE(mResourceManager);
+	SAFE_DELETE(mRenderManager);
+	SAFE_DELETE(mSoundManager);
+	SAFE_DELETE(mPhysicsManager);
+	SAFE_DELETE(mGameManager);
 
 #if defined(_DEBUG) && defined(ENGINE_MEMORY_TRACKER)
-	_CrtMemDumpAllObjectsSince(NULL);
+	_CrtMemDumpAllObjectsSince(nullptr);
 #endif // _DEBUG
 }
 
@@ -113,42 +135,55 @@ void EngineManager::initializeImpl()
 	loadOptions();
 
 	// Load plugins
-	PluginManager::getInstance().initialize();
+	if (PluginManager::getInstance() != nullptr)
+		PluginManager::getInstance()->initialize();
 
-	engine::EngineSettings& engineOptions = engine::EngineSettings::getInstance();
-
-	//create the main window
-	render::RenderWindow* pMainWindow = render::RenderManager::getInstance().createRenderWindow(engineOptions.getWidth(), engineOptions.getHeight(), engineOptions.getBitdepth(), engineOptions.getFullscreen(), 0, 0, true, engineOptions.getMainWindowId());
-	render::RenderManager::getInstance().setMainWindow(pMainWindow);
+	engine::EngineSettings* engineOptions = engine::EngineSettings::getInstance();
+	if (engine::EngineSettings::getInstance() != nullptr && render::RenderManager::getInstance() != nullptr)
+	{
+		//create the main window
+		render::RenderWindow* pMainWindow = render::RenderManager::getInstance()->createRenderWindow(
+											engine::EngineSettings::getInstance()->getWidth(),
+											engine::EngineSettings::getInstance()->getHeight(),
+											engine::EngineSettings::getInstance()->getBitdepth(),
+											engine::EngineSettings::getInstance()->getFullscreen(),
+											0,
+											0,
+											true,
+											engine::EngineSettings::getInstance()->getMainWindowId());
+		
+		render::RenderManager::getInstance()->setMainWindow(pMainWindow);
+	}
 
 	// the order is important
-	platform::PlatformManager::getInstance().initialize();
-	resource::ResourceManager::getInstance().initialize();
-	input::InputManager::getInstance().initialize();
+	if (platform::PlatformManager::getInstance()	!= nullptr) platform::PlatformManager::getInstance()->initialize();
+	if (resource::ResourceManager::getInstance()	!= nullptr) resource::ResourceManager::getInstance()->initialize();
+	if (input::InputManager::getInstance()			!= nullptr) input::InputManager::getInstance()->initialize();
 
-	render::RenderManager::getInstance().initialize();
-	physics::PhysicsManager::getInstance().initialize();
-	sound::SoundManager::getInstance().initialize();
+	if (render::RenderManager::getInstance()		!= nullptr) render::RenderManager::getInstance()->initialize();
+	if (physics::PhysicsManager::getInstance()		!= nullptr) physics::PhysicsManager::getInstance()->initialize();
+	if (sound::SoundManager::getInstance()			!= nullptr) sound::SoundManager::getInstance()->initialize();
 
-	game::GameManager::getInstance().initialize();
+	if (game::GameManager::getInstance()			!= nullptr) game::GameManager::getInstance()->initialize();
 
 	fireEngineInitialized();
 }
 
 void EngineManager::uninitializeImpl()
 {
-	game::GameManager::getInstance().uninitialize();
+	if (game::GameManager::getInstance()			!= nullptr) game::GameManager::getInstance()->uninitialize();
 
-	physics::PhysicsManager::getInstance().uninitialize();
-	sound::SoundManager::getInstance().uninitialize();
-	render::RenderManager::getInstance().uninitialize();
+
+	if (physics::PhysicsManager::getInstance()		!= nullptr) physics::PhysicsManager::getInstance()->uninitialize();
+	if (sound::SoundManager::getInstance()			!= nullptr) sound::SoundManager::getInstance()->uninitialize();
+	if (render::RenderManager::getInstance()		!= nullptr) render::RenderManager::getInstance()->uninitialize();
 	
-	resource::ResourceManager::getInstance().uninitialize();
-	input::InputManager::getInstance().uninitialize();
-	platform::PlatformManager::getInstance().uninitialize();
+	if (resource::ResourceManager::getInstance()	!= nullptr) resource::ResourceManager::getInstance()->uninitialize();
+	if (input::InputManager::getInstance()			!= nullptr) input::InputManager::getInstance()->uninitialize();
+	if (platform::PlatformManager::getInstance()	!= nullptr) platform::PlatformManager::getInstance()->uninitialize();
 
 	// Unload plugins
-	PluginManager::getInstance().uninitialize();
+	if (PluginManager::getInstance()				!= nullptr) PluginManager::getInstance()->uninitialize();
 
 	//save options
 	saveOptions();
@@ -159,14 +194,14 @@ void EngineManager::uninitializeImpl()
 void EngineManager::startImpl()
 {
 	// the order is important
-	platform::PlatformManager::getInstance().start();
-	resource::ResourceManager::getInstance().start();
-	input::InputManager::getInstance().start();
+	if (platform::PlatformManager::getInstance()	!= nullptr) platform::PlatformManager::getInstance()->start();
+	if (resource::ResourceManager::getInstance()	!= nullptr) resource::ResourceManager::getInstance()->start();
+	if (input::InputManager::getInstance()			!= nullptr) input::InputManager::getInstance()->start();
 	
-	game::GameManager::getInstance().start();
-	render::RenderManager::getInstance().start();
-	physics::PhysicsManager::getInstance().start();
-	sound::SoundManager::getInstance().start();
+	if (game::GameManager::getInstance()			!= nullptr) game::GameManager::getInstance()->start();
+	if (render::RenderManager::getInstance()		!= nullptr) render::RenderManager::getInstance()->start();
+	if (physics::PhysicsManager::getInstance()		!= nullptr) physics::PhysicsManager::getInstance()->start();
+	if (sound::SoundManager::getInstance()			!= nullptr) sound::SoundManager::getInstance()->start();
 
 	fireEngineStarted();
 }
@@ -176,14 +211,14 @@ void EngineManager::stopImpl()
 	fireEngineStopped();
 	
 	//Stopping all managers
-	sound::SoundManager::getInstance().stop();
-	physics::PhysicsManager::getInstance().stop();	
-	render::RenderManager::getInstance().stop();
-	game::GameManager::getInstance().stop();
+	if (sound::SoundManager::getInstance()			!= nullptr) sound::SoundManager::getInstance()->stop();
+	if (physics::PhysicsManager::getInstance()		!= nullptr) physics::PhysicsManager::getInstance()->stop();
+	if (render::RenderManager::getInstance()		!= nullptr) render::RenderManager::getInstance()->stop();
+	if (game::GameManager::getInstance()			!= nullptr) game::GameManager::getInstance()->stop();
 	
-	input::InputManager::getInstance().stop();
-	resource::ResourceManager::getInstance().stop();
-	platform::PlatformManager::getInstance().stop();
+	if (input::InputManager::getInstance()			!= nullptr) input::InputManager::getInstance()->stop();
+	if (resource::ResourceManager::getInstance()	!= nullptr) resource::ResourceManager::getInstance()->stop();
+	if (platform::PlatformManager::getInstance()	!= nullptr) platform::PlatformManager::getInstance()->stop();
 }
 
 void EngineManager::updateImpl(float elapsedTime)
@@ -191,16 +226,101 @@ void EngineManager::updateImpl(float elapsedTime)
 	fireEngineUpdateStarted();
 
 	// the order is important
-	platform::PlatformManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	resource::ResourceManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	input::InputManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
+	if (platform::PlatformManager::getInstance()	!= nullptr) platform::PlatformManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
+	if (resource::ResourceManager::getInstance()	!= nullptr) resource::ResourceManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
+	if (input::InputManager::getInstance()			!= nullptr) input::InputManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
 	
-	game::GameManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	render::RenderManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	physics::PhysicsManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
-	sound::SoundManager::getInstance().update(mEngineEvent->timeSinceLastUpdate);
+	if (game::GameManager::getInstance()			!= nullptr) game::GameManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
+	if (render::RenderManager::getInstance()		!= nullptr) render::RenderManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
+	if (physics::PhysicsManager::getInstance()		!= nullptr) physics::PhysicsManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
+	if (sound::SoundManager::getInstance()			!= nullptr) sound::SoundManager::getInstance()->update(mEngineEvent->timeSinceLastUpdate);
 
 	fireEngineUpdateEnded();
+}
+
+void EngineManager::resetTimer()
+{
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+	// Get the current process core mask
+	DWORD_PTR procMask;
+	DWORD_PTR sysMask;
+	GetProcessAffinityMask(GetCurrentProcess(), &procMask, &sysMask);
+
+	// If procMask is 0, consider there is only one core available
+	// (using 0 as procMask will cause an infinite loop below)
+	if (procMask == 0)
+		procMask = 1;
+
+	// Find the lowest core that this process uses
+	if( mTimerMask == 0 )
+	{
+		mTimerMask = 1;
+		while( ( mTimerMask & procMask ) == 0 )
+		{
+			mTimerMask <<= 1;
+		}
+	}
+
+	HANDLE thread = GetCurrentThread();
+
+	// Set affinity to the first core
+	DWORD_PTR oldMask = SetThreadAffinityMask(thread, mTimerMask);
+
+	// Get the constant frequency
+	QueryPerformanceFrequency(&mFrequency);
+
+	// Query the timer
+	QueryPerformanceCounter(&mStartTime);
+	mStartTick = GetTickCount();
+
+	// Reset affinity
+	SetThreadAffinityMask(thread, oldMask);
+
+	mLastTime = 0;
+#endif
+}
+
+unsigned long EngineManager::getMilliseconds()
+{
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+	LARGE_INTEGER curTime;
+
+	HANDLE thread = GetCurrentThread();
+
+	// Set affinity to the first core
+	DWORD_PTR oldMask = SetThreadAffinityMask(thread, mTimerMask);
+
+	// Query the timer
+	QueryPerformanceCounter(&curTime);
+
+	// Reset affinity
+	SetThreadAffinityMask(thread, oldMask);
+
+    LONGLONG newTime = curTime.QuadPart - mStartTime.QuadPart;
+    
+    // scale by 1000 for milliseconds
+    unsigned long newTicks = (unsigned long) (1000 * newTime / mFrequency.QuadPart);
+
+    // detect and compensate for performance counter leaps
+    // (surprisingly common, see Microsoft KB: Q274323)
+    unsigned long check = GetTickCount() - mStartTick;
+    signed long msecOff = (signed long)(newTicks - check);
+    if (msecOff < -100 || msecOff > 100)
+    {
+        // We must keep the timer running forward :)
+        LONGLONG adjust = (std::min)(msecOff * mFrequency.QuadPart / 1000, newTime - mLastTime);
+        mStartTime.QuadPart += adjust;
+        newTime -= adjust;
+
+        // Re-calculate milliseconds
+        newTicks = (unsigned long) (1000 * newTime / mFrequency.QuadPart);
+    }
+
+    // Record last time for adjust
+    mLastTime = newTime;
+
+    return newTicks;
+#endif
 }
 
 void EngineManager::fireEngineInitialized()
@@ -246,15 +366,15 @@ void EngineManager::fireEngineStopped()
 void EngineManager::fireEngineUpdateStarted()
 {
 	// Do frame start event
-	mCurrentTimeStamp.update();
-		
+	unsigned long now = getMilliseconds();
+
 	mEngineEvent->timeSinceLastUpdate = 0.0f;
-	if (mCurrentTimeStamp != NULL && mLastUpdateStartTimeStamp != NULL)
+	if (now != 0 && mLastUpdateStartTime != 0)
 	{
-		Poco::Timestamp::TimeDiff diff = mCurrentTimeStamp - mLastUpdateStartTimeStamp;
-		mEngineEvent->timeSinceLastUpdate = (float)(diff * 1.0f / Poco::Timestamp::resolution());
+		unsigned long diff = now - mLastUpdateStartTime;
+		mEngineEvent->timeSinceLastUpdate = (float)(diff) / 1000.0f;
 	}
-	mLastUpdateStartTimeStamp.swap(mCurrentTimeStamp);
+	mLastUpdateStartTime = now;
 
 	// Tell all listeners
 	std::list<EngineEventReceiver*>::const_iterator i;
@@ -267,15 +387,15 @@ void EngineManager::fireEngineUpdateStarted()
 void EngineManager::fireEngineUpdateEnded()
 {
 	// Do frame start event
-	mCurrentTimeStamp.update();
+	unsigned long now = getMilliseconds();
 
 	mEngineEvent->timeSinceLastUpdate = 0.0f;
-	if (mCurrentTimeStamp != NULL && mLastUpdateEndTimeStamp != NULL)
+	if (now != 0 && mLastUpdateEndTime != 0)
 	{
-		Poco::Timestamp::TimeDiff diff = mCurrentTimeStamp - mLastUpdateEndTimeStamp;
-		mEngineEvent->timeSinceLastUpdate = (float)(diff * 1.0f / Poco::Timestamp::resolution());
+		unsigned long diff = now - mLastUpdateEndTime;
+		mEngineEvent->timeSinceLastUpdate = (float)(diff) / 1000.0f;
 	}
-	mLastUpdateEndTimeStamp.swap(mCurrentTimeStamp);
+	mLastUpdateEndTime = now;
 
 	// Tell all listeners
 	std::list<EngineEventReceiver*>::const_iterator i;
@@ -287,22 +407,19 @@ void EngineManager::fireEngineUpdateEnded()
 
 void EngineManager::loadOptions()
 {
-	EngineSettings::getInstance().loadOptions(mOptionsFile);
+	if (EngineSettings::getInstance() != nullptr)
+		EngineSettings::getInstance()->loadOptions(mOptionsFile);
 }
 
 void EngineManager::saveOptions()
 {
-	EngineSettings::getInstance().saveOptions(mOptionsFile);
+	if (EngineSettings::getInstance() != nullptr)
+		EngineSettings::getInstance()->saveOptions(mOptionsFile);
 }
 
-EngineManager& EngineManager::getInstance()
+EngineManager* EngineManager::getInstance()
 {
 	return core::Singleton<EngineManager>::getInstance();
-}
-
-EngineManager* EngineManager::getInstancePtr()
-{
-	return core::Singleton<EngineManager>::getInstancePtr();
 }
 
 } // end namespace engine

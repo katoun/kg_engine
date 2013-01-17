@@ -40,7 +40,8 @@ game::Component* ModelFactory::createComponent()
 {
 	Model* pModel = new Model();
 
-	RenderManager::getInstance().addModel(pModel);
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->addModel(pModel);
 
 	return pModel;
 }
@@ -49,10 +50,11 @@ void ModelFactory::destroyComponent(game::Component* component)
 {
 	Model* pModel = static_cast<Model*>(component);
 
-	RenderManager::getInstance().removeModel(pModel);
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->removeModel(pModel);
 
-	assert(pModel != NULL);
-	if (pModel != NULL)
+	assert(pModel != nullptr);
+	if (pModel != nullptr)
 		delete pModel;
 }
 

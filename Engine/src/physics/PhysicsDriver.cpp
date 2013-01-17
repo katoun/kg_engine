@@ -36,17 +36,20 @@ PhysicsDriver::~PhysicsDriver() {}
 
 void PhysicsDriver::fireCollisionStarted(Body* body1, Body* body2, const std::vector<CollisionPoint*>& points)
 {
-	PhysicsManager::getInstance().fireCollisionStarted(body1, body2, points);
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->fireCollisionStarted(body1, body2, points);
 }
 
 void PhysicsDriver::fireCollisionUpdate(Body* body1, Body* body2, const std::vector<CollisionPoint*>& points)
 {
-	PhysicsManager::getInstance().fireCollisionUpdate(body1, body2, points);
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->fireCollisionUpdate(body1, body2, points);
 }
 
 void PhysicsDriver::fireCollisionEnded(Body* body1, Body* body2)
 {
-	PhysicsManager::getInstance().fireCollisionEnded(body1, body2);
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->fireCollisionEnded(body1, body2);
 }
 
 } // end namespace physics

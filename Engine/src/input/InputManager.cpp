@@ -30,26 +30,26 @@ THE SOFTWARE.
 #include <input/InputDeviceDefines.h>
 #include <input/InputDriver.h>
 
-template<> input::InputManager& core::Singleton<input::InputManager>::ms_Singleton = input::InputManager();
+template<> input::InputManager* core::Singleton<input::InputManager>::m_Singleton = nullptr;
 
 namespace input
 {
 
 InputManager::InputManager(): core::System("InputManager")
 {
-	mCursor = NULL;
+	mCursor = nullptr;
 
 	mCursorCenter.X = 0;
 	mCursorCenter.Y = 0;
 
-	mInputDriver = NULL;
+	mInputDriver = nullptr;
 }
 
 InputManager::~InputManager() {}
 
 signed int InputManager::numJoySticks()
 {
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 	{
 		return mInputDriver->numJoySticks();
 	}
@@ -59,7 +59,7 @@ signed int InputManager::numJoySticks()
 
 signed int InputManager::numMice()
 {
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 	{
 		return mInputDriver->numMice();
 	}
@@ -69,7 +69,7 @@ signed int InputManager::numMice()
 
 signed int InputManager::numKeyboards()
 {
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 	{
 		return mInputDriver->numKeyboards();
 	}
@@ -79,21 +79,21 @@ signed int InputManager::numKeyboards()
 
 InputDevice* InputManager::createInputDevice(InputType type, bool buffered)
 {
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 	{
 		InputDevice* newDevice = mInputDriver->createInputDevice(type, buffered);
-		if (newDevice != NULL)
+		if (newDevice != nullptr)
 			mInputDevices.push_back(newDevice);
 
 		return newDevice;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void InputManager::removeInputDevice(InputDevice* device)
 {
-	if (device == NULL)
+	if (device == nullptr)
 		return;
 
 	std::list<InputDevice*>::iterator i;
@@ -103,7 +103,7 @@ void InputManager::removeInputDevice(InputDevice* device)
 		{
 			mInputDevices.erase(i);
 
-			if (mInputDriver != NULL)
+			if (mInputDriver != nullptr)
 				mInputDriver->removeInputDevice(device);
 		}
 	}
@@ -114,7 +114,7 @@ void InputManager::removeAllInputDevices()
 	std::list<InputDevice*>::iterator i;
 	for (i = mInputDevices.begin(); i != mInputDevices.end(); ++i)
 	{
-		if (mInputDriver != NULL)
+		if (mInputDriver != nullptr)
 			mInputDriver->removeInputDevice(*i);
 	}
 	mInputDevices.clear();
@@ -127,7 +127,7 @@ Cursor* InputManager::getCursor()
 
 void InputManager::initializeImpl()
 {
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 	{
 		mCursorCenter = mInputDriver->getCursorCenter();
 	}
@@ -145,14 +145,14 @@ void InputManager::stopImpl() {}
 
 void InputManager::updateImpl(float elapsedTime)
 {
-	if (mCursor != NULL)
+	if (mCursor != nullptr)
 		mCursor->update(elapsedTime);
 
 	std::list<InputDevice*>::iterator i;
 	for (i = mInputDevices.begin(); i != mInputDevices.end(); ++i)
 	{
 		InputDevice* device = (*i);
-		if (device != NULL)
+		if (device != nullptr)
 			device->update(elapsedTime);
 	}
 }
@@ -161,23 +161,17 @@ void InputManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
 {
 	mInputDriver = static_cast<InputDriver*>(systemDriver);
 
-	if (mInputDriver != NULL)
+	if (mInputDriver != nullptr)
 		mCursor = mInputDriver->getCursor();
 }
 
 void InputManager::removeSystemDriverImpl()
 {
-	mInputDriver = NULL;
+	mInputDriver = nullptr;
 }
 
-InputManager& InputManager::getInstance()
+InputManager* InputManager::getInstance()
 {
 	return core::Singleton<InputManager>::getInstance();
 }
-
-InputManager* InputManager::getInstancePtr()
-{
-	return core::Singleton<InputManager>::getInstancePtr();
-}
-
 } // end namespace input

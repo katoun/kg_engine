@@ -40,7 +40,8 @@ game::Component* ListenerFactory::createComponent()
 {
 	Listener* pListener = new Listener();
 
-	SoundManager::getInstance().addListener(pListener);
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->addListener(pListener);
 
 	return pListener;
 }
@@ -49,10 +50,11 @@ void ListenerFactory::destroyComponent(game::Component* component)
 {
 	Listener* pListener = static_cast<Listener*>(component);
 
-	SoundManager::getInstance().removeListener(pListener);
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->removeListener(pListener);
 
-	assert(pListener != NULL);
-	if (pListener != NULL)
+	assert(pListener != nullptr);
+	if (pListener != nullptr)
 		delete pListener;
 }
 

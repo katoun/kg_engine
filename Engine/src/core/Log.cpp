@@ -26,99 +26,69 @@ THE SOFTWARE.
 
 #include <core/Log.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/File.h>
-#include <Poco/SplitterChannel.h>
-#include <Poco/FileChannel.h>
-#include <Poco/ConsoleChannel.h>
-#include <Poco/FormattingChannel.h>
-#include <Poco/PatternFormatter.h>
-#include <Poco/Logger.h>
-#include <Poco/Message.h>
-
-#include <string>
-
-template<> core::Log& core::Singleton<core::Log>::ms_Singleton = core::Log();
+template<> core::Log* core::Singleton<core::Log>::m_Singleton = nullptr;
 
 namespace core
 {
 
-Poco::AutoPtr<Poco::SplitterChannel> pSplitterChannel;
-Poco::AutoPtr<Poco::PatternFormatter> pPatternFormater;
-Poco::AutoPtr<Poco::FileChannel> pFileChannel;
-Poco::AutoPtr<Poco::FormattingChannel> pFileFormattingChannel;
-Poco::AutoPtr<Poco::ConsoleChannel> pConsoleChannel;
-Poco::AutoPtr<Poco::FormattingChannel> pConsoleFormattingChannel;
-
-Log::Log(): mDefaultLogger(Poco::Logger::root())
+Log::Log()
 {
-	pSplitterChannel = new Poco::SplitterChannel();
-	pPatternFormater = new Poco::PatternFormatter();
-
-	pFileChannel = new Poco::FileChannel();
-
-	pFileFormattingChannel = new Poco::FormattingChannel(pPatternFormater, pFileChannel);
-
-	pConsoleChannel = new Poco::ConsoleChannel();
-	pConsoleFormattingChannel = new Poco::FormattingChannel(pPatternFormater, pConsoleChannel);
-
-	if (!pPatternFormater.isNull())
-		pPatternFormater->setProperty("pattern", "%Y-%m-%d %H:%M:%S [%p] %s: %t");
-	
-	std::string logFileName = "engine.log";
-	Poco::File logFile(logFileName);
-	if (logFile.exists())
-		logFile.remove();
-	
-	if (!pFileChannel.isNull())
-	{
-		pFileChannel->setProperty("path", logFileName);
-		pFileChannel->open();
-	}
-	
-	if (!pSplitterChannel.isNull())
-	{
-		pSplitterChannel->addChannel(pFileFormattingChannel);
-		pSplitterChannel->addChannel(pConsoleFormattingChannel);
-	}
-
-	mDefaultLogger.setChannel(pSplitterChannel);
-
-	mDefaultLogger.setLevel(Poco::Message::PRIO_INFORMATION);
+	mLogStream.open("engine.log");
 }
 
-Log::~Log() {}
+Log::~Log()
+{
+	mLogStream.close();
+}
 
 void Log::logMessage(const std::string& source, const std::string& text, LogLevel logLevel)
 {
-	Poco::Message message;
-	message.setSource(source);
-	message.setText(text);
+	mLogStream.fill('-');
+	mLogStream.width(20);
+#ifdef _DEBUG
+	std::cerr.fill('-');
+	std::cerr.width(20);
+#endif
+
+	mLogStream<<std::left<<source;
+#ifdef _DEBUG
+	std::cerr<<std::left<<source;
+#endif
+
+	mLogStream<<">";
+#ifdef _DEBUG
+	std::cerr<<">";
+#endif
 
 	switch(logLevel)
 	{
 	case LOG_LEVEL_INFORMATION:
-		message.setPriority(Poco::Message::PRIO_INFORMATION);
+		mLogStream<<" "<<text<<std::endl;
+#ifdef _DEBUG
+		std::cerr<<" "<<text<<std::endl;
+#endif
 		break;
 	case LOG_LEVEL_WARNING:
-		message.setPriority(Poco::Message::PRIO_WARNING);
+		mLogStream<<" (w)"<<text<<std::endl;
+#ifdef _DEBUG
+		std::cerr<<" (w) "<<text<<std::endl;
+#endif
 		break;
 	case LOG_LEVEL_ERROR:
-		message.setPriority(Poco::Message::PRIO_ERROR);
+		mLogStream<<" (!)"<<text<<std::endl;
+#ifdef _DEBUG
+		std::cerr<<" (!) "<<text<<std::endl;
+#endif
 		break;
 	}
 
-	mDefaultLogger.log(message);
+	// Flush stcmdream to ensure it is written (incase of a crash, we need log to be up to date)
+	mLogStream.flush();
 }
 
-Log& Log::getInstance()
+Log* Log::getInstance()
 {
 	return core::Singleton<Log>::getInstance();
-}
-
-Log* Log::getInstancePtr()
-{
-	return core::Singleton<Log>::getInstancePtr();
 }
 
 } // end namespace core

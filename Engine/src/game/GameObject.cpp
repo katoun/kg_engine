@@ -41,7 +41,7 @@ GameObject::GameObject()
 
 	mName = "GameObject_" + core::intToString(mID);
 
-	mParent = NULL;
+	mParent = nullptr;
 }
 
 GameObject::GameObject(const std::string& name)
@@ -50,14 +50,14 @@ GameObject::GameObject(const std::string& name)
 
 	mName = name;
 
-	mParent = NULL;
+	mParent = nullptr;
 }
 
 GameObject::~GameObject()
 {
 	removeAllChildren();
 
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		mParent->removeChild(this);
 
 	std::map<unsigned int, Component*>::iterator i;
@@ -65,12 +65,13 @@ GameObject::~GameObject()
 	{
 		Component* pComponent = i->second;
 
-		if (pComponent != NULL)
+		if (pComponent != nullptr)
 		{
-			i->second = NULL;
+			i->second = nullptr;
 			pComponent->onDetach();
 
-			game::GameManager::getInstance().removeComponent(pComponent);
+			if (game::GameManager::getInstance() != nullptr)
+				game::GameManager::getInstance()->removeComponent(pComponent);
 		}
 	}
 
@@ -99,10 +100,10 @@ GameObject* GameObject::getParent()
 
 void GameObject::setParent(GameObject* parent)
 {
-	if (parent == NULL)
+	if (parent == nullptr)
 		return;
 
-	if (mParent != NULL)
+	if (mParent != nullptr)
 		mParent->removeChild(this);
 
 	mParent = parent;
@@ -114,10 +115,10 @@ void GameObject::setParent(GameObject* parent)
 
 void GameObject::addChild(GameObject* child)
 {
-	if (child == NULL)
+	if (child == nullptr)
 		return;
 
-	if (child->mParent != NULL)
+	if (child->mParent != nullptr)
 		child->mParent->removeChild(child);
 
 	mChildren[child->getID()] = child;
@@ -129,7 +130,7 @@ void GameObject::addChild(GameObject* child)
 
 void GameObject::removeChild(GameObject* child)
 {
-	if (child == NULL)
+	if (child == nullptr)
 		return;
 
 	removeChild(child->getID());
@@ -141,16 +142,16 @@ GameObject* GameObject::removeChild(const unsigned int& id)
 	if (i != mChildren.end())
 	{
 		GameObject* pGameObject = i->second;
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
-			pGameObject->mParent = NULL;
+			pGameObject->mParent = nullptr;
 			mChildren.erase(i);
 
 			return pGameObject;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void GameObject::removeAllChildren()
@@ -159,9 +160,9 @@ void GameObject::removeAllChildren()
 	for (i = mChildren.begin(); i != mChildren.end(); ++i)
 	{
 		GameObject* pGameObject = i->second;
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
-			pGameObject->mParent = NULL;
+			pGameObject->mParent = nullptr;
 		}
 	}
 	
@@ -170,7 +171,7 @@ void GameObject::removeAllChildren()
 
 void GameObject::attachComponent(Component* component)
 {
-	if (component == NULL)
+	if (component == nullptr)
 		return;
 
 	std::map<unsigned int, Component*>::iterator i = mComponents.find(component->getType());
@@ -183,7 +184,7 @@ void GameObject::attachComponent(Component* component)
 
 void GameObject::detachComponent(Component* component)
 {
-	if (component == NULL)
+	if (component == nullptr)
 		return;
 
 	std::map<unsigned int, Component*>::iterator i = mComponents.find(component->getType());
@@ -202,7 +203,7 @@ Component* GameObject::getComponent(unsigned int type)
 		return i->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const std::map<unsigned int, Component*>& GameObject::getComponents()
@@ -218,7 +219,7 @@ void GameObject::sendMessage(Component* source, unsigned int messageID)
 	{
 		Component* pComponent = i->second;
 
-		if (pComponent != NULL && pComponent != source)
+		if (pComponent != nullptr && pComponent != source)
 		{
 			pComponent->onMessage(messageID);
 		}
@@ -229,7 +230,7 @@ void GameObject::sendMessage(Component* source, unsigned int messageID)
 	for (j = mChildren.begin(); j != mChildren.end(); ++j)
 	{
 		GameObject* pGameObject = j->second;
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
 			pGameObject->sendMessage(source, messageID);
 		}
@@ -244,7 +245,7 @@ void GameObject::sendMessage(GameObject* source, unsigned int messageID)
 	{
 		Component* pComponent = i->second;
 
-		if (pComponent != NULL)
+		if (pComponent != nullptr)
 		{
 			pComponent->onMessage(messageID);
 		}
@@ -255,7 +256,7 @@ void GameObject::sendMessage(GameObject* source, unsigned int messageID)
 	for (j = mChildren.begin(); j != mChildren.end(); ++j)
 	{
 		GameObject* pGameObject = j->second;
-		if (pGameObject != NULL && pGameObject != source)
+		if (pGameObject != nullptr && pGameObject != source)
 		{
 			pGameObject->sendMessage(source, messageID);
 		}
@@ -274,7 +275,7 @@ void GameObject::updateImpl(float elapsedTime)
 	{
 		Component* pComponent = i->second;
 
-		if (pComponent != NULL)
+		if (pComponent != nullptr)
 		{
 			pComponent->update(elapsedTime);
 		}

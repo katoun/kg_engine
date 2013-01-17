@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	include <windows.h>			// Header File For Windows
 #	include <gl\glew.h>			// Header File For The Glew Library
 #	include <gl\gl.h>			// Header File For The OpenGL32 Library
@@ -50,7 +50,7 @@ THE SOFTWARE.
 #include <Cg/cgGL.h>
 
 // Export Section
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // If we're not including this from a client build, specify that the stuff
 // should get exported. Otherwise, import it.
 #	if defined(MINGW) || defined(__MINGW32__)

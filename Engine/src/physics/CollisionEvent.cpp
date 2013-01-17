@@ -31,8 +31,8 @@ namespace physics
 
 CollisionEvent::CollisionEvent()
 {
-	mBody1 = NULL;
-	mBody2 = NULL;
+	mBody1 = nullptr;
+	mBody2 = nullptr;
 }
 
 } // end namespace physics

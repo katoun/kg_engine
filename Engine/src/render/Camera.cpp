@@ -70,7 +70,7 @@ Camera::Camera(): game::Component()
 
 Camera::~Camera()
 {
-	if (mFrustum != NULL)
+	if (mFrustum != nullptr)
 	{
 		delete mFrustum;
 	}
@@ -238,7 +238,8 @@ void Camera::updateProjection()
 			mProjMatrix.buildProjectionMatrixOrtho(width, height, mNearDist, mFarDist);
 		}
 		
-		RenderManager::getInstance().convertProjectionMatrix(mProjMatrix, mProjMatrixRS);
+		if (RenderManager::getInstance() != nullptr)
+			RenderManager::getInstance()->convertProjectionMatrix(mProjMatrix, mProjMatrixRS);
 
 		mProjectionNeedsUpdate = false;
 		mFrustumNeedsUpdate = true;
@@ -253,10 +254,10 @@ void Camera::updateView()
 		// Update the view matrix
 		// ----------------------
 
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				core::vector3d pos = pTransform->getAbsolutePosition();
 				core::vector3d target = pos + (pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z);

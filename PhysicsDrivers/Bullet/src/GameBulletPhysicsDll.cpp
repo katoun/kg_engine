@@ -36,54 +36,50 @@ THE SOFTWARE.
 namespace physics
 {
 
-PhysicsDriver* bulletPhysicsDriver = NULL;
-BodyFactory* bulletBodyFactory = NULL;
-ShapeFactory* bulletShapeFactory = NULL;
-JointFactory* bulletJointFactory = NULL;
-resource::ResourceFactory* bulletMaterialFactory = NULL;
+PhysicsDriver* bulletPhysicsDriver = nullptr;
+BodyFactory* bulletBodyFactory = nullptr;
+ShapeFactory* bulletShapeFactory = nullptr;
+JointFactory* bulletJointFactory = nullptr;
+resource::ResourceFactory* bulletMaterialFactory = nullptr;
 
 extern "C" void BULLET_PUBLIC_EXPORT loadPlugin() throw()
 {
-	bulletPhysicsDriver = BulletPhysicsDriver::getInstancePtr();
+	bulletPhysicsDriver = new BulletPhysicsDriver();
 	bulletBodyFactory = new BulletBodyFactory();
 	bulletShapeFactory = new BulletShapeFactory();
 	bulletJointFactory = new BulletJointFactory();
-	PhysicsManager::getInstance().setSystemDriver(bulletPhysicsDriver);
-	PhysicsManager::getInstance().setDefaultBodyFactory(bulletBodyFactory);
-	PhysicsManager::getInstance().setJointFactory(bulletJointFactory);
-
-	PhysicsManager::getInstance().setShapeFactory(bulletShapeFactory);
+	if (PhysicsManager::getInstance() != nullptr)
+	{
+		PhysicsManager::getInstance()->setSystemDriver(bulletPhysicsDriver);
+		PhysicsManager::getInstance()->setDefaultBodyFactory(bulletBodyFactory);
+		PhysicsManager::getInstance()->setJointFactory(bulletJointFactory);
+		PhysicsManager::getInstance()->setShapeFactory(bulletShapeFactory);
+	}
 
 	bulletMaterialFactory = new BulletMaterialFactory();
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL, bulletMaterialFactory);
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL, bulletMaterialFactory);
 
 }
 
 extern "C" void BULLET_PUBLIC_EXPORT unloadPlugin()
 {
-	PhysicsManager::getInstance().removeSystemDriver();
-	PhysicsManager::getInstance().removeDefaultBodyFactory();
-	PhysicsManager::getInstance().removeJointFactory();
-	PhysicsManager::getInstance().removeShapeFactory();
+	if (PhysicsManager::getInstance() != nullptr)
+	{
+		PhysicsManager::getInstance()->removeSystemDriver();
+		PhysicsManager::getInstance()->removeDefaultBodyFactory();
+		PhysicsManager::getInstance()->removeJointFactory();
+		PhysicsManager::getInstance()->removeShapeFactory();
+	}
 
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL);
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_PHYSICS_MATERIAL);
 
-	if (bulletBodyFactory != NULL)
-	{
-		delete bulletBodyFactory;
-	}
-	if (bulletShapeFactory != NULL)
-	{
-		delete bulletShapeFactory;
-	}
-	if (bulletJointFactory != NULL)
-	{
-		delete bulletJointFactory;
-	}
-	if (bulletMaterialFactory != NULL)
-	{
-		delete bulletMaterialFactory;
-	}
+	SAFE_DELETE(bulletBodyFactory);
+	SAFE_DELETE(bulletShapeFactory);
+	SAFE_DELETE(bulletJointFactory);
+	SAFE_DELETE(bulletMaterialFactory);
+	SAFE_DELETE(bulletPhysicsDriver);
 }
 
 } // end namespace game

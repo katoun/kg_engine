@@ -29,53 +29,46 @@ THE SOFTWARE.
 #include <platform/PlatformDriver.h>
 #include <core/Utils.h>
 
-template<> platform::PlatformManager& core::Singleton<platform::PlatformManager>::ms_Singleton = platform::PlatformManager();
+template<> platform::PlatformManager* core::Singleton<platform::PlatformManager>::m_Singleton = nullptr;
 
 namespace platform
 {
 
 PlatformManager::PlatformManager(): core::System("PlatformManager")
 {
-	mPlatformDriver = NULL;
+	mPlatformDriver = nullptr;
+
+	mCPUVendor	= "";
+	mCPUName	= "";
+	mCPUType	= "";
+	mCPUBrand	= "";
 }
 
 PlatformManager::~PlatformManager() {}
 
 const std::string& PlatformManager::getCPUVendor()
 {
-	if(mPlatformDriver == NULL)
-		return core::STRING_BLANK;
-
-	return mPlatformDriver->getCPUVendor();
+	return mCPUVendor;
 }
 
 const std::string& PlatformManager::getCPUName()
 {
-	if(mPlatformDriver == NULL)
-		return core::STRING_BLANK;
-
-	return mPlatformDriver->getCPUName();
+	return mCPUName;
 }
 
 const std::string& PlatformManager::getCPUType()
 {
-	if(mPlatformDriver == NULL)
-		return core::STRING_BLANK;
-
-	return mPlatformDriver->getCPUType();
+	return mCPUType;
 }
 
 const std::string& PlatformManager::getCPUBrand()
 {
-	if(mPlatformDriver == NULL)
-		return core::STRING_BLANK;
-
-	return mPlatformDriver->getCPUBrand();
+	return mCPUBrand;
 }
 
 int PlatformManager::getCPUFrequency()
 {
-	if(mPlatformDriver == NULL)
+	if(mPlatformDriver == nullptr)
 		return 0;
 
 	return mPlatformDriver->getCPUFrequency();
@@ -83,7 +76,7 @@ int PlatformManager::getCPUFrequency()
 
 bool PlatformManager::checkCPUFeature(CpuFeature feature)
 {
-	if(mPlatformDriver == NULL)
+	if(mPlatformDriver == nullptr)
 		return false;
 
 	return mPlatformDriver->checkCPUFeature(feature);
@@ -91,7 +84,7 @@ bool PlatformManager::checkCPUFeature(CpuFeature feature)
 
 unsigned short int PlatformManager::getPhysicalProcessorsNum()
 {
-	if(mPlatformDriver == NULL)
+	if(mPlatformDriver == nullptr)
 		return 0;
 
 	return mPlatformDriver->getPhysicalProcessorsNum();
@@ -99,7 +92,7 @@ unsigned short int PlatformManager::getPhysicalProcessorsNum()
 
 unsigned short int PlatformManager::getLogicalProcessorsNum()
 {
-	if(mPlatformDriver == NULL)
+	if(mPlatformDriver == nullptr)
 		return 0;
 
 	return mPlatformDriver->getLogicalProcessorsNum();
@@ -107,13 +100,22 @@ unsigned short int PlatformManager::getLogicalProcessorsNum()
 
 unsigned int PlatformManager::getCPUCacheSize(CacheLevel level)
 {
-	if(mPlatformDriver == NULL)
+	if(mPlatformDriver == nullptr)
 		return 0;
 
 	return mPlatformDriver->getCPUCacheSize(level);	
 }
 
-void PlatformManager::initializeImpl() {}
+void PlatformManager::initializeImpl()
+{
+	if (mPlatformDriver != nullptr)
+	{
+		mCPUVendor	= mPlatformDriver->getCPUVendor();
+		mCPUName	= mPlatformDriver->getCPUName();
+		mCPUType	= mPlatformDriver->getCPUType();
+		mCPUBrand	= mPlatformDriver->getCPUBrand();
+	}
+}
 
 void PlatformManager::uninitializeImpl() {}
 
@@ -130,17 +132,12 @@ void PlatformManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
 
 void PlatformManager::removeSystemDriverImpl()
 {
-	mPlatformDriver = NULL;
+	mPlatformDriver = nullptr;
 }
 
-PlatformManager& PlatformManager::getInstance()
+PlatformManager* PlatformManager::getInstance()
 {
 	return core::Singleton<PlatformManager>::getInstance();
-}
-
-PlatformManager* PlatformManager::getInstancePtr()
-{
-	return core::Singleton<PlatformManager>::getInstancePtr();
 }
 
 } // end namespace platform

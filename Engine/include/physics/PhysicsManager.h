@@ -137,8 +137,7 @@ public:
 	void setJointFactory(JointFactory* factory);
 	void removeJointFactory();
 
-	static PhysicsManager& getInstance();
-	static PhysicsManager* getInstancePtr();
+	static PhysicsManager* getInstance();
 
 private:
 

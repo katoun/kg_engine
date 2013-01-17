@@ -90,7 +90,7 @@ public:
 	
 	//! Creates a new rendering window.
 	virtual RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth,
-		bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = NULL) = 0;
+		bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = nullptr) = 0;
 
 	//! Create a vertex buffer.
 	virtual VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage) = 0;
@@ -239,7 +239,7 @@ protected:
 	unsigned int mTextureCoordIndex[ENGINE_MAX_TEXTURE_COORD_SETS];
 
 	// Array of up to 8 lights, indexed as per API
-	// Note that a null value indicates a free slot
+	// Note that a nullptr value indicates a free slot
 	Light* mLights[ENGINE_MAX_SIMULTANEOUS_LIGHTS];
 
 	// Saved manual color blends

@@ -53,10 +53,10 @@ void Listener::updateImpl(float elapsedTime)
 	if (elapsedTime == 0.0f)
 		return;
 
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
 			mVelocity = delta / elapsedTime;

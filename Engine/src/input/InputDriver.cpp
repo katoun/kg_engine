@@ -31,7 +31,7 @@ namespace input
 
 InputDriver::InputDriver(const std::string& name): core::SystemDriver(name)
 {
-	mCursor = NULL;
+	mCursor = nullptr;
 
 	mCursorCenter.X = 0;
 	mCursorCenter.Y = 0;

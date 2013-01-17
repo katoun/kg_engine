@@ -1,5 +1,4 @@
 <Plugins>
-	<PluginFolder>./</PluginFolder>
 	<Plugin>PlatformDriver</Plugin>
 	<Plugin>ResourceLoaders</Plugin>
 	<Plugin>InputDriver_Win32</Plugin>

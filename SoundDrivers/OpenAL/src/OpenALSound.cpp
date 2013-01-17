@@ -49,7 +49,7 @@ OpenALSound::OpenALSound(): Sound()
 	//	return;
 	if (!mSourceId)
 	{
-		core::Log::getInstance().logMessage("OpenALSound", "Cannot create OpenAL sound source", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSound", "Cannot create OpenAL sound source", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
@@ -215,11 +215,11 @@ void OpenALSound::setLoop(bool loop)
 
 void OpenALSound::initializeImpl()
 {
-	if (mSoundData == NULL)
+	if (mSoundData == nullptr)
 		return;
 
 	OpenALSoundData* pOpenalSoundData = static_cast<OpenALSoundData*>(mSoundData);
-	if (pOpenalSoundData == NULL)
+	if (pOpenalSoundData == nullptr)
 		return;
 	
 	alSourcei(mSourceId, AL_BUFFER, pOpenalSoundData->getOpenALBufferID());
@@ -238,10 +238,10 @@ void OpenALSound::updateImpl(float elapsedTime)
 	
 	if (mSourceNeedsUpdate)
 	{
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
@@ -272,7 +272,7 @@ void OpenALSound::onMessageImpl(unsigned int messageID)
 
 void OpenALSound::setSoundDataImpl(SoundData* soundData)
 {
-	if (soundData == NULL)
+	if (soundData == nullptr)
 		return;
 
 	alSourcef(mSourceId, AL_PITCH,					mSoundData->getPitch());

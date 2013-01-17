@@ -34,7 +34,7 @@ enum LogLevel
 {	
 	LOG_LEVEL_INFORMATION	= 0,	//! High log level, warnings, errors and information texts are printed out.	
 	LOG_LEVEL_WARNING		= 1,	//! Default log level, warnings and errors are printed out.	
-	LOG_LEVEL_ERROR		= 2,	//! Low log level, only errors are printed into the log	
+	LOG_LEVEL_ERROR			= 2,	//! Low log level, only errors are printed into the log	
 	LOG_LEVEL_NONE			= 3		//! Nothing is printed out to the log
 };
 

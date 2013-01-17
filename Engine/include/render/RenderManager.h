@@ -106,7 +106,7 @@ public:
 
 	~RenderManager();
 
-	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = NULL);
+	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = nullptr);
 
 	//! Sets a pointer to the main render window.
 	void setMainWindow(RenderWindow* window);
@@ -236,8 +236,7 @@ public:
 	//! Returns the vertical texel offset value required for mapping texel origins to pixel origins.
 	float getVerticalTexelOffset();
 
-	static RenderManager& getInstance();
-	static RenderManager* getInstancePtr();
+	static RenderManager* getInstance();
 
 protected:
 
@@ -291,7 +290,7 @@ protected:
 	{
 		SolidModel()
 		{
-			model = NULL;
+			model = nullptr;
 			materialID = 0;
 		}
 
@@ -308,7 +307,7 @@ protected:
 	{
 		TransparentModel()
 		{
-			model = NULL;
+			model = nullptr;
 			distance = 0;
 		}
 
@@ -325,7 +324,7 @@ protected:
 	{
 		DistanceLight()
 		{
-			light = NULL;
+			light = nullptr;
 			distance = 0;
 		}
 

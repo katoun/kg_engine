@@ -72,7 +72,7 @@ public:
 	bool loadResource(Resource* resource);
 	void unloadResource(Resource* resource);
 	bool reloadResource(Resource* resource);
-	bool saveResource(Resource* resource, const std::string& filename = core::STRING_BLANK);
+	bool saveResource(Resource* resource, const std::string& filename = "");
 
 	//! Remove a Resource from the managed resources list, calling it's unload() method.
 	void removeResource(Resource *resource);
@@ -94,8 +94,7 @@ public:
 	//! Gets the current memory usage, in bytes.
 	unsigned int getMemoryUsage() const;
 
-	static ResourceManager& getInstance();
-	static ResourceManager* getInstancePtr();
+	static ResourceManager* getInstance();
 
 protected:
 

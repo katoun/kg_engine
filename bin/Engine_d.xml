@@ -1,7 +1,7 @@
 <Engine>
 	<Bitdepth value="32"/>
 	<Fullscreen value="No"/>
-	<VSync value="No"/>
+	<VSync value="Yes"/>
 	<VideoSize>
 		<Width value="1024"/>
 		<Height value="768"/>

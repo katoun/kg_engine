@@ -31,8 +31,6 @@ THE SOFTWARE.
 #include <platform/PlatformManager.h>
 #include <render/RenderTargetEventReceiver.h>
 
-#include <Poco/Timestamp.h>
-
 #include <list>
 
 namespace render
@@ -145,8 +143,7 @@ protected:
 	FrameStats mStats;
 
 	signed int mFrameCount;
-	Poco::Timestamp mLastTimeStamp;
-	Poco::Timestamp mCurrentTimeStamp;
+	float mLastElapsedTime;
 
 	bool mActive;
 

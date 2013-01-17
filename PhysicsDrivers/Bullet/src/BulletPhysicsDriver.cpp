@@ -46,11 +46,11 @@ THE SOFTWARE.
 #include "BulletMultiThreaded/btParallelConstraintSolver.h"
 #endif//USE_PARALLEL_DISPATCHER || USE_PARALLEL_SOLVER
 
-#if GAME_PLATFORM == PLATFORM_WIN32
+#if GAME_PLATFORM == PLATFORM_WINDOWS
 #include <windows.h>
 #endif
 
-template<> physics::BulletPhysicsDriver& core::Singleton<physics::BulletPhysicsDriver>::ms_Singleton = physics::BulletPhysicsDriver();
+template<> physics::BulletPhysicsDriver* core::Singleton<physics::BulletPhysicsDriver>::m_Singleton = nullptr;
 
 namespace physics
 {
@@ -58,8 +58,8 @@ namespace physics
 CollisionData::CollisionData()
 {
 	hashID = 0;
-	body1 = NULL;
-	body2 = NULL;
+	body1 = nullptr;
+	body2 = nullptr;
 }
 
 CollisionData::~CollisionData()
@@ -77,11 +77,11 @@ BulletPhysicsDriver::BulletPhysicsDriver(): PhysicsDriver("Bullet PhysicsDriver"
 	set_substeps = 1;
 	set_pe = 1;
 
-	mDynamicsWorld = NULL;
-	mBroadphase = NULL;
-	mDispatcher = NULL;
-	mSolver = NULL;
-	mCollisionConfiguration = NULL;
+	mDynamicsWorld = nullptr;
+	mBroadphase = nullptr;
+	mDispatcher = nullptr;
+	mSolver = nullptr;
+	mCollisionConfiguration = nullptr;
 
 	mLastCollisions.clear();
 }
@@ -103,7 +103,7 @@ void BulletPhysicsDriver::setCollisionAccuracy(float accuracy)
 
 void BulletPhysicsDriver::setSolverAccuracy(float accuracy)
 {
-	if (mDynamicsWorld != NULL)
+	if (mDynamicsWorld != nullptr)
 	{
 		if (accuracy < 1.0f)
 			accuracy = 1.0f;
@@ -113,7 +113,7 @@ void BulletPhysicsDriver::setSolverAccuracy(float accuracy)
 
 void BulletPhysicsDriver::setGravity(const core::vector3d& gravity)
 {
-	if (mDynamicsWorld != NULL)
+	if (mDynamicsWorld != nullptr)
 	{
 		mDynamicsWorld->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
 	}
@@ -141,7 +141,7 @@ void BulletPhysicsDriver::initializeImpl()
 #else
 	int maxNumOutstandingTasks = set_pe;
 
-	btThreadSupportInterface* mThreadSupportCollision = NULL;
+	btThreadSupportInterface* mThreadSupportCollision = nullptr;
 	mThreadSupportCollision = new Win32ThreadSupport(Win32ThreadSupport::Win32ThreadConstructionInfo(
 							"BulletCollision",	processCollisionTask, createCollisionLocalStoreMemory, maxNumOutstandingTasks));
 	
@@ -152,7 +152,7 @@ void BulletPhysicsDriver::initializeImpl()
 #ifndef USE_PARALLEL_SOLVER
 	mSolver = new btSequentialImpulseConstraintSolver;
 #else
-	btThreadSupportInterface* mThreadSupportSolver = NULL;
+	btThreadSupportInterface* mThreadSupportSolver = nullptr;
 	mThreadSupportSolver = new Win32ThreadSupport(Win32ThreadSupport::Win32ThreadConstructionInfo(
 							"BulletSolver", SolverThreadFunc, SolverlsMemoryFunc, maxNumOutstandingTasks));
 
@@ -177,26 +177,26 @@ void BulletPhysicsDriver::initializeImpl()
 
 void BulletPhysicsDriver::uninitializeImpl()
 {
-	if (mDynamicsWorld != NULL)
+	if (mDynamicsWorld != nullptr)
 		delete mDynamicsWorld;
 
-	if (mSolver != NULL)
+	if (mSolver != nullptr)
 		delete mSolver;
 
-	if (mBroadphase != NULL)
+	if (mBroadphase != nullptr)
 		delete mBroadphase;
 
-	if (mDispatcher != NULL)
+	if (mDispatcher != nullptr)
 		delete mDispatcher;
 
-	if (mCollisionConfiguration != NULL)
+	if (mCollisionConfiguration != nullptr)
 		delete mCollisionConfiguration;
 }
 
 void BulletPhysicsDriver::updateImpl(float elapsedTime)
 {
 	///step the simulation
-	if (mDynamicsWorld != NULL)
+	if (mDynamicsWorld != nullptr)
 	{
 		if (m_fFixedTimeStep > 0)
 			mDynamicsWorld->stepSimulation(elapsedTime, set_substeps, m_fFixedTimeStep);
@@ -204,7 +204,7 @@ void BulletPhysicsDriver::updateImpl(float elapsedTime)
 			mDynamicsWorld->stepSimulation(elapsedTime, 0);
 	}	
 
-	if (mDispatcher == NULL)
+	if (mDispatcher == nullptr)
 		return;
 
 	// Browse all collision pairs
@@ -212,18 +212,18 @@ void BulletPhysicsDriver::updateImpl(float elapsedTime)
 	for (int i=0; i< mDispatcher->getNumManifolds(); i++)
 	{
 		btPersistentManifold* contactManifold = mDispatcher->getManifoldByIndexInternal(i);
-		if (contactManifold == NULL)
+		if (contactManifold == nullptr)
 			continue;
 
 		btCollisionObject* collisionObjectA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 		btCollisionObject* collisionObjectB = static_cast<btCollisionObject*>(contactManifold->getBody1());
-		if (collisionObjectA == NULL || collisionObjectB == NULL)
+		if (collisionObjectA == nullptr || collisionObjectB == nullptr)
 			continue;
 
 		Body* body1 = static_cast<Body*>(collisionObjectA->getUserPointer());
 		Body* body2 = static_cast<Body*>(collisionObjectB->getUserPointer());
 
-		if (body1 == NULL || body2 == NULL)
+		if (body1 == nullptr || body2 == nullptr)
 			continue;
 
 		if (contactManifold->getNumContacts() == 0)
@@ -321,14 +321,9 @@ void BulletPhysicsDriver::removeAllCollisions()
 	mLastCollisions.clear();
 }
 
-BulletPhysicsDriver& BulletPhysicsDriver::getInstance()
+BulletPhysicsDriver* BulletPhysicsDriver::getInstance()
 {
 	return core::Singleton<BulletPhysicsDriver>::getInstance();
-}
-
-BulletPhysicsDriver* BulletPhysicsDriver::getInstancePtr()
-{
-	return core::Singleton<BulletPhysicsDriver>::getInstancePtr();
 }
 
 } // end namespace game

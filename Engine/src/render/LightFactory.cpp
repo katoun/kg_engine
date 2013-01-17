@@ -40,7 +40,8 @@ game::Component* LightFactory::createComponent()
 {
 	Light* pLight = new Light();
 
-	RenderManager::getInstance().addLight(pLight);
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->addLight(pLight);
 
 	return pLight;
 }
@@ -49,10 +50,11 @@ void LightFactory::destroyComponent(game::Component* component)
 {
 	Light* pLight = static_cast<Light*>(component);
 
-	RenderManager::getInstance().removeLight(pLight);
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->removeLight(pLight);
 
-	assert(pLight != NULL);
-	if (pLight != NULL)
+	assert(pLight != nullptr);
+	if (pLight != nullptr)
 		delete pLight;
 }
 

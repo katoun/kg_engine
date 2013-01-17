@@ -36,7 +36,8 @@ game::Component* BulletBodyFactory::createComponent()
 {
 	BulletBody* pBody = new BulletBody();
 
-	PhysicsManager::getInstance().addBody(pBody);
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->addBody(pBody);
 
 	return pBody;
 }
@@ -45,10 +46,11 @@ void BulletBodyFactory::destroyComponent(game::Component* component)
 {
 	BulletBody* pBody = static_cast<BulletBody*>(component);
 
-	PhysicsManager::getInstance().removeBody(pBody);
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->removeBody(pBody);
 
-	assert(pBody != NULL);
-	if (pBody != NULL)
+	assert(pBody != nullptr);
+	if (pBody != nullptr)
 		delete pBody;
 }
 

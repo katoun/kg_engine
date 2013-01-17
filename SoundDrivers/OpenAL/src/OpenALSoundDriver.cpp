@@ -36,28 +36,28 @@ THE SOFTWARE.
 #include <OpenALSoundData.h>
 #include <OpenALSound.h>
 
-template<> sound::OpenALSoundDriver& core::Singleton<sound::OpenALSoundDriver>::ms_Singleton = sound::OpenALSoundDriver();
+template<> sound::OpenALSoundDriver* core::Singleton<sound::OpenALSoundDriver>::m_Singleton = nullptr;
 
 namespace sound
 {
 
 OpenALSoundDriver::OpenALSoundDriver(): SoundDriver("OpenAL SoundDriver") 
 {
-	mContext = NULL;
-	mDevice = NULL;
+	mContext = nullptr;
+	mDevice = nullptr;
 }
 
 OpenALSoundDriver::~OpenALSoundDriver() {}
 
 void OpenALSoundDriver::updateListener(Listener* listener)
 {
-	if (listener == NULL)
+	if (listener == nullptr)
 		return;
 
-	if (listener->getGameObject() != NULL)
+	if (listener->getGameObject() != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(listener->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			core::vector3d position = pTransform->getAbsolutePosition();
 			core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
@@ -102,29 +102,29 @@ void OpenALSoundDriver::setSoundSpeed(float soundSpeed)
 
 void OpenALSoundDriver::initializeImpl()
 {
-	alcGetIntegerv(NULL, ALC_MAJOR_VERSION, sizeof(mMajorVersion), &mMajorVersion);
-	alcGetIntegerv(NULL, ALC_MINOR_VERSION, sizeof(mMinorVersion), &mMinorVersion);
+	alcGetIntegerv(nullptr, ALC_MAJOR_VERSION, sizeof(mMajorVersion), &mMajorVersion);
+	alcGetIntegerv(nullptr, ALC_MINOR_VERSION, sizeof(mMinorVersion), &mMinorVersion);
 
 	// Open an audio device
-	mDevice = alcOpenDevice(NULL);
+	mDevice = alcOpenDevice(nullptr);
 	if (!mDevice)
 	{
-		core::Log::getInstance().logMessage("SoundSystem", "OpenAL::initialize could not create sound device", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not create sound device", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
 	// Create OpenAL Context
-	mContext = alcCreateContext(mDevice, NULL);
+	mContext = alcCreateContext(mDevice, nullptr);
 	if (!mContext)
 	{
-		core::Log::getInstance().logMessage("SoundSystem", "OpenAL::initialize could not create sound context", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not create sound context", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
 	alcMakeContextCurrent(mContext);
 	if (checkALError("initialize()"))
 	{
-		core::Log::getInstance().logMessage("SoundSystem", "OpenAL::initialize could not make sound context current and active.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not make sound context current and active.", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
@@ -141,12 +141,12 @@ void OpenALSoundDriver::initializeImpl()
 void OpenALSoundDriver::uninitializeImpl()
 {
 	// Release the OpenAL Context and the Audio device
-	if (mContext != NULL)
+	if (mContext != nullptr)
 	{
-		alcMakeContextCurrent(NULL);
+		alcMakeContextCurrent(nullptr);
 		alcDestroyContext(mContext);
 	}
-	if (mDevice != NULL)
+	if (mDevice != nullptr)
 		alcCloseDevice(mDevice);
 }
 
@@ -206,14 +206,9 @@ bool OpenALSoundDriver::checkALError(const std::string& message)
 	return true;
 }
 
-OpenALSoundDriver& OpenALSoundDriver::getInstance()
+OpenALSoundDriver* OpenALSoundDriver::getInstance()
 {
 	return core::Singleton<OpenALSoundDriver>::getInstance();
-}
-
-OpenALSoundDriver *OpenALSoundDriver::getInstancePtr()
-{
-	return core::Singleton<OpenALSoundDriver>::getInstancePtr();
 }
 
 } // end namespace sound

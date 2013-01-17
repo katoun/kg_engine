@@ -39,8 +39,8 @@ void SceneFactory::destroyResource(resource::Resource* resource)
 {
 	Scene* pScene = static_cast<Scene*>(resource);
 
-	assert(pScene != NULL);
-	if (pScene != NULL)
+	assert(pScene != nullptr);
+	if (pScene != nullptr)
 		delete pScene;
 }
 

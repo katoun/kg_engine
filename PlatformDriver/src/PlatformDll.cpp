@@ -31,21 +31,22 @@ THE SOFTWARE.
 namespace platform
 {
 
-PlatformDriver* pGenericPlatformDriver = NULL;
+PlatformDriver* pGenericPlatformDriver = nullptr;
 
 extern "C" void PLATFORM_PUBLIC_EXPORT loadPlugin()
 {	
 	pGenericPlatformDriver = new GenericPlatformDriver();
-	PlatformManager::getInstance().setSystemDriver(pGenericPlatformDriver);
+	if (PlatformManager::getInstance() != nullptr)
+		PlatformManager::getInstance()->setSystemDriver(pGenericPlatformDriver);
 }
 
 /// Destroys
 extern "C" void PLATFORM_PUBLIC_EXPORT unloadPlugin()
 {
-	PlatformManager::getInstance().removeSystemDriver();
+	if (PlatformManager::getInstance() != nullptr)
+		PlatformManager::getInstance()->removeSystemDriver();
 
-	if (pGenericPlatformDriver != NULL)
-		delete pGenericPlatformDriver;
+	SAFE_DELETE(pGenericPlatformDriver);
 }
 
 } // end namespace platform

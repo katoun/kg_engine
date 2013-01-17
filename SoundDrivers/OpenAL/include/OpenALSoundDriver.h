@@ -59,9 +59,8 @@ public:
 
 	void setSoundSpeed(float soundSpeed);
 
-	static OpenALSoundDriver& getInstance();
-	static OpenALSoundDriver* getInstancePtr();
-	
+	static OpenALSoundDriver* getInstance();
+
 protected:
 
 	virtual void initializeImpl();

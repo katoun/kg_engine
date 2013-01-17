@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include <FontSerializer.h>
 
 #include <Poco/AutoPtr.h>
-#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -49,25 +48,29 @@ FontSerializer::~FontSerializer() {}
 
 bool FontSerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_FONT)
 	{
-		core::Log::getInstance().logMessage("FontSerializer", "Unable to load font - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("FontSerializer", "Unable to load font - invalid resource pointer.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	render::Font* font = static_cast<render::Font*>(dest);
-	assert(font != NULL);
-	if (font == NULL)
+	assert(font != nullptr);
+	if (font == nullptr)
 		return false;
 
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("FontSerializer", "Unable to load font - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try

@@ -39,14 +39,14 @@ GLVertexBuffer::GLVertexBuffer(unsigned int vertexSize, unsigned int numVertices
 
 	if (!mBufferId)
 	{
-		core::Log::getInstance().logMessage("GLVertexBuffer", "Cannot create GL vertex buffer", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Cannot create GL vertex buffer", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
 
 	// Initialize mapped buffer and set usage
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(usage));
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
 }
 
 GLVertexBuffer::~GLVertexBuffer() 
@@ -72,7 +72,7 @@ void GLVertexBuffer::writeData(unsigned int offset, unsigned int length, const v
 	{
 		if(discardWholeBuffer)
 		{
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(mUsage));
+			glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 		}
 
 		// Now update the real buffer
@@ -91,15 +91,15 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 
 	if(mIsLocked)
 	{		
-		core::Log::getInstance().logMessage("GLVertexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
 
 	if(options == resource::BL_DISCARD)
 	{
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(mUsage));
+		glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 
 		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
 
@@ -108,8 +108,8 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 	{
 		if(mUsage & resource::BU_WRITE_ONLY)
 		{
-			core::Log::getInstance().logMessage("GLVertexBuffer", "Invalid attempt to lock a write-only vertex buffer as read-only", core::LOG_LEVEL_ERROR);
-			return NULL;
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid attempt to lock a write-only vertex buffer as read-only", core::LOG_LEVEL_ERROR);
+			return nullptr;
 		}
 		access = GL_READ_ONLY_ARB;
 	}
@@ -119,16 +119,16 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 	}
 	else
 	{	
-		core::Log::getInstance().logMessage("GLVertexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	void* pBuffer = glMapBufferARB(GL_ARRAY_BUFFER_ARB, access);
 
-	if(pBuffer == NULL)
+	if(pBuffer == nullptr)
 	{		
-		core::Log::getInstance().logMessage("GLVertexBuffer", "Vertex Buffer: Out of memory", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Vertex Buffer: Out of memory", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	mIsLocked = true;
@@ -142,7 +142,7 @@ void GLVertexBuffer::unlockImpl()
 
 	if(!glUnmapBufferARB(GL_ARRAY_BUFFER_ARB))
 	{
-		core::Log::getInstance().logMessage("GLVertexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
 		return;
 	}
 

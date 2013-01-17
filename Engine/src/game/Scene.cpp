@@ -40,7 +40,7 @@ Scene::~Scene() {}
 
 void Scene::addGameObject(GameObject* gameObject)
 {
-	if (gameObject == NULL)
+	if (gameObject == nullptr)
 		return;
 
 	mGameObjects[gameObject->getID()] = gameObject;
@@ -48,7 +48,7 @@ void Scene::addGameObject(GameObject* gameObject)
 
 void Scene::removeGameObject(GameObject* gameObject)
 {
-	if (gameObject == NULL)
+	if (gameObject == nullptr)
 		return;
 
 	removeGameObject(gameObject->getID());
@@ -60,10 +60,10 @@ void Scene::removeGameObject(const unsigned int& id)
 	if (i != mGameObjects.end())
 	{
 		GameObject* pGameObject = i->second;
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
 			delete pGameObject;
-			i->second = NULL;
+			i->second = nullptr;
 		}
 
 		mGameObjects.erase(i);
@@ -76,10 +76,10 @@ void Scene::removeAllGameObjects()
 	for (i = mGameObjects.begin(); i != mGameObjects.end(); ++i)
 	{
 		GameObject* pGameObject = i->second;
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
 			delete pGameObject;
-			i->second = NULL;
+			i->second = nullptr;
 		}
 	}
 	

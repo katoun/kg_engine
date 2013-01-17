@@ -29,8 +29,6 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <OpenALSoundData.h>
 
-#include <Poco/Path.h>
-
 namespace sound
 {
 
@@ -38,7 +36,7 @@ namespace sound
 
 OpenALSoundData::OpenALSoundData(const std::string& filename, resource::Serializer* serializer): SoundData(filename, serializer)
 {
-	mData = NULL;
+	mData = nullptr;
 	mDataSize = 0;
 	mFrequency = 0;
 	mChannels = 0;
@@ -50,7 +48,7 @@ OpenALSoundData::OpenALSoundData(const std::string& filename, resource::Serializ
 
 	if (!mBufferId)
 	{
-		core::Log::getInstance().logMessage("OpenALSoundData", "Cannot create OpenAL sound buffer", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Cannot create OpenAL sound buffer", core::LOG_LEVEL_ERROR);
 		return;
 	}
 }
@@ -72,15 +70,19 @@ bool OpenALSoundData::loadImpl()
 	size_t pos = mFilename.find_last_of('.');
 	if (pos == std::string::npos)
 	{
-		core::Log::getInstance().logMessage("OpenALSoundData", "Unable to load sound - invalid extension.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Unable to load sound - invalid extension.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Unable to load sound - resources data path not set.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	extention = mFilename.substr(pos + 1, mFilename.size() - pos);
 
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(mFilename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
 
 	if (extention == "wav" || extention == "ogg")
 	{
@@ -97,7 +99,7 @@ bool OpenALSoundData::loadImpl()
 		message += extention;
 		message += " unsupported extension.";
 
-		core::Log::getInstance().logMessage("OpenALSoundData", message, core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", message, core::LOG_LEVEL_ERROR);
 		return false;
 	}
 

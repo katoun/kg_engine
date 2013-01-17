@@ -31,8 +31,7 @@ THE SOFTWARE.
 #include <resource/ResourceEventReceiver.h>
 #include <resource/ResourceManager.h>
 
-#include <Poco/Path.h>
-#include <Poco/File.h>
+#include <stdio.h>
 
 namespace resource
 {
@@ -132,18 +131,20 @@ bool Resource::save(const std::string& filename)
 
 void Resource::updateSize()
 {
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(mFilename);
-	std::string filePath = path.toString();
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
+
+		FILE* pFile = fopen(filePath.c_str(), "rb");
 	
-	if (filePath == core::STRING_BLANK)
-		return;
-	
-	Poco::File file(filePath);
-	if (!file.exists())
-		return;
-	
-	mSize = (unsigned int)file.getSize();
+		if (pFile != nullptr)
+		{
+			fseek(pFile, 0, SEEK_END);
+			mSize = (unsigned int)ftell(pFile);
+
+			fclose(pFile);
+		}
+	}
 }
 
 void Resource::checkAlreadyLoaded()
@@ -164,7 +165,7 @@ void Resource::checkAlreadyLoaded()
 
 void Resource::addResourceEventReceiver(ResourceEventReceiver* newEventReceiver)
 {
-	if (newEventReceiver == NULL)
+	if (newEventReceiver == nullptr)
 		return;
 
 	mResourceEventReceivers.push_back(newEventReceiver);
@@ -177,7 +178,7 @@ void Resource::addResourceEventReceiver(ResourceEventReceiver* newEventReceiver)
 
 void Resource::removeResourceEventReceiver(ResourceEventReceiver* oldEventReceiver)
 {
-	if (oldEventReceiver == NULL)
+	if (oldEventReceiver == nullptr)
 		return;
 
 	std::list<ResourceEventReceiver*>::iterator i;
@@ -193,7 +194,7 @@ void Resource::removeResourceEventReceiver(ResourceEventReceiver* oldEventReceiv
 
 bool Resource::loadImpl()
 {
-	if (mSerializer != NULL)
+	if (mSerializer != nullptr)
 	{
 		return mSerializer->importResource(this, mFilename);
 	}
@@ -205,10 +206,12 @@ void Resource::unloadImpl() {}
 
 bool Resource::saveImpl(const std::string& filename)
 {
-	if (filename != core::STRING_BLANK)
-		mFilename = filename;
+	if (filename.empty())
+		return false;
+
+	mFilename = filename;
 	
-	if (mSerializer != NULL)
+	if (mSerializer != nullptr)
 	{
 		return mSerializer->exportResource(this, mFilename);
 	}

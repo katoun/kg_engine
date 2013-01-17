@@ -31,7 +31,7 @@ namespace render
 
 RenderTargetEvent::RenderTargetEvent()
 {
-	source = NULL;
+	source = nullptr;
 }
 
 } // end namespace render

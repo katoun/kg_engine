@@ -61,8 +61,6 @@ inline ENGINE_PUBLIC_EXPORT unsigned short int floatToHalf(float i);
 //! Convert a float16 (NV_half_float) to a float32.Courtesy of OpenEXR.
 inline ENGINE_PUBLIC_EXPORT float halfToFloat(unsigned short int y);
 
-static const std::string STRING_BLANK = "";
-
 } // end namespace core
 
 #endif

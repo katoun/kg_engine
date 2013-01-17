@@ -34,11 +34,7 @@ namespace platform
 
 GenericPlatformDriver::GenericPlatformDriver(): PlatformDriver("Generic PlatformDriver")
 {
-	mCPUInfo = NULL;
-	mCPUVendor = core::STRING_BLANK;
-	mCPUName = core::STRING_BLANK;
-	mCPUType = core::STRING_BLANK;
-	mCPUBrand = core::STRING_BLANK;
+	mCPUInfo = nullptr;
 
 	mProcessorCount = getCPUCount();
 	mCPUInfos = new CPUInfo[mProcessorCount];
@@ -46,39 +42,46 @@ GenericPlatformDriver::GenericPlatformDriver(): PlatformDriver("Generic Platform
 	if (mProcessorCount > 0)
 	{
 		mCPUInfo = &mCPUInfos[0];
-
-		mCPUVendor = mCPUInfo->getVendorName();
-		mCPUName = mCPUInfo->getProcessorName();
-		mCPUType = mCPUInfo->getProcessorTypeName();
-		mCPUBrand = mCPUInfo->getProcessorBrandName();
 	}
 }
 
 GenericPlatformDriver::~GenericPlatformDriver() {}
 
-const std::string& GenericPlatformDriver::getCPUVendor()
+const std::string GenericPlatformDriver::getCPUVendor()
 {
-	return mCPUVendor;
+	if (mCPUInfo == nullptr)
+		return "";
+	
+	return mCPUInfo->getVendorName();
 }
 
-const std::string& GenericPlatformDriver::getCPUName()
+const std::string GenericPlatformDriver::getCPUName()
 {
-	return mCPUName;
+	if (mCPUInfo == nullptr)
+		return "";
+
+	return mCPUInfo->getProcessorName();
 }
 
-const std::string& GenericPlatformDriver::getCPUType()
+const std::string GenericPlatformDriver::getCPUType()
 {
-	return mCPUType;
+	if (mCPUInfo == nullptr)
+		return "";
+
+	return mCPUInfo->getProcessorTypeName();
 }
 
-const std::string& GenericPlatformDriver::getCPUBrand()
+const std::string GenericPlatformDriver::getCPUBrand()
 {
-	return mCPUBrand;
+	if (mCPUInfo == nullptr)
+		return "";
+
+	return mCPUInfo->getProcessorBrandName();
 }
 
 int GenericPlatformDriver::getCPUFrequency()
 {
-	if (mCPUInfo == NULL)
+	if (mCPUInfo == nullptr)
 		return 0;
 
 	return mCPUInfo->frequency;
@@ -357,7 +360,7 @@ unsigned short int GenericPlatformDriver::getPhysicalProcessorsNum()
 
 unsigned short int GenericPlatformDriver::getLogicalProcessorsNum()
 {
-	if (mCPUInfo == NULL)
+	if (mCPUInfo == nullptr)
 		return 1;
 
 	if (mCPUInfo->features.htt)
@@ -370,7 +373,7 @@ unsigned short int GenericPlatformDriver::getLogicalProcessorsNum()
 
 unsigned int GenericPlatformDriver::getCPUCacheSize(CacheLevel level)
 {
-	if (mCPUInfo == NULL)
+	if (mCPUInfo == nullptr)
 		return 0;
 
 	switch(level)
@@ -394,6 +397,8 @@ unsigned int GenericPlatformDriver::getCPUCacheSize(CacheLevel level)
 		}
 		break;
 	}
+
+	return 0;
 }
 
 void GenericPlatformDriver::initializeImpl() {}

@@ -29,17 +29,10 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 #include <core/SystemDefines.h>
-#include <core/LogDefines.h>
-
-namespace Poco
-{
-class Logger;
-}
 
 namespace core
 {
 
-class Log;
 class SystemDriver;
 
 class ENGINE_PUBLIC_EXPORT System
@@ -93,8 +86,6 @@ protected:
 	SystemState mState;
 
 	SystemDriver* mSystemDriver;
-
-	static Log* mLog;
 };
 
 } // end namespace core

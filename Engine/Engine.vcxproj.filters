@@ -28,6 +28,9 @@
     <Filter Include="game">
       <UniqueIdentifier>{ca4028a7-aa86-48d4-86df-1957cdbf5ba7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tinyxml2">
+      <UniqueIdentifier>{028a7960-f821-4566-9ceb-9b7f99bc4a07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine\EngineEvent.h">
@@ -429,6 +432,9 @@
     <ClInclude Include="include\game\SceneFactory.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h">
+      <Filter>tinyxml2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -746,6 +752,9 @@
     </ClCompile>
     <ClCompile Include="src\game\SceneFactory.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp">
+      <Filter>tinyxml2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

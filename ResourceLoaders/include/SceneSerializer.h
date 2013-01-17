@@ -64,7 +64,7 @@ public:
 
 private:
 
-	void importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfiguration>& config, std::string rootKey = core::STRING_BLANK, game::GameObject* parent = NULL);
+	void importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfiguration>& config, std::string rootKey = "", game::GameObject* parent = nullptr);
 };
 
 }// end namespace resource

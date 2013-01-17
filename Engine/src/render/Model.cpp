@@ -49,9 +49,9 @@ Model::Model(): game::Component()
 
 	mModelNeedsUpdate = true;
 
-	mMeshData = NULL;
+	mMeshData = nullptr;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 
 	mVisibleBoundingBox = false;
 	mVisibleBoundingSphere = false;
@@ -59,18 +59,18 @@ Model::Model(): game::Component()
 	mWorldMatrix = core::matrix4::IDENTITY;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
-	mVertexData = NULL;
-	mIndexData = NULL;
+	mVertexData = nullptr;
+	mIndexData = nullptr;
 }
 
 Model::~Model()
 {
-	if (mMeshData != NULL)
+	if (mMeshData != nullptr)
 	{
 		mMeshData->removeResourceEventReceiver(this);
 	}
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
@@ -80,28 +80,31 @@ Model::~Model()
 
 void Model::setMeshData(const std::string& filename)
 {
-	MeshData* newMeshData = static_cast<MeshData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_MESH_DATA, filename));
-	assert(newMeshData != NULL);
-	if (newMeshData == NULL)
-		return;
-
-	if (mMeshData != NULL)
+	if (resource::ResourceManager::getInstance() != nullptr)
 	{
-		mMeshData->removeResourceEventReceiver(this);
+		MeshData* newMeshData = static_cast<MeshData*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_MESH_DATA, filename));
+		assert(newMeshData != nullptr);
+		if (newMeshData == nullptr)
+			return;
 
-		uninitialize();
+		if (mMeshData != nullptr)
+		{
+			mMeshData->removeResourceEventReceiver(this);
+
+			uninitialize();
+		}
+
+		mMeshData = newMeshData;
+		mMeshData->addResourceEventReceiver(this);
 	}
-
-	mMeshData = newMeshData;
-	mMeshData->addResourceEventReceiver(this);
 }
 
 void Model::setMeshData(MeshData* meshData)
 {
-	if (meshData == NULL)
+	if (meshData == nullptr)
 		return;
 
-	if (mMeshData != NULL)
+	if (mMeshData != nullptr)
 	{
 		mMeshData->removeResourceEventReceiver(this);
 
@@ -119,14 +122,15 @@ MeshData* Model::getMeshData() const
 
 void Model::setMaterial(const std::string& filename)
 {
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
 
-	mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, filename));
+	if (resource::ResourceManager::getInstance() != nullptr)
+		mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, filename));
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->addResourceEventReceiver(this);
 	}
@@ -134,17 +138,17 @@ void Model::setMaterial(const std::string& filename)
 
 void Model::setMaterial(Material* material)
 {
-	if (material == NULL)
+	if (material == nullptr)
 		return;
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
 
 	mMaterial = material;
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->addResourceEventReceiver(this);
 	}
@@ -207,15 +211,15 @@ IndexData* Model::getIndexData()
 
 void Model::resourceLoaded(const resource::ResourceEvent& evt)
 {
-	if (evt.source != NULL)
+	if (evt.source != nullptr)
 	{
 		if (evt.source == mMeshData)
 		{
-			if (mMaterial == NULL && mMeshData->getMaterial() != NULL)
+			if (mMaterial == nullptr && mMeshData->getMaterial() != nullptr)
 			{
 				mMaterial = mMeshData->getMaterial();
 				
-				if (mMaterial != NULL)
+				if (mMaterial != nullptr)
 				{
 					mMaterial->addResourceEventReceiver(this);
 				}
@@ -240,8 +244,8 @@ void Model::resourceUnloaded(const resource::ResourceEvent& evt)
 	if (evt.source && evt.source == mMeshData)
 	{
 		mRenderOperationType = ROT_TRIANGLE_LIST;
-		mVertexData = NULL;
-		mIndexData = NULL;
+		mVertexData = nullptr;
+		mIndexData = nullptr;
 
 		uninitialize();
 	}
@@ -251,10 +255,10 @@ void Model::updateImpl(float elapsedTime)
 {
 	if (mModelNeedsUpdate)
 	{
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::quaternion orientation = pTransform->getAbsoluteOrientation();
@@ -263,7 +267,7 @@ void Model::updateImpl(float elapsedTime)
 				mWorldMatrix.buildWorldMatrix(position, scale, orientation);
 
 				// Update bounding box
-				if (mMeshData != NULL)
+				if (mMeshData != nullptr)
 				{
 					mBoundingBox = mMeshData->getBoundingBox();
 

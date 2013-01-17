@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include <BodySerializer.h>
 
 #include <Poco/AutoPtr.h>
-#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -52,24 +51,28 @@ BodySerializer::~BodySerializer() {}
 
 bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_BODY_DATA)
 	{
-		core::Log::getInstance().logMessage("BodySerializer", "Unable to load body - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("BodySerializer", "Unable to load body - invalid resource pointer.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	physics::BodyData* pBodyData = static_cast<physics::BodyData*>(dest);
-	assert(pBodyData != NULL);
-	if (pBodyData == NULL) return false;
+	assert(pBodyData != nullptr);
+	if (pBodyData == nullptr) return false;
+
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("BodySerializer", "Unable to load body - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
@@ -95,7 +98,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 			pBodyData->setBodyType(physics::BT_KINEMATIC);
 		else
 		{
-			core::Log::getInstance().logMessage("BodySerializer", "Bad body type attribute, valid parameters are 'dynamic', 'static' or 'kinematic'.", core::LOG_LEVEL_ERROR);
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("BodySerializer", "Bad body type attribute, valid parameters are 'dynamic', 'static' or 'kinematic'.", core::LOG_LEVEL_ERROR);
 			return false;
 		}
 
@@ -186,11 +189,13 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 			else if (type == "mesh")
 				shapeType = physics::SHAPE_TYPE_MESH;
 			else
-				core::Log::getInstance().logMessage("BodySerializer", "Bad shape type attribute, valid parameters are 'plane', 'sphere', 'box', 'capsule', 'convex', or 'mesh'.", core::LOG_LEVEL_ERROR);
+				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("BodySerializer", "Bad shape type attribute, valid parameters are 'plane', 'sphere', 'box', 'capsule', 'convex', or 'mesh'.", core::LOG_LEVEL_ERROR);
 	
 			if (shapeType != physics::SHAPE_TYPE_UNDEFINED)
 			{
-				physics::Shape* pShape = physics::PhysicsManager::getInstance().createShape(shapeType);
+				physics::Shape* pShape = nullptr;
+				if (physics::PhysicsManager::getInstance() != nullptr)
+					pShape = physics::PhysicsManager::getInstance()->createShape(shapeType);
 
 				pBodyData->addShape(pShape);
 
@@ -234,7 +239,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 					case physics::SHAPE_TYPE_PLANE:
 						{
 							physics::PlaneShape* planeShape = static_cast<physics::PlaneShape*>(pShape);
-							if (planeShape != NULL)
+							if (planeShape != nullptr)
 							{
 								float x = 0.0f;
 								float y = 0.0f;
@@ -256,7 +261,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 					case physics::SHAPE_TYPE_SPHERE:
 						{
 							physics::SphereShape* sphereShape = static_cast<physics::SphereShape*>(pShape);
-							if (sphereShape != NULL)
+							if (sphereShape != nullptr)
 							{
 								float radius = 0.0f;
 								if (pConf->has("shape.dimension[@radius]"))
@@ -269,7 +274,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 					case physics::SHAPE_TYPE_BOX:
 						{
 							physics::BoxShape* boxShape = static_cast<physics::BoxShape*>(pShape);
-							if (boxShape != NULL)
+							if (boxShape != nullptr)
 							{
 								float x = 0.0f;
 								float y = 0.0f;

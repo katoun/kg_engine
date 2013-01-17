@@ -31,7 +31,7 @@ namespace resource
 
 ResourceEvent::ResourceEvent()
 {
-	source = NULL;
+	source = nullptr;
 }
 
 } // end namespace resource

@@ -43,8 +43,7 @@ RenderTarget::RenderTarget()
 	mRenderTargetEvent = new RenderTargetEvent();
 
 	mFrameCount = 0;
-	mLastTimeStamp.update();
-	mCurrentTimeStamp.update();
+	mLastElapsedTime = 0;
 
 	resetStatistics();
 }
@@ -80,8 +79,8 @@ unsigned int RenderTarget::getColorDepth() const
 Viewport* RenderTarget::createViewport(Camera* cam, float top, float left, float width , float height)
 {
 	Viewport* pViewport = new Viewport(cam, this);
-	if (pViewport == NULL)
-		return NULL;
+	if (pViewport == nullptr)
+		return nullptr;
 
 	pViewport->setTop(top);
 	pViewport->setLeft(left);
@@ -95,7 +94,7 @@ Viewport* RenderTarget::createViewport(Camera* cam, float top, float left, float
 
 void RenderTarget::removeViewport(Viewport* viewport)
 {
-	if (viewport == NULL)
+	if (viewport == nullptr)
 		return;
 
 	std::list<Viewport*>::iterator i;
@@ -115,7 +114,7 @@ void RenderTarget::removeAllViewports()
 	for (i = mViewports.begin(); i != mViewports.end(); ++i)
 	{
 		Viewport* pViewport = (*i);
-		if (pViewport != NULL)
+		if (pViewport != nullptr)
 		{
 			delete pViewport;
 		}
@@ -160,7 +159,7 @@ void RenderTarget::resetStatistics()
 	mStats.triangleCount = 0;
 
 	mFrameCount = 0;
-	mLastTimeStamp.update();
+	mLastElapsedTime = 0;
 }
 
 bool RenderTarget::isActive() const
@@ -226,23 +225,13 @@ void RenderTarget::updateImpl(float elapsedTime)
 	firePostUpdate();
 
 	// Update statistics
-	updateStats();
-}
-
-void RenderTarget::updateStats()
-{
 	++mFrameCount;
-
-	mCurrentTimeStamp.update();
-
-	if (mCurrentTimeStamp != NULL && mLastTimeStamp != NULL)
+	mLastElapsedTime += elapsedTime;
+	if (mLastElapsedTime != 0.0f)
 	{
-		Poco::Timestamp::TimeDiff diff = mCurrentTimeStamp - mLastTimeStamp;
-
-		// Update the frame rate once per second
-		if (diff > Poco::Timestamp::resolution())
+		if (mLastElapsedTime > 1000.0f)
 		{
-			mStats.lastFPS = (float)(mFrameCount * Poco::Timestamp::resolution()) / (float)(diff);
+			mStats.lastFPS = (float)(mFrameCount * 1000.0f) / (float)(mLastElapsedTime);
 
 			if (mStats.avgFPS == 0)
 				mStats.avgFPS = mStats.lastFPS;
@@ -252,8 +241,8 @@ void RenderTarget::updateStats()
 			mStats.bestFPS = core::max(mStats.bestFPS, mStats.lastFPS);
 			mStats.worstFPS = core::min(mStats.worstFPS, mStats.lastFPS);
 
-			mLastTimeStamp.swap(mCurrentTimeStamp);
-			mFrameCount  = 0;
+			mFrameCount = 0;
+			mLastElapsedTime = 0;
 		}
 	}
 }

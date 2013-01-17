@@ -37,36 +37,40 @@ THE SOFTWARE.
 namespace sound
 {
 
-SoundDriver* openalSoundDriver = NULL;
-SoundFactory* openalSoundFactory = NULL;
-resource::ResourceFactory* openalSoundDataFactory = NULL;
+SoundDriver* openalSoundDriver = nullptr;
+SoundFactory* openalSoundFactory = nullptr;
+resource::ResourceFactory* openalSoundDataFactory = nullptr;
 
 extern "C" void OPENAL_PUBLIC_EXPORT loadPlugin() throw()
 {	
-	openalSoundDriver = OpenALSoundDriver::getInstancePtr();
+	openalSoundDriver = new OpenALSoundDriver();
 	openalSoundFactory = new OpenALSoundFactory();
-	SoundManager::getInstance().setSystemDriver((core::SystemDriver*)openalSoundDriver);
-	SoundManager::getInstance().setDefaultSoundFactory(openalSoundFactory);
+	if (SoundManager::getInstance() != nullptr)
+	{
+		SoundManager::getInstance()->setSystemDriver((core::SystemDriver*)openalSoundDriver);
+		SoundManager::getInstance()->setDefaultSoundFactory(openalSoundFactory);
+	}
 
 	openalSoundDataFactory = new OpenALSoundDataFactory();
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA, openalSoundDataFactory);
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA, openalSoundDataFactory);
 }
 
 extern "C" void OPENAL_PUBLIC_EXPORT unloadPlugin()
 {
-	SoundManager::getInstance().removeSystemDriver();
-	SoundManager::getInstance().removeDefaultSoundFactory();
-
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA);
-
-	if (openalSoundFactory != NULL)
+	if (SoundManager::getInstance() != nullptr)
 	{
-		delete openalSoundFactory;
+		SoundManager::getInstance()->removeSystemDriver();
+		SoundManager::getInstance()->removeDefaultSoundFactory();
 	}
-	if (openalSoundDataFactory != NULL)
-	{
-		delete openalSoundDataFactory;
-	}
+
+	if (resource::ResourceManager::getInstance() != nullptr)
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA);
+
+	SAFE_DELETE(openalSoundFactory);
+	SAFE_DELETE(openalSoundDataFactory);
+
+	SAFE_DELETE(openalSoundDriver);
 }
 
 } // end namespace sound

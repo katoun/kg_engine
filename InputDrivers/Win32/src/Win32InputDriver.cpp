@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <Win32Keyboard.h>
 #include <Win32Joystick.h>
 
-template<> input::Win32InputDriver& core::Singleton<input::Win32InputDriver>::ms_Singleton = input::Win32InputDriver();
+template<> input::Win32InputDriver* core::Singleton<input::Win32InputDriver>::m_Singleton = nullptr;
 
 namespace input
 {
@@ -41,8 +41,8 @@ Win32InputDriver::Win32InputDriver(): InputDriver("Win32 InputDriver")
 {
 	mCursor = new Win32Cursor();
 
-	mWin32Keyboard = NULL;
-	mWin32Mouse = NULL;
+	mWin32Keyboard = nullptr;
+	mWin32Mouse = nullptr;
 
 	mGrabbed = false;
 }
@@ -66,7 +66,7 @@ signed int Win32InputDriver::numKeyboards()
 
 InputDevice* Win32InputDriver::createInputDevice(InputType type, bool buffered)
 {
-	InputDevice* device = NULL;
+	InputDevice* device = nullptr;
 	switch (type)
 	{
 		case INPUT_TYPE_KEYBOARD:
@@ -78,13 +78,13 @@ InputDevice* Win32InputDriver::createInputDevice(InputType type, bool buffered)
 			device = mWin32Mouse;
 			break;
 		case INPUT_TYPE_JOYSTICK:
-			device = NULL;
+			device = nullptr;
 			break;
 		default:
-			device = NULL;
+			device = nullptr;
 	}
 
-	if (device != NULL)
+	if (device != nullptr)
 	{
 		try
 		{
@@ -103,7 +103,7 @@ InputDevice* Win32InputDriver::createInputDevice(InputType type, bool buffered)
 void Win32InputDriver::removeInputDevice(InputDevice* device)
 {
 	assert(device);
-	if (device == NULL)
+	if (device == nullptr)
 		return;
 
 	delete device;
@@ -121,17 +121,18 @@ void Win32InputDriver::setGrabMode(bool grabbed)
 
 void Win32InputDriver::initializeImpl()
 {
-	engine::EngineSettings& engineOptions = engine::EngineSettings::getInstance();
+	if (engine::EngineSettings::getInstance() == nullptr)
+		return;
 
 	// Get HWND
-	if (engineOptions.getMainWindowId())//if external window
+	if (engine::EngineSettings::getInstance()->getMainWindowId())//if external window
 		return;
 	
 	mHWnd = GetActiveWindow();
 
 	if (IsWindow(mHWnd) == 0)
 	{
-		MessageBox(NULL, "Win32InputSystem: The HWND is not valid!", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Win32InputSystem: The HWND is not valid!", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 
@@ -143,7 +144,7 @@ void Win32InputDriver::initializeImpl()
 	mCursorCenter.X = (signed int)((rect.right - rect.left) / 2);
 	mCursorCenter.Y = (signed int)((rect.bottom - rect.top) / 2);
 
-	if (mCursor != NULL)
+	if (mCursor != nullptr)
 		mCursor->setPosition(mCursorCenter);
 
 #ifdef _DEBUG
@@ -161,7 +162,7 @@ void Win32InputDriver::initializeImpl()
 
 void Win32InputDriver::uninitializeImpl()
 {
-	if (mCursor != NULL)
+	if (mCursor != nullptr)
 		delete mCursor;
 
 	int r = oi_close();
@@ -169,7 +170,7 @@ void Win32InputDriver::uninitializeImpl()
 
 void Win32InputDriver::updateImpl(float elapsedTime)
 {
-	if(mCursor != NULL && mCursor->isAutoCenter())
+	if(mCursor != nullptr && mCursor->isAutoCenter())
 	{
 		//Only update cursor position if the window has the focus
 		if(mHWnd == GetForegroundWindow() && IsWindowVisible(mHWnd))
@@ -183,31 +184,31 @@ void Win32InputDriver::updateImpl(float elapsedTime)
 	{
 		case OI_KEYDOWN:
 		{
-			if (mWin32Keyboard != NULL)
+			if (mWin32Keyboard != nullptr)
 				mWin32Keyboard->sendKeyDown(ev.key.keysym.sym);
 		}
 		break;
 		case OI_KEYUP:
 		{
-			if (mWin32Keyboard != NULL)
+			if (mWin32Keyboard != nullptr)
 				mWin32Keyboard->sendKeyUp(ev.key.keysym.sym);
 		}
 		break;
 		case OI_MOUSEBUTTONDOWN:
 		{
-			if (mWin32Mouse != NULL)
+			if (mWin32Mouse != nullptr)
 				mWin32Mouse->sendButtonDown((oi_mouse)ev.button.button);
 		}
 		break;
 		case OI_MOUSEBUTTONUP:
 		{
-			if (mWin32Mouse != NULL)
+			if (mWin32Mouse != nullptr)
 				mWin32Mouse->sendButtonUp((oi_mouse)ev.button.button);
 		}
 		break;
 		case OI_MOUSEMOVE:
 		{
-			if (mWin32Mouse != NULL)
+			if (mWin32Mouse != nullptr)
 				mWin32Mouse->sendMove(ev.move.relx, ev.move.rely);
 		}
 		break;
@@ -216,14 +217,9 @@ void Win32InputDriver::updateImpl(float elapsedTime)
 
 void Win32InputDriver::enumerateDevices() {}
 
-Win32InputDriver& Win32InputDriver::getInstance()
+Win32InputDriver* Win32InputDriver::getInstance()
 {
 	return core::Singleton<Win32InputDriver>::getInstance();
-}
-
-Win32InputDriver* Win32InputDriver::getInstancePtr()
-{
-	return core::Singleton<Win32InputDriver>::getInstancePtr();
 }
 
 } // end namespace platform

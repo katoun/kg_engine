@@ -38,7 +38,6 @@ THE SOFTWARE.
 #include <MeshSerializer.h>
 
 #include <Poco/AutoPtr.h>
-#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -56,25 +55,29 @@ MeshSerializer::~MeshSerializer() {}
 
 bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_MESH_DATA)
 	{
-		core::Log::getInstance().logMessage("MeshSerializer", "Unable to load mesh - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MeshSerializer", "Unable to load mesh - invalid resource pointer.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	render::MeshData* resource = static_cast<render::MeshData*>(dest);
-	assert(resource != NULL);
-	if (resource == NULL)
+	assert(resource != nullptr);
+	if (resource == nullptr)
 		return false;
 
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MeshSerializer", "Unable to load mesh - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
@@ -85,6 +88,9 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 	{
 		return false;
 	}
+
+	if (render::RenderManager::getInstance() == nullptr)
+			return false;
 
 	// Vertex buffers
 	if (pConf->has("vertexbuffer"))
@@ -108,13 +114,13 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 		vertexData->vertexCount = numVertices;
 
 		unsigned int bindIdx = 0;
-		float *pFloat = NULL;
+		float *pFloat = nullptr;
 
 		// float* pVertices (x, y, z order x numVertices)
 		vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_POSITION);
-		render::VertexBuffer* vbuf = render::RenderManager::getInstance().createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
+		render::VertexBuffer* vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
 		pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
-		if (pFloat == NULL)
+		if (pFloat == nullptr)
 			return false;
 		// Read direct into hardware buffer
 		for (unsigned int i = 0; i < vertexData->vertexCount; i++)
@@ -185,9 +191,9 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 		{
 			// float* pNormals (x, y, z order x numVertices)
 			vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_NORMAL);
-			vbuf = render::RenderManager::getInstance().createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
+			vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
 			pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
-			if (pFloat == NULL)
+			if (pFloat == nullptr)
 				return false;
 			// Read direct into hardware buffer
 			for (unsigned int i = 0; i < vertexData->vertexCount; i++)
@@ -220,14 +226,14 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 		if (pConf->has("vertexbuffer[@colours_diffuse]"))
 			colours_diffuse = pConf->getBool("vertexbuffer[@colours_diffuse]");
 
-		unsigned int* pRGBA = NULL;
+		unsigned int* pRGBA = nullptr;
 		if (colours_diffuse)
 		{
 			// unsigned int* pColors (RGBA 8888 format x numVertices)
 			vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_COLOR, render::VES_DIFFUSE);
-			vbuf = render::RenderManager::getInstance().createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
+			vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
 			pRGBA = (unsigned int*)(vbuf->lock(resource::BL_DISCARD));
-			if (pRGBA == NULL)
+			if (pRGBA == nullptr)
 				return false;
 			// Read direct into hardware buffer
 			for (unsigned int i = 0; i < vertexData->vertexCount; i++)
@@ -268,9 +274,9 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				unsigned int dim = 2;
 				// float* pTexCoords  (u [v] [w] order, dimensions x numVertices)
 				vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, dim), render::VES_TEXTURE_COORDINATES, texCoordSet);
-				vbuf = render::RenderManager::getInstance().createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
+				vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
-				if (pFloat == NULL)
+				if (pFloat == nullptr)
 					return false;
 				// Read direct into hardware buffer
 				for (unsigned int i = 0; i < vertexData->vertexCount; i++)
@@ -310,11 +316,11 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			numIndexes = (unsigned int)pConf->getInt("indexbuffer[@count]");
 		indexData->indexCount = numIndexes;
 
-		render::IndexBuffer* ibuf = render::RenderManager::getInstance().createIndexBuffer(render::IT_32BIT, indexData->indexCount, resource->getIndexBufferUsage());
+		render::IndexBuffer* ibuf = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, indexData->indexCount, resource->getIndexBufferUsage());
 		indexData->indexBuffer = ibuf;
 
 		unsigned int* pIdx = (unsigned int*)(ibuf->lock(resource::BL_DISCARD));
-		if (pIdx == NULL)
+		if (pIdx == nullptr)
 			return false;
 		// Read direct into hardware buffer
 		for (unsigned int i = 0; i < indexData->indexCount; i++)

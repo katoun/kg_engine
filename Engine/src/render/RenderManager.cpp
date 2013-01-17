@@ -61,7 +61,7 @@ THE SOFTWARE.
 
 #include <algorithm>
 
-template<> render::RenderManager& core::Singleton<render::RenderManager>::ms_Singleton = render::RenderManager();
+template<> render::RenderManager* core::Singleton<render::RenderManager>::m_Singleton = nullptr;
 
 namespace render
 {
@@ -77,15 +77,15 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mDefaultLightFactory = new LightFactory();
 	mDefaultModelFactory = new ModelFactory();
 
-	mMainWindow = NULL;
-	mRenderDriver = NULL;
-	mCurrentViewport = NULL;
+	mMainWindow = nullptr;
+	mRenderDriver = nullptr;
+	mCurrentViewport = nullptr;
 
 	mAmbientLight = Color::Black;
 
-	mDefaultMaterial = NULL;
+	mDefaultMaterial = nullptr;
 
-	mFrustum = NULL;
+	mFrustum = nullptr;
 
 	mFogMode = FM_NONE;
 	mFogColor = Color::White;
@@ -102,27 +102,27 @@ RenderManager::RenderManager(): core::System("RenderManager")
 
 RenderManager::~RenderManager()
 {
-	if (mDefaultFontFactory != NULL)
+	if (mDefaultFontFactory != nullptr)
 	{
 		delete mDefaultFontFactory;
 	}
-	if (mDefaultMaterialFactory != NULL)
+	if (mDefaultMaterialFactory != nullptr)
 	{
 		delete mDefaultMaterialFactory;
 	}
-	if (mDefaultMeshDataFactory != NULL)
+	if (mDefaultMeshDataFactory != nullptr)
 	{
 		delete mDefaultMeshDataFactory;
 	}
-	if (mDefaultCameraFactory != NULL)
+	if (mDefaultCameraFactory != nullptr)
 	{
 		delete mDefaultCameraFactory;
 	}
-	if (mDefaultLightFactory != NULL)
+	if (mDefaultLightFactory != nullptr)
 	{
 		delete mDefaultLightFactory;
 	}
-	if (mDefaultModelFactory != NULL)
+	if (mDefaultModelFactory != nullptr)
 	{
 		delete mDefaultModelFactory;
 	}
@@ -130,12 +130,12 @@ RenderManager::~RenderManager()
 
 RenderWindow* RenderManager::createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left, signed int top, bool depthBuffer, void* windowId)
 {
-	if (!mRenderDriver) return NULL;
+	if (!mRenderDriver) return nullptr;
 
 	RenderWindow* win = mRenderDriver->createRenderWindow(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
 
 	std::string message = "RenderWindow Created --> " + core::intToString(width) + ", " + core::intToString(height) + ", " + core::intToString(colorDepth) + ".";
-	core::Log::getInstance().logMessage("RenderManager", message);
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderManager", message);
 
 	mRenderWindows[win->getID()] = win;
 
@@ -144,8 +144,8 @@ RenderWindow* RenderManager::createRenderWindow(signed int width, signed int hei
 
 void RenderManager::setMainWindow(RenderWindow* window)
 {
-	assert(window != NULL);
-	if (window == NULL)
+	assert(window != nullptr);
+	if (window == nullptr)
 		return;
 	
 	mMainWindow = window;
@@ -162,7 +162,7 @@ RenderWindow* RenderManager::getRenderWindow(const unsigned int& id)
 	if (i != mRenderWindows.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 void RenderManager::removeRenderWindow(const unsigned int& id)
@@ -181,7 +181,7 @@ void RenderManager::removeAllRenderWindows()
 	for (i = mRenderWindows.begin(); i != mRenderWindows.end(); ++i)
 	{
 		delete i->second;
-		i->second = NULL;
+		i->second = nullptr;
 	}
 
 	mRenderWindows.clear();
@@ -217,7 +217,7 @@ signed int RenderManager::getViewportWidth() const
 
 void RenderManager::addLight(Light *light)
 {
-	if (light == NULL)
+	if (light == nullptr)
 		return;
 
 	mLights[light->getID()] = light;
@@ -225,7 +225,7 @@ void RenderManager::addLight(Light *light)
 
 void RenderManager::removeLight(Light *light)
 {
-	if (light == NULL)
+	if (light == nullptr)
 		return;
 
 	removeLight(light->getID());
@@ -245,7 +245,7 @@ void RenderManager::removeAllLights()
 
 void RenderManager::addCamera(Camera* camera)
 {
-	if (camera == NULL)
+	if (camera == nullptr)
 		return;
 
 	mCameras[camera->getID()] = camera;
@@ -253,7 +253,7 @@ void RenderManager::addCamera(Camera* camera)
 
 void RenderManager::removeCamera(Camera* camera)
 {
-	if (camera == NULL)
+	if (camera == nullptr)
 		return;
 
 	removeCamera(camera->getID());
@@ -273,7 +273,7 @@ void RenderManager::removeAllCameras()
 
 void RenderManager::addModel(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 
 	mModels[model->getID()] = model;
@@ -281,7 +281,7 @@ void RenderManager::addModel(Model* model)
 
 void RenderManager::removeModel(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 
 	removeModel(model->getID());
@@ -301,7 +301,7 @@ void RenderManager::removeAllModels()
 
 void RenderManager::addUpdatedViewport(Viewport* viewport)
 {
-	if (viewport == NULL)
+	if (viewport == nullptr)
 		return;
 
 	mUpdatedViewports.push_back(viewport);
@@ -309,18 +309,23 @@ void RenderManager::addUpdatedViewport(Viewport* viewport)
 
 Font* RenderManager::createFont(const std::string& filename)
 {
-	Font* newFont = static_cast<Font*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_FONT, filename));
-	if (newFont == NULL)
-		return NULL;
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		Font* newFont = static_cast<Font*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_FONT, filename));
+		if (newFont == nullptr)
+			return nullptr;
 
-	mFonts[newFont->getID()] = newFont;
+		mFonts[newFont->getID()] = newFont;
 
-	return newFont;
+		return newFont;
+	}
+
+	return nullptr;
 }
 
 void RenderManager::removeFont(Font* font)
 {
-	if (font == NULL)
+	if (font == nullptr)
 		return;
 
 	removeFont(font->getID());
@@ -340,15 +345,19 @@ void RenderManager::removeAllFonts()
 
 Shader* RenderManager::createShader(const std::string& shaderFilename, const ShaderType& type)
 {
-	// Get shader (load if required)
-	Shader* newShader = static_cast<Shader*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SHADER, shaderFilename));
-	if (newShader == NULL)
-		return NULL;
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		Shader* newShader = static_cast<Shader*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SHADER, shaderFilename));
+		if (newShader == nullptr)
+			return nullptr;
 
-	newShader->setShaderType(type);
-	mShaders[newShader->getID()] = newShader;
+		newShader->setShaderType(type);
+		mShaders[newShader->getID()] = newShader;
 
-	return newShader;
+		return newShader;
+	}
+
+	return nullptr;
 }
 
 Shader* RenderManager::getShader(const unsigned int& id)
@@ -357,7 +366,7 @@ Shader* RenderManager::getShader(const unsigned int& id)
 	if (i != mShaders.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 unsigned int RenderManager::getNumberOfShaders() const
@@ -367,7 +376,7 @@ unsigned int RenderManager::getNumberOfShaders() const
 
 void RenderManager::removeShader(Shader* shader)
 {
-	if (shader == NULL)
+	if (shader == nullptr)
 		return;
 
 	removeShader(shader->getID());
@@ -398,7 +407,7 @@ VertexBuffer* RenderManager::createVertexBuffer(unsigned int vertexSize, unsigne
 
 		return buf;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void RenderManager::removeVertexBuffer(VertexBuffer* buf)
@@ -438,7 +447,7 @@ IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int nu
 
 		return buf;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void RenderManager::removeIndexBuffer(IndexBuffer* buf)
@@ -582,7 +591,8 @@ float RenderManager::getVerticalTexelOffset()
 
 void RenderManager::initializeImpl()
 {
-	mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
+	if (resource::ResourceManager::getInstance() != nullptr)
+		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
 	mSolidModels.reserve(1024);
 	mTransparentModels.reserve(1024);
@@ -627,8 +637,8 @@ void RenderManager::uninitializeImpl()
 
 	mLightsAffectingFrustum.clear();		
 
-	mMainWindow = NULL;
-	mFrustum = NULL;
+	mMainWindow = nullptr;
+	mFrustum = nullptr;
 }
 
 void RenderManager::startImpl()
@@ -653,7 +663,7 @@ void RenderManager::updateImpl(float elapsedTime)
 	{
 		RenderWindow* window = j->second;
 
-		if(window != NULL && window->isActive())
+		if(window != nullptr && window->isActive())
 		{
 			window->update(elapsedTime);
 
@@ -662,7 +672,7 @@ void RenderManager::updateImpl(float elapsedTime)
 			for (k = window->getViewports().begin(); k != window->getViewports().end(); ++k)
 			{
 				Viewport* pViewport = (*k);
-				if (pViewport != NULL && pViewport->isVisible())
+				if (pViewport != nullptr && pViewport->isVisible())
 					render(pViewport->getCamera(), pViewport);
 			}
 		}
@@ -678,29 +688,41 @@ void RenderManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
 
 void RenderManager::removeSystemDriverImpl()
 {
-	mRenderDriver = NULL;
+	mRenderDriver = nullptr;
 }
 
 void RenderManager::registerDefaultFactoriesImpl()
 {
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_FONT, mDefaultFontFactory);
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, mDefaultMaterialFactory);
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_FONT, mDefaultFontFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, mDefaultMaterialFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
+	}
 
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mDefaultCameraFactory);
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mDefaultLightFactory);
-	game::GameManager::getInstance().registerComponentFactory(game::COMPONENT_TYPE_MODEL, mDefaultModelFactory);
+	if (game::GameManager::getInstance() != nullptr)
+	{
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mDefaultCameraFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mDefaultLightFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_MODEL, mDefaultModelFactory);
+	}
 }
 
 void RenderManager::removeDefaultFactoriesImpl()
 {
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_FONT);
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_FONT);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
+	}
 
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_CAMERA);
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_LIGHT);
-	game::GameManager::getInstance().removeComponentFactory(game::COMPONENT_TYPE_MODEL);
+	if (game::GameManager::getInstance() != nullptr)
+	{
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_CAMERA);
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_LIGHT);
+		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_MODEL);
+	}
 }
 
 void RenderManager::fireFrameStarted()
@@ -731,11 +753,11 @@ void RenderManager::beginGeometryCount()
 
 void RenderManager::addGeometruCount(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 	
 	// Update stats
-	if (model->getVertexData() == NULL || model->getIndexData() == NULL)
+	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
 		return;
 
 	unsigned int val = model->getIndexData()->indexCount;
@@ -772,10 +794,10 @@ void RenderManager::endGeometryCount() {}
 
 void RenderManager::render(Camera* camera, Viewport* viewport)
 {
-	if (camera == NULL)
+	if (camera == nullptr)
 		return;
 	
-	if (viewport == NULL)
+	if (viewport == nullptr)
 		return;
 
 	setCurrentViewport(viewport);
@@ -819,15 +841,15 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 	for (ci = mCameras.begin(); ci != mCameras.end(); ++ci)
 	{
 		Camera* pCamera = ci->second;
-		if (pCamera != NULL && pCamera->getID() != camera->getID())
+		if (pCamera != nullptr && pCamera->getID() != camera->getID())
 		{
-			game::Transform* pTransform = NULL;
-			if (pCamera->getGameObject() != NULL)
+			game::Transform* pTransform = nullptr;
+			if (pCamera->getGameObject() != nullptr)
 			{
 				pTransform = static_cast<game::Transform*>(pCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			}
 
-			if ((pTransform != NULL && pTransform->getVisibleAxis()) || pCamera->getVisibleFrustum())
+			if ((pTransform != nullptr && pTransform->getVisibleAxis()) || pCamera->getVisibleFrustum())
 			{
 				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
 				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
@@ -845,10 +867,10 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 				if (pCamera->getVisibleFrustum())
 				{
 					mFrustum = pCamera->getFrustum();
-					if (mFrustum != NULL)
+					if (mFrustum != nullptr)
 						mRenderDriver->renderFrustumVolume(mFrustum->getCorners());
 				}
-				if (pTransform != NULL && pTransform->getVisibleAxis())
+				if (pTransform != nullptr && pTransform->getVisibleAxis())
 				{
 					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
 				}
@@ -861,15 +883,15 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 	for (li = mLights.begin(); li != mLights.end(); ++li)
 	{
 		Light* pLight = li->second;
-		if (pLight != NULL)
+		if (pLight != nullptr)
 		{
-			game::Transform* pTransform = NULL;
-			if (pLight->getGameObject() != NULL)
+			game::Transform* pTransform = nullptr;
+			if (pLight->getGameObject() != nullptr)
 			{
 				pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			}
 
-			if (pTransform != NULL && pTransform->getVisibleAxis())
+			if (pTransform != nullptr && pTransform->getVisibleAxis())
 			{
 				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
 				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
@@ -908,7 +930,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 void RenderManager::setCurrentViewport(Viewport* viewport)
 {
-	if (viewport == NULL)
+	if (viewport == nullptr)
 		return;
 
 	bool viewportChanged = false;
@@ -920,7 +942,7 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 		for (i = mUpdatedViewports.begin(); i != mUpdatedViewports.end(); ++i)
 		{
 			Viewport* pViewport = (*i);
-			if (pViewport != NULL && pViewport == viewport)
+			if (pViewport != nullptr && pViewport == viewport)
 			{
 				mUpdatedViewports.erase(i);
 				viewportChanged = true;
@@ -937,7 +959,7 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 	{
 		mCurrentViewport = viewport;
 
-		if (mRenderDriver != NULL)
+		if (mRenderDriver != nullptr)
 		{
 			mRenderDriver->setViewport(viewport);
 		}
@@ -946,9 +968,9 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 
 void RenderManager::beginFrame(Viewport* viewport)
 {
-	if (viewport == NULL)
+	if (viewport == nullptr)
 	{
-		core::Log::getInstance().logMessage("RenderManager", "::beginFrame() Cannot begin frame - no viewport selected.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderManager", "::beginFrame() Cannot begin frame - no viewport selected.", core::LOG_LEVEL_ERROR);
 		return;
 	}
 	
@@ -958,7 +980,7 @@ void RenderManager::beginFrame(Viewport* viewport)
 
 void RenderManager::findLightsAffectingFrustum(Camera* camera)
 {
-	if (camera == NULL)
+	if (camera == nullptr)
 		return;
 	
 	mLightsAffectingFrustum.clear();
@@ -992,7 +1014,7 @@ void RenderManager::findLightsAffectingFrustum(Camera* camera)
 
 void RenderManager::findLightsAffectingModel(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 	
 	mDistanceLights.clear();
@@ -1001,7 +1023,7 @@ void RenderManager::findLightsAffectingModel(Model* model)
 	for (i = mLightsAffectingFrustum.begin(); i!= mLightsAffectingFrustum.end(); ++i)
 	{
 		Light* pLight = (*i);
-		if (pLight != NULL)
+		if (pLight != nullptr)
 		{
 			if (pLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
 			{
@@ -1015,13 +1037,13 @@ void RenderManager::findLightsAffectingModel(Model* model)
 			{
 				// Calculate squared distance
 				float distance = 0.0f;
-				game::Transform* pLightTransform = NULL;
-				game::Transform* pModelTransform = NULL;
-				if (pLight->getGameObject() != NULL && model->getGameObject() != NULL)
+				game::Transform* pLightTransform = nullptr;
+				game::Transform* pModelTransform = nullptr;
+				if (pLight->getGameObject() != nullptr && model->getGameObject() != nullptr)
 				{
 					pLightTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 					pModelTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					if (pLightTransform != NULL && pModelTransform)
+					if (pLightTransform != nullptr && pModelTransform)
 					{
 						distance = (pLightTransform->getAbsolutePosition() - pModelTransform->getAbsolutePosition()).getLengthSQ();
 					}
@@ -1046,14 +1068,14 @@ void RenderManager::findLightsAffectingModel(Model* model)
 
 void RenderManager::findVisibleModels(Camera* camera)
 {
-	if (camera == NULL)
+	if (camera == nullptr)
 		return;
 
 	mSolidModels.clear();
 	mTransparentModels.clear();
 
 	mFrustum = camera->getFrustum();
-	if (mFrustum == NULL)
+	if (mFrustum == nullptr)
 		return;
 
 	// Go through all the models
@@ -1061,13 +1083,13 @@ void RenderManager::findVisibleModels(Camera* camera)
 	for (i = mModels.begin(); i != mModels.end(); ++i)
 	{
 		Model* pModel = i->second;
-		if (pModel != NULL)
+		if (pModel != nullptr)
 		{
 			if (mFrustum->isVisible(pModel->getBoundingSphere()) && mFrustum->isVisible(pModel->getBoundingBox()))
 			{
 				Material* pMaterial = pModel->getMaterial();
 
-				if (pMaterial != NULL)
+				if (pMaterial != nullptr)
 				{
 					if (pMaterial->isTransparent())
 					{
@@ -1075,13 +1097,13 @@ void RenderManager::findVisibleModels(Camera* camera)
 						newTransparentModel.model = pModel;
 						newTransparentModel.distance = 0.0f;
 
-						game::Transform* pCameraTransform = NULL;
-						game::Transform* pModelTransform = NULL;
-						if (camera->getGameObject() != NULL && pModel->getGameObject() != NULL)
+						game::Transform* pCameraTransform = nullptr;
+						game::Transform* pModelTransform = nullptr;
+						if (camera->getGameObject() != nullptr && pModel->getGameObject() != nullptr)
 						{
 							pCameraTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 							pModelTransform = static_cast<game::Transform*>(pModel->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-							if (pCameraTransform != NULL && pModelTransform != NULL)
+							if (pCameraTransform != nullptr && pModelTransform != nullptr)
 							{
 								// Calculate squared distance
 								newTransparentModel.distance = (pModelTransform->getAbsolutePosition() - pCameraTransform->getAbsolutePosition()).getLengthSQ();
@@ -1130,13 +1152,13 @@ void RenderManager::renderVisibleModels()
 
 void RenderManager::renderSingleModel(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 
-	if (model->getGameObject() != NULL)
+	if (model->getGameObject() != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			if (pTransform->getVisibleAxis() || model->getVisibleBoundingBox() || model->getVisibleBoundingSphere())
 			{
@@ -1184,7 +1206,7 @@ void RenderManager::renderSingleModel(Model* model)
 
 			localLightList.clear();
 
-			if (model->getMaterial() != NULL)
+			if (model->getMaterial() != nullptr)
 				setMaterial(model->getMaterial());
 			else
 				setMaterial(mDefaultMaterial);
@@ -1197,7 +1219,7 @@ void RenderManager::renderSingleModel(Model* model)
 
 void RenderManager::setMaterial(Material* material)
 {
-	if (material == NULL)
+	if (material == nullptr)
 		return;
 
 	bool surfaceAndLightParams = true;
@@ -1301,14 +1323,9 @@ void RenderManager::endFrame()
 	mRenderDriver->endFrame();
 }
 
-RenderManager& RenderManager::getInstance()
+RenderManager* RenderManager::getInstance()
 {
 	return core::Singleton<RenderManager>::getInstance();
-}
-
-RenderManager* RenderManager::getInstancePtr()
-{
-	return core::Singleton<RenderManager>::getInstancePtr();
 }
 
 } // end namespace render

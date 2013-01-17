@@ -52,7 +52,7 @@ public:
 	GLRenderDriver();
 	~GLRenderDriver();
 
-	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = NULL);
+	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool												depthBuffer = true, void* windowId = nullptr);
 
 	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
 	
@@ -130,8 +130,7 @@ public:
 
 	static bool checkForCgError(CGcontext context);
 
-	static GLRenderDriver& getInstance();
-	static GLRenderDriver* getInstancePtr();
+	static GLRenderDriver* getInstance();
 
 protected:
 

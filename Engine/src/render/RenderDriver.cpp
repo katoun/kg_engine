@@ -42,13 +42,13 @@ RenderDriver::RenderDriver(const std::string& name): core::SystemDriver(name)
 
 
 	for(unsigned int i=0; i<ENGINE_MAX_SIMULTANEOUS_LIGHTS; ++i)
-		mLights[i] = NULL;
+		mLights[i] = nullptr;
 
 	mDisabledTexUnitsFrom = 0;
 
-	mCurrentVertexShader = NULL;
-	mCurrentFragmentShader = NULL;
-	mCurrentGeometryShader = NULL;
+	mCurrentVertexShader = nullptr;
+	mCurrentFragmentShader = nullptr;
+	mCurrentGeometryShader = nullptr;
 }
 
 RenderDriver::~RenderDriver() {}
@@ -76,7 +76,7 @@ void RenderDriver::convertProjectionMatrix(const core::matrix4& matrix, core::ma
 
 void RenderDriver::setTextureUnitSettings(unsigned int texUnit, TextureUnit* tu)
 {
-	if (tu == NULL)
+	if (tu == nullptr)
 		return;
 	
 	setTexture(true, texUnit, tu->getTexture());
@@ -113,7 +113,7 @@ void RenderDriver::setTextureCoordSet(unsigned int unit, unsigned int index)
 
 void RenderDriver::bindShader(Shader* shader)
 {
-	if (shader == NULL)
+	if (shader == nullptr)
 		return;
 
 	switch(shader->getShaderType())
@@ -152,21 +152,21 @@ void RenderDriver::unbindShader(ShaderType type)
 		if (mCurrentVertexShader)
 		{
 			mCurrentVertexShader->unbind();
-			mCurrentVertexShader = NULL;
+			mCurrentVertexShader = nullptr;
 		}
 		break;
 	case SHADER_TYPE_GEOMETRY:
 		if (mCurrentGeometryShader)
 		{
 			mCurrentGeometryShader->unbind();
-			mCurrentGeometryShader = NULL;
+			mCurrentGeometryShader = nullptr;
 		}
 		break;
 	case SHADER_TYPE_FRAGMENT:
 		if (mCurrentFragmentShader)
 		{
 			mCurrentFragmentShader->unbind();
-			mCurrentFragmentShader = NULL;
+			mCurrentFragmentShader = nullptr;
 		}
 		break;
 	}
@@ -177,11 +177,11 @@ bool RenderDriver::isShaderBound(ShaderType type)
 	switch(type)
 	{
 	case SHADER_TYPE_VERTEX:
-		return (mCurrentVertexShader != NULL);
+		return (mCurrentVertexShader != nullptr);
 	case SHADER_TYPE_GEOMETRY:
-		return (mCurrentGeometryShader != NULL);
+		return (mCurrentGeometryShader != nullptr);
 	case SHADER_TYPE_FRAGMENT:
-		return (mCurrentFragmentShader != NULL);
+		return (mCurrentFragmentShader != nullptr);
 	}
 
 	return false;
@@ -189,7 +189,7 @@ bool RenderDriver::isShaderBound(ShaderType type)
 
 void RenderDriver::updateShaderAutoParameters(Shader* shader, ShaderParamData& data)
 {
-	if (shader == NULL)
+	if (shader == nullptr)
 		return;
 
 	shader->updateAutoParameters(data);

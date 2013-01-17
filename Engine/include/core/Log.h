@@ -30,11 +30,8 @@ THE SOFTWARE.
 #include <core/Singleton.h>
 #include <core/LogDefines.h>
 
-#include <Poco/Logger.h>
-
 #include <string>
-#include <map>
-#include <list>
+#include <fstream>
 
 namespace core
 {
@@ -55,13 +52,12 @@ public:
 	//! \param level: Log level of the text.
 	void logMessage(const std::string& source, const std::string& text, LogLevel logLevel = LOG_LEVEL_INFORMATION);
 
-	static Log& getInstance();
-	static Log* getInstancePtr();
+	static Log* getInstance();
 
 protected:
 
 	//! Default log.
-	Poco::Logger& mDefaultLogger;
+	std::ofstream mLogStream;
 };
 
 } // end namespace core

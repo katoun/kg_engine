@@ -29,11 +29,9 @@ THE SOFTWARE.
 #include <engine/PluginManager.h>
 #include <engine/Plugin.h>
 
-#include <Poco/Path.h>
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
-template<> engine::PluginManager& core::Singleton<engine::PluginManager>::ms_Singleton = engine::PluginManager();
+template<> engine::PluginManager* core::Singleton<engine::PluginManager>::m_Singleton = nullptr;
 
 namespace engine
 {
@@ -56,64 +54,62 @@ void PluginManager::setPluginsFile(const std::string& pluginsFile)
 
 void PluginManager::createPlugins()
 {
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(mPluginsFile);
-	}
-	catch(...)
-	{
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(mPluginsFile.c_str()) != tinyxml2::XML_SUCCESS)
 		return;
-	}
-
-	Poco::Path dirPath;
-	if (pConf->has("PluginFolder"))
-	{
-		std::string pluginDir = pConf->getString("PluginFolder");
-		dirPath = Poco::Path(pluginDir);
-	}
-
-	int index = 0;
-	std::string sProperty = "Plugin[" + core::intToString(index) + "]";
 	
-	while(pConf->has(sProperty))
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("Plugins");
+	if (pRoot != nullptr)
 	{
-		std::string pluginName = pConf->getString(sProperty);
-		std::string pluginFileName = Poco::Path(dirPath, pluginName).toString();
+		const char* value;
+		tinyxml2::XMLElement* pElement = nullptr;
+		pElement = pRoot->FirstChildElement("Plugin");
+		while (pElement != nullptr)
+		{
+			value = pElement->GetText();
+			if (value != nullptr)
+			{
+				std::string pluginName = value;
 
-		Plugin* plugin = createPlugin(pluginName, pluginFileName);
+				//Remove extension
+				size_t pos = pluginName.find_last_of('.');
+				if (pos != std::string::npos)
+				{
+					pluginName = pluginName.substr(0, pos);
+				}
 
-		index++;
-		sProperty = "Plugin[" + core::intToString(index) + "]";
+				Plugin* plugin = createPlugin(pluginName);
+			}
+
+			pElement = pElement->NextSiblingElement("Plugin");
+		}
 	}
 }
 
-Plugin* PluginManager::createPlugin(const std::string& name, const std::string& filename)
+Plugin* PluginManager::createPlugin(const std::string& name)
 {
-	if(name == core::STRING_BLANK || filename == core::STRING_BLANK)
-		return NULL;
+	if (name.empty())
+		return nullptr;
 	
 	std::map<std::string, Plugin*>::iterator i = mPlugins.find(name);
 	if (i != mPlugins.end())
 	{
-		Plugin* pPlugin = i->second;
-		if (pPlugin != NULL && pPlugin->getFilename() == filename)
-			return pPlugin;
+		return i->second;
 	}
 	else
 	{
-		Plugin* newPlugin = new Plugin(name, filename);
+		Plugin* newPlugin = new Plugin(name);
 
 		mPlugins[name] = newPlugin;
 		mLoadPlugins.push_back(newPlugin);
 		
-		std::string message = "Plugin: " + newPlugin->getName() + " filename: " + filename + " created.";
-		core::Log::getInstance().logMessage("PluginManager", message);
+		std::string message = "Plugin: " + newPlugin->getName() + " created.";
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("PluginManager", message);
 
 		return newPlugin;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void PluginManager::loadPlugins()
@@ -134,49 +130,49 @@ void PluginManager::unloadPlugins()
 
 bool PluginManager::loadPlugin(Plugin* plugin)
 {
-	assert(plugin != NULL);
-	if (plugin == NULL)
+	assert(plugin != nullptr);
+	if (plugin == nullptr)
 		return false;
 
 	if (!plugin->load())
 		return false;
 
-	std::string message = "Plugin: " + plugin->getName() + " filename: " + plugin->getFilename() + " loaded.";
-	core::Log::getInstance().logMessage("PluginManager", message);
+	std::string message = "Plugin: " + plugin->getName() + " loaded.";
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("PluginManager", message);
 
 	return true;
 }
 
 void PluginManager::unloadPlugin(Plugin* plugin)
 {
-	assert(plugin != NULL);
-	if (plugin == NULL)
+	assert(plugin != nullptr);
+	if (plugin == nullptr)
 		return;
 
 	plugin->unload();
 
-	std::string message = "Plugin: " + plugin->getName() + " filename: " + plugin->getFilename() + " unloaded.";
-	core::Log::getInstance().logMessage("PluginManager", message);
+	std::string message = "Plugin: " + plugin->getName() + " unloaded.";
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("PluginManager", message);
 }
 
 bool PluginManager::reloadPlugin(Plugin* plugin)
 {
-	assert(plugin != NULL);
-	if (plugin == NULL)
+	assert(plugin != nullptr);
+	if (plugin == nullptr)
 		return false;
 
 	if (!plugin->reload())
 		return false;
 
-	std::string message = "Plugin: " + plugin->getName() + " filename: " + plugin->getFilename() + " reloaded.";
-	core::Log::getInstance().logMessage("PluginManager", message);
+	std::string message = "Plugin: " + plugin->getName() + " reloaded.";
+	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("PluginManager", message);
 
 	return true;
 }
 
 void PluginManager::removePlugin(Plugin* plugin)
 {
-	if (plugin == NULL)
+	if (plugin == nullptr)
 		return;
 
 	removePlugin(plugin->getName());
@@ -189,8 +185,8 @@ void PluginManager::removePlugin(const std::string& name)
 	{
 		Plugin* plugin = i->second;
 
-		assert(plugin != NULL);
-		if (plugin == NULL)
+		assert(plugin != nullptr);
+		if (plugin == nullptr)
 			return;
 
 		mPlugins.erase(i);
@@ -222,14 +218,9 @@ void PluginManager::uninitializeImpl()
 	unloadPlugins();
 }
 
-PluginManager& PluginManager::getInstance()
+PluginManager* PluginManager::getInstance()
 {
 	return core::Singleton<PluginManager>::getInstance();
-}
-
-PluginManager* PluginManager::getInstancePtr()
-{
-	return core::Singleton<PluginManager>::getInstancePtr();
 }
 
 } // end namespace engine

@@ -43,7 +43,6 @@ THE SOFTWARE.
 #include <SceneSerializer.h>
 
 #include <Poco/AutoPtr.h>
-#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -71,7 +70,7 @@ game::ComponentType convertComponentType(const std::string& param)
 		return game::COMPONENT_TYPE_LISTENER;
 	else
 	{
-		core::Log::getInstance().logMessage("SceneSerializer", "Invalid component type, using default.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SceneSerializer", "Invalid component type, using default.", core::LOG_LEVEL_ERROR);
 
 		return game::COMPONENT_TYPE_UNDEFINED;
 	}
@@ -87,7 +86,7 @@ render::LightType convertLightType(const std::string& param)
 		return render::LIGHT_TYPE_SPOTLIGHT;
 	else
 	{
-		core::Log::getInstance().logMessage("SceneSerializer", "Invalid light type, using default.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SceneSerializer", "Invalid light type, using default.", core::LOG_LEVEL_ERROR);
 
 		return render::LIGHT_TYPE_POINT;
 	}
@@ -103,20 +102,24 @@ SceneSerializer::~SceneSerializer() {}
 
 bool SceneSerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_SCENE)
 	{
-		core::Log::getInstance().logMessage("SceneSerializer", "Unable to load scene - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SceneSerializer", "Unable to load scene - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SceneSerializer", "Unable to load scene - resources data path not set.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
@@ -144,23 +147,25 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 {
 	//game objects
 	unsigned int i = 0;
-	std::string gkey = key == core::STRING_BLANK ? "game_object[" + core::intToString(i) + "]" : key + ".game_object[" + core::intToString(i) + "]";
+	std::string gkey = key.empty() ? "game_object[" + core::intToString(i) + "]" : key + ".game_object[" + core::intToString(i) + "]";
 	while (config->has(gkey))
 	{
-		game::GameObject* pGameObject = NULL;
+		game::GameObject* pGameObject = nullptr;
 		if (config->has(gkey + "[@name]"))
 		{
 			std::string name = config->getString(gkey + "[@name]");
-			pGameObject = game::GameManager::getInstance().createGameObject(name);
+			if (game::GameManager::getInstance() != nullptr)
+				pGameObject = game::GameManager::getInstance()->createGameObject(name);
 		}
 		else
 		{
-			pGameObject = game::GameManager::getInstance().createGameObject();
+			if (game::GameManager::getInstance() != nullptr)
+				pGameObject = game::GameManager::getInstance()->createGameObject();
 		}
 
-		if (pGameObject != NULL)
+		if (pGameObject != nullptr)
 		{
-			if (parent != NULL)
+			if (parent != nullptr)
 			{
 				pGameObject->setParent(parent);
 			}
@@ -176,7 +181,9 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 
 					game::ComponentType componentType = convertComponentType(type);
 
-					game::Component* pComponent = game::GameManager::getInstance().createComponent(componentType);
+					game::Component* pComponent = nullptr;
+					if (game::GameManager::getInstance() != nullptr)
+						pComponent = game::GameManager::getInstance()->createComponent(componentType);
 					pGameObject->attachComponent(pComponent);
 
 					switch(componentType)
@@ -184,7 +191,7 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 					case game::COMPONENT_TYPE_TRANSFORM:
 						{
 							game::Transform* pTransform = static_cast<game::Transform*>(pComponent);
-							if (pTransform == NULL)
+							if (pTransform == nullptr)
 								break;
 
 							if (config->has(ckey + ".position"))
@@ -255,7 +262,7 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 					case game::COMPONENT_TYPE_LIGHT:
 						{
 							render::Light* pLight = static_cast<render::Light*>(pComponent);
-							if (pLight == NULL)
+							if (pLight == nullptr)
 								break;
 
 							if (config->has(ckey + ".type[@value]"))
@@ -396,7 +403,7 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 					case game::COMPONENT_TYPE_CAMERA:
 						{
 							render::Camera* pCamera = static_cast<render::Camera*>(pComponent);
-							if (pCamera == NULL)
+							if (pCamera == nullptr)
 								break;
 
 							if (config->has(ckey + ".fov[@value]"))
@@ -427,7 +434,7 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 					case game::COMPONENT_TYPE_MODEL:
 						{
 							render::Model* pModel = static_cast<render::Model*>(pComponent);
-							if (pModel == NULL)
+							if (pModel == nullptr)
 								break;
 
 							if (config->has(ckey + ".resource[@value]"))
@@ -471,7 +478,7 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 			importGameObjects(config, gkey, pGameObject);
 		}
 
-		gkey = key == core::STRING_BLANK ? "game_object[" + core::intToString(++i) + "]" : key + ".game_object[" + core::intToString(++i) + "]";
+		gkey = key.empty() ? "game_object[" + core::intToString(++i) + "]" : key + ".game_object[" + core::intToString(++i) + "]";
 	}
 }
 

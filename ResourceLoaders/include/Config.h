@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <core/Config.h>
 
 // Export Section
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // If we're not including this from a client build, specify that the stuff
 // should get exported. Otherwise, import it.
 #	if defined(MINGW) || defined(__MINGW32__)

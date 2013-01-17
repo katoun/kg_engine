@@ -40,7 +40,7 @@ public:
 	Win32Window();
 	~Win32Window();
 
-	void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = NULL);
+	void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = nullptr);
 	void setFullscreen(bool fullScreen, unsigned int width, unsigned int height);
 
 	bool isVisible() const;

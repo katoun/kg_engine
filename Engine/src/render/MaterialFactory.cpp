@@ -39,8 +39,8 @@ void MaterialFactory::destroyResource(resource::Resource* resource)
 {
 	Material* material = static_cast<Material*>(resource);
 
-	assert(material != NULL);
-	if (material != NULL) delete material;
+	assert(material != nullptr);
+	if (material != nullptr) delete material;
 }
 
 

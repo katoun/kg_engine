@@ -28,8 +28,6 @@ THE SOFTWARE.
 #include <core/SystemDriver.h>
 #include <core/Log.h>
 
-//core::Log* core::System::mLog = new core::Log();
-
 namespace core
 {
 
@@ -39,14 +37,14 @@ System::System(const std::string& name)
 
 	mState = SYSTEM_STATE_UNINITIALIZED;
 
-	mSystemDriver = NULL;
+	mSystemDriver = nullptr;
 
-	Log::getInstance().logMessage(mName, "Create");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Create");
 }
 
 System::~System()
 {
-	Log::getInstance().logMessage(mName, "Destroy");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Destroy");
 }
 
 void System::initialize()
@@ -56,9 +54,9 @@ void System::initialize()
 
 	mState = SYSTEM_STATE_INITIALIZING;
 
-	Log::getInstance().logMessage(mName, "Initializing");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Initializing");
 
-	if (mSystemDriver != NULL)
+	if (mSystemDriver != nullptr)
 		mSystemDriver->initialize();
 
 	registerDefaultFactories();
@@ -66,7 +64,7 @@ void System::initialize()
 
 	mState = SYSTEM_STATE_INITIALIZED;
 
-	Log::getInstance().logMessage(mName, "Initialized");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Initialized");
 }
 
 void System::uninitialize()
@@ -76,9 +74,9 @@ void System::uninitialize()
 
 	mState = SYSTEM_STATE_UNINITIALIZING;
 
-	Log::getInstance().logMessage(mName, "Uninitializing");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Uninitializing");
 
-	if (mSystemDriver != NULL)
+	if (mSystemDriver != nullptr)
 		mSystemDriver->uninitialize();
 
 	uninitializeImpl();
@@ -86,7 +84,7 @@ void System::uninitialize()
 
 	mState = SYSTEM_STATE_UNINITIALIZED;
 
-	Log::getInstance().logMessage(mName, "Uninitialized");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Uninitialized");
 }
 
 void System::start()
@@ -96,16 +94,16 @@ void System::start()
 
 	mState = SYSTEM_STATE_STARTING;
 
-	Log::getInstance().logMessage(mName, "Starting");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Starting");
 
-	if (mSystemDriver != NULL)
+	if (mSystemDriver != nullptr)
 		mSystemDriver->start();
 
 	startImpl();
 
 	mState = SYSTEM_STATE_STARTED;
 
-	Log::getInstance().logMessage(mName, "Started");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Started");
 }
 
 void System::stop()
@@ -117,22 +115,22 @@ void System::stop()
 	{
 		mState = SYSTEM_STATE_STOPING;
 
-		Log::getInstance().logMessage(mName, "Stoping");
+		if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoping");
 
-		if (mSystemDriver != NULL)
+		if (mSystemDriver != nullptr)
 			mSystemDriver->stop();
 
 		stopImpl();
 
 		mState = SYSTEM_STATE_STOPED;
 
-		Log::getInstance().logMessage(mName, "Stoped");
+		if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoped");
 	}
 	else
 	{
 		mState = SYSTEM_STATE_STOPING;
 
-		Log::getInstance().logMessage(mName, "Stoping");
+		if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoping");
 	}
 }
 
@@ -143,21 +141,21 @@ void System::update(float elapsedTime)
 
 	mState = SYSTEM_STATE_UPDATING;
 
-	if (mSystemDriver != NULL)
+	if (mSystemDriver != nullptr)
 		mSystemDriver->update(elapsedTime);
 
 	updateImpl(elapsedTime);
 
 	if (mState == SYSTEM_STATE_STOPING)
 	{
-		if (mSystemDriver != NULL)
+		if (mSystemDriver != nullptr)
 			mSystemDriver->stop();
 
 		stopImpl();
 
 		mState = SYSTEM_STATE_STOPED;
 
-		Log::getInstance().logMessage(mName, "Stoped");
+		if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoped");
 	}
 	else
 	{
@@ -188,7 +186,7 @@ void System::setSystemDriver(SystemDriver* systemDriver)
 
 void System::removeSystemDriver()
 {
-	mSystemDriver = NULL;
+	mSystemDriver = nullptr;
 	removeSystemDriverImpl();
 }
 

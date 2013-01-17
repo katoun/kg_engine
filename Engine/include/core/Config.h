@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 //////////////////////////////////////////////////////////////////////////
 // Init Section
-#define PLATFORM_WIN32 1
+#define PLATFORM_WINDOWS 1
 #define PLATFORM_LINUX 2
 #define PLATFORM_APPLE 3
 
@@ -52,31 +52,12 @@ THE SOFTWARE.
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-// Config Section
-
-//! KG Version
-#define KG_VERSION "0.4.0"
-
-#define ENGINE_UNIT_M 1
-
-#define ENGINE_MAX_TEXTURE_COORD_SETS 6
-
-//! Define max number of texture layers allowed per pass on any card.
-#define ENGINE_MAX_TEXTURE_LAYERS 16
-
-//! Define max number of lights allowed per pass.
-#define ENGINE_MAX_SIMULTANEOUS_LIGHTS 8
-
-// Config Section
-//////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////
 // Platform Section
 #if defined(__APPLE_CC__)
 #	define ENGINE_PLATFORM PLATFORM_APPLE
 
 #elif defined(__WIN32__) || defined(_WIN32)
-#	define ENGINE_PLATFORM PLATFORM_WIN32
+#	define ENGINE_PLATFORM PLATFORM_WINDOWS
 
 #elif !defined(WIN32) && !defined(_XBOX) && !defined(OS2) && !defined(MACOSX)
 #	define ENGINE_PLATFORM PLATFORM_LINUX
@@ -114,7 +95,7 @@ THE SOFTWARE.
 
 #endif
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // Win32 compilers use _DEBUG for specifying debug builds.
 #	ifdef _DEBUG
 #		define ENGINE_COMPILER_MODE COMPILER_DEBUG
@@ -152,7 +133,7 @@ THE SOFTWARE.
 
 //////////////////////////////////////////////////////////////////////////
 // Unicode Section
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // Disable unicode support on MingW at the moment, poorly supported in stdlibc++
 // STLPORT fixes this though so allow if found
 // MinGW C++ Toolkit supports unicode and sets the define __MINGW32_TOOLKIT_UNICODE__ in _mingw.h
@@ -178,7 +159,7 @@ THE SOFTWARE.
 
 //////////////////////////////////////////////////////////////////////////
 // Export Section
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // If we're not including this from a client build, specify that the stuff
 // should get exported. Otherwise, import it.
 #	if defined(MINGW) || defined(__MINGW32__)
@@ -215,7 +196,7 @@ THE SOFTWARE.
 // Export Section
 //////////////////////////////////////////////////////////////////////////
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	if ENGINE_COMPILER == COMPILER_MSVC
 #		define ENGINE_CALLBACK				__stdcall
 #		define ENGINE_CALLCONV				__cdecl
@@ -231,7 +212,7 @@ THE SOFTWARE.
 #	define ENGINE_CALLCONV
 #endif
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	if ENGINE_COMPILER == COMPILER_MSVC
 #		define	snprintf	_snprintf
 #		if !defined(_CRT_SECURE_NO_DEPRECATE)
@@ -316,22 +297,35 @@ THE SOFTWARE.
 // Memory Tracking Section
 //////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////
-// Visual Leak Detector
-//#define VISUAL_LEAK_DETECTOR
-
-#if defined(_DEBUG) && defined(VISUAL_LEAK_DETECTOR)
-#include <vld.h>
-#endif
-
-// Memory Tracking Section
-//////////////////////////////////////////////////////////////////////////
-
 #include <wchar.h>
 #include <assert.h>
 
 #ifdef _DEBUG
 #	include <iostream>
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+// Config Section
+
+//! KG Version
+#define KG_VERSION "0.4.0"
+
+#define ENGINE_UNIT_M 1
+
+#define ENGINE_MAX_TEXTURE_COORD_SETS 6
+
+//! Define max number of texture layers allowed per pass on any card.
+#define ENGINE_MAX_TEXTURE_LAYERS 16
+
+//! Define max number of lights allowed per pass.
+#define ENGINE_MAX_SIMULTANEOUS_LIGHTS 8
+
+#define MAX_PATH_SIZE 255
+
+#define SAFE_DELETE(object_ptr) if(object_ptr != nullptr) { delete object_ptr; object_ptr = nullptr; }
+
+// Config Section
+//////////////////////////////////////////////////////////////////////////
+
 
 #endif // _CONFIG_H_

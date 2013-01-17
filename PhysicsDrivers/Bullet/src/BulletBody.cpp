@@ -44,8 +44,8 @@ namespace physics
 
 BulletBody::BulletBody(): Body()
 {
-	mRigidBody = NULL;
-	mMotionState = NULL;
+	mRigidBody = nullptr;
+	mMotionState = nullptr;
 
 	mBodyNeedsUpdate = true;
 }
@@ -56,7 +56,7 @@ void BulletBody::setEnabled(bool enabled)
 {
 	Body::setEnabled(enabled);
 
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
 		if (mEnabled)
 		{
@@ -74,9 +74,9 @@ void BulletBody::setMaterial(const std::string& filename)
 {
 	Body::setMaterial(filename);
 
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
-		if (mMaterial != NULL)
+		if (mMaterial != nullptr)
 		{
 			mRigidBody->setFriction(mMaterial->getStaticFriction());
 			mRigidBody->setRestitution(mMaterial->getRestitution());
@@ -86,14 +86,14 @@ void BulletBody::setMaterial(const std::string& filename)
 
 void BulletBody::setMaterial(Material* material)
 {
-	if (material == NULL)
+	if (material == nullptr)
 		return;
 
 	if (mMaterial != material)
 	{
 		Body::setMaterial(material);
 
-		if (mRigidBody != NULL)
+		if (mRigidBody != nullptr)
 		{
 			if (mMaterial)
 			{
@@ -108,7 +108,7 @@ void BulletBody::applyForce(const core::vector3d& force)
 {
 	Body::applyForce(force);
 
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
 		btVector3 f(mForce.X, mForce.Y, mForce.Z);
 		mRigidBody->applyCentralForce(f);
@@ -121,7 +121,7 @@ void BulletBody::applyTorque(const core::vector3d& torque)
 {
 	Body::applyTorque(torque);
 	
-	if (mRigidBody == NULL)
+	if (mRigidBody == nullptr)
 	{
 		btVector3 t(mTorque.X, mTorque.Y, mTorque.Z);
 		mRigidBody->applyTorque(t);
@@ -134,7 +134,7 @@ void BulletBody::applyLinearImpulse(const core::vector3d& linearImpulse)
 {
 	Body::applyLinearImpulse(linearImpulse);
 		
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
 		btVector3 impulse(mLinearImpulse.X, mLinearImpulse.Y, mLinearImpulse.Z);
 		mRigidBody->applyCentralImpulse(impulse);
@@ -147,7 +147,7 @@ void BulletBody::applyAngularImpulse(const core::vector3d& angularImpulse)
 {
 	Body::applyAngularImpulse(angularImpulse);
 	
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
 		btVector3 impulse(mAngularImpulse.X, mAngularImpulse.Y, mAngularImpulse.Z);
 		mRigidBody->applyTorqueImpulse(impulse);
@@ -165,10 +165,10 @@ void BulletBody::initializeImpl()
 {
 	Body::initializeImpl();
 
-	if (mBodyData == NULL)
+	if (mBodyData == nullptr)
 		return;
 
-	if (mMaterial == NULL)
+	if (mMaterial == nullptr)
 		return;
 
 	if (mBodyData->getState() != resource::RESOURCE_STATE_LOADED)
@@ -177,13 +177,15 @@ void BulletBody::initializeImpl()
 	if (mMaterial->getState() != resource::RESOURCE_STATE_LOADED)
 		return;
 
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 		return;
 	
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mBodyData->getShapes().size() == 0)
@@ -192,16 +194,16 @@ void BulletBody::initializeImpl()
 	std::list<Shape*>::const_iterator i = mBodyData->getShapes().begin();
 	btCollisionShape* pShape = addBulletShape((*i));
 
-	if (pShape == NULL)
+	if (pShape == nullptr)
 		return;
 
 	btTransform trans;
 	trans.setIdentity();
 	
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			core::vector3d position = pTransform->getAbsolutePosition();
 			core::quaternion orientation = pTransform->getAbsoluteOrientation();
@@ -306,16 +308,18 @@ void BulletBody::initializeImpl()
 
 void BulletBody::uninitializeImpl()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 	
-	if (mMotionState != NULL)
+	if (mMotionState != nullptr)
 		delete mMotionState;
 
-	if (mRigidBody != NULL)
+	if (mRigidBody != nullptr)
 	{
 		pDynamicsWorld->removeRigidBody(mRigidBody);
 		delete mRigidBody;
@@ -324,7 +328,7 @@ void BulletBody::uninitializeImpl()
 
 void BulletBody::updateImpl(float elapsedTime)
 {
-	if (mRigidBody == NULL)
+	if (mRigidBody == nullptr)
 		return;
 
 	if (mRigidBody->isActive())
@@ -335,10 +339,10 @@ void BulletBody::updateImpl(float elapsedTime)
 		btVector3 globalPos = trans.getOrigin();
 		btQuaternion globalOrient = trans.getRotation();
 
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				pTransform->setPosition(globalPos.getX(), globalPos.getY(), globalPos.getZ());
 
@@ -353,10 +357,10 @@ void BulletBody::updateImpl(float elapsedTime)
 		btTransform trans;
 		trans.setIdentity();
 		
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::quaternion orientation = pTransform->getAbsoluteOrientation();
@@ -382,8 +386,8 @@ void BulletBody::onMessageImpl(unsigned int messageID)
 
 btCollisionShape* BulletBody::addBulletShape(Shape* shape)
 {
-	if (shape == NULL)
-		return NULL;
+	if (shape == nullptr)
+		return nullptr;
 
 	switch(shape->getShapeType())
 	{
@@ -417,7 +421,7 @@ btCollisionShape* BulletBody::addBulletShape(Shape* shape)
 		break;	
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 } // end namespace game

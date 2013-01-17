@@ -54,12 +54,13 @@ TextureUnit::TextureUnit()
 
 void TextureUnit::setTexture(const std::string& filename)
 {
-	mTexture = static_cast<Texture*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_TEXTURE, filename));
+	if (resource::ResourceManager::getInstance() != nullptr)
+		mTexture = static_cast<Texture*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_TEXTURE, filename));
 }
 
 void TextureUnit::setTexture(Texture* texture)
 {
-	if (texture == NULL)
+	if (texture == nullptr)
 		return;
 
 	mTexture = texture;

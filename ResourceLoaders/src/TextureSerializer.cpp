@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include <TextureSerializer.h>
 
 #include <FreeImage.h>
-#include <Poco/Path.h>
 
 namespace resource
 {
@@ -72,19 +71,23 @@ TextureSerializer::~TextureSerializer()
 
 bool TextureSerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_TEXTURE)
 	{
-		core::Log::getInstance().logMessage("TextureSerializer", "Unable to load texture - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("TextureSerializer", "Unable to load texture - invalid resource pointer.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("TextureSerializer", "Unable to load texture - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
 	FREE_IMAGE_FORMAT fi_format = FreeImage_GetFileType(filePath.c_str());
 	FIBITMAP *fi_bitmap = FreeImage_Load(fi_format, filePath.c_str());
@@ -94,13 +97,13 @@ bool TextureSerializer::importResource(Resource* dest, const std::string& filena
 
 	if (!fi_bitmap)
 	{
-		core::Log::getInstance().logMessage("TextureSerializer", "Error decoding image.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("TextureSerializer", "Error decoding image.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
 	render::Texture* tex = static_cast<render::Texture*>(dest);
-	assert(tex != NULL);
-	if (tex == NULL)
+	assert(tex != nullptr);
+	if (tex == nullptr)
 		return false;
 
 	unsigned int width = FreeImage_GetWidth(fi_bitmap);
@@ -216,7 +219,7 @@ bool TextureSerializer::importResource(Resource* dest, const std::string& filena
 
 	tex->setBuffer(pBuffer, size);
 
-	if (pBuffer != NULL)
+	if (pBuffer != nullptr)
 		delete []pBuffer;
 
 	tex->setWidth(width);

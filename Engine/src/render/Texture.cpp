@@ -39,7 +39,7 @@ Texture::Texture(const std::string& filename, resource::Serializer* serializer):
 
 	mPixelFormat = resource::PF_UNKNOWN;
 
-	mBuffer = NULL;
+	mBuffer = nullptr;
 	mSize = 0;
 
 	mWidth = 0;
@@ -167,7 +167,7 @@ void Texture::unloadImpl()
 
 	mPixelFormat = resource::PF_UNKNOWN;
 
-	mBuffer = NULL;
+	mBuffer = nullptr;
 	mSize = 0;
 
 	mWidth = 0;

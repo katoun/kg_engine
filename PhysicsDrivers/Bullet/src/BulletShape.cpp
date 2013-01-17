@@ -35,7 +35,7 @@ namespace physics
 
 BulletPlaneShape::BulletPlaneShape(): PlaneShape()
 {
-	mPlaneShape = NULL;
+	mPlaneShape = nullptr;
 }
 
 BulletPlaneShape::~BulletPlaneShape()
@@ -64,7 +64,7 @@ btCollisionShape* BulletPlaneShape::getBulletCollisionShape()
 
 BulletSphereShape::BulletSphereShape(): SphereShape()
 {
-	mSphereShape = NULL;
+	mSphereShape = nullptr;
 }
 
 BulletSphereShape::~BulletSphereShape()
@@ -93,7 +93,7 @@ btCollisionShape* BulletSphereShape::getBulletCollisionShape()
 
 BulletBoxShape::BulletBoxShape(): BoxShape()
 {
-	mBoxShape = NULL;
+	mBoxShape = nullptr;
 }
 
 BulletBoxShape::~BulletBoxShape()

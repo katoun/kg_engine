@@ -71,8 +71,7 @@ public:
 	void setInputDriver(InputDriver* driver);
 	void removeInputDriver();
 
-	static InputManager& getInstance();
-	static InputManager* getInstancePtr();
+	static InputManager* getInstance();
 
 protected:
 

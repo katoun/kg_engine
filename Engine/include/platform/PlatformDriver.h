@@ -54,13 +54,13 @@ public:
 	//! Destructor
 	virtual ~PlatformDriver();
 
-	virtual const std::string& getCPUVendor() = 0;
+	virtual const std::string getCPUVendor() = 0;
 
-	virtual const std::string& getCPUName() = 0;
+	virtual const std::string getCPUName() = 0;
 
-	virtual const std::string& getCPUType() = 0;
+	virtual const std::string getCPUType() = 0;
 
-	virtual const std::string& getCPUBrand() = 0;
+	virtual const std::string getCPUBrand() = 0;
 
 	virtual int getCPUFrequency() = 0;
 

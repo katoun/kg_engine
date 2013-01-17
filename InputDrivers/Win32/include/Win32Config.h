@@ -37,39 +37,39 @@ THE SOFTWARE.
 #include <openinput.h>
 
 // Export Section
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // If we're not including this from a client build, specify that the stuff
 // should get exported. Otherwise, import it.
 #	if defined(MINGW) || defined(__MINGW32__)
 // Linux compilers don't have symbol import/export directives.
-#		define DINPUT_PUBLIC_EXPORT
-#		define DINPUT_TEMPLATE_EXPORT
-#		define DINPUT_PRIVATE_EXPORT
+#		define WININPUT_PUBLIC_EXPORT
+#		define WININPUT_TEMPLATE_EXPORT
+#		define WININPUT_PRIVATE_EXPORT
 #	else
-#		ifdef INPUTSYSTEM_WIN32_DLL
-#			define DINPUT_PUBLIC_EXPORT			__declspec(dllexport)
-#			define DINPUT_TEMPLATE_EXPORT			__declspec(dllexport)
+#		ifdef INPUTSYSTEM_WINDOWS_DLL
+#			define WININPUT_PUBLIC_EXPORT			__declspec(dllexport)
+#			define WININPUT_TEMPLATE_EXPORT			__declspec(dllexport)
 #		else
-#			define DINPUT_PUBLIC_EXPORT			__declspec(dllimport)
-#			define DINPUT_TEMPLATE_EXPORT
+#			define WININPUT_PUBLIC_EXPORT			__declspec(dllimport)
+#			define WININPUT_TEMPLATE_EXPORT
 #		endif
-#		define DINPUT_PRIVATE_EXPORT
+#		define WININPUT_PRIVATE_EXPORT
 #	endif
 #elif ENGINE_PLATFORM == PLATFORM_LINUX || ENGINE_PLATFORM == PLATFORM_APPLE
 // Enable GCC 4.0 symbol visibility
 #	if ENGINE_COMPILER_VERSION >= 400
-#		define DINPUT_PUBLIC_EXPORT			__attribute__ ((visibility("default")))
-#		define DINPUT_TEMPLATE_EXPORT			__attribute__ ((visibility("default")))
-#		define DINPUT_PRIVATE_EXPORT			__attribute__ ((visibility("hidden")))
+#		define WININPUT_PUBLIC_EXPORT			__attribute__ ((visibility("default")))
+#		define WININPUT_TEMPLATE_EXPORT			__attribute__ ((visibility("default")))
+#		define WININPUT_PRIVATE_EXPORT			__attribute__ ((visibility("hidden")))
 #	else
-#		define DINPUT_PUBLIC_EXPORT
-#		define DINPUT_TEMPLATE_EXPORT
-#		define DINPUT_PRIVATE_EXPORT
+#		define WININPUT_PUBLIC_EXPORT
+#		define WININPUT_TEMPLATE_EXPORT
+#		define WININPUT_PRIVATE_EXPORT
 #	endif
 #else
-#	define DINPUT_PUBLIC_EXPORT
-#	define DINPUT_TEMPLATE_EXPORT
-#	define DINPUT_PRIVATE_EXPORT
+#	define WININPUT_PUBLIC_EXPORT
+#	define WININPUT_TEMPLATE_EXPORT
+#	define WININPUT_PRIVATE_EXPORT
 #endif
 // Export Section
 

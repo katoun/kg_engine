@@ -38,25 +38,32 @@ class ENGINE_TEMPLATE_EXPORT Singleton
 {
 public:
 
-	Singleton() {}
-
-	~Singleton() {}
-
-	//! Get instance
-	static T& getInstance()
+	Singleton()
 	{
-		return ms_Singleton;
+		assert(!m_Singleton);
+#if defined( _MSC_VER ) && _MSC_VER < 1200
+		int offset = (int)(T*)1 - (int)(Singleton <T>*)(T*)1;
+		m_Singleton = (T*)((int)this + offset);
+#else
+		m_Singleton = static_cast<T*>(this);
+#endif
+	}
+
+	~Singleton()
+	{
+		assert(m_Singleton);
+		m_Singleton = nullptr;
 	}
 
 	//! Get instance
-	static T* getInstancePtr()
+	static T* getInstance()
 	{
-		return &ms_Singleton;
+		return m_Singleton;
 	}
 	
 protected:
 
-	static T& ms_Singleton;
+	static T* m_Singleton;
 };
 
 } // end namespace core

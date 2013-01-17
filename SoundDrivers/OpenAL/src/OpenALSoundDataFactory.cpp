@@ -39,8 +39,8 @@ void OpenALSoundDataFactory::destroyResource(resource::Resource* resource)
 {
 	OpenALSoundData* soundData = static_cast<OpenALSoundData*>(resource);
 
-	assert(soundData != NULL);
-	if (soundData != NULL) delete soundData;
+	assert(soundData != nullptr);
+	if (soundData != nullptr) delete soundData;
 }
 
 

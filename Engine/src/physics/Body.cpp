@@ -45,7 +45,7 @@ Body::Body(): game::Component()
 
 	mBodyType = BT_STATIC;
 
-	mBodyData = NULL;
+	mBodyData = nullptr;
 
 	mSleeping = false;
 
@@ -61,7 +61,7 @@ Body::Body(): game::Component()
 
 	mAngularVelocity = core::vector3d::ORIGIN_3D;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 
 	mEnabled = false;
 
@@ -70,17 +70,17 @@ Body::Body(): game::Component()
 	mLinearImpulse = core::vector3d::ORIGIN_3D;
 	mAngularImpulse = core::vector3d::ORIGIN_3D;
 
-	mJoint = NULL;
+	mJoint = nullptr;
 }
 
 Body::~Body()
 {
-	if (mBodyData != NULL)
+	if (mBodyData != nullptr)
 	{
 		mBodyData->removeResourceEventReceiver(this);
 	}
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
@@ -98,31 +98,34 @@ BodyType Body::getBodyType()
 
 void Body::setBodyData(const std::string& filename)
 {
-	BodyData* newBodyData = static_cast<BodyData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_BODY_DATA, filename));
-	assert(newBodyData != NULL);
-	if (newBodyData == NULL)
-		return;
-
-	if (mBodyData != NULL)
+	if (resource::ResourceManager::getInstance() != nullptr)
 	{
-		mBodyData->removeResourceEventReceiver(this);
+		BodyData* newBodyData = static_cast<BodyData*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_BODY_DATA, filename));
+		assert(newBodyData != nullptr);
+		if (newBodyData == nullptr)
+			return;
 
-		uninitialize();
+		if (mBodyData != nullptr)
+		{
+			mBodyData->removeResourceEventReceiver(this);
+
+			uninitialize();
+		}
+
+		mBodyData = newBodyData;
+		mBodyData->addResourceEventReceiver(this);
+
+		setBodyDataImpl(mBodyData);
 	}
-
-	mBodyData = newBodyData;
-	mBodyData->addResourceEventReceiver(this);
-
-	setBodyDataImpl(mBodyData);
 }
 
 void Body::setBodyData(BodyData* bodyData)
 {
-	assert(bodyData != NULL);
-	if (bodyData == NULL)
+	assert(bodyData != nullptr);
+	if (bodyData == nullptr)
 		return;
 
-	if (mBodyData != NULL)
+	if (mBodyData != nullptr)
 	{
 		mBodyData->removeResourceEventReceiver(this);
 
@@ -142,14 +145,15 @@ BodyData* Body::getBodyData() const
 
 void Body::setMaterial(const std::string& filename)
 {
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
 
-	mMaterial = PhysicsManager::getInstance().createMaterial(filename);
+	if (PhysicsManager::getInstance() != nullptr)
+		mMaterial = PhysicsManager::getInstance()->createMaterial(filename);
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->addResourceEventReceiver(this);
 	}
@@ -157,17 +161,17 @@ void Body::setMaterial(const std::string& filename)
 
 void Body::setMaterial(Material* material)
 {
-	if (material == NULL)
+	if (material == nullptr)
 		return;
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->removeResourceEventReceiver(this);
 	}
 
 	mMaterial = material;
 
-	if (mMaterial != NULL)
+	if (mMaterial != nullptr)
 	{
 		mMaterial->addResourceEventReceiver(this);
 	}
@@ -264,10 +268,10 @@ const core::vector3d Body::getAngularVelocity()
 
 void Body::applyForce(const core::vector3d& force)
 {
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			mForce = pTransform->getOrientation() * force;
 		}
@@ -281,10 +285,10 @@ void Body::applyTorque(const core::vector3d& torque)
 
 void Body::applyLinearImpulse(const core::vector3d& linearImpulse)
 {
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			mLinearImpulse = pTransform->getOrientation() * linearImpulse;
 		}
@@ -293,10 +297,10 @@ void Body::applyLinearImpulse(const core::vector3d& linearImpulse)
 
 void Body::applyAngularImpulse(const core::vector3d& angularImpulse)
 {
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			mAngularImpulse = pTransform->getOrientation() * angularImpulse;
 		}
@@ -310,15 +314,15 @@ void Body::setJoint(Joint* joint)
 
 void Body::resourceLoaded(const resource::ResourceEvent& evt)
 {
-	if (evt.source != NULL)
+	if (evt.source != nullptr)
 	{
 		if (evt.source == mBodyData)
 		{
-			if (mMaterial == NULL && mBodyData->getMaterial() != NULL)
+			if (mMaterial == nullptr && mBodyData->getMaterial() != nullptr)
 			{
 				mMaterial = mBodyData->getMaterial();
 
-				if (mMaterial != NULL)
+				if (mMaterial != nullptr)
 				{
 					mMaterial->addResourceEventReceiver(this);
 				}
@@ -339,7 +343,7 @@ void Body::resourceLoaded(const resource::ResourceEvent& evt)
 		
 			initialize();
 
-			if (mJoint != NULL)
+			if (mJoint != nullptr)
 				mJoint->initialize();
 		}
 
@@ -347,7 +351,7 @@ void Body::resourceLoaded(const resource::ResourceEvent& evt)
 		{
 			initialize();
 
-			if (mJoint != NULL)
+			if (mJoint != nullptr)
 				mJoint->initialize();
 		}
 	}
@@ -373,7 +377,7 @@ void Body::resourceUnloaded(const resource::ResourceEvent& evt)
 
 		mAngularVelocity = core::vector3d::ORIGIN_3D;
 
-		mMaterial = NULL;
+		mMaterial = nullptr;
 
 		mEnabled = false;
 

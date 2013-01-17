@@ -175,10 +175,10 @@ void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
 	case TRANSFORM_SPACE_WORLD:
 		// position is relative to parent so transform upwards
 		GameObject* pParent = mGameObject->getParent();
-		if (pParent != NULL)
+		if (pParent != nullptr)
 		{
 			Transform* pParentTransform = static_cast<Transform*>(pParent->getComponent(COMPONENT_TYPE_TRANSFORM));
-			if (pParentTransform != NULL)
+			if (pParentTransform != nullptr)
 			{
 				core::vector3d offset = pParentTransform->getAbsoluteOrientation().getInverse() * d;
 				core::matrix4 m;
@@ -252,15 +252,15 @@ void Transform::updateImpl(float elapsedTime)
 {
 	if (mTransformNeedsUpdate)
 	{
-		if (mGameObject != NULL)
+		if (mGameObject != nullptr)
 		{
 			mGameObject->sendMessage(this, MESSAGE_TRANSFORM_NEEDS_UPDATE);
 
 			GameObject* pParent = mGameObject->getParent();
-			if (pParent != NULL)
+			if (pParent != nullptr)
 			{
 				Transform* pParentTransform = static_cast<Transform*>(pParent->getComponent(COMPONENT_TYPE_TRANSFORM));
-				if (pParentTransform != NULL)
+				if (pParentTransform != nullptr)
 				{
 					// Combine orientation with that of parent
 					const core::quaternion& parentOrientation = pParentTransform->getAbsoluteOrientation();

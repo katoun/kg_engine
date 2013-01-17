@@ -36,20 +36,22 @@ namespace physics
 //Spherical Joint
 BulletSphericalJoint::BulletSphericalJoint(): SphericalJoint()
 {
-	mSphericalConstraint = NULL;
+	mSphericalConstraint = nullptr;
 }
 
 BulletSphericalJoint::BulletSphericalJoint(const std::string& name): SphericalJoint(name)
 {
-	mSphericalConstraint = NULL;
+	mSphericalConstraint = nullptr;
 }
 
 BulletSphericalJoint::~BulletSphericalJoint()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mSphericalConstraint)
@@ -65,10 +67,12 @@ void BulletSphericalJoint::initializeImpl()
 		(mActor1 && mActor1->isInitialized()) ||
 		(mActor2 && mActor2->isInitialized()))
 	{
-		btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+		btDynamicsWorld* pDynamicsWorld = nullptr;
+		if (BulletPhysicsDriver::getInstance() != nullptr)
+			pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-		assert(pDynamicsWorld != NULL);
-		if (pDynamicsWorld == NULL)
+		assert(pDynamicsWorld != nullptr);
+		if (pDynamicsWorld == nullptr)
 			return;
 
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
@@ -91,7 +95,7 @@ void BulletSphericalJoint::initializeImpl()
 
 void BulletSphericalJoint::setLimits(float coneLimit, float twistLimit)
 {
-	if (mSphericalConstraint == NULL)
+	if (mSphericalConstraint == nullptr)
 		return;
 
 	SphericalJoint::setLimits(coneLimit, twistLimit);
@@ -105,20 +109,22 @@ void BulletSphericalJoint::setLimits(float coneLimit, float twistLimit)
 //Hinge Joint
 BulletHingeJoint::BulletHingeJoint(): HingeJoint()
 {
-	mHingeConstraint = NULL;
+	mHingeConstraint = nullptr;
 }
 
 BulletHingeJoint::BulletHingeJoint(const std::string& name): HingeJoint(name)
 {
-	mHingeConstraint = NULL;
+	mHingeConstraint = nullptr;
 }
 
 BulletHingeJoint::~BulletHingeJoint()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mHingeConstraint)
@@ -134,10 +140,12 @@ void BulletHingeJoint::initializeImpl()
 		(mActor1 && mActor1->isInitialized()) ||
 		(mActor2 && mActor2->isInitialized()))
 	{
-		btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+		btDynamicsWorld* pDynamicsWorld = nullptr;
+		if (BulletPhysicsDriver::getInstance() != nullptr)
+			pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-		assert(pDynamicsWorld != NULL);
-		if (pDynamicsWorld == NULL)
+		assert(pDynamicsWorld != nullptr);
+		if (pDynamicsWorld == nullptr)
 			return;
 
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
@@ -157,7 +165,7 @@ void BulletHingeJoint::initializeImpl()
 
 void BulletHingeJoint::setLimits(float lowerLimit, float upperLimit)
 {
-	if (mHingeConstraint == NULL)
+	if (mHingeConstraint == nullptr)
 		return;
 
 	HingeJoint::setLimits(lowerLimit, upperLimit);
@@ -169,20 +177,22 @@ void BulletHingeJoint::setLimits(float lowerLimit, float upperLimit)
 //Slider Joint
 BulletSliderJoint::BulletSliderJoint(): SliderJoint()
 {
-	mSliderConstraint = NULL;
+	mSliderConstraint = nullptr;
 }
 
 BulletSliderJoint::BulletSliderJoint(const std::string& name): SliderJoint(name)
 {
-	mSliderConstraint = NULL;
+	mSliderConstraint = nullptr;
 }
 
 BulletSliderJoint::~BulletSliderJoint()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mSliderConstraint)
@@ -198,10 +208,12 @@ void BulletSliderJoint::initializeImpl()
 		(mActor1 && mActor1->isInitialized()) ||
 		(mActor2 && mActor2->isInitialized()))
 	{
-		btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+		btDynamicsWorld* pDynamicsWorld = nullptr;
+		if (BulletPhysicsDriver::getInstance() != nullptr)
+			pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-		assert(pDynamicsWorld != NULL);
-		if (pDynamicsWorld == NULL)
+		assert(pDynamicsWorld != nullptr);
+		if (pDynamicsWorld == nullptr)
 			return;
 
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
@@ -225,20 +237,22 @@ void BulletSliderJoint::initializeImpl()
 //Generic Joint
 BulletGenericJoint::BulletGenericJoint(): GenericJoint()
 {
-	mGenericConstraint = NULL;
+	mGenericConstraint = nullptr;
 }
 
 BulletGenericJoint::BulletGenericJoint(const std::string& name): GenericJoint(name)
 {
-	mGenericConstraint = NULL;
+	mGenericConstraint = nullptr;
 }
 
 BulletGenericJoint::~BulletGenericJoint()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mGenericConstraint)
@@ -254,10 +268,12 @@ void BulletGenericJoint::initializeImpl()
 		(mActor1 && mActor1->isInitialized()) ||
 		(mActor2 && mActor2->isInitialized()))
 	{
-		btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+		btDynamicsWorld* pDynamicsWorld = nullptr;
+		if (BulletPhysicsDriver::getInstance() != nullptr)
+			pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-		assert(pDynamicsWorld != NULL);
-		if (pDynamicsWorld == NULL)
+		assert(pDynamicsWorld != nullptr);
+		if (pDynamicsWorld == nullptr)
 			return;
 
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
@@ -282,20 +298,22 @@ void BulletGenericJoint::initializeImpl()
 //Rigid Joint
 BulletRigidJoint::BulletRigidJoint(): RigidJoint()
 {
-	mRigidConstraint = NULL;
+	mRigidConstraint = nullptr;
 }
 
 BulletRigidJoint::BulletRigidJoint(const std::string& name): RigidJoint(name)
 {
-	mRigidConstraint = NULL;
+	mRigidConstraint = nullptr;
 }
 
 BulletRigidJoint::~BulletRigidJoint()
 {
-	btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+	btDynamicsWorld* pDynamicsWorld = nullptr;
+	if (BulletPhysicsDriver::getInstance() != nullptr)
+		pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-	assert(pDynamicsWorld != NULL);
-	if (pDynamicsWorld == NULL)
+	assert(pDynamicsWorld != nullptr);
+	if (pDynamicsWorld == nullptr)
 		return;
 
 	if (mRigidConstraint)
@@ -311,10 +329,12 @@ void BulletRigidJoint::initializeImpl()
 		(mActor1 && mActor1->isInitialized()) ||
 		(mActor2 && mActor2->isInitialized()))
 	{
-		btDynamicsWorld* pDynamicsWorld = BulletPhysicsDriver::getInstance().getDynamicsWorld();
+		btDynamicsWorld* pDynamicsWorld = nullptr;
+		if (BulletPhysicsDriver::getInstance() != nullptr)
+			pDynamicsWorld = BulletPhysicsDriver::getInstance()->getDynamicsWorld();
 
-		assert(pDynamicsWorld != NULL);
-		if (pDynamicsWorld == NULL)
+		assert(pDynamicsWorld != nullptr);
+		if (pDynamicsWorld == nullptr)
 			return;
 
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);

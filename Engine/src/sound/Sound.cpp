@@ -41,7 +41,7 @@ Sound::Sound(): game::Component()
 {
 	mType = game::COMPONENT_TYPE_SOUND;
 
-	mSoundData = NULL;
+	mSoundData = nullptr;
 
 	mLastPosition = core::vector3d::ORIGIN_3D;
 	mVelocity = core::vector3d::ORIGIN_3D;
@@ -59,7 +59,7 @@ Sound::Sound(): game::Component()
 
 Sound::~Sound()
 {
-	if (mSoundData != NULL)
+	if (mSoundData != nullptr)
 	{
 		mSoundData->removeResourceEventReceiver(this);
 	}
@@ -69,29 +69,32 @@ Sound::~Sound()
 
 void Sound::setSoundData(const std::string& filename)
 {
-	SoundData* newSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
-	if (newSoundData == NULL)
-		return;
-
-	if (mSoundData != NULL)
+	if (resource::ResourceManager::getInstance() != nullptr)
 	{
-		mSoundData->removeResourceEventReceiver(this);
+		SoundData* newSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
+		if (newSoundData == nullptr)
+			return;
 
-		uninitialize();
+		if (mSoundData != nullptr)
+		{
+			mSoundData->removeResourceEventReceiver(this);
+
+			uninitialize();
+		}
+
+		mSoundData = newSoundData;
+		mSoundData->addResourceEventReceiver(this);
+
+		setSoundDataImpl(mSoundData);
 	}
-
-	mSoundData = newSoundData;
-	mSoundData->addResourceEventReceiver(this);
-
-	setSoundDataImpl(mSoundData);
 }
 
 void Sound::setSoundData(SoundData* soundData)
 {
-	if (soundData == NULL)
+	if (soundData == nullptr)
 		return;
 
-	if (mSoundData != NULL)
+	if (mSoundData != nullptr)
 	{
 		mSoundData->removeResourceEventReceiver(this);
 
@@ -284,10 +287,10 @@ void Sound::updateImpl(float elapsedTime)
 	if (elapsedTime == 0.0f)
 		return;
 
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
 			mVelocity = delta / elapsedTime;

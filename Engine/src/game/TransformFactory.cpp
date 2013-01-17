@@ -44,8 +44,8 @@ void TransformFactory::destroyComponent(Component* component)
 {
 	Transform* pTransform = static_cast<Transform*>(component);
 
-	assert(pTransform != NULL);
-	if (pTransform != NULL)
+	assert(pTransform != nullptr);
+	if (pTransform != nullptr)
 		delete pTransform;
 }
 

@@ -36,32 +36,39 @@ THE SOFTWARE.
 namespace render
 {
 
-RenderDriver* glRenderDriver = NULL;
-resource::ResourceFactory* glTextureFactory = NULL;
-resource::ResourceFactory* glShaderFactory = NULL;
+RenderDriver* glRenderDriver = nullptr;
+resource::ResourceFactory* glTextureFactory = nullptr;
+resource::ResourceFactory* glShaderFactory = nullptr;
 
 extern "C" void GL_PUBLIC_EXPORT loadPlugin() throw()
 {
-	glRenderDriver = GLRenderDriver::getInstancePtr();
-	RenderManager::getInstance().setSystemDriver(glRenderDriver);
+	glRenderDriver = new GLRenderDriver();
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->setSystemDriver(glRenderDriver);
 
 	glTextureFactory = new GLTextureFactory();
 	glShaderFactory = new GLShaderFactory();
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_TEXTURE, glTextureFactory);
-	resource::ResourceManager::getInstance().registerResourceFactory(resource::RESOURCE_TYPE_SHADER, glShaderFactory);
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_TEXTURE, glTextureFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SHADER, glShaderFactory);
+	}
 }
 
 extern "C" void GL_PUBLIC_EXPORT unloadPlugin()
 {
-	RenderManager::getInstance().removeSystemDriver();
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->removeSystemDriver();
 
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_TEXTURE);
-	resource::ResourceManager::getInstance().removeResourceFactory(resource::RESOURCE_TYPE_SHADER);
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_TEXTURE);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SHADER);
+	}
 
-	if (glTextureFactory != NULL)
-		delete glTextureFactory;
-	if (glShaderFactory != NULL)
-		delete glShaderFactory;
+	SAFE_DELETE(glTextureFactory);
+	SAFE_DELETE(glShaderFactory);
+	SAFE_DELETE(glRenderDriver);
 }
 
 } // end namespace render

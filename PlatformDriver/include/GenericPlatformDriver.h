@@ -38,20 +38,20 @@ namespace platform
 
 class FileSystem;
 
-class GenericPlatformDriver : public PlatformDriver
+class GenericPlatformDriver: public PlatformDriver
 {
 public:
 
 	GenericPlatformDriver();
 	~GenericPlatformDriver();
 
-	const std::string& getCPUVendor();
+	const std::string getCPUVendor();
 
-	const std::string& getCPUName();
+	const std::string getCPUName();
 
-	const std::string& getCPUType();
+	const std::string getCPUType();
 
-	const std::string& getCPUBrand();
+	const std::string getCPUBrand();
 
 	int getCPUFrequency();
 
@@ -72,11 +72,6 @@ protected:
 	CPUInfo* mCPUInfos;
 	CPUInfo* mCPUInfo;
 	int mProcessorCount;
-
-	std::string mCPUVendor;
-	std::string mCPUName;
-	std::string mCPUType;
-	std::string mCPUBrand;
 };
 
 } // end namespace platform

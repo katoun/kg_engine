@@ -257,7 +257,7 @@ void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned sh
 	if ((*i))
 	{
 		delete (*i);
-		(*i) = NULL;
+		(*i) = nullptr;
 	}
 
 	(*i) = new VertexElement(source, offset, theType, semantic, index);
@@ -274,7 +274,7 @@ const VertexElement* VertexDeclaration::findElementBySemantic(VertexElementSeman
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 std::list<VertexElement*> VertexDeclaration::findElementsBySource(unsigned short int source)
@@ -363,7 +363,7 @@ void VertexBufferBinding::unsetBinding(unsigned short int index)
 	{		
 		std::string message = "Cannot find buffer binding for index " + core::intToString(index) + ".";
 
-		core::Log::getInstance().logMessage("VertexBufferBinding", message, core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("VertexBufferBinding", message, core::LOG_LEVEL_ERROR);
 
 		return;
 	}
@@ -382,7 +382,7 @@ VertexBuffer* VertexBufferBinding::getBuffer(unsigned short int index)
 	if (i != mBindingMap.end())
 		return i->second;
 
-	return NULL;
+	return nullptr;
 }
 
 unsigned short int VertexBufferBinding::getNextIndex()

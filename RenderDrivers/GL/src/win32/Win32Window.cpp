@@ -52,7 +52,7 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	if (mHWnd)
 		destroy();
 	
-	HINSTANCE hInst = GetModuleHandle(NULL);
+	HINSTANCE hInst = GetModuleHandle(nullptr);
 
 	char name[255];
 	sprintf_s(name, "K_Game OpenGL window%d", mID);
@@ -101,15 +101,15 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		wndClass.cbClsExtra		= 0;												// No Extra Window Data
 		wndClass.cbWndExtra		= 4;												// No Extra Window Data
 		wndClass.hInstance		= hInst;											// Set The Instance
-		wndClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION/*IDI_WINLOGO*/);	// Load The Default Icon
-		wndClass.hCursor		= LoadCursor(NULL, IDC_ARROW);						// Load The Arrow Pointer
+		wndClass.hIcon			= LoadIcon(nullptr, IDI_APPLICATION/*IDI_WINLOGO*/);	// Load The Default Icon
+		wndClass.hCursor		= LoadCursor(nullptr, IDC_ARROW);						// Load The Arrow Pointer
 		wndClass.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);				// No Background Required For GL
-		wndClass.lpszMenuName	= NULL;												// We Don't Want A Menu
+		wndClass.lpszMenuName	= nullptr;												// We Don't Want A Menu
 		wndClass.lpszClassName	= TEXT(name);										// Set The Class Name
 
 		if (!RegisterClass(&wndClass))
 		{
-			MessageBox(NULL, "Failed To Register The Window Class.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+			MessageBox(nullptr, "Failed To Register The Window Class.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 			return;
 		}
 
@@ -170,7 +170,7 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		if (!mHWnd)
 		{
 			destroy();
-			MessageBox(NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+			MessageBox(nullptr, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 			return;
 		}
 
@@ -192,14 +192,14 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 
 				if(ChangeDisplaySettings(&displayDeviceMode, CDS_FULLSCREEN | CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
 				{
-					MessageBox(NULL, "ChangeDisplaySettings with user display frequency failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+					MessageBox(nullptr, "ChangeDisplaySettings with user display frequency failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 					displayDeviceMode.dmFields ^= DM_DISPLAYFREQUENCY;
 				}	
 			}
 
 			if(ChangeDisplaySettings(&displayDeviceMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
-				MessageBox(NULL, "ChangeDisplaySettings failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+				MessageBox(nullptr, "ChangeDisplaySettings failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 			}
 		}
 	}
@@ -243,14 +243,14 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	if(!iPixelFormat)
 	{
 		destroy();
-		MessageBox(NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return ;
 	}
 
 	if(!SetPixelFormat(mHDC, iPixelFormat, &pfd))
 	{
 		destroy();
-		MessageBox(NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 
@@ -258,13 +258,13 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	if(!mGlrc)
 	{
 		destroy();
-		MessageBox(NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 	if(!wglMakeCurrent(mHDC, mGlrc))
 	{
 		destroy();
-		MessageBox(NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 
@@ -299,7 +299,7 @@ void Win32Window::setFullscreen(bool fullScreen, unsigned int width, unsigned in
 				dm.dmFields |= DM_DISPLAYFREQUENCY;
 				if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN | CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
 				{
-					MessageBox(NULL, "ChangeDisplaySettings with user display frequency failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+					MessageBox(nullptr, "ChangeDisplaySettings with user display frequency failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 					dm.dmFields ^= DM_DISPLAYFREQUENCY;
 				}
 			}
@@ -319,7 +319,7 @@ void Win32Window::setFullscreen(bool fullScreen, unsigned int width, unsigned in
 
 			}
 			if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-				MessageBox(NULL, "ChangeDisplaySettings failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+				MessageBox(nullptr, "ChangeDisplaySettings failed.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 
 			SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
 			SetWindowPos(mHWnd, HWND_TOPMOST, 0, 0, width, height,
@@ -332,7 +332,7 @@ void Win32Window::setFullscreen(bool fullScreen, unsigned int width, unsigned in
 			dwStyle |= WS_OVERLAPPEDWINDOW;
 
 			// drop out of fullscreen
-			ChangeDisplaySettings(NULL, 0);
+			ChangeDisplaySettings(nullptr, 0);
 
 			// calculate overall dimensions for requested client area
 			RECT rc = { 0, 0, width, height };
@@ -370,7 +370,7 @@ void Win32Window::setActive(bool state)
 		if (!state)
 		{
 			//Restore Desktop
-			ChangeDisplaySettings(NULL, 0);
+			ChangeDisplaySettings(nullptr, 0);
 			ShowWindow(mHWnd, SW_SHOWMINNOACTIVE);
 		}
 		else
@@ -469,7 +469,7 @@ void Win32Window::windowMovedOrResized()
 		for (i = mViewports.begin(); i != mViewports.end(); ++i)
 		{
 			Viewport* pViewport = (*i);
-			if (pViewport != NULL)
+			if (pViewport != nullptr)
 			{
 				pViewport->setDimenionsChanged();
 			}
@@ -483,15 +483,15 @@ void Win32Window::destroy()
 
 	if (mGlrc)											// Do We Have A Rendering Context?
 	{
-		if (!wglMakeCurrent(NULL, NULL))
+		if (!wglMakeCurrent(nullptr, nullptr))
 		{
-			MessageBox(NULL, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			MessageBox(nullptr, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		}
 		if (!wglDeleteContext(mGlrc))
 		{
-			MessageBox(NULL, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			MessageBox(nullptr, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		}
-		mGlrc = NULL;
+		mGlrc = nullptr;
 	}
 
 	mHDC = GetDC(mHWnd);
@@ -499,24 +499,24 @@ void Win32Window::destroy()
 	{
 		if (!ReleaseDC(mHWnd, mHDC))				// Are We Able To Release The DC
 		{
-			MessageBox(NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			MessageBox(nullptr, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		}
 
-		mHDC = NULL;
+		mHDC = nullptr;
 	}
 
 	if (!mIsExternal)
 	{
 		if (mIsFullScreen)									// Are We In Fullscreen Mode?
 		{
-			ChangeDisplaySettings(NULL, 0);					// If So Switch Back To The Desktop
+			ChangeDisplaySettings(nullptr, 0);					// If So Switch Back To The Desktop
 			ShowCursor(true);								// Show Mouse Pointer
 		}
 
 		if (mHWnd && !DestroyWindow(mHWnd))					// Are We Able To Destroy The Window?
 		{
-			MessageBox(NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-			mHWnd = NULL;
+			MessageBox(nullptr, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			mHWnd = nullptr;
 		}
 	}
 	else
@@ -551,7 +551,7 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 	// look up window instance
 	Win32Window* win = (Win32Window*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	if (win == NULL)
+	if (win == nullptr)
 	{
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -623,7 +623,7 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			break;
 
 		case WM_CLOSE:
-			engine::EngineManager::getInstance().stop();
+			if (engine::EngineManager::getInstance() != nullptr) engine::EngineManager::getInstance()->stop();
 			return 0;
 
 		case WM_SYSCOMMAND:

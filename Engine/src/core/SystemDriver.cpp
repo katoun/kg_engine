@@ -34,48 +34,48 @@ SystemDriver::SystemDriver(const std::string& name)
 {
 	mName = name;
 
-	Log::getInstance().logMessage(mName, "Create");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Create");
 }
 
 SystemDriver::~SystemDriver()
 {
-	Log::getInstance().logMessage(mName, "Destroy");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Destroy");
 }
 
 void SystemDriver::initialize()
 {
-	Log::getInstance().logMessage(mName, "Initialize");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Initialize");
 
 	initializeImpl();
 
-	Log::getInstance().logMessage(mName, "Initialized");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Initialized");
 }
 
 void SystemDriver::uninitialize()
 {
-	Log::getInstance().logMessage(mName, "Uninitialize");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Uninitialize");
 
 	uninitializeImpl();
 
-	Log::getInstance().logMessage(mName, "Uninitialized");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Uninitialized");
 }
 
 void SystemDriver::start()
 {
-	Log::getInstance().logMessage(mName, "Starting");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Starting");
 
 	startImpl();
 
-	Log::getInstance().logMessage(mName, "Started");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Started");
 }
 
 void SystemDriver::stop()
 {
-	Log::getInstance().logMessage(mName, "Stoping");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoping");
 
 	stopImpl();
 
-	Log::getInstance().logMessage(mName, "Stoped");
+	if (Log::getInstance() != nullptr) Log::getInstance()->logMessage(mName, "Stoped");
 }
 
 void SystemDriver::update(float elapsedTime)

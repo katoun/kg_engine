@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include <MaterialSerializer.h>
 
 #include <Poco/AutoPtr.h>
-#include <Poco/Path.h>
 #include <Poco/Util/XMLConfiguration.h>
 
 #include <string>
@@ -68,7 +67,7 @@ render::SceneBlendFactor convertBlendFactor(const std::string& param)
 		return render::SBF_ONE_MINUS_SOURCE_ALPHA;
 	else
 	{
-		core::Log::getInstance().logMessage("MaterialSerializer", "Invalid blend factor, using default.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid blend factor, using default.", core::LOG_LEVEL_ERROR);
 
 		return render::SBF_ONE;
 	}
@@ -108,7 +107,7 @@ render::LayerBlendOperation convertBlendOperation(const std::string& param)
 		return render::LBX_DOTPRODUCT;
 	else
 	{
-		core::Log::getInstance().logMessage("MaterialSerializer", "Invalid blend function", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid blend function", core::LOG_LEVEL_ERROR);
 
 		return render::LBX_MODULATE;
 	}
@@ -128,7 +127,7 @@ render::LayerBlendSource convertBlendSource(const std::string& param)
 		return render::LBS_MANUAL;
 	else
 	{
-		core::Log::getInstance().logMessage("MaterialSerializer", "Invalid blend source", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid blend source", core::LOG_LEVEL_ERROR);
 	
 		return render::LBS_CURRENT;
 	}
@@ -216,7 +215,7 @@ render::ShaderAutoParameterType convertAutoParameterType(const std::string& para
 	else if (param == "camera_position_object_space")
 		return render::SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE;
 	{
-		core::Log::getInstance().logMessage("MaterialSerializer", "Invalid auto parameter type, using default.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid auto parameter type, using default.", core::LOG_LEVEL_ERROR);
 
 		return render::SHADER_AUTO_PARAMETER_TYPE_NONE;
 	}
@@ -232,24 +231,24 @@ MaterialSerializer::~MaterialSerializer() {}
 
 bool MaterialSerializer::importResource(Resource* dest, const std::string& filename)
 {
-	assert(dest != NULL);
-	if (dest == NULL)
+	assert(dest != nullptr);
+	if (dest == nullptr)
 		return false;
 
 	if (dest->getResourceType() != RESOURCE_TYPE_RENDER_MATERIAL && dest->getResourceType() != RESOURCE_TYPE_PHYSICS_MATERIAL)
 	{
-		core::Log::getInstance().logMessage("MaterialSerializer", "Unable to load material - invalid resource pointer.", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Unable to load material - invalid resource pointer.", core::LOG_LEVEL_ERROR);
 		return false;
 	}
 
-	render::Material* renderMaterial = NULL;
-	physics::Material* physicsMaterial = NULL;
+	render::Material* renderMaterial = nullptr;
+	physics::Material* physicsMaterial = nullptr;
 	if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
 	{
 		renderMaterial = static_cast<render::Material*>(dest);
 
-		assert(renderMaterial != NULL);
-		if (renderMaterial == NULL)
+		assert(renderMaterial != nullptr);
+		if (renderMaterial == nullptr)
 			return false;
 	}
 
@@ -257,15 +256,19 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 	{
 		physicsMaterial = static_cast<physics::Material*>(dest);
 
-		assert(physicsMaterial != NULL);
-		if (physicsMaterial == NULL)
+		assert(physicsMaterial != nullptr);
+		if (physicsMaterial == nullptr)
 			return false;
 	}
 
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Unable to load material - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(filename);
-	std::string filePath = path.toString();
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try
 	{
@@ -397,7 +400,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 			else if (type == "exp2")
 				mFogtype = render::FM_EXP2;
 			else
-				core::Log::getInstance().logMessage("MaterialSerializer", "Bad fog attribute, valid parameters are 'none', 'linear', 'exp', or 'exp2'.", core::LOG_LEVEL_ERROR);
+				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad fog attribute, valid parameters are 'none', 'linear', 'exp', or 'exp2'.", core::LOG_LEVEL_ERROR);
 
 			if (pConf->has("fog[@r]"))
 				r = (float)pConf->getDouble("fog[@r]");
@@ -433,7 +436,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 			else if (type == "phong")
 				shadingMode = render::SO_PHONG;
 			else
-				core::Log::getInstance().logMessage("MaterialSerializer", "Bad shading attribute, valid parameters are 'flat', 'gouraud' or 'phong'.", core::LOG_LEVEL_ERROR);
+				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad shading attribute, valid parameters are 'flat', 'gouraud' or 'phong'.", core::LOG_LEVEL_ERROR);
 		
 			renderMaterial->setShadingMode(shadingMode);
 		}
@@ -456,7 +459,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 				else
 				{
 					std::string message = "Bad scene_blend attribute, unrecognised parameter '" + type + "'.";
-					core::Log::getInstance().logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
+					if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
 				}
 			}
 			else if (pConf->has("scene_blend[@src]") && pConf->has("scene_blend[@dest]"))
@@ -514,7 +517,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 				if (shader.empty())
 					continue;
 			
-				render::Shader* pShader = NULL;
+				render::Shader* pShader = nullptr;
 				
 				if (key == "vertex_shader")
 				{
@@ -532,7 +535,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 					pShader = renderMaterial->getGeometryShader();
 				}
 				
-				if (pShader != NULL)
+				if (pShader != nullptr)
 				{
 					if (pConf->has(key + ".entry_point"))
 					{
@@ -708,7 +711,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 						else
 						{
 							std::string message = "Invalid param_named attribute - unrecognized parameter type " + type + " .";
-							core::Log::getInstance().logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
+							if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
 						}
 
 						nkey = key + ".param_named[" + core::intToString(++i) + "]";

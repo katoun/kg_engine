@@ -40,7 +40,8 @@ game::Component* CameraFactory::createComponent()
 {
 	Camera* pCamera = new Camera();
 
-	RenderManager::getInstance().addCamera(pCamera);
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->addCamera(pCamera);
 
 	return pCamera;
 }
@@ -48,11 +49,12 @@ game::Component* CameraFactory::createComponent()
 void CameraFactory::destroyComponent(game::Component* component)
 {
 	Camera* pCamera = static_cast<Camera*>(component);
+	
+	if (RenderManager::getInstance() != nullptr)
+		RenderManager::getInstance()->removeCamera(pCamera);
 
-	RenderManager::getInstance().removeCamera(pCamera);
-
-	assert(pCamera != NULL);
-	if (pCamera != NULL)
+	assert(pCamera != nullptr);
+	if (pCamera != nullptr)
 		delete pCamera;
 }
 

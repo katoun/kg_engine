@@ -46,20 +46,20 @@ THE SOFTWARE.
 #include <GLVertexBuffer.h>
 #include <GLIndexBuffer.h>
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #include <win32/Win32Window.h>
 #endif
 
-#define VBO_BUFFER_OFFSET(i) ((char *)NULL + (i))
+#define VBO_BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
-template<> render::GLRenderDriver& core::Singleton<render::GLRenderDriver>::ms_Singleton = render::GLRenderDriver();
+template<> render::GLRenderDriver* core::Singleton<render::GLRenderDriver>::m_Singleton = nullptr;
 
 namespace render
 {
 
 GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver")
 {
-	mCgContext = NULL;
+	mCgContext = nullptr;
 }
 
 GLRenderDriver::~GLRenderDriver() {}
@@ -67,13 +67,13 @@ GLRenderDriver::~GLRenderDriver() {}
 RenderWindow* GLRenderDriver::createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left, signed int top, bool depthBuffer, void* windowId)
 {
 	// Create the window
-	RenderWindow* pRenderWindow = NULL;
+	RenderWindow* pRenderWindow = nullptr;
 
-#if ENGINE_PLATFORM == PLATFORM_WIN32
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
 	pRenderWindow = new Win32Window();
 #endif
 
-	if (pRenderWindow != NULL)
+	if (pRenderWindow != nullptr)
 	{
 		pRenderWindow->create(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
 	}
@@ -130,13 +130,13 @@ void GLRenderDriver::beginFrame(Viewport* vp)
 
 void GLRenderDriver::renderModel(Model* model)
 {
-	if (model == NULL)
+	if (model == nullptr)
 		return;
 
-	if (model->getVertexData() == NULL || model->getIndexData() == NULL)
+	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
 		return;
 	
-	void* pBufferData = NULL;
+	void* pBufferData = nullptr;
 
 	const std::list<VertexElement*>& elems = model->getVertexData()->vertexDeclaration->getElements();
 	std::list<VertexElement*>::const_iterator i;
@@ -577,7 +577,7 @@ void GLRenderDriver::endFrame()
 
 void GLRenderDriver::setViewport(Viewport* viewport)
 {
-	if (viewport == NULL)
+	if (viewport == nullptr)
 		return;
 
 	GLsizei x, y, w, h;
@@ -1127,14 +1127,14 @@ void GLRenderDriver::setGLLight(unsigned int index, Light* light)
 
 void GLRenderDriver::setGLLightPositionDirection(unsigned int index, Light* light)
 {
-	if (light == NULL)
+	if (light == nullptr)
 		return;
 	
-	if (light->getGameObject() == NULL)
+	if (light->getGameObject() == nullptr)
 		return;
 
 	game::Transform* pTransform = static_cast<game::Transform*>(light->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-	if (pTransform != NULL)
+	if (pTransform != nullptr)
 	{
 		GLint gl_index = GL_LIGHT0 + index;
 
@@ -1167,7 +1167,7 @@ void GLRenderDriver::initializeImpl()
 
 	if (GLEW_OK != err)
 	{
-		MessageBox(NULL, "Can't Initialize GLew.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Initialize GLew.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 
@@ -1248,7 +1248,7 @@ void GLRenderDriver::initializeImpl()
 			// Get listing with full compile errors
 			message += "\n" + std::string(cgGetLastListing(mCgContext));
 		}
-		core::Log::getInstance().logMessage("RenderSystem", message, core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderSystem", message, core::LOG_LEVEL_ERROR);
 
 		return;
 	}
@@ -1280,7 +1280,7 @@ void GLRenderDriver::initializeImpl()
 
 void GLRenderDriver::uninitializeImpl()
 {
-	if (mCgContext != NULL)
+	if (mCgContext != nullptr)
 		cgDestroyContext(mCgContext);
 }
 
@@ -1368,7 +1368,7 @@ GLenum GLRenderDriver::getGLType(VertexElementType type)
 
 bool GLRenderDriver::checkForCgError(CGcontext context)
 {
-	if (context == NULL) return false;
+	if (context == nullptr) return false;
 
 	CGerror error = cgGetError();
 	if (error == CG_NO_ERROR) return false;
@@ -1387,14 +1387,9 @@ bool GLRenderDriver::checkForCgError(CGcontext context)
 	return true;
 }
 
-GLRenderDriver& GLRenderDriver::getInstance()
+GLRenderDriver* GLRenderDriver::getInstance()
 {
 	return core::Singleton<GLRenderDriver>::getInstance();
-}
-
-GLRenderDriver* GLRenderDriver::getInstancePtr()
-{
-	return core::Singleton<GLRenderDriver>::getInstancePtr();
 }
 
 } // end namespace render

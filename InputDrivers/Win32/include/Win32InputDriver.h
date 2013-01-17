@@ -37,7 +37,7 @@ namespace input
 class Win32Keyboard;
 class Win32Mouse;
 
-class Win32InputDriver : public InputDriver, public core::Singleton<Win32InputDriver>
+class Win32InputDriver: public InputDriver, public core::Singleton<Win32InputDriver>
 {
 public:
 
@@ -58,8 +58,7 @@ public:
 	bool getGrabMode();
 	void setGrabMode(bool grabbed);
 
-	static Win32InputDriver& getInstance();
-	static Win32InputDriver* getInstancePtr();
+	static Win32InputDriver* getInstance();
 
 protected:
 

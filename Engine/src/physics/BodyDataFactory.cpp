@@ -39,8 +39,8 @@ void BodyDataFactory::destroyResource(resource::Resource* resource)
 {
 	BodyData* bodyData = static_cast<BodyData*>(resource);
 
-	assert(bodyData != NULL);
-	if (bodyData != NULL) delete bodyData;
+	assert(bodyData != nullptr);
+	if (bodyData != nullptr) delete bodyData;
 }
 
 

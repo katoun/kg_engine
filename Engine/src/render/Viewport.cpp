@@ -186,7 +186,7 @@ void Viewport::update(float elapsedTime)
 {
 	if (mDimentionsNeedsUpdate)
 	{
-		if (mTarget != NULL)
+		if (mTarget != nullptr)
 		{
 			float width = (float)mTarget->getWidth();
 			float height = (float)mTarget->getHeight();
@@ -199,13 +199,14 @@ void Viewport::update(float elapsedTime)
 
 		// This allows cameras to be used to render to many viewports,
 		// which can have their own dimensions and aspect ratios.
-		if (mCamera != NULL) 
+		if (mCamera != nullptr) 
 		{
 			mCamera->setAspectRatio((float)mActualWidth / (float)mActualHeight);
 		}
 
 		//Add this viewport to the render manager to be counted as a viewport state change
-		RenderManager::getInstance().addUpdatedViewport(this);
+		if (RenderManager::getInstance() != nullptr)
+			RenderManager::getInstance()->addUpdatedViewport(this);
 
 		mDimentionsNeedsUpdate = false;
 	}

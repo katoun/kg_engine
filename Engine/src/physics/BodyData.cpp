@@ -12,7 +12,7 @@ BodyData::BodyData(const std::string& name, resource::Serializer* serializer): r
 
 	mBodyType = BT_STATIC;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 
 	mMass = 1.0f;
 	mSleeping = false;
@@ -111,8 +111,8 @@ const core::vector3d& BodyData::getAngularVelocity() const
 
 void BodyData::setMaterial(const std::string& filename)
 {
-	std::string materialname = filename;
-	mMaterial = PhysicsManager::getInstance().createMaterial(materialname);
+	if (PhysicsManager::getInstance() != nullptr)
+		mMaterial = PhysicsManager::getInstance()->createMaterial(filename);
 }
 
 Material* BodyData::getMaterial()
@@ -122,7 +122,7 @@ Material* BodyData::getMaterial()
 
 void BodyData::addShape(Shape* shape)
 {
-	if (shape == NULL)
+	if (shape == nullptr)
 		return;
 
 	mShapes.push_back(shape);
@@ -155,7 +155,7 @@ void BodyData::unloadImpl()
 	mAngularDamping = 0.0f;
 	mLinearVelocity = core::vector3d::ORIGIN_3D;
 	mAngularVelocity = core::vector3d::ORIGIN_3D;
-	mMaterial = NULL;
+	mMaterial = nullptr;
 }
 
 } // end namespace physics

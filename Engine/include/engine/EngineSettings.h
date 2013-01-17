@@ -48,6 +48,7 @@ public:
 	const bool getFullscreen();
 	const bool getVSync();
 	const std::string& getDataPath();
+	const std::string& getWorkPath();
 	void* getMainWindowId();
 
 	void setWidth(unsigned int width);
@@ -66,8 +67,7 @@ public:
 	//! \param optionsfile: The file that will contain game information.
 	void saveOptions(const std::string& optionsfile);
 
-	static EngineSettings& getInstance();
-	static EngineSettings* getInstancePtr();
+	static EngineSettings* getInstance();
 
 protected:
 
@@ -80,6 +80,7 @@ protected:
 	bool mFullscreen;
 	bool mVSync;
 	std::string mDataPath;
+	std::string mWorkPath;
 
 	void* mMainWindowId;
 };

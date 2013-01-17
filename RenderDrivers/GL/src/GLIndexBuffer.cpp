@@ -39,14 +39,14 @@ GLIndexBuffer::GLIndexBuffer(IndexType idxType, unsigned int numIndexes, resourc
 
 	if (!mBufferId)
 	{
-		core::Log::getInstance().logMessage("GLIndexBuffer", "Cannot create GL index buffer", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Cannot create GL index buffer", core::LOG_LEVEL_ERROR);
 		return;
 	}
 
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
 
 	// Initialize buffer and set usage
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(usage));
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
 }
 
 GLIndexBuffer::~GLIndexBuffer() 
@@ -72,7 +72,7 @@ void GLIndexBuffer::writeData(unsigned int offset, unsigned int length, const vo
 	{
 		if(discardWholeBuffer)
 		{
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(mUsage));
+			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 		}
 
 		// Now update the real buffer
@@ -91,15 +91,15 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 
 	if(mIsLocked)
 	{		
-		core::Log::getInstance().logMessage("GLIndexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
 
 	if(options == resource::BL_DISCARD)
 	{
-		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, GLRenderDriver::getGLUsage(mUsage));
+		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 
 		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
 
@@ -108,8 +108,8 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 	{
 		if(mUsage & resource::BU_WRITE_ONLY)
 		{
-			core::Log::getInstance().logMessage("GLIndexBuffer", "Invalid attempt to lock a write-only index buffer as read-only", core::LOG_LEVEL_ERROR);
-			return NULL;
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock a write-only index buffer as read-only", core::LOG_LEVEL_ERROR);
+			return nullptr;
 		}
 		access = GL_READ_ONLY_ARB;
 	}
@@ -119,16 +119,16 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 	}
 	else
 	{	
-		core::Log::getInstance().logMessage("GLIndexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	void* pBuffer = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, access);
 
-	if(pBuffer == NULL)
+	if(pBuffer == nullptr)
 	{		
-		core::Log::getInstance().logMessage("GLIndexBuffer", "Index Buffer: Out of memory", core::LOG_LEVEL_ERROR);
-		return NULL;
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Index Buffer: Out of memory", core::LOG_LEVEL_ERROR);
+		return nullptr;
 	}
 
 	mIsLocked = true;
@@ -142,7 +142,7 @@ void GLIndexBuffer::unlockImpl()
 
 	if(!glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB))
 	{
-		core::Log::getInstance().logMessage("GLIndexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
 		return;
 	}
 

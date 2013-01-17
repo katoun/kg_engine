@@ -58,9 +58,9 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 
 	mTextureUnits.clear();
 
-	mVertexShader = NULL;
-	mFragmentShader = NULL;
-	mGeometryShader = NULL;
+	mVertexShader = nullptr;
+	mFragmentShader = nullptr;
+	mGeometryShader = nullptr;
 }
 
 Material::~Material() {}
@@ -277,7 +277,7 @@ bool Material::getDepthWriteEnabled() const
 
 void Material::addTextureUnit(TextureUnit* tu)
 {
-	if (tu == NULL)
+	if (tu == nullptr)
 		return;
 
 	mTextureUnits.push_back(tu);
@@ -286,7 +286,7 @@ void Material::addTextureUnit(TextureUnit* tu)
 TextureUnit* Material::getTextureUnit(unsigned int index) const
 {
 	if (index >= mTextureUnits.size())
-		return NULL;
+		return nullptr;
 
 	std::list<TextureUnit*>::const_iterator i = mTextureUnits.begin();
 	for (unsigned int j=0; j<index; ++j)
@@ -324,11 +324,12 @@ void Material::setVertexShader(const std::string& filename)
 {
 	if (filename.empty())
 	{
-		mVertexShader = NULL;
+		mVertexShader = nullptr;
 	}
 	else
 	{
-		mVertexShader = RenderManager::getInstance().createShader(filename, SHADER_TYPE_VERTEX);
+		if (RenderManager::getInstance() != nullptr)
+			mVertexShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_VERTEX);
 	}
 }
 
@@ -349,11 +350,12 @@ void Material::setFragmentShader(const std::string& filename)
 {
 	if (filename.empty())
 	{
-		mFragmentShader = NULL;
+		mFragmentShader = nullptr;
 	}
 	else
 	{
-		mFragmentShader = RenderManager::getInstance().createShader(filename, SHADER_TYPE_FRAGMENT);
+		if (RenderManager::getInstance() != nullptr)
+			mFragmentShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_FRAGMENT);
 	}
 }
 
@@ -374,11 +376,12 @@ void Material::setGeometryShader(const std::string& filename)
 {
 	if (filename.empty())
 	{
-		mGeometryShader = NULL;
+		mGeometryShader = nullptr;
 	}
 	else
 	{
-		mGeometryShader = RenderManager::getInstance().createShader(filename, SHADER_TYPE_GEOMETRY);
+		if (RenderManager::getInstance() != nullptr)
+			mGeometryShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_GEOMETRY);
 	}
 }
 
@@ -397,21 +400,21 @@ Shader* Material::getGeometryShader()
 
 bool Material::isProgrammable()
 {
-	return (mVertexShader != NULL || mFragmentShader != NULL || mGeometryShader != NULL);
+	return (mVertexShader != nullptr || mFragmentShader != nullptr || mGeometryShader != nullptr);
 }
 bool Material::hasVertexShader()
 {
-	return mVertexShader != NULL;
+	return mVertexShader != nullptr;
 }
 
 bool Material::hasFragmentShader()
 {
-	return mFragmentShader != NULL;
+	return mFragmentShader != nullptr;
 }
 
 bool Material::hasGeometryShader()
 {
-	return mGeometryShader != NULL;
+	return mGeometryShader != nullptr;
 }
 
 void Material::unloadImpl()
@@ -440,9 +443,9 @@ void Material::unloadImpl()
 	mDepthCheck = true;
 	mDepthWrite = true;
 
-	mVertexShader = NULL;
-	mFragmentShader = NULL;
-	mGeometryShader = NULL;
+	mVertexShader = nullptr;
+	mFragmentShader = nullptr;
+	mGeometryShader = nullptr;
 }
 
 } //namespace render

@@ -31,7 +31,7 @@ namespace input
 
 InputEvent::InputEvent()
 {
-	mDevice = NULL;
+	mDevice = nullptr;
 }
 
 void InputEvent::set(InputDevice* source)

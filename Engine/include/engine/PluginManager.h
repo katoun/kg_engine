@@ -59,7 +59,7 @@ public:
 	void createPlugins();
 
 	//! Creates a plugin.
-	Plugin* createPlugin(const std::string& name, const std::string& filename);
+	Plugin* createPlugin(const std::string& name);
 
 	//! Load all plugins waiting for load.
 	void loadPlugins();
@@ -76,8 +76,7 @@ public:
 
 	void removeAllPlugins();
 	
-	static PluginManager& getInstance();
-	static PluginManager* getInstancePtr();
+	static PluginManager* getInstance();
 
 protected:
 

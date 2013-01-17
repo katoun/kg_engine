@@ -31,18 +31,21 @@ THE SOFTWARE.
 namespace input
 {
 
-InputDriver* win32InputDriver = NULL;
+InputDriver* win32InputDriver = nullptr;
 
-extern "C" void DINPUT_PUBLIC_EXPORT loadPlugin()
+extern "C" void WININPUT_PUBLIC_EXPORT loadPlugin()
 {
-	win32InputDriver = Win32InputDriver::getInstancePtr();
-	InputManager::getInstance().setSystemDriver(win32InputDriver);
+	win32InputDriver = new Win32InputDriver();
+	if (InputManager::getInstance() != nullptr)
+		InputManager::getInstance()->setSystemDriver(win32InputDriver);
 }
 
 /// Destroys
-extern "C" void DINPUT_PUBLIC_EXPORT unloadPlugin()
+extern "C" void WININPUT_PUBLIC_EXPORT unloadPlugin()
 {
-	InputManager::getInstance().removeSystemDriver();
+	if (InputManager::getInstance() != nullptr)
+		InputManager::getInstance()->removeSystemDriver();
+	SAFE_DELETE(win32InputDriver);
 }
 
 } // end namespace input

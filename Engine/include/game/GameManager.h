@@ -73,8 +73,8 @@ public:
 	void removeScene();
 
 	//! Creates a game object.
-	GameObject* createGameObject(GameObject* parent = NULL);
-	GameObject* createGameObject(const std::string& name, GameObject* parent = NULL);
+	GameObject* createGameObject(GameObject* parent = nullptr);
+	GameObject* createGameObject(const std::string& name, GameObject* parent = nullptr);
 
 	//! Remove a game object from the managed list.
 	void removeGameObject(GameObject* gameObject);
@@ -96,8 +96,7 @@ public:
 	void registerComponentFactory(unsigned int type, ComponentFactory* factory);
 	void removeComponentFactory(unsigned int type);
 
-	static GameManager& getInstance();
-	static GameManager* getInstancePtr();
+	static GameManager* getInstance();
 
 protected:
 

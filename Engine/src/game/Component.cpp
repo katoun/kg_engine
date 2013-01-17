@@ -43,12 +43,12 @@ Component::Component()
 
 	mInitialized = false;
 
-	mGameObject = NULL;
+	mGameObject = nullptr;
 }
 
 Component::~Component()
 {
-	if (mGameObject != NULL)
+	if (mGameObject != nullptr)
 	{
 		mGameObject->detachComponent(this);
 	}
@@ -95,7 +95,7 @@ bool Component::isInitialized() const
 
 void Component::onAttach(GameObject* gameObject)
 {
-	if (gameObject == NULL)
+	if (gameObject == nullptr)
 		return;
 
 	mGameObject = gameObject;
@@ -103,7 +103,7 @@ void Component::onAttach(GameObject* gameObject)
 
 void Component::onDetach()
 {
-	mGameObject = NULL;
+	mGameObject = nullptr;
 }
 
 void Component::onMessage(unsigned int messageID)

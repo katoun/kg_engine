@@ -123,8 +123,7 @@ public:
 	void setDefaultSoundFactory(game::ComponentFactory* factory);
 	void removeDefaultSoundFactory();
 
-	static SoundManager& getInstance();
-	static SoundManager* getInstancePtr();
+	static SoundManager* getInstance();
 
 protected:
 

@@ -40,8 +40,8 @@ Joint::Joint(): engine::Object("Joint_" + core::intToString(msNextGeneratedJoint
 	mObjectType = engine::OT_JOINT;
 	mJointType = JOINT_TYPE_UNDEFINED;
 
-	mActor1 = NULL;
-	mActor2 = NULL;
+	mActor1 = nullptr;
+	mActor2 = nullptr;
 
 	mAnchor = core::vector3d::ORIGIN_3D;
 	mAxis = core::vector3d::NEGATIVE_UNIT_Y;
@@ -52,8 +52,8 @@ Joint::Joint(const std::string& name): engine::Object(name)
 	mObjectType = engine::OT_JOINT;
 	mJointType = JOINT_TYPE_UNDEFINED;
 
-	mActor1 = NULL;
-	mActor2 = NULL;
+	mActor1 = nullptr;
+	mActor2 = nullptr;
 
 	mAnchor = core::vector3d::ORIGIN_3D;
 	mAxis = core::vector3d::NEGATIVE_UNIT_Y;
@@ -61,10 +61,10 @@ Joint::Joint(const std::string& name): engine::Object(name)
 
 Joint::~Joint()
 {
-	if (mActor1 != NULL)
-		mActor1->setJoint(NULL);
-	if (mActor2 != NULL)
-		mActor2->setJoint(NULL);
+	if (mActor1 != nullptr)
+		mActor1->setJoint(nullptr);
+	if (mActor2 != nullptr)
+		mActor2->setJoint(nullptr);
 }
 
 void Joint::setActors(Body* actor1, Body* actor2)
@@ -72,9 +72,9 @@ void Joint::setActors(Body* actor1, Body* actor2)
 	mActor1 = actor1;
 	mActor2 = actor2;
 
-	if (mActor1 != NULL)
+	if (mActor1 != nullptr)
 		mActor1->setJoint(this);
-	if (mActor2 != NULL)
+	if (mActor2 != nullptr)
 		mActor2->setJoint(this);
 }
 

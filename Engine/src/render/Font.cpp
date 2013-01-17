@@ -35,20 +35,20 @@ Font::Font(const std::string& name, resource::Serializer* serializer): resource:
 {
 	mResourceType = resource::RESOURCE_TYPE_FONT;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 }
 
 Font::~Font() {}
 
 void Font::setMaterial(const std::string& filename)
 {
-	std::string materialname = filename;
-	mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, materialname));
+	if (resource::ResourceManager::getInstance() != nullptr)
+		mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, filename));
 }
 
 void Font::setMaterial(Material* material)
 {
-	if (material == NULL)
+	if (material == nullptr)
 		return;
 
 	mMaterial = material;

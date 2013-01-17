@@ -32,8 +32,11 @@ namespace render
 
 VertexData::VertexData()
 {
-	vertexBufferBinding = RenderManager::getInstance().createVertexBufferBinding();
-	vertexDeclaration = RenderManager::getInstance().createVertexDeclaration();
+	if (RenderManager::getInstance() != nullptr)
+	{
+		vertexBufferBinding = RenderManager::getInstance()->createVertexBufferBinding();
+		vertexDeclaration = RenderManager::getInstance()->createVertexDeclaration();
+	}
 
 	vertexCount = 0;
 	vertexStart = 0;
@@ -41,8 +44,11 @@ VertexData::VertexData()
 
 VertexData::~VertexData()
 {
-	RenderManager::getInstance().removeVertexBufferBinding(vertexBufferBinding);
-	RenderManager::getInstance().removeVertexDeclaration(vertexDeclaration);
+	if (RenderManager::getInstance() != nullptr)
+	{
+		RenderManager::getInstance()->removeVertexBufferBinding(vertexBufferBinding);
+		RenderManager::getInstance()->removeVertexDeclaration(vertexDeclaration);
+	}
 }
 
 IndexData::IndexData()

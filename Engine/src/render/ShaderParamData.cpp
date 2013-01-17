@@ -79,10 +79,10 @@ ShaderParamData::ShaderParamData()
 	mCameraPositionDirty = true;
 	mCameraPositionObjectSpaceDirty = true;
 
-	mCurrentModel = NULL;
-	mCurrentCamera = NULL;
-	mCurrentLight = NULL;
-	mCurrentViewport = NULL;
+	mCurrentModel = nullptr;
+	mCurrentCamera = nullptr;
+	mCurrentLight = nullptr;
+	mCurrentViewport = nullptr;
 
 	mAmbientLightColor = Color::Black;
 }
@@ -149,10 +149,10 @@ const core::vector3d& ShaderParamData::getCameraPosition()
 {
 	if(mCameraPositionDirty)
 	{
-		if (mCurrentCamera != NULL && mCurrentCamera->getGameObject() != NULL)
+		if (mCurrentCamera != nullptr && mCurrentCamera->getGameObject() != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mCurrentCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				mCameraPosition = pTransform->getAbsolutePosition();
 			}
@@ -167,10 +167,10 @@ const core::vector3d& ShaderParamData::getCameraPositionObjectSpace()
 {
 	if(mCameraPositionObjectSpaceDirty)
 	{
-		if (mCurrentCamera != NULL && mCurrentCamera->getGameObject() != NULL)
+		if (mCurrentCamera != nullptr && mCurrentCamera->getGameObject() != nullptr)
 		{
 			game::Transform* pTransform = static_cast<game::Transform*>(mCurrentCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != NULL)
+			if (pTransform != nullptr)
 			{
 				mCameraPositionObjectSpace = pTransform->getAbsolutePosition();
 				getInverseWorldMatrix().transformVector(mCameraPositionObjectSpace);
@@ -184,10 +184,10 @@ const core::vector3d& ShaderParamData::getCameraPositionObjectSpace()
 
 const core::vector3d& ShaderParamData::getCurrentLightPosition()
 {
-	if (mCurrentLight != NULL && mCurrentLight->getGameObject() != NULL)
+	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			mLightPosition = pTransform->getAbsolutePosition();
 		}
@@ -226,13 +226,13 @@ const core::vector3d& ShaderParamData::getCurrentLightPositionViewSpace()
 
 const core::vector3d& ShaderParamData::getCurrentLightDirection()
 {
-	if (mCurrentLight != NULL)
+	if (mCurrentLight != nullptr)
 		
 
-	if (mCurrentLight != NULL && mCurrentLight->getGameObject() != NULL)
+	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
 	{
 		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != NULL)
+		if (pTransform != nullptr)
 		{
 			mLightDirection = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
 		}
@@ -305,7 +305,7 @@ const core::matrix4& ShaderParamData::getWorldMatrix()
 {
 	if (mWorldMatrixDirty)
 	{
-		if (mCurrentModel != NULL)
+		if (mCurrentModel != nullptr)
 		{
 			mWorldMatrix = mCurrentModel->getWorldMatrix();
 		}
@@ -319,7 +319,7 @@ const core::matrix4& ShaderParamData::getViewMatrix()
 {
 	 if (mViewMatrixDirty)
 	 {
-		if (mCurrentCamera != NULL)
+		if (mCurrentCamera != nullptr)
 		{
 			mViewMatrix = mCurrentCamera->getViewMatrix();
 		}
@@ -333,7 +333,7 @@ const core::matrix4& ShaderParamData::getProjectionMatrix()
 {
 	if (mProjMatrixDirty)
 	{
-		if (mCurrentCamera != NULL)
+		if (mCurrentCamera != nullptr)
 		{
 			mProjectionMatrix = mCurrentCamera->getProjectionMatrixRS();
 		}

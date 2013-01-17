@@ -34,15 +34,15 @@ namespace render
 
 CGShaderParameter::CGShaderParameter(): ShaderParameter()
 {
-	cgParameter = NULL;
+	cgParameter = nullptr;
 }
 
 GLShader::GLShader(const std::string& name, resource::Serializer* serializer): Shader(name, serializer)
 {
-	mCgContext = NULL;
-	mCgProgram = NULL;
+	mCgContext = nullptr;
+	mCgProgram = nullptr;
 	mSelectedCgProfile = CG_PROFILE_UNKNOWN;
-	mCgArguments = NULL;
+	mCgArguments = nullptr;
 }
 
 GLShader::~GLShader() {}
@@ -126,11 +126,13 @@ bool GLShader::loadImpl()
 	if (!Shader::loadImpl())
 		return false;
 
-	//if (GLRenderDriver::getInstance() == NULL)
+	//if (GLRenderDriver::getInstance() == nullptr)
 	//	return false;
 
-	mCgContext = GLRenderDriver::getInstance().getCGContext();
-	if (mCgContext == NULL)
+	mCgContext = nullptr;
+	if (GLRenderDriver::getInstance() != nullptr)
+		mCgContext = GLRenderDriver::getInstance()->getCGContext();
+	if (mCgContext == nullptr)
 		return false;
 	
 	mSelectedCgProfile = cgGLGetLatestProfile(GLRenderDriver::getCGGLType(mShaderType));
@@ -227,7 +229,7 @@ bool GLShader::loadImpl()
 
 void GLShader::unloadImpl()
 {
-	if (mCgProgram != NULL)
+	if (mCgProgram != nullptr)
 		cgDestroyProgram(mCgProgram);
 
 	Shader::unloadImpl();
@@ -240,7 +242,7 @@ ShaderParameter* GLShader::createParameterImpl(const std::string& name)
 	if (mState == resource::RESOURCE_STATE_LOADED)
 	{
 		cgParam->cgParameter = cgGetNamedParameter(mCgProgram, name.c_str());
-		if (GLRenderDriver::checkForCgError(mCgContext)) return NULL;
+		if (GLRenderDriver::checkForCgError(mCgContext)) return nullptr;
 	}
 
 	return cgParam;

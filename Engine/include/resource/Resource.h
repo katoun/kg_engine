@@ -54,7 +54,7 @@ class ENGINE_PUBLIC_EXPORT Resource
 {
 public:
     
-	Resource(const std::string& filename, Serializer* serializer = NULL);
+	Resource(const std::string& filename, Serializer* serializer = nullptr);
 	virtual ~Resource();
 
 	//! Returns the id of the resource.
@@ -76,7 +76,7 @@ public:
 
 	bool reload();
 
-	bool save(const std::string& filename = core::STRING_BLANK);
+	bool save(const std::string& filename = "");
 
 	void updateSize();
 

@@ -31,11 +31,18 @@ THE SOFTWARE.
 #include <core/Singleton.h>
 #include <core/System.h>
 
-#include <Poco/Timestamp.h>
-
 #include <string>
 #include <list>
 #include <map>
+
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#include <windows.h>
+#endif
+
+namespace core
+{
+class Log;
+}
 
 namespace platform
 {
@@ -67,6 +74,11 @@ namespace physics
 class PhysicsManager;
 }
 
+namespace game
+{
+class GameManager;
+}
+
 namespace engine
 {
 
@@ -92,8 +104,7 @@ public:
 
 	void setOptionsFile(const std::string& optionsFile);
 
-	static EngineManager& getInstance();
-	static EngineManager* getInstancePtr();
+	static EngineManager* getInstance();
 
 protected:
 
@@ -111,9 +122,24 @@ protected:
 	static EngineEvent* mEngineEvent;
 	static std::list<EngineEventReceiver*> mEngineEventReceivers;
 
-	Poco::Timestamp mLastUpdateStartTimeStamp;
-	Poco::Timestamp mLastUpdateEndTimeStamp;
-	Poco::Timestamp mCurrentTimeStamp;
+	unsigned long mLastUpdateStartTime;
+	unsigned long mLastUpdateEndTime;
+
+	core::Log*					mLog;
+	EngineSettings*				mSettings;
+
+	PluginManager*				mPluginManager;
+	platform::PlatformManager*	mPlatformManager;
+	input::InputManager*		mInputManager;
+	resource::ResourceManager*	mResourceManager;
+	render::RenderManager*		mRenderManager;
+	sound::SoundManager*		mSoundManager;
+	physics::PhysicsManager*	mPhysicsManager;
+	game::GameManager*			mGameManager;
+
+	void resetTimer();
+
+	unsigned long getMilliseconds();
 
 	void fireEngineInitialized();
 
@@ -132,6 +158,15 @@ protected:
 	
 	//! Method saves a game configuration file with all the instantiated options.
 	void saveOptions();
+
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+	DWORD			mStartTick;
+	LONGLONG		mLastTime;
+	LARGE_INTEGER	mStartTime;
+	LARGE_INTEGER	mFrequency;
+
+	DWORD_PTR		mTimerMask;
+#endif
 };
 
 } // end namespace engine

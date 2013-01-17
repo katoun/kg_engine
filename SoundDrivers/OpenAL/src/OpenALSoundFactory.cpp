@@ -34,8 +34,9 @@ namespace sound
 game::Component* OpenALSoundFactory::createComponent()
 {
 	OpenALSound* pSound = new OpenALSound();
-
-	SoundManager::getInstance().addSound(pSound);
+	
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->addSound(pSound);
 
 	return pSound;
 }
@@ -44,10 +45,11 @@ void OpenALSoundFactory::destroyComponent(game::Component* component)
 {
 	OpenALSound* pSound = static_cast<OpenALSound*>(component);
 
-	SoundManager::getInstance().removeSound(pSound);
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->removeSound(pSound);
 
-	assert(pSound != NULL);
-	if (pSound != NULL)
+	assert(pSound != nullptr);
+	if (pSound != nullptr)
 		delete pSound;
 }
 

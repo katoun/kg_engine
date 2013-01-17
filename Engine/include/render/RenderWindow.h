@@ -66,7 +66,7 @@ public:
 	//! \param top: The y-position of the window. Ignored if fullScreen = true.
 	//! \param depthBuffer: Specify true to include a depth-buffer.
 	//! \param windowId: Specify the windowID of the external window if needed.
-	virtual void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = NULL) = 0;
+	virtual void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = nullptr) = 0;
 
 	//! Retrieve information about the render window.
 	virtual unsigned int getTop() const;

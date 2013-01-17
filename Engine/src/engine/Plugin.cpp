@@ -28,17 +28,52 @@ THE SOFTWARE.
 #include <core/LogDefines.h>
 #include <core/System.h>
 #include <engine/Plugin.h>
+#include <engine/EngineSettings.h>
 
-
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+#elif GAME_PLATFORM == PLATFORM_APPLE
+#	include "macPlugins.h"
+#endif
 
 namespace engine
 {
 
-Plugin::Plugin(const std::string& name, const std::string& filename)
+Plugin::Plugin(const std::string& name)
 {
 	mName = name;
 
-	mFileName = filename;
+	mFileName = name;
+
+#if ENGINE_PLATFORM == PLATFORM_LINUX
+	// dlopen() does not add .so to the filename, like windows does for .dll
+#if defined(_DEBUG)
+	mFileName += "d.so";
+#else
+	mFileName += ".so";
+#endif
+#elif ENGINE_PLATFORM == PLATFORM_APPLE
+	// dlopen() does not add .dylib to the filename, like windows does for .dll
+#if defined(_DEBUG)
+	mFileName += "d.dylib";
+#else
+	mFileName += ".dylib";
+#endif
+#elif ENGINE_PLATFORM == PLATFORM_WINDOWS
+	// Although LoadLibraryEx will add .dll itself when you only specify the library name,
+	// if you include a relative path then it does not. So, add it to be sure.
+#if defined(_DEBUG)
+	mFileName += "d.dll";
+#else
+	mFileName += ".dll";
+#endif	
+#endif
+
+	if (EngineSettings::getInstance() != nullptr)
+		mFileName = EngineSettings::getInstance()->getWorkPath() + "/" + mFileName;
+
+	m_hInst = nullptr;
 }
 
 Plugin::~Plugin() {}
@@ -48,37 +83,26 @@ const std::string& Plugin::getName() const
 	return mName;
 }
 
-const std::string& Plugin::getFilename() const
-{
-	return mFileName;
-}
-
 bool Plugin::load()
-{	
-	std::string filename = mFileName;
-	filename.append(Poco::SharedLibrary::suffix());
+{
+	m_hInst = (DYNLIB_HANDLE)DYNLIB_LOAD(mFileName.c_str());
 
-	mSharedLibrary.load(filename);
-
-	//if (!m_hInst)
-	if (!mSharedLibrary.isLoaded())
+	if (!m_hInst)
 	{
 		DWORD err = GetLastError();
-		
+
 		std::string message = mName;
 		message += " could not load.";
 
-		core::Log::getInstance().logMessage("Plugin", message, core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Plugin", message, core::LOG_LEVEL_ERROR);
 
 		return false;
 	}
 
 	// Call startup	
-	DLL_LOAD_PLUGIN pLoadFunc = NULL;
-	if (mSharedLibrary.hasSymbol("loadPlugin"))
-		pLoadFunc = (DLL_LOAD_PLUGIN)mSharedLibrary.getSymbol("loadPlugin");
+	DLL_LOAD_PLUGIN pLoadFunc = (DLL_LOAD_PLUGIN)getSymbol("loadPlugin");
 
-	if (pLoadFunc != NULL)
+	if (pLoadFunc != nullptr)
 		pLoadFunc();
 
 	return true;
@@ -87,21 +111,17 @@ bool Plugin::load()
 void Plugin::unload()
 {
 	// Call shutdown
-	DLL_UNLOAD_PLUGIN pUnloadFunc = NULL;
-	if (mSharedLibrary.hasSymbol("unloadPlugin"))
-		pUnloadFunc = (DLL_UNLOAD_PLUGIN)mSharedLibrary.getSymbol("unloadPlugin");
+	DLL_UNLOAD_PLUGIN pUnloadFunc = (DLL_UNLOAD_PLUGIN)getSymbol("unloadPlugin");
 
-	if (pUnloadFunc != NULL)
+	if (pUnloadFunc != nullptr)
 		pUnloadFunc();
 	
-	mSharedLibrary.unload();
-
-	if (mSharedLibrary.isLoaded())
+	if (DYNLIB_UNLOAD(m_hInst))
 	{
 		std::string message = mName;
 		message += " could not unload.";
 
-		core::Log::getInstance().logMessage("Plugin", message, core::LOG_LEVEL_ERROR);
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Plugin", message, core::LOG_LEVEL_ERROR);
 
 		return;
 	}
@@ -111,6 +131,44 @@ bool Plugin::reload()
 {
 	unload();
 	return load();
+}
+
+bool Plugin::isLoaded() const
+{
+	return false;
+}
+
+void* Plugin::getSymbol(const std::string& strName) const throw()
+{
+	return (void*)DYNLIB_GETSYM(m_hInst, strName.c_str());
+}
+
+std::string Plugin::dynlibError()
+{
+#if GAME_PLATFORM == PLATFORM_WINDOWS
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMsgBuf,
+		0,
+		NULL
+	);
+	std::string ret = (c8*)lpMsgBuf;
+	// Free the buffer.
+	LocalFree(lpMsgBuf);
+	return ret;
+#elif GAME_PLATFORM == PLATFORM_LINUX
+	return std::string(dlerror());
+#elif GAME_PLATFORM == PLATFORM_APPLE
+	return std::string(mac_errorBundle());
+#else
+	return std::string("");
+#endif
 }
 
 } // end namespace engine

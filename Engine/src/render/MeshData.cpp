@@ -39,12 +39,12 @@ MeshData::MeshData(const std::string& name, resource::Serializer* serializer): r
 {
 	mResourceType = resource::RESOURCE_TYPE_MESH_DATA;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 
-	mVertexData = NULL;
-	mIndexData = NULL;
+	mVertexData = nullptr;
+	mIndexData = nullptr;
 	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 
@@ -101,8 +101,8 @@ resource::BufferUsage& MeshData::getIndexBufferUsage()
 
 void MeshData::setMaterial(const std::string& filename)
 {
-	std::string materialname = filename;
-	mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance().createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, materialname));
+	if (resource::ResourceManager::getInstance() != nullptr)
+		mMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, filename));
 }
 
 Material* MeshData::getMaterial() const
@@ -138,12 +138,12 @@ void MeshData::unloadImpl()
 	if (mIndexData)
 		delete mIndexData;
 
-	mMaterial = NULL;
+	mMaterial = nullptr;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 
-	mVertexData = NULL;
-	mIndexData = NULL;
+	mVertexData = nullptr;
+	mIndexData = nullptr;
 	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 

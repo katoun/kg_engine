@@ -32,10 +32,7 @@ THE SOFTWARE.
 #include <render/Texture.h>
 #include <resource/ResourceManager.h>
 
-#include <Poco/Path.h>
-#include <Poco/File.h>
-#include <Poco/FileStream.h>
-
+#include <stdio.h>
 #include <limits>
 #include <iostream>
 #include <fstream>
@@ -350,7 +347,7 @@ void Shader::setAutoParameter(const std::string& name, ShaderAutoParameterType t
 	{
 		if (isFloat(param->paramType) != isFloat(type) || getElementCount(param->paramType) != getElementCount(type))
 		{
-			core::Log::getInstance().logMessage("Shader", "Invalid auto parameter type or element count found.", core::LOG_LEVEL_ERROR);
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid auto parameter type or element count found.", core::LOG_LEVEL_ERROR);
 
 			return;
 		}
@@ -378,28 +375,32 @@ void Shader::setAutoParameter(const std::string& name, ShaderAutoParameterType t
 
 bool Shader::loadImpl()
 {
-	Poco::Path path(resource::ResourceManager::getInstance().getDataPath());
-	path.append(mFilename);
-	std::string filePath = path.toString();
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
 	
-	Poco::FileInputStream fileInputStream(filePath);
-	if (!fileInputStream.good())
-		return false;
+		FILE* pFile = fopen(filePath.c_str(), "rb");
+	
+		if (pFile != nullptr)
+		{
+			fseek(pFile, 0, SEEK_END);
+			mSize = (unsigned int)ftell(pFile);
 
-	// get length of file:
-	fileInputStream.seekg(0, std::ios::end);
-	unsigned int length = (unsigned int)fileInputStream.tellg();
-	fileInputStream.seekg(0, std::ios::beg);
+			fseek(pFile, 0, SEEK_SET);
 
-	char* pBuffer = new char[length];
-	fileInputStream.read(pBuffer, length);
-	fileInputStream.close();
+			char* pBuffer = new char[mSize];
+			fread(pBuffer, mSize, 1, pFile);
 
-	mSource.insert(0, (const char*)pBuffer, length);
+			mSource.insert(0, (const char*)pBuffer, mSize);
+			delete []pBuffer;
 
-	delete []pBuffer;
+			fclose(pFile);
 
-	return true;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Shader::unloadImpl() {}
@@ -423,7 +424,7 @@ ShaderParameter* Shader::createParameterImpl(const std::string& name)
 ShaderParameter* Shader::findParameter(const std::string& name)
 {
 	hashmap<std::string, ShaderParameter*>::const_iterator i = mParameters.find(name);
-	if (i == mParameters.end()) return NULL;
+	if (i == mParameters.end()) return nullptr;
 
 	return i->second;
 }
@@ -469,7 +470,7 @@ void Shader::removeAllParameters()
 	for (i = mParameters.begin(); i != mParameters.end(); ++i)
 	{
 		delete i->second;
-		i->second = NULL;
+		i->second = nullptr;
 	}
 
 	mParameters.clear();

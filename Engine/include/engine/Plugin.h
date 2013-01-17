@@ -29,9 +29,29 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 
-#include <Poco/SharedLibrary.h>
-
 #include <string>
+
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#    define DYNLIB_HANDLE hInstance
+#    define DYNLIB_LOAD( a ) LoadLibraryEx( a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH )
+#    define DYNLIB_GETSYM( a, b ) GetProcAddress( a, b )
+#    define DYNLIB_UNLOAD( a ) !FreeLibrary( a )
+
+struct HINSTANCE__;
+typedef struct HINSTANCE__* hInstance;
+
+#elif ENGINE_PLATFORM == PLATFORM_LINUX
+#    define DYNLIB_HANDLE void*
+#    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY | RTLD_GLOBAL)
+#    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
+#    define DYNLIB_UNLOAD( a ) dlclose( a )
+
+#elif ENGINE_PLATFORM == PLATFORM_APPLE
+#    define DYNLIB_HANDLE CFBundleRef
+#    define DYNLIB_LOAD( a ) mac_loadExeBundle( a )
+#    define DYNLIB_GETSYM( a, b ) mac_getBundleSym( a, b )
+#    define DYNLIB_UNLOAD( a ) mac_unloadExeBundle( a )
+#endif
 
 namespace engine
 {
@@ -46,7 +66,7 @@ class ENGINE_PUBLIC_EXPORT Plugin
 {
 public:
 	//! Default constructor.
-	Plugin(const std::string& name, const std::string& filename);
+	Plugin(const std::string& name);
 
 	//! Default destructor.
 	~Plugin();
@@ -54,15 +74,21 @@ public:
 	//! Get the name of the plugin.
 	const std::string& getName() const;
 
-	//! Get the file name of the plugin.
-	const std::string& getFilename() const;
-
 	//! Load the plugin.
 	bool load();
 	//! Unload the plugin.
 	void unload();
 	//! Reload the plugin.
 	bool reload();
+
+	bool isLoaded() const;
+
+	//! Returns the address of the given symbol from the loaded library.
+	//! \param strName: The name of the symbol to search for
+	//! \return If the function succeeds, the returned value is a handle to
+	//! the symbol.
+	//! If the function fails, the returned value is <b>NULL</b>.
+	void* getSymbol(const std::string& name) const throw();
 	
 protected:
 
@@ -73,7 +99,8 @@ protected:
 	//! Gets the last loading error
 	std::string dynlibError();
 
-	Poco::SharedLibrary mSharedLibrary;
+	// Handle to the loaded library.
+	DYNLIB_HANDLE m_hInst;
 };
 
 } // end namespace engine

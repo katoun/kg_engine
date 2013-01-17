@@ -61,7 +61,7 @@ struct CollisionData
 	std::vector<CollisionPoint*> collisionPoints;
 };
 
-class BulletPhysicsDriver : public PhysicsDriver, public core::Singleton<BulletPhysicsDriver>
+class BulletPhysicsDriver: public PhysicsDriver, public core::Singleton<BulletPhysicsDriver>
 {
 public:
 	// Default constructor / destructor
@@ -79,8 +79,7 @@ public:
 
 	std::vector<short> mCollisionMasks;
 
-	static BulletPhysicsDriver& getInstance();
-	static BulletPhysicsDriver* getInstancePtr();
+	static BulletPhysicsDriver* getInstance();
 
 protected:
 
