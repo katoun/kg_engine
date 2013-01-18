@@ -394,7 +394,7 @@ void Win32Window::setActive(bool state)
 	}
 }
 
-void Win32Window::reposition(signed int top, signed int left)
+void Win32Window::reposition(int top, int left)
 {	
 	if (mHWnd && !mIsFullScreen)
 	{

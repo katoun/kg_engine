@@ -38,7 +38,7 @@ class ENGINE_PUBLIC_EXPORT position2d
 public:
 
 	position2d();
-	position2d(signed int x, signed int y);
+	position2d(int x, int y);
 	position2d(const position2d& other);
 
 	inline position2d& operator=(const position2d& other);
@@ -61,7 +61,7 @@ public:
 	//! ORIGIN_2D is a const position2d that defines the 2d origin position for the 2d space
 	static const position2d ORIGIN_2D;
 
-	signed int X, Y;
+	int X, Y;
 };
 
 } // end namespace core

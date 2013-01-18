@@ -55,19 +55,19 @@ protected:
 
 	void enumerate();
 
-	signed int axisX, axisY, axisZ, axisRX, axisRY, axisRZ;
-	signed int axisVX, axisVY, axisVZ, axisVRX, axisVRY, axisVRZ;
-	signed int axisAX, axisAY, axisAZ, axisARX, axisARY, axisARZ;
-	signed int axisFX, axisFY, axisFZ, axisFRX, axisFRY, axisFRZ;
+	int axisX, axisY, axisZ, axisRX, axisRY, axisRZ;
+	int axisVX, axisVY, axisVZ, axisVRX, axisVRY, axisVRZ;
+	int axisAX, axisAY, axisAZ, axisARX, axisARY, axisARZ;
+	int axisFX, axisFY, axisFZ, axisFRX, axisFRY, axisFRZ;
 
-	signed int sliderX, sliderY;
-	signed int vsliderX, vsliderY;
-	signed int	asliderX, asliderY;
-	signed int fsliderX, fsliderY;
+	int sliderX, sliderY;
+	int vsliderX, vsliderY;
+	int	asliderX, asliderY;
+	int fsliderX, fsliderY;
 
 	PovDirection povDirection0, povDirection1, povDirection2, povDirection3;
 
-	signed int mAxisNumber;
+	int mAxisNumber;
 };
 
 } // end namespace input

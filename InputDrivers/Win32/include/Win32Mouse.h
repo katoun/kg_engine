@@ -51,7 +51,7 @@ public:
 
 	void sendButtonUp(oi_mouse button);
 
-	void sendMove(signed int axisX, signed int axisY);
+	void sendMove(int axisX, int axisY);
 
 	void setGrab(bool grabbed);
 

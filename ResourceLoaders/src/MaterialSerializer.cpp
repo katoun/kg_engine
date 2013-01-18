@@ -701,7 +701,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							std::vector<std::string> vecparams = core::splitString(value, " \t");
 
 							unsigned int count = vecparams.size();
-							signed int* intBuffer = new signed int[count];
+							int* intBuffer = new int[count];
 
 							for(unsigned int i = 0; i < count; ++i)
 								intBuffer[i] = core::stringToInt(vecparams[i]);

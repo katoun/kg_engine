@@ -52,7 +52,7 @@ public:
 	GLRenderDriver();
 	~GLRenderDriver();
 
-	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool												depthBuffer = true, void* windowId = nullptr);
+	RenderWindow* createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left = 0, int top = 0, bool												depthBuffer = true, void* windowId = nullptr);
 
 	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
 	

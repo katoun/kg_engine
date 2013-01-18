@@ -144,7 +144,7 @@ public:
 	static unsigned int getNumElemBits(PixelFormat format);
 
 	//! Gives the number of bits (RGBA) for a format.
-	static void getBitDepths(PixelFormat format, signed int rgba[4]);
+	static void getBitDepths(PixelFormat format, int rgba[4]);
 
 	//! Gives the masks for the R, G, B and A component.
 	static void getBitMasks(PixelFormat format, unsigned int rgba[4]);

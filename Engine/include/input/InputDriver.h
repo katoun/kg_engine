@@ -52,13 +52,13 @@ public:
 	virtual ~InputDriver();
 
 	//! Returns the number of joysticks found.
-	virtual signed int numJoySticks() = 0;
+	virtual int numJoySticks() = 0;
 
 	//!	Returns the number of mice found.
-	virtual signed int numMice() = 0;
+	virtual int numMice() = 0;
 
 	//!	Returns the number of keyboards found.
-	virtual signed int numKeyboards() = 0;
+	virtual int numKeyboards() = 0;
 
 	//! Return an input device.
 	virtual InputDevice* createInputDevice(InputType type, bool buffered) = 0;

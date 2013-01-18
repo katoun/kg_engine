@@ -62,7 +62,7 @@ void Win32Mouse::sendButtonUp(oi_mouse button)
 	}
 }
 
-void Win32Mouse::sendMove(signed int axisX, signed int axisY)
+void Win32Mouse::sendMove(int axisX, int axisY)
 {
 	mEvent->set(MOUSE_BUTTON_UNKNOWN, axisX, axisY, 0, this);
 

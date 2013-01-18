@@ -57,7 +57,7 @@ public:
 	void setParameter(const std::string& name, const core::vector4d& vec);
 	void setParameter(const std::string& name, const core::matrix4& m);
 	void setParameter(const std::string& name, const float* val, unsigned int count);
-	void setParameter(const std::string& name, const signed int* val, unsigned int count);
+	void setParameter(const std::string& name, const int* val, unsigned int count);
 
 protected:
 

@@ -69,8 +69,8 @@ protected:
 	virtual void stopImpl();
 	virtual void updateImpl(float elapsedTime);
 
-	signed int mMajorVersion;
-	signed int mMinorVersion;
+	int mMajorVersion;
+	int mMinorVersion;
 
 	ALCcontext* mContext;
 	ALCdevice* mDevice;

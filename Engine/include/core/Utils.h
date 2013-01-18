@@ -39,11 +39,11 @@ inline ENGINE_PUBLIC_EXPORT void stringTrim(std::string& str, const std::string&
 inline ENGINE_PUBLIC_EXPORT void stringToLower(std::string& str);
 inline ENGINE_PUBLIC_EXPORT void stringToUpper(std::string& str);
 
-inline ENGINE_PUBLIC_EXPORT signed int stringToInt(std::string& str);
+inline ENGINE_PUBLIC_EXPORT int stringToInt(std::string& str);
 inline ENGINE_PUBLIC_EXPORT float stringToFloat(std::string& str);
 
 inline ENGINE_PUBLIC_EXPORT std::string intToString(unsigned int i);
-inline ENGINE_PUBLIC_EXPORT std::string intToString(signed int i);
+inline ENGINE_PUBLIC_EXPORT std::string intToString(int i);
 inline ENGINE_PUBLIC_EXPORT std::string floatToString(float f);
 
 inline ENGINE_PUBLIC_EXPORT void stringReplaceChar(std::string& str, const char src, const char dest);

@@ -56,7 +56,7 @@ public:
 		float avgFPS;
 		float bestFPS;
 		float worstFPS;
-		signed int triangleCount;
+		int triangleCount;
 	};
 
 	RenderTarget();
@@ -104,7 +104,7 @@ public:
 	//! Individual stats access - gets the worst frames per second (FPS) since call to RenderSystem::startRendering.
 	virtual float getWorstFPS() const;
 	//! Gets the number of triangles rendered in the last update() call.
-	virtual signed int getTriangleCount() const;
+	virtual int getTriangleCount() const;
 
 	//! Resets saved frame-rate statistices.
 	virtual void resetStatistics();
@@ -142,7 +142,7 @@ protected:
 	// Stats
 	FrameStats mStats;
 
-	signed int mFrameCount;
+	int mFrameCount;
 	float mLastElapsedTime;
 
 	bool mActive;

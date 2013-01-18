@@ -112,7 +112,7 @@ void GLShader::setParameter(const std::string& name, const float* val, unsigned 
 	if (cgParam && cgParam->cgParameter) cgSetParameterValuefr(cgParam->cgParameter, count, val);
 }
 
-void GLShader::setParameter(const std::string& name, const signed int* val, unsigned int count)
+void GLShader::setParameter(const std::string& name, const int* val, unsigned int count)
 {
 	Shader::setParameter(name, val, count);
 

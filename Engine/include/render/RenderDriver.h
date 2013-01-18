@@ -89,8 +89,8 @@ public:
 	virtual ~RenderDriver();
 	
 	//! Creates a new rendering window.
-	virtual RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth,
-		bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = nullptr) = 0;
+	virtual RenderWindow* createRenderWindow(int width, int height, int colorDepth,
+		bool fullScreen, int left = 0, int top = 0, bool depthBuffer = true, void* windowId = nullptr) = 0;
 
 	//! Create a vertex buffer.
 	virtual VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage) = 0;

@@ -47,7 +47,7 @@ public:
 
 	void setPosition(const core::position2d& pos);
 
-	void setPosition(signed int x, signed int y);
+	void setPosition(int x, int y);
 
 	const core::position2d& getPosition() const;
 

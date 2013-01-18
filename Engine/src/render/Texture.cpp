@@ -110,12 +110,12 @@ unsigned int Texture::getDepth()
 	return mDepth;
 }
 
-void Texture::setFlags(signed int flags)
+void Texture::setFlags(int flags)
 {
 	mFlags = flags;
 }
 
-signed int Texture::getFlags()
+int Texture::getFlags()
 {
 	return mFlags;
 }

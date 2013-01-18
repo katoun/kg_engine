@@ -128,7 +128,7 @@ RenderManager::~RenderManager()
 	}
 }
 
-RenderWindow* RenderManager::createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left, signed int top, bool depthBuffer, void* windowId)
+RenderWindow* RenderManager::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
 {
 	if (!mRenderDriver) return nullptr;
 
@@ -205,12 +205,12 @@ void RenderManager::removeFrameEventReceiver(FrameEventReceiver* oldEventReceive
 	}
 }
 
-signed int RenderManager::getViewportHeight() const
+int RenderManager::getViewportHeight() const
 {
 	return mLastViewportHeight;
 }
 
-signed int RenderManager::getViewportWidth() const
+int RenderManager::getViewportWidth() const
 {
 	return mLastViewportWidth;
 }

@@ -59,7 +59,7 @@ public:
 	//! Sets the new position of the cursor.
 	//! \param x: New X position of the cursor.
 	//! \param y: New Y position of the cursor.
-	virtual void setPosition(signed int x, signed int y) = 0;
+	virtual void setPosition(int x, int y) = 0;
 
 	//! Returns the current position of the mouse cursor.
 	//! \return Returns the current position of the cursor.

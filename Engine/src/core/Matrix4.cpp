@@ -85,7 +85,7 @@ inline matrix4& matrix4::operator=(const matrix4 &other)
 	return *this;
 }
 
-float& matrix4::operator()(signed int row, signed int col)
+float& matrix4::operator()(int row, int col)
 {
 	assert(row <= 3 && col <= 3);
 
@@ -95,7 +95,7 @@ float& matrix4::operator()(signed int row, signed int col)
 	return M[row * 4 + col];
 }
 
-const float& matrix4::operator()(signed int row, signed int col) const
+const float& matrix4::operator()(int row, int col) const
 {
 	assert(row <= 3 && col <= 3);
 
@@ -172,7 +172,7 @@ inline matrix4& matrix4::operator*=(const matrix4& other)
 	newMatrix[14] = m1[12] * m2[ 2] + m1[13] * m2[ 6] + m1[14] * m2[10] + m1[15] * m2[14];
 	newMatrix[15] = m1[12] * m2[ 3] + m1[13] * m2[ 7] + m1[14] * m2[11] + m1[15] * m2[15];
 
-	for (signed int i = 0; i < 16; ++i)
+	for (int i = 0; i < 16; ++i)
 		M[i] = newMatrix[i];
 
 	return *this;
@@ -411,9 +411,9 @@ inline void matrix4::makeIdentity()
 
 inline bool matrix4::isIdentity()
 {
-	for (signed int i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-		for (signed int j = 0; j < 4; ++j)
+		for (int j = 0; j < 4; ++j)
 		{
 			if (j != i)
 			{

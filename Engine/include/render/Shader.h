@@ -96,7 +96,7 @@ public:
 	virtual void setParameter(const std::string& name, const core::vector4d& vec);
 	virtual void setParameter(const std::string& name, const core::matrix4& m);
 	virtual void setParameter(const std::string& name, const float* val, unsigned int count);
-	virtual void setParameter(const std::string& name, const signed int* val, unsigned int count);
+	virtual void setParameter(const std::string& name, const int* val, unsigned int count);
 
 	virtual void addParameter(const std::string& name, ShaderParameterType type);
 
@@ -117,13 +117,13 @@ protected:
 
 	ShaderParameter* findParameter(const std::string& name);
 	void writedParameterData(unsigned int index, const float* val, unsigned int count);
-	void writedParameterData(unsigned int index, const signed int* val, unsigned int count);
+	void writedParameterData(unsigned int index, const int* val, unsigned int count);
 
 	float* getFloatPrameterData(unsigned int index);
 	const float* getFloatPrameterData(unsigned int index) const;
 
-	signed int* getIntPrameterData(unsigned int index);
-	const signed int* getIntPrameterData(unsigned int index) const;
+	int* getIntPrameterData(unsigned int index);
+	const int* getIntPrameterData(unsigned int index) const;
 
 	void removeAllParameters();
 
@@ -136,7 +136,7 @@ protected:
 	static ShaderParameterType getType(TextureType type);
 
 	std::vector<float> mFloatParameterData;
-	std::vector<signed int> mIntParameterData;
+	std::vector<int> mIntParameterData;
 	hashmap<std::string, ShaderParameter*> mParameters;
 };
 

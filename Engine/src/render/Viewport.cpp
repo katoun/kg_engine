@@ -137,22 +137,22 @@ void Viewport::setHeight(float height)
 	mDimentionsNeedsUpdate = true;
 }
 
-signed int Viewport::getActualLeft()
+int Viewport::getActualLeft()
 {
 	return mActualLeft;
 }
 
-signed int Viewport::getActualTop()
+int Viewport::getActualTop()
 {
 	return mActualTop;
 }
 
-signed int Viewport::getActualWidth()
+int Viewport::getActualWidth()
 {
 	return mActualWidth;
 }
 
-signed int Viewport::getActualHeight()
+int Viewport::getActualHeight()
 {
 	return mActualHeight;
 }
@@ -191,10 +191,10 @@ void Viewport::update(float elapsedTime)
 			float width = (float)mTarget->getWidth();
 			float height = (float)mTarget->getHeight();
 
-			mActualLeft = (signed int)(mRelativeLeft * width);
-			mActualTop = (signed int)(mRelativeTop * height);
-			mActualWidth = (signed int)(mRelativeWidth * width);
-			mActualHeight = (signed int)(mRelativeHeight * height);
+			mActualLeft = (int)(mRelativeLeft * width);
+			mActualTop = (int)(mRelativeTop * height);
+			mActualWidth = (int)(mRelativeWidth * width);
+			mActualHeight = (int)(mRelativeHeight * height);
 		}
 
 		// This allows cameras to be used to render to many viewports,

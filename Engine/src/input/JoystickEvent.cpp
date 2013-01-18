@@ -88,14 +88,14 @@ JoystickEvent::JoystickEvent()
 JoystickEvent::~JoystickEvent() {}
 
 void JoystickEvent::set(JoystickButton button,
-						signed int axisX, signed int axisY, signed int axisZ, signed int axisRX, signed int axisRY, signed int axisRZ,
-						signed int axisVX, signed int axisVY, signed int axisVZ, signed int axisVRX, signed int axisVRY, signed int axisVRZ,
-						signed int axisAX, signed int axisAY, signed int axisAZ, signed int axisARX, signed int axisARY, signed int axisARZ,
-						signed int axisFX, signed int axisFY, signed int axisFZ, signed int axisFRX, signed int axisFRY, signed int axisFRZ,
-						signed int sliderX, signed int sliderY,
-						signed int vsliderX, signed int vsliderY,
-						signed int	asliderX, signed int asliderY,
-						signed int fsliderX, signed int fsliderY,
+						int axisX, int axisY, int axisZ, int axisRX, int axisRY, int axisRZ,
+						int axisVX, int axisVY, int axisVZ, int axisVRX, int axisVRY, int axisVRZ,
+						int axisAX, int axisAY, int axisAZ, int axisARX, int axisARY, int axisARZ,
+						int axisFX, int axisFY, int axisFZ, int axisFRX, int axisFRY, int axisFRZ,
+						int sliderX, int sliderY,
+						int vsliderX, int vsliderY,
+						int	asliderX, int asliderY,
+						int fsliderX, int fsliderY,
 						PovDirection povDirection0, PovDirection povDirection1, PovDirection povDirection2, PovDirection povDirection3,
 						InputDevice *source)
 {
@@ -157,165 +157,165 @@ JoystickButton JoystickEvent::getButton() const
 	return mButton;
 }
 
-signed int JoystickEvent::getAxisX() const
+int JoystickEvent::getAxisX() const
 {
 	return mAxisX;
 }
 
-signed int JoystickEvent::getAxisY() const
+int JoystickEvent::getAxisY() const
 {
 	return mAxisY;
 }
 
-signed int JoystickEvent::getAxisZ() const
+int JoystickEvent::getAxisZ() const
 {
 	return mAxisZ;
 }
 
-signed int JoystickEvent::getAxisRX() const
+int JoystickEvent::getAxisRX() const
 {
 	return mAxisRX;
 }
 
-signed int JoystickEvent::getAxisRY() const
+int JoystickEvent::getAxisRY() const
 {
 	return mAxisRY;
 }
 
-signed int JoystickEvent::getAxisRZ() const
+int JoystickEvent::getAxisRZ() const
 {
 	return mAxisRZ;
 }
 
 
-signed int JoystickEvent::getAxisVX() const
+int JoystickEvent::getAxisVX() const
 {
 	return mAxisVX;
 }
 
-signed int JoystickEvent::getAxisVY() const
+int JoystickEvent::getAxisVY() const
 {
 	return mAxisVY;
 }
 
-signed int JoystickEvent::getAxisVZ() const
+int JoystickEvent::getAxisVZ() const
 {
 	return mAxisVZ;
 }
 
-signed int JoystickEvent::getAxisVRX() const
+int JoystickEvent::getAxisVRX() const
 {
 	return mAxisVRX;
 }
 
-signed int JoystickEvent::getAxisVRY() const
+int JoystickEvent::getAxisVRY() const
 {
 	return mAxisVRY;
 }
 
-signed int JoystickEvent::getAxisVRZ() const
+int JoystickEvent::getAxisVRZ() const
 {
 	return mAxisVRZ;
 }
 
 
-signed int JoystickEvent::getAxisAX() const
+int JoystickEvent::getAxisAX() const
 {
 	return mAxisAX;
 }
 
-signed int JoystickEvent::getAxisAY() const
+int JoystickEvent::getAxisAY() const
 {
 	return mAxisAY;
 }
 
-signed int JoystickEvent::getAxisAZ() const
+int JoystickEvent::getAxisAZ() const
 {
 	return mAxisAZ;
 }
 
-signed int JoystickEvent::getAxisARX() const
+int JoystickEvent::getAxisARX() const
 {
 	return mAxisARX;
 }
 
-signed int JoystickEvent::getAxisARY() const
+int JoystickEvent::getAxisARY() const
 {
 	return mAxisARY;
 }
 
-signed int JoystickEvent::getAxisARZ() const
+int JoystickEvent::getAxisARZ() const
 {
 	return mAxisARZ;
 }
 
 
-signed int JoystickEvent::getAxisFX() const
+int JoystickEvent::getAxisFX() const
 {
 	return mAxisFX;
 }
 
-signed int JoystickEvent::getAxisFY() const
+int JoystickEvent::getAxisFY() const
 {
 	return mAxisFY;
 }
 
-signed int JoystickEvent::getAxisFZ() const
+int JoystickEvent::getAxisFZ() const
 {
 	return mAxisFZ;
 }
 
-signed int JoystickEvent::getAxisFRX() const
+int JoystickEvent::getAxisFRX() const
 {
 	return mAxisFRX;
 }
 
-signed int JoystickEvent::getAxisFRY() const
+int JoystickEvent::getAxisFRY() const
 {
 	return mAxisFRY;
 }
 
-signed int JoystickEvent::getAxisFRZ() const
+int JoystickEvent::getAxisFRZ() const
 {
 	return mAxisFRZ;
 }
 
-signed int JoystickEvent::getSliderX() const
+int JoystickEvent::getSliderX() const
 {
 	return mSliderX;
 }
 
-signed int JoystickEvent::getSliderY() const
+int JoystickEvent::getSliderY() const
 {
 	return mSliderY;
 }
 
-signed int JoystickEvent::getVSliderX() const
+int JoystickEvent::getVSliderX() const
 {
 	return mVSliderX;
 }
 
-signed int JoystickEvent::getVSliderY() const
+int JoystickEvent::getVSliderY() const
 {
 	return mVSliderY;
 }
 
-signed int JoystickEvent::getASliderX() const
+int JoystickEvent::getASliderX() const
 {
 	return mASliderX;
 }
 
-signed int JoystickEvent::getASliderY() const
+int JoystickEvent::getASliderY() const
 {
 	return mASliderY;
 }
 
-signed int JoystickEvent::getFSliderX() const
+int JoystickEvent::getFSliderX() const
 {
 	return mFSliderX;
 }
 
-signed int JoystickEvent::getFSliderY() const
+int JoystickEvent::getFSliderY() const
 {
 	return mFSliderY;
 }

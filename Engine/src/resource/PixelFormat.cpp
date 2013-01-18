@@ -598,7 +598,7 @@ PixelFormatDescription PixelUtil::pixelFormats[PF_COUNT] =
 
 const PixelFormatDescription& PixelUtil::getDescriptionFor(const PixelFormat format)
 {
-	const signed int ord = (signed int)format;
+	const int ord = (int)format;
 	assert(ord >= 0 && ord < PF_COUNT);
 
 	if (ord < 0 || ord >= PF_COUNT)
@@ -617,7 +617,7 @@ unsigned int PixelUtil::getNumElemBits(PixelFormat format)
 	return getDescriptionFor(format).elemBytes * 8;
 }
 
-void PixelUtil::getBitDepths(PixelFormat format, signed int rgba[4])
+void PixelUtil::getBitDepths(PixelFormat format, int rgba[4])
 {
 	const PixelFormatDescription& des = getDescriptionFor(format);
 	rgba[0] = des.rbits;

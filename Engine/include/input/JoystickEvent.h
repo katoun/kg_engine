@@ -86,14 +86,14 @@ public:
 	//! \param povDirection3: pov3 direction.
 	//! \param source: The input device which this event originates from.
 	void set(JoystickButton button,
-			signed int axisX, signed int axisY, signed int axisZ, signed int axisRX, signed int axisRY, signed int axisRZ,
-			signed int axisVX, signed int axisVY, signed int axisVZ, signed int axisVRX, signed int axisVRY, signed int axisVRZ,
-			signed int axisAX, signed int axisAY, signed int axisAZ, signed int axisARX, signed int axisARY, signed int axisARZ,
-			signed int axisFX, signed int axisFY, signed int axisFZ, signed int axisFRX, signed int axisFRY, signed int axisFRZ,
-			signed int sliderX, signed int sliderY,
-			signed int vsliderX, signed int vsliderY,
-			signed int	asliderX, signed int asliderY,
-			signed int fsliderX, signed int fsliderY,
+			int axisX, int axisY, int axisZ, int axisRX, int axisRY, int axisRZ,
+			int axisVX, int axisVY, int axisVZ, int axisVRX, int axisVRY, int axisVRZ,
+			int axisAX, int axisAY, int axisAZ, int axisARX, int axisARY, int axisARZ,
+			int axisFX, int axisFY, int axisFZ, int axisFRX, int axisFRY, int axisFRZ,
+			int sliderX, int sliderY,
+			int vsliderX, int vsliderY,
+			int	asliderX, int asliderY,
+			int fsliderX, int fsliderY,
 			PovDirection povDirection0, PovDirection povDirection1, PovDirection povDirection2, PovDirection povDirection3,
 			InputDevice *source);
 
@@ -101,104 +101,104 @@ public:
 	JoystickButton getButton() const;
 
 	//! getAxisX - DOCUMENTATION NEEDED
-	signed int getAxisX() const;
+	int getAxisX() const;
 
 	//! getAxisY - DOCUMENTATION NEEDED
-	signed int getAxisY() const;
+	int getAxisY() const;
 
 	//! getAxisZ - DOCUMENTATION NEEDED
-	signed int getAxisZ() const;
+	int getAxisZ() const;
 
 	//! getAxisRX - DOCUMENTATION NEEDED
-	signed int getAxisRX() const;
+	int getAxisRX() const;
 
 	//! getAxisRY - DOCUMENTATION NEEDED
-	signed int getAxisRY() const;
+	int getAxisRY() const;
 
 	//! getAxisRZ - DOCUMENTATION NEEDED
-	signed int getAxisRZ() const;
+	int getAxisRZ() const;
 
 
 	//! getAxisVX - DOCUMENTATION NEEDED
-	signed int getAxisVX() const;
+	int getAxisVX() const;
 
 	//! getAxisVY - DOCUMENTATION NEEDED
-	signed int getAxisVY() const;
+	int getAxisVY() const;
 
 	//! getAxisVZ - DOCUMENTATION NEEDED
-	signed int getAxisVZ() const;
+	int getAxisVZ() const;
 
 	//! getAxisVRX - DOCUMENTATION NEEDED
-	signed int getAxisVRX() const;
+	int getAxisVRX() const;
 
 	//! getAxisVRY - DOCUMENTATION NEEDED
-	signed int getAxisVRY() const;
+	int getAxisVRY() const;
 
 	//! getAxisVRZ - DOCUMENTATION NEEDED
-	signed int getAxisVRZ() const;
+	int getAxisVRZ() const;
 
 
 	//! getAxisAX - DOCUMENTATION NEEDED
-	signed int getAxisAX() const;
+	int getAxisAX() const;
 
 	//! getAxisAY - DOCUMENTATION NEEDED
-	signed int getAxisAY() const;
+	int getAxisAY() const;
 
 	//! getAxisAZ - DOCUMENTATION NEEDED
-	signed int getAxisAZ() const;
+	int getAxisAZ() const;
 
 	//! getAxisARX - DOCUMENTATION NEEDED
-	signed int getAxisARX() const;
+	int getAxisARX() const;
 
 	//! getAxisARY - DOCUMENTATION NEEDED
-	signed int getAxisARY() const;
+	int getAxisARY() const;
 
 	//! getAxisARZ - DOCUMENTATION NEEDED
-	signed int getAxisARZ() const;
+	int getAxisARZ() const;
 
 
 	//! getAxisFX - DOCUMENTATION NEEDED
-	signed int getAxisFX() const;
+	int getAxisFX() const;
 
 	//! getAxisFY - DOCUMENTATION NEEDED
-	signed int getAxisFY() const;
+	int getAxisFY() const;
 
 	//! getAxisFZ - DOCUMENTATION NEEDED
-	signed int getAxisFZ() const;
+	int getAxisFZ() const;
 
 	//! getAxisFRX - DOCUMENTATION NEEDED
-	signed int getAxisFRX() const;
+	int getAxisFRX() const;
 
 	//! getAxisFRY - DOCUMENTATION NEEDED
-	signed int getAxisFRY() const;
+	int getAxisFRY() const;
 
 	//! getAxisFRZ - DOCUMENTATION NEEDED
-	signed int getAxisFRZ() const;
+	int getAxisFRZ() const;
 
 
 	//! getSliderX - DOCUMENTATION NEEDED
-	signed int getSliderX() const;
+	int getSliderX() const;
 
 	//! getSliderY - DOCUMENTATION NEEDED
-	signed int getSliderY() const;
+	int getSliderY() const;
 
 	//! getVSliderX - DOCUMENTATION NEEDED
-	signed int getVSliderX() const;
+	int getVSliderX() const;
 
 	//! getVSliderY - DOCUMENTATION NEEDED
-	signed int getVSliderY() const;
+	int getVSliderY() const;
 
 	//! getASliderX - DOCUMENTATION NEEDED
-	signed int getASliderX() const;
+	int getASliderX() const;
 
 	//! getASliderY - DOCUMENTATION NEEDED
-	signed int getASliderY() const;
+	int getASliderY() const;
 
 	//! getFSliderX - DOCUMENTATION NEEDED
-	signed int getFSliderX() const;
+	int getFSliderX() const;
 
 	//! getFSliderY - DOCUMENTATION NEEDED
-	signed int getFSliderY() const;
+	int getFSliderY() const;
 	
 	//! getPovDirection0 - DOCUMENTATION NEEDED
 	PovDirection getPovDirection0();
@@ -216,49 +216,49 @@ protected:
 
 	JoystickButton mButton;
 
-	signed int mAxisX;		// x-axis position
-	signed int mAxisY;		// y-axis position
-	signed int mAxisZ;		// z-axis position
+	int mAxisX;		// x-axis position
+	int mAxisY;		// y-axis position
+	int mAxisZ;		// z-axis position
 
-	signed int mAxisRX;	// x-axis rotation
-	signed int mAxisRY;	// y-axis rotation
-	signed int mAxisRZ;	// z-axis rotation
+	int mAxisRX;	// x-axis rotation
+	int mAxisRY;	// y-axis rotation
+	int mAxisRZ;	// z-axis rotation
 
-	signed int mAxisVX;	// x-axis velocity
-	signed int mAxisVY;	// y-axis velocity
-	signed int mAxisVZ;	// z-axis velocity
+	int mAxisVX;	// x-axis velocity
+	int mAxisVY;	// y-axis velocity
+	int mAxisVZ;	// z-axis velocity
 
-	signed int mAxisVRX;	// x-axis angular velocity
-	signed int mAxisVRY;	// y-axis angular velocity
-	signed int mAxisVRZ;	// z-axis angular velocity
+	int mAxisVRX;	// x-axis angular velocity
+	int mAxisVRY;	// y-axis angular velocity
+	int mAxisVRZ;	// z-axis angular velocity
 
-	signed int mAxisAX;	// x-axis acceleration
-	signed int mAxisAY;	// y-axis acceleration
-	signed int mAxisAZ;	// z-axis acceleration
+	int mAxisAX;	// x-axis acceleration
+	int mAxisAY;	// y-axis acceleration
+	int mAxisAZ;	// z-axis acceleration
 
-	signed int mAxisARX;	// x-axis angular acceleration
-	signed int mAxisARY;	// y-axis angular acceleration
-	signed int mAxisARZ;	// z-axis angular acceleration
+	int mAxisARX;	// x-axis angular acceleration
+	int mAxisARY;	// y-axis angular acceleration
+	int mAxisARZ;	// z-axis angular acceleration
 
-	signed int mAxisFX;	// x-axis force
-	signed int mAxisFY;	// y-axis force
-	signed int mAxisFZ;	// z-axis force
+	int mAxisFX;	// x-axis force
+	int mAxisFY;	// y-axis force
+	int mAxisFZ;	// z-axis force
 
-	signed int mAxisFRX;	// x-axis torque
-	signed int mAxisFRY;	// y-axis torque
-	signed int mAxisFRZ;	// z-axis torque
+	int mAxisFRX;	// x-axis torque
+	int mAxisFRY;	// y-axis torque
+	int mAxisFRZ;	// z-axis torque
 
-	signed int mSliderX;	// extra x-axis position
-	signed int mSliderY;	// extra y-axis position
+	int mSliderX;	// extra x-axis position
+	int mSliderY;	// extra y-axis position
 
-	signed int mVSliderX;	// extra x-axis velocity
-	signed int mVSliderY;	// extra y-axis velocity
+	int mVSliderX;	// extra x-axis velocity
+	int mVSliderY;	// extra y-axis velocity
 
-	signed int mASliderX;	// extra x-axis acceleration
-	signed int mASliderY;	// extra y-axis acceleration
+	int mASliderX;	// extra x-axis acceleration
+	int mASliderY;	// extra y-axis acceleration
 
-	signed int mFSliderX;	// extra x-axis force
-	signed int mFSliderY;	// extra y-axis force
+	int mFSliderX;	// extra x-axis force
+	int mFSliderY;	// extra y-axis force
 
 	PovDirection	mPovDirection0;
 	PovDirection	mPovDirection1;

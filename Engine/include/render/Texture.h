@@ -81,10 +81,10 @@ public:
 	unsigned int getDepth();
 
 	//! Sets the flags of the texture.
-	void setFlags(signed int flags);
+	void setFlags(int flags);
 
 	//! Returns the flags of the texture.
-	signed int getFlags();
+	int getFlags();
 
 	//! Sets the pixel size of the texture.
 	void setPixelSize(unsigned char size);
@@ -125,7 +125,7 @@ protected:
 	unsigned int mHeight;
 	unsigned int mDepth;
 
-	signed int mFlags;			//! Image specific flags
+	int mFlags;			//! Image specific flags
 	unsigned char mPixelSize;		//! The number of bytes per pixel
 
 	unsigned int mNumMipmaps;

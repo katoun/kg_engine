@@ -51,27 +51,27 @@ public:
 	//! \param axisY: The Y axis of the mouse.
 	//! \param axisZ: The Z axis of the mouse.
 	//! \param source: Which input device the mouse event is coming from.
-	void set(MouseButton button, signed int axisX, signed short int axisY, signed int axisZ, InputDevice *source);
+	void set(MouseButton button, int axisX, signed short int axisY, int axisZ, InputDevice *source);
 
 	//! getButton - DOCUMENTATION NEEDED
 	MouseButton getButton() const;
 
 	//! getAxisX - DOCUMENTATION NEEDED
-	signed int getAxisX() const;
+	int getAxisX() const;
 
 	//! getAxisY - DOCUMENTATION NEEDED
-	signed int getAxisY() const;
+	int getAxisY() const;
 
 	//! getAxisZ - DOCUMENTATION NEEDED
-	signed int getAxisZ() const;
+	int getAxisZ() const;
 
 protected:
 
 	MouseButton mButton;
 
-	signed int mAxisX;
-	signed int mAxisY;
-	signed int mAxisZ;
+	int mAxisX;
+	int mAxisY;
+	int mAxisZ;
 };
 
 } // end namespace input

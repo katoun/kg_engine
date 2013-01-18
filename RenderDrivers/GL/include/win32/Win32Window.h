@@ -46,7 +46,7 @@ public:
 	bool isVisible() const;
 	void setActive(bool state);
 	
-	void reposition(signed int top, signed int left);
+	void reposition(int top, int left);
 	void resize(unsigned int width, unsigned int height);
 	void setCaption(const std::string& text);
 

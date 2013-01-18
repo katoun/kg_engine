@@ -54,7 +54,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed __int64         Int64;
 	typedef unsigned __int64       UInt64;
@@ -75,7 +75,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed long            IntPtr;
 	typedef unsigned long          UIntPtr;
@@ -97,7 +97,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed __int64         Int64;
 	typedef unsigned __int64       UInt64;
@@ -125,7 +125,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed long            IntPtr;
 	typedef unsigned long          UIntPtr;
@@ -147,7 +147,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed long            IntPtr;
 	typedef unsigned long          UIntPtr;
@@ -169,7 +169,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed long            IntPtr;
 	typedef unsigned long          UIntPtr;
@@ -191,7 +191,7 @@ namespace Poco {
 	typedef unsigned char          UInt8;
 	typedef signed short           Int16;
 	typedef unsigned short         UInt16;
-	typedef signed int             Int32;
+	typedef int             Int32;
 	typedef unsigned int           UInt32;
 	typedef signed long            IntPtr;
 	typedef unsigned long          UIntPtr;
@@ -210,7 +210,7 @@ namespace Poco {
 	typedef unsigned char      UInt8;
 	typedef signed short       Int16;
 	typedef unsigned short     UInt16;
-	typedef signed int         Int32;
+	typedef int         Int32;
 	typedef unsigned int       UInt32;
 	typedef signed long        IntPtr;
 	typedef unsigned long      UIntPtr;

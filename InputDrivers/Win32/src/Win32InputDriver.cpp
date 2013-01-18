@@ -49,17 +49,17 @@ Win32InputDriver::Win32InputDriver(): InputDriver("Win32 InputDriver")
 
 Win32InputDriver::~Win32InputDriver() {}
 
-signed int Win32InputDriver::numJoySticks()
+int Win32InputDriver::numJoySticks()
 {
 	return 0;
 }
 
-signed int Win32InputDriver::numMice()
+int Win32InputDriver::numMice()
 {
 	return 1;
 }
 
-signed int Win32InputDriver::numKeyboards()
+int Win32InputDriver::numKeyboards()
 {
 	return 1;
 }
@@ -141,8 +141,8 @@ void Win32InputDriver::initializeImpl()
 
 	RECT rect;
 	GetClientRect(mHWnd, &rect);
-	mCursorCenter.X = (signed int)((rect.right - rect.left) / 2);
-	mCursorCenter.Y = (signed int)((rect.bottom - rect.top) / 2);
+	mCursorCenter.X = (int)((rect.right - rect.left) / 2);
+	mCursorCenter.Y = (int)((rect.bottom - rect.top) / 2);
 
 	if (mCursor != nullptr)
 		mCursor->setPosition(mCursorCenter);

@@ -82,7 +82,7 @@ public:
 	virtual void setFullscreen(bool fullScreen, unsigned int width, unsigned int height);
 
 	//! Reposition the window.
-	virtual void reposition(signed int top, signed int left) = 0;
+	virtual void reposition(int top, int left) = 0;
 
 	//! Alter the size of the window.
 	virtual void resize(unsigned int width, unsigned int height) = 0;
@@ -111,8 +111,8 @@ protected:
 
 	bool mIsFullScreen;
 
-	signed int mTop;
-	signed int mLeft;
+	int mTop;
+	int mLeft;
 };
 
 } // end namespace render

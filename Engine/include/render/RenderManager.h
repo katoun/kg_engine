@@ -106,7 +106,7 @@ public:
 
 	~RenderManager();
 
-	RenderWindow* createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left = 0, signed int top = 0, bool depthBuffer = true, void* windowId = nullptr);
+	RenderWindow* createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left = 0, int top = 0, bool depthBuffer = true, void* windowId = nullptr);
 
 	//! Sets a pointer to the main render window.
 	void setMainWindow(RenderWindow* window);
@@ -127,10 +127,10 @@ public:
 	void removeFrameEventReceiver(FrameEventReceiver* oldEventReceiver);
 
 	//! Gets the height of the destination viewport in pixels.
-	signed int getViewportHeight() const;
+	int getViewportHeight() const;
 
 	//! Gets the width of the destination viewport in pixels.
-	signed int getViewportWidth() const;
+	int getViewportWidth() const;
 
 	//!  Adds a light to be managed by this scene manager.
 	void addLight(Light *light);
@@ -365,8 +365,8 @@ protected:
 	float mFogStart;
 	float mFogEnd;
 
-	signed int mLastViewportWidth;
-	signed int mLastViewportHeight;
+	int mLastViewportWidth;
+	int mLastViewportHeight;
 
 	unsigned int mFaceCount;
 	unsigned int mVertexCount;

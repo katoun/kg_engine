@@ -52,13 +52,13 @@ public:
 	virtual ~InputManager();
 
 	//! Returns the number of joysticks found.
-	signed int numJoySticks();
+	int numJoySticks();
 
 	//!	Returns the number of mice found.
-	signed int numMice();
+	int numMice();
 
 	//!	Returns the number of keyboards found.
-	signed int numKeyboards();
+	int numKeyboards();
 
 	InputDevice* createInputDevice(InputType type, bool buffered);
 

@@ -47,7 +47,7 @@ InputManager::InputManager(): core::System("InputManager")
 
 InputManager::~InputManager() {}
 
-signed int InputManager::numJoySticks()
+int InputManager::numJoySticks()
 {
 	if (mInputDriver != nullptr)
 	{
@@ -57,7 +57,7 @@ signed int InputManager::numJoySticks()
 	return 0;
 }
 
-signed int InputManager::numMice()
+int InputManager::numMice()
 {
 	if (mInputDriver != nullptr)
 	{
@@ -67,7 +67,7 @@ signed int InputManager::numMice()
 	return 0;
 }
 
-signed int InputManager::numKeyboards()
+int InputManager::numKeyboards()
 {
 	if (mInputDriver != nullptr)
 	{

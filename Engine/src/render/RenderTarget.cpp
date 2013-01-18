@@ -145,7 +145,7 @@ float RenderTarget::getWorstFPS() const
 	return mStats.worstFPS;
 }
 
-signed int RenderTarget::getTriangleCount() const
+int RenderTarget::getTriangleCount() const
 {
 	return mStats.triangleCount;
 }

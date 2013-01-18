@@ -215,7 +215,7 @@ void Shader::updateAutoParameters(ShaderParamData& data)
 void Shader::setParameter(const std::string& name, const Color& col)
 {
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
 
@@ -229,7 +229,7 @@ void Shader::setParameter(const std::string& name, const Color& col)
 void Shader::setParameter(const std::string& name, const core::vector2d& vec)
 {
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT2, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT2));
 
@@ -243,7 +243,7 @@ void Shader::setParameter(const std::string& name, const core::vector2d& vec)
 void Shader::setParameter(const std::string& name, const core::vector3d& vec)
 {
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT3, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT3));
 
@@ -257,7 +257,7 @@ void Shader::setParameter(const std::string& name, const core::vector3d& vec)
 void Shader::setParameter(const std::string& name, const core::vector4d& vec)
 {
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
 
@@ -271,7 +271,7 @@ void Shader::setParameter(const std::string& name, const core::vector4d& vec)
 void Shader::setParameter(const std::string& name, const core::matrix4& m)
 {
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_MATRIX_4X4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX_4X4));
 
@@ -288,7 +288,7 @@ void Shader::setParameter(const std::string& name, const float* val, unsigned in
 		return;
 
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT, mFloatParameterData.size(), count);
 		
@@ -299,13 +299,13 @@ void Shader::setParameter(const std::string& name, const float* val, unsigned in
 	writedParameterData(param->index, val, count);
 }
 
-void Shader::setParameter(const std::string& name, const signed int* val, unsigned int count)
+void Shader::setParameter(const std::string& name, const int* val, unsigned int count)
 {
 	if (count == 0)
 		return;
 
 	ShaderParameter* param = findParameter(name);
-	if (!param)
+	if (param == nullptr)
 	{
 		param = createParameter(name, SHADER_PARAMETER_TYPE_INT, mIntParameterData.size(), count);
 
@@ -320,7 +320,7 @@ void Shader::addParameter(const std::string& name, ShaderParameterType type)
 {
 	ShaderParameter* param = findParameter(name);
 
-	if (!param)
+	if (param == nullptr)
 	{
 		if (isFloat(type))
 		{
@@ -343,7 +343,7 @@ void Shader::setAutoParameter(const std::string& name, ShaderAutoParameterType t
 {
 	ShaderParameter* param = findParameter(name);
 
-	if (param)
+	if (param != nullptr)
 	{
 		if (isFloat(param->paramType) != isFloat(type) || getElementCount(param->paramType) != getElementCount(type))
 		{
@@ -432,13 +432,13 @@ ShaderParameter* Shader::findParameter(const std::string& name)
 void Shader::writedParameterData(unsigned int index, const float* val, unsigned int count)
 {
 	assert(index + count <= mFloatParameterData.size());
-	memcpy(&mFloatParameterData[index], val, sizeof(signed int) * count);
+	memcpy(&mFloatParameterData[index], val, sizeof(int) * count);
 }
 
-void Shader::writedParameterData(unsigned int index, const signed int* val, unsigned int count)
+void Shader::writedParameterData(unsigned int index, const int* val, unsigned int count)
 {
 	assert(index + count <= mIntParameterData.size());
-	memcpy(&mIntParameterData[index], val, sizeof(signed int) * count);
+	memcpy(&mIntParameterData[index], val, sizeof(int) * count);
 }
 
 float* Shader::getFloatPrameterData(unsigned int index)
@@ -452,13 +452,13 @@ const float* Shader::getFloatPrameterData(unsigned int index) const
 	return &mFloatParameterData[index];
 }
 
-signed int* Shader::getIntPrameterData(unsigned int index)
+int* Shader::getIntPrameterData(unsigned int index)
 {
 	assert(index < mIntParameterData.size());
 	return &mIntParameterData[index];
 }
 
-const signed int* Shader::getIntPrameterData(unsigned int index) const
+const int* Shader::getIntPrameterData(unsigned int index) const
 {
 	assert(index < mIntParameterData.size());
 	return &mIntParameterData[index];

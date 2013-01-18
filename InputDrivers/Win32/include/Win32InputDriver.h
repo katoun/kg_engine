@@ -45,11 +45,11 @@ public:
 
 	~Win32InputDriver();
 
-	signed int numJoySticks();
+	int numJoySticks();
 
-	signed int numMice();
+	int numMice();
 
-	signed int numKeyboards();
+	int numKeyboards();
 
 	InputDevice* createInputDevice(InputType type, bool buffered);
 

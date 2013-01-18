@@ -60,10 +60,10 @@ public:
 	matrix4& operator=(const matrix4 &other);
 	
 	//! Simple operator for directly accessing every element of the matrix.
-	float& operator()(signed int row, signed int col);
+	float& operator()(int row, int col);
 
 	//! Simple operator for directly accessing every element of the matrix.
-	const float& operator()(signed int row, signed int col) const;
+	const float& operator()(int row, int col) const;
 
 	//! Simple operator for linearly accessing every element of the matrix.
 	float& operator[](unsigned int index);

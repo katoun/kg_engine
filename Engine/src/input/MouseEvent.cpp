@@ -39,7 +39,7 @@ MouseEvent::MouseEvent()
 
 MouseEvent::~MouseEvent() {}
 
-void MouseEvent::set(MouseButton button, signed int axisX, signed short int axisY, signed int axisZ, InputDevice *source)
+void MouseEvent::set(MouseButton button, int axisX, signed short int axisY, int axisZ, InputDevice *source)
 {
 	InputEvent::set(source);
 	mButton = button;
@@ -53,17 +53,17 @@ MouseButton MouseEvent::getButton() const
 	return mButton;
 }
 
-signed int MouseEvent::getAxisX() const
+int MouseEvent::getAxisX() const
 {
 	return mAxisX;
 }
 
-signed int MouseEvent::getAxisY() const
+int MouseEvent::getAxisY() const
 {
 	return mAxisY;
 }
 
-signed int MouseEvent::getAxisZ() const
+int MouseEvent::getAxisZ() const
 {
 	return mAxisZ;
 }

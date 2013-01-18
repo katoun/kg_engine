@@ -51,9 +51,9 @@ void stringToUpper(std::string& str)
 	std::transform(str.begin(),	str.end(), str.begin(),	toupper);
 }
 
-signed int stringToInt(std::string& str)
+int stringToInt(std::string& str)
 {
-	signed int ret;
+	int ret;
 
 	std::stringstream ss(str);
 	ss >> ret;
@@ -81,7 +81,7 @@ std::string intToString(unsigned int i)
 	return ret;
 }
 
-std::string intToString(signed int i)
+std::string intToString(int i)
 {
 	std::stringstream ss;
 	ss << i;

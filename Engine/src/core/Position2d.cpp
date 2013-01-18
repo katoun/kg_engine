@@ -32,7 +32,7 @@ namespace core
 
 position2d::position2d() : X(0), Y(0) {}
 
-position2d::position2d(signed int x, signed int y) : X(x), Y(y) {}
+position2d::position2d(int x, int y) : X(x), Y(y) {}
 
 position2d::position2d(const position2d& other) : X(other.X), Y(other.Y) {}
 
@@ -79,15 +79,15 @@ bool position2d::operator != (const position2d& other) const
 
 float position2d::getDistanceFrom(const position2d& other) const
 {
-	signed int vx = X - other.X;
-	signed int vy = Y - other.Y;
+	int vx = X - other.X;
+	int vy = Y - other.Y;
 	return sqrt((float)(vx*vx + vy*vy));
 }
 
 float position2d::getDistanceFromSQ(const position2d& other) const
 {
-	signed int vx = X - other.X;
-	signed int vy = Y - other.Y;
+	int vx = X - other.X;
+	int vy = Y - other.Y;
 	return (float)(vx*vx + vy*vy);
 }
 

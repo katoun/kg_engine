@@ -79,13 +79,13 @@ public:
 	void setHeight(float height);
 
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
-	signed int getActualLeft();
+	int getActualLeft();
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
-	signed int getActualTop();
+	int getActualTop();
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
-	signed int getActualWidth();
+	int getActualWidth();
 	//! Gets one of the actual dimensions of the viewport, a value in pixels.
-	signed int getActualHeight();
+	int getActualHeight();
 	
 	void setDimenionsChanged();
 
@@ -132,10 +132,10 @@ protected:
 	float mRelativeWidth;
 	float mRelativeHeight;
 	// Actual dimensions, based on target dimensions
-	signed int mActualTop;
-	signed int mActualLeft;
-	signed int mActualWidth;
-	signed int mActualHeight;
+	int mActualTop;
+	int mActualLeft;
+	int mActualWidth;
+	int mActualHeight;
 	
 	// Stored number of visible faces in the last render
 	unsigned int mRenderedFaces;

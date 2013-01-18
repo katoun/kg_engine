@@ -54,7 +54,7 @@ void Win32Cursor::setPosition(const core::position2d& pos)
 	setPosition(pos.X, pos.Y);
 }
 
-void Win32Cursor::setPosition(signed int x, signed int y)
+void Win32Cursor::setPosition(int x, int y)
 {
 	oi_mouse_warp(0, x, y);
 }

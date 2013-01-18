@@ -64,7 +64,7 @@ GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver")
 
 GLRenderDriver::~GLRenderDriver() {}
 
-RenderWindow* GLRenderDriver::createRenderWindow(signed int width, signed int height, signed int colorDepth, bool fullScreen, signed int left, signed int top, bool depthBuffer, void* windowId)
+RenderWindow* GLRenderDriver::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
 {
 	// Create the window
 	RenderWindow* pRenderWindow = nullptr;
