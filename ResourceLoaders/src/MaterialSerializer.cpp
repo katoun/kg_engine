@@ -35,8 +35,7 @@ THE SOFTWARE.
 #include <physics/Material.h>
 #include <MaterialSerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
 #include <string>
 
@@ -267,297 +266,510 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
+
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
-	}
 
-	if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("material");
+	if (pRoot != nullptr)
 	{
-		//ambient
-		if (pConf->has("ambient"))
+		int ivalue = 0;
+		double dvalue = 0.0;
+		const char* svalue;
+		std::string value;
+		tinyxml2::XMLElement* pElement = nullptr;
+		tinyxml2::XMLElement* pSubElement = nullptr;
+
+		if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
 		{
-			float r = 1.0f;
-			float g = 1.0f;
-			float b = 1.0f;
-			float a = 1.0f;
-			if (pConf->has("ambient[@r]"))
-				r = (float)pConf->getDouble("ambient[@r]");
-			if (pConf->has("ambient[@g]"))
-				g = (float)pConf->getDouble("ambient[@g]");
-			if (pConf->has("ambient[@b]"))
-				b = (float)pConf->getDouble("ambient[@b]");
-			if (pConf->has("ambient[@a]"))
-				a = (float)pConf->getDouble("ambient[@a]");
-			renderMaterial->setAmbient(render::Color(r,g,b,a));
-		}
-
-		//diffuse
-		if (pConf->has("diffuse"))
-		{
-			float r = 1.0f;
-			float g = 1.0f;
-			float b = 1.0f;
-			float a = 1.0f;
-			if (pConf->has("diffuse[@r]"))
-				r = (float)pConf->getDouble("diffuse[@r]");
-			if (pConf->has("diffuse[@g]"))
-				g = (float)pConf->getDouble("diffuse[@g]");
-			if (pConf->has("diffuse[@b]"))
-				b = (float)pConf->getDouble("diffuse[@b]");
-			if (pConf->has("diffuse[@a]"))
-				a = (float)pConf->getDouble("diffuse[@a]");
-			renderMaterial->setDiffuse(render::Color(r,g,b,a));
-		}
-
-		//specular
-		if (pConf->has("specular"))
-		{
-			float r = 1.0f;
-			float g = 1.0f;
-			float b = 1.0f;
-			float a = 1.0f;
-			if (pConf->has("specular[@r]"))
-				r = (float)pConf->getDouble("specular[@r]");
-			if (pConf->has("specular[@g]"))
-				g = (float)pConf->getDouble("specular[@g]");
-			if (pConf->has("specular[@b]"))
-				b = (float)pConf->getDouble("specular[@b]");
-			if (pConf->has("specular[@a]"))
-				a = (float)pConf->getDouble("specular[@a]");
-			renderMaterial->setSpecular(render::Color(r,g,b,a));
-		}
-
-		//emissive
-		if (pConf->has("emissive"))
-		{
-			float r = 1.0f;
-			float g = 1.0f;
-			float b = 1.0f;
-			float a = 1.0f;
-			if (pConf->has("emissive[@r]"))
-				r = (float)pConf->getDouble("emissive[@r]");
-			if (pConf->has("emissive[@g]"))
-				g = (float)pConf->getDouble("emissive[@g]");
-			if (pConf->has("emissive[@b]"))
-				b = (float)pConf->getDouble("emissive[@b]");
-			if (pConf->has("emissive[@a]"))
-				a = (float)pConf->getDouble("emissive[@a]");
-			renderMaterial->setEmissive(render::Color(r,g,b,a));
-		}
-
-		//shininess
-		if (pConf->has("shininess"))
-		{
-			float shininess = 0.0f;
-			if (pConf->has("shininess[@value]"))
-				shininess = (float)pConf->getDouble("shininess[@value]");
-			renderMaterial->setShininess(shininess);
-		}
-
-		//lighting
-		if (pConf->has("lighting"))
-		{
-			bool lighting = false;
-			if (pConf->has("lighting[@value]"))
-				lighting = pConf->getBool("lighting[@value]");
-			renderMaterial->setLightingEnabled(lighting);
-		}
-
-		//fog
-		if (pConf->has("fog"))
-		{
-			bool fog = false;
-			float r = 1.0f;
-			float g = 1.0f;
-			float b = 1.0f;
-			float a = 1.0f;
-			render::FogMode mFogtype = render::FM_NONE;
-			float density = 0.0f;
-			float start = 0.0f;
-			float end = 0.0f;
-			
-			if (pConf->has("fog[@value]"))
-				fog = pConf->getBool("fog[@value]");
-
-			std::string type;
-			if (pConf->has("fog[@type]"))
-				type = pConf->getString("fog[@type]");
-
-			if (type == "none")
-				mFogtype = render::FM_NONE;
-			else if (type == "linear")
-				mFogtype = render::FM_LINEAR;
-			else if (type == "exp")
-				mFogtype = render::FM_EXP;
-			else if (type == "exp2")
-				mFogtype = render::FM_EXP2;
-			else
-				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad fog attribute, valid parameters are 'none', 'linear', 'exp', or 'exp2'.", core::LOG_LEVEL_ERROR);
-
-			if (pConf->has("fog[@r]"))
-				r = (float)pConf->getDouble("fog[@r]");
-			if (pConf->has("fog[@g]"))
-				g = (float)pConf->getDouble("fog[@g]");
-			if (pConf->has("fog[@b]"))
-				b = (float)pConf->getDouble("fog[@b]");
-			if (pConf->has("fog[@a]"))
-				a = (float)pConf->getDouble("fog[@a]");
-		
-			if (pConf->has("fog[@density]"))
-				density = (float)pConf->getDouble("fog[@density]");
-			if (pConf->has("fog[@start]"))
-				start = (float)pConf->getDouble("fog[@start]");
-			if (pConf->has("fog[@end]"))
-				end = (float)pConf->getDouble("fog[@end]");
-
-			renderMaterial->setFog(fog, mFogtype, render::Color(r,g,b,a), density, start, end);
-		}
-
-		//shading
-		if (pConf->has("shading"))
-		{
-			std::string type;
-			if (pConf->has("shading[@type]"))
-				type = pConf->getString("shading[@type]");
-
-			render::ShadeOptions shadingMode = render::SO_FLAT;
-			if (type == "flat")
-				shadingMode = render::SO_FLAT;
-			else if (type == "gouraud")
-				shadingMode = render::SO_GOURAUD;
-			else if (type == "phong")
-				shadingMode = render::SO_PHONG;
-			else
-				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad shading attribute, valid parameters are 'flat', 'gouraud' or 'phong'.", core::LOG_LEVEL_ERROR);
-		
-			renderMaterial->setShadingMode(shadingMode);
-		}
-
-		//scene_blend
-		if (pConf->has("scene_blend"))
-		{
-			if (pConf->has("scene_blend[@type]"))
+			pElement = pRoot->FirstChildElement("ambient");
+			if (pElement != nullptr)
 			{
-				std::string type = pConf->getString("scene_blend[@type]");
+				float r = 1.0f;
+				float g = 1.0f;
+				float b = 1.0f;
+				float a = 1.0f;
 
-				if (type == "add")
-					renderMaterial->setSceneBlending(render::SBT_ADD);
-				else if (type == "modulate")
-					renderMaterial->setSceneBlending(render::SBT_MODULATE);
-				else if (type == "color_blend")
-					renderMaterial->setSceneBlending(render::SBT_TRANSPARENT_COLOR);
-				else if (type == "alpha_blend")
-					renderMaterial->setSceneBlending(render::SBT_TRANSPARENT_ALPHA);
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setAmbient(render::Color(r,g,b,a));
+			}
+
+			pElement = pRoot->FirstChildElement("diffuse");
+			if (pElement != nullptr)
+			{
+				float r = 1.0f;
+				float g = 1.0f;
+				float b = 1.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setDiffuse(render::Color(r,g,b,a));
+			}
+
+			pElement = pRoot->FirstChildElement("specular");
+			if (pElement != nullptr)
+			{
+				float r = 1.0f;
+				float g = 1.0f;
+				float b = 1.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setSpecular(render::Color(r,g,b,a));
+			}
+
+			pElement = pRoot->FirstChildElement("emissive");
+			if (pElement != nullptr)
+			{
+				float r = 1.0f;
+				float g = 1.0f;
+				float b = 1.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setEmissive(render::Color(r,g,b,a));
+			}
+
+			pElement = pRoot->FirstChildElement("shininess");
+			if (pElement != nullptr)
+			{
+				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					renderMaterial->setShininess((float)dvalue);
+				}
+			}
+
+			pElement = pRoot->FirstChildElement("lighting");
+			if (pElement != nullptr)
+			{
+				svalue = pElement->Attribute("value");
+				if (svalue != nullptr)
+				{
+					renderMaterial->setLightingEnabled((std::string(svalue) == "true") ? true : false);
+				}
+			}
+
+			pElement = pRoot->FirstChildElement("fog");
+			if (pElement != nullptr)
+			{
+				render::FogMode mFogtype = render::FM_NONE;
+				bool fog = false;
+				float r = 1.0f;
+				float g = 1.0f;
+				float b = 1.0f;
+				float a = 1.0f;
+				float density = 0.0f;
+				float start = 0.0f;
+				float end = 0.0f;
+
+				svalue = pElement->Attribute("value");
+				if (svalue != nullptr)
+				{
+					fog = (std::string(svalue) == "true") ? true : false;
+				}
+
+				std::string type;
+				svalue = pElement->Attribute("type");
+				if (svalue != nullptr)
+				{
+					type = svalue;
+				}
+
+				if (type == "none")
+					mFogtype = render::FM_NONE;
+				else if (type == "linear")
+					mFogtype = render::FM_LINEAR;
+				else if (type == "exp")
+					mFogtype = render::FM_EXP;
+				else if (type == "exp2")
+					mFogtype = render::FM_EXP2;
 				else
+					if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad fog attribute, valid parameters are 'none', 'linear', 'exp', or 'exp2'.", core::LOG_LEVEL_ERROR);
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
-					std::string message = "Bad scene_blend attribute, unrecognised parameter '" + type + "'.";
-					if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
+					r = (float)dvalue;
 				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("density", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					density = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("start", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					start = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("end", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					end = (float)dvalue;
+				}
+
+				renderMaterial->setFog(fog, mFogtype, render::Color(r,g,b,a), density, start, end);
 			}
-			else if (pConf->has("scene_blend[@src]") && pConf->has("scene_blend[@dest]"))
+
+			pElement = pRoot->FirstChildElement("shading");
+			if (pElement != nullptr)
 			{
-				render::SceneBlendFactor blendSrc, blendDest;
-				std::string src = pConf->getString("scene_blend[@src]");
-				std::string dest = pConf->getString("scene_blend[@dest]");
+				std::string type;
+				svalue = pElement->Attribute("type");
+				if (svalue != nullptr)
+				{
+					type = svalue;
+				}
 
-				blendSrc = convertBlendFactor(src);
-				blendDest = convertBlendFactor(dest);
-
-				renderMaterial->setSceneBlending(blendSrc, blendDest);
+				render::ShadeOptions shadingMode = render::SO_FLAT;
+				if (type == "flat")
+					shadingMode = render::SO_FLAT;
+				else if (type == "gouraud")
+					shadingMode = render::SO_GOURAUD;
+				else if (type == "phong")
+					shadingMode = render::SO_PHONG;
+				else
+					if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Bad shading attribute, valid parameters are 'flat', 'gouraud' or 'phong'.", core::LOG_LEVEL_ERROR);
+		
+				renderMaterial->setShadingMode(shadingMode);
 			}
-		}
 
-		//depth_check
-		if (pConf->has("depth_check"))
-		{
-			bool depth_check = false;
-			if (pConf->has("depth_check[@value]"))
-				depth_check = pConf->getBool("depth_check[@value]");
-			renderMaterial->setDepthCheckEnabled(depth_check);
-		}
-
-		//depth_write
-		if (pConf->has("depth_write"))
-		{
-			bool depth_write = false;
-			if (pConf->has("depth_write[@value]"))
-				depth_write = pConf->getBool("depth_write[@value]");
-			renderMaterial->setDepthWriteEnabled(depth_write);
-		}
-
-		std::vector<std::string> shaderkeys(3);
-		//shaderkeys.reserve(3);
-		shaderkeys[0] = "vertex_shader";
-		shaderkeys[1] = "fragment_shader";
-		shaderkeys[2] = "geometry_shader";
-
-		//shaders
-		for (int i = 0; i < shaderkeys.size(); ++i)
-		{
-			std::string key = shaderkeys[i];
-
-			//vertex_shader
-			if (pConf->has(key))
+			pElement = pRoot->FirstChildElement("scene_blend");
+			if (pElement != nullptr)
 			{
-				std::string shader;
-				if (pConf->has(key + ".shader"))
+				if (pElement->Attribute("type") != nullptr)
 				{
-					if (pConf->has(key + ".shader[@value]"))
-						shader = pConf->getString(key + ".shader[@value]");
-				}
-
-				if (shader.empty())
-					continue;
-			
-				render::Shader* pShader = nullptr;
-				
-				if (key == "vertex_shader")
-				{
-					renderMaterial->setVertexShader(shader);
-					pShader = renderMaterial->getVertexShader();
-				}
-				if (key == "fragment_shader")
-				{
-					renderMaterial->setFragmentShader(shader);
-					pShader = renderMaterial->getFragmentShader();
-				}
-				if (key == "geometry_shader")
-				{
-					renderMaterial->setGeometryShader(shader);
-					pShader = renderMaterial->getGeometryShader();
-				}
-				
-				if (pShader != nullptr)
-				{
-					if (pConf->has(key + ".entry_point"))
+					std::string type;
+					svalue = pElement->Attribute("type");
+					if (svalue != nullptr)
 					{
-						std::string entry_point; 
-						if (pConf->has(key + ".entry_point[@value]"))
-							entry_point = pConf->getString(key + ".entry_point[@value]");
-						pShader->setEntryPoint(entry_point);
+						type = svalue;
 					}
 
-					//named params
-					unsigned int i = 0;
-					std::string nkey = key + ".param_named[" + core::intToString(i) + "]";
-					while (pConf->has(nkey))
+					if (type == "add")
+						renderMaterial->setSceneBlending(render::SBT_ADD);
+					else if (type == "modulate")
+						renderMaterial->setSceneBlending(render::SBT_MODULATE);
+					else if (type == "color_blend")
+						renderMaterial->setSceneBlending(render::SBT_TRANSPARENT_COLOR);
+					else if (type == "alpha_blend")
+						renderMaterial->setSceneBlending(render::SBT_TRANSPARENT_ALPHA);
+					else
+					{
+						std::string message = "Bad scene_blend attribute, unrecognised parameter '" + type + "'.";
+						if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
+					}
+				}
+				else if (pElement->Attribute("src") != nullptr && pElement->Attribute("dest") != nullptr)
+				{
+					std::string src;
+					std::string dest;
+					svalue = pElement->Attribute("src");
+					if (svalue != nullptr)
+					{
+						src = svalue;
+					}
+					svalue = pElement->Attribute("dest");
+					if (svalue != nullptr)
+					{
+						dest = svalue;
+					}
+
+					renderMaterial->setSceneBlending(convertBlendFactor(src), convertBlendFactor(dest));
+				}
+			}
+
+			pElement = pRoot->FirstChildElement("depth_check");
+			if (pElement != nullptr)
+			{
+				svalue = pElement->Attribute("value");
+				if (svalue != nullptr)
+				{
+					renderMaterial->setDepthCheckEnabled((std::string(svalue) == "true") ? true : false);
+				}
+			}
+
+			pElement = pRoot->FirstChildElement("depth_write");
+			if (pElement != nullptr)
+			{
+				svalue = pElement->Attribute("value");
+				if (svalue != nullptr)
+				{
+					renderMaterial->setDepthWriteEnabled((std::string(svalue) == "true") ? true : false);
+				}
+			}
+
+
+			std::vector<std::string> shaderkeys(3);
+
+			shaderkeys[0] = "vertex_shader";
+			shaderkeys[1] = "fragment_shader";
+			shaderkeys[2] = "geometry_shader";
+
+			for (int i = 0; i < shaderkeys.size(); ++i)
+			{
+				std::string key = shaderkeys[i];
+
+				pElement = pRoot->FirstChildElement(key.c_str());
+				if (pElement != nullptr)
+				{
+					std::string shader;
+					pSubElement = pElement->FirstChildElement("shader");
+					if (pSubElement != nullptr)
+					{
+						svalue = pSubElement->Attribute("value");
+						if (svalue != nullptr)
+						{
+							shader = svalue;
+						}
+					}
+					
+					if (shader.empty())
+						continue;
+
+					render::Shader* pShader = nullptr;
+				
+					if (key == "vertex_shader")
+					{
+						renderMaterial->setVertexShader(shader);
+						pShader = renderMaterial->getVertexShader();
+					}
+					if (key == "fragment_shader")
+					{
+						renderMaterial->setFragmentShader(shader);
+						pShader = renderMaterial->getFragmentShader();
+					}
+					if (key == "geometry_shader")
+					{
+						renderMaterial->setGeometryShader(shader);
+						pShader = renderMaterial->getGeometryShader();
+					}
+
+					if (pShader == nullptr)
+						continue;
+
+					pSubElement = pElement->FirstChildElement("entry_point");
+					if (pSubElement != nullptr)
+					{
+						svalue = pSubElement->Attribute("value");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							pShader->setEntryPoint(value);
+						}
+					}
+
+					pSubElement = pElement->FirstChildElement("param_named");
+					while (pSubElement != nullptr)
 					{
 						std::string name;
-						if (pConf->has(nkey + "[@name]"))
-							name = pConf->getString(nkey + "[@name]");
 						std::string type;
-						if (pConf->has(nkey + "[@type]"))
-							type = pConf->getString(nkey + "[@type]");
 
-						if (type == "matrix4x4")
+						svalue = pSubElement->Attribute("name");
+						if (svalue != nullptr)
+						{
+							name = svalue;
+						}
+
+						svalue = pSubElement->Attribute("type");
+						if (svalue != nullptr)
+						{
+							type = svalue;
+						}
+
+						if (name.empty() && type.empty())
+							continue;
+
+						if (type == "color")
+						{
+							float r = 1.0f;
+							float g = 1.0f;
+							float b = 1.0f;
+							float a = 1.0f;
+
+							if (pSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								r = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								g = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								b = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								a = (float)dvalue;
+							}
+
+							pShader->setParameter(name, render::Color(r,g,b,a));
+						}
+						else if (type == "vector2d")
+						{
+							float x = 0.0f;
+							float y = 0.0f;
+
+							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								x = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								y = (float)dvalue;
+							}
+
+							pShader->setParameter(name, core::vector2d(x,y));
+						}
+						else if (type == "vector3d")
+						{
+							float x = 0.0f;
+							float y = 0.0f;
+							float z = 0.0f;
+
+							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								x = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								y = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								z = (float)dvalue;
+							}
+
+							pShader->setParameter(name, core::vector3d(x,y,z));
+						}
+						else if (type == "vector4d")
+						{
+							float x = 0.0f;
+							float y = 0.0f;
+							float z = 0.0f;
+							float w = 0.0f;
+
+							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								x = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								y = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								z = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("w", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								w = (float)dvalue;
+							}
+
+							pShader->setParameter(name, core::vector4d(x,y,z,w));
+						}
+						else if (type == "matrix4x4")
 						{
 							float m00 = 0.0f;
 							float m01 = 0.0f;
@@ -576,111 +788,100 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							float m32 = 0.0f;
 							float m33 = 0.0f;
 
-							if (pConf->has(nkey + "[@m00]"))
-								m00 = (float)pConf->getDouble(nkey + "[@m00]");
-							if (pConf->has(nkey + "[@m01]"))
-								m01 = (float)pConf->getDouble(nkey + "[@m01]");
-							if (pConf->has(nkey + "[@m02]"))
-								m02 = (float)pConf->getDouble(nkey + "[@m02]");
-							if (pConf->has(nkey + "[@m03]"))
-								m03 = (float)pConf->getDouble(nkey + "[@m03]");
-							if (pConf->has(nkey + "[@m10]"))
-								m10 = (float)pConf->getDouble(nkey + "[@m10]");
-							if (pConf->has(nkey + "[@m11]"))
-								m11 = (float)pConf->getDouble(nkey + "[@m11]");
-							if (pConf->has(nkey + "[@m12]"))
-								m12 = (float)pConf->getDouble(nkey + "[@m12]");
-							if (pConf->has(nkey + "[@m13]"))
-								m13 = (float)pConf->getDouble(nkey + "[@m13]");
-							if (pConf->has(nkey + "[@m20]"))
-								m20 = (float)pConf->getDouble(nkey + "[@m20]");
-							if (pConf->has(nkey + "[@m21]"))
-								m21 = (float)pConf->getDouble(nkey + "[@m21]");
-							if (pConf->has(nkey + "[@m22]"))
-								m22 = (float)pConf->getDouble(nkey + "[@m22]");
-							if (pConf->has(nkey + "[@m23]"))
-								m23 = (float)pConf->getDouble(nkey + "[@m23]");
-							if (pConf->has(nkey + "[@m30]"))
-								m30 = (float)pConf->getDouble(nkey + "[@m30]");
-							if (pConf->has(nkey + "[@m31]"))
-								m31 = (float)pConf->getDouble(nkey + "[@m31]");
-							if (pConf->has(nkey + "[@m32]"))
-								m32 = (float)pConf->getDouble(nkey + "[@m32]");
-							if (pConf->has(nkey + "[@m33]"))
-								m33 = (float)pConf->getDouble(nkey + "[@m33]");
+							tinyxml2::XMLElement* pRowSubElement = nullptr;
+							pRowSubElement = pSubElement->FirstChildElement("row0");
+							if (pRowSubElement != nullptr)
+							{
+								svalue = pRowSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									value = svalue;
+								}
 
-							core::matrix4 m(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
-							pShader->setParameter(name, m);
-						}
-						else if (type == "color")
-						{
-							float r = 1.0f;
-							float g = 1.0f;
-							float b = 1.0f;
-							float a = 1.0f;
+								std::vector<std::string> vecparams = core::splitString(value, " \t");
 
-							if (pConf->has(nkey + "[@r]"))
-								r = (float)pConf->getDouble(nkey + "[@r]");
-							if (pConf->has(nkey + "[@g]"))
-								g = (float)pConf->getDouble(nkey + "[@g]");
-							if (pConf->has(nkey + "[@b]"))
-								b = (float)pConf->getDouble(nkey + "[@b]");
-							if (pConf->has(nkey + "[@a]"))
-								a = (float)pConf->getDouble(nkey + "[@a]");
+								if (vecparams.size() > 0)
+									m00 = core::stringToFloat(vecparams[0]);
+								if (vecparams.size() > 1)
+									m01 = core::stringToFloat(vecparams[1]);
+								if (vecparams.size() > 2)
+									m02 = core::stringToFloat(vecparams[2]);
+								if (vecparams.size() > 3)
+									m03 = core::stringToFloat(vecparams[3]);
+							}
 
-							pShader->setParameter(name, render::Color(r,g,b,a));
-						}
-						else if (type == "vector2d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
+							pRowSubElement = pSubElement->FirstChildElement("row1");
+							if (pRowSubElement != nullptr)
+							{
+								svalue = pRowSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									value = svalue;
+								}
 
-							if (pConf->has(nkey + ".param_named[@x]"))
-								x = (float)pConf->getDouble(nkey + ".param_named[@x]");
-							if (pConf->has(nkey + ".param_named[@y]"))
-								y = (float)pConf->getDouble(nkey + ".param_named[@y]");
+								std::vector<std::string> vecparams = core::splitString(value, " \t");
 
-							pShader->setParameter(name, core::vector2d(x,y));
-			
-						}
-						else if (type == "vector3d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
-							float z = 0.0f;
+								if (vecparams.size() > 0)
+									m10 = core::stringToFloat(vecparams[0]);
+								if (vecparams.size() > 1)
+									m11 = core::stringToFloat(vecparams[1]);
+								if (vecparams.size() > 2)
+									m12 = core::stringToFloat(vecparams[2]);
+								if (vecparams.size() > 3)
+									m13 = core::stringToFloat(vecparams[3]);
+							}
 
-							if (pConf->has(nkey + "[@x]"))
-								x = (float)pConf->getDouble(nkey + "[@x]");
-							if (pConf->has(nkey + "[@y]"))
-								y = (float)pConf->getDouble(nkey + "[@y]");
-							if (pConf->has(nkey + "[@z]"))
-								z = (float)pConf->getDouble(nkey + "[@z]");
+							pRowSubElement = pSubElement->FirstChildElement("row2");
+							if (pRowSubElement != nullptr)
+							{
+								svalue = pRowSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									value = svalue;
+								}
 
-							pShader->setParameter(name, core::vector3d(x,y,z));
-						}
-						else if (type == "vector4d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
-							float z = 0.0f;
-							float w = 0.0f;
+								std::vector<std::string> vecparams = core::splitString(value, " \t");
 
-							if (pConf->has(nkey + "[@x]"))
-								x = (float)pConf->getDouble(nkey + "[@x]");
-							if (pConf->has(nkey + "[@y]"))
-								y = (float)pConf->getDouble(nkey + "[@y]");
-							if (pConf->has(nkey + "[@z]"))
-								z = (float)pConf->getDouble(nkey + "[@z]");
-							if (pConf->has(nkey + "[@w]"))
-								w = (float)pConf->getDouble(nkey + "[@w]");
+								if (vecparams.size() > 0)
+									m20 = core::stringToFloat(vecparams[0]);
+								if (vecparams.size() > 1)
+									m21 = core::stringToFloat(vecparams[1]);
+								if (vecparams.size() > 2)
+									m22 = core::stringToFloat(vecparams[2]);
+								if (vecparams.size() > 3)
+									m23 = core::stringToFloat(vecparams[3]);
+							}
 
-							pShader->setParameter(name, core::vector4d(x,y,z,w));
+							pRowSubElement = pSubElement->FirstChildElement("row3");
+							if (pRowSubElement != nullptr)
+							{
+								svalue = pRowSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									value = svalue;
+								}
+
+								std::vector<std::string> vecparams = core::splitString(value, " \t");
+
+								if (vecparams.size() > 0)
+									m30 = core::stringToFloat(vecparams[0]);
+								if (vecparams.size() > 1)
+									m31 = core::stringToFloat(vecparams[1]);
+								if (vecparams.size() > 2)
+									m32 = core::stringToFloat(vecparams[2]);
+								if (vecparams.size() > 3)
+									m33 = core::stringToFloat(vecparams[3]);
+							}
+
+							pShader->setParameter(name, core::matrix4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33));
 						}
 						else if (type == "float")
 						{
-							std::string value;
-							if (pConf->has(nkey + "[@value]"))
-								value = pConf->getString(nkey + "[@value]");
+							svalue = pElement->Attribute("value");
+							if (svalue != nullptr)
+							{
+								value = svalue;
+							}
 
 							std::vector<std::string> vecparams = core::splitString(value, " \t");
 
@@ -694,9 +895,11 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 						}
 						else if (type == "int")
 						{
-							std::string value;
-							if (pConf->has(nkey + "[@value]"))
-								value = pConf->getString(nkey + "[@value]");
+							svalue = pElement->Attribute("value");
+							if (svalue != nullptr)
+							{
+								value = svalue;
+							}
 
 							std::vector<std::string> vecparams = core::splitString(value, " \t");
 
@@ -714,182 +917,259 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
 						}
 
-						nkey = key + ".param_named[" + core::intToString(++i) + "]";
+						pSubElement = pSubElement->NextSiblingElement("param_named");
 					}
 
-					//auto params
-					unsigned int j = 0;
-					std::string akey = key + ".param_auto[" + core::intToString(j) + "]";
-					while (pConf->has(akey))
+					pSubElement = pElement->FirstChildElement("param_auto");
+					while (pSubElement != nullptr)
 					{
-						std::string name;
-						if (pConf->has(akey + "[@name]"))
-							name = pConf->getString(akey + "[@name]");
+						render::ShaderAutoParameterType paramAutoType = render::SHADER_AUTO_PARAMETER_TYPE_NONE;
 
-						std::string type;
-						if (pConf->has(akey + "[@type]"))
-							type = pConf->getString(akey + "[@type]");
+						svalue = pSubElement->Attribute("type");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							paramAutoType =	convertAutoParameterType(value);
+						}
 
-						render::ShaderAutoParameterType paramAutoType =	convertAutoParameterType(type);
+						svalue = pSubElement->Attribute("name");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+						}
 
-						pShader->setAutoParameter(name, paramAutoType);
+						pShader->setAutoParameter(value, paramAutoType);
 
-						akey = key + ".param_auto[" + core::intToString(++j) + "]";
+						pSubElement = pSubElement->NextSiblingElement("param_auto");
 					}
 				}
 			}
+			
+			pElement = pRoot->FirstChildElement("texture_unit");
+			while (pElement != nullptr)
+			{
+				std::string texture;
+				pSubElement = pElement->FirstChildElement("texture");
+				if (pSubElement != nullptr)
+				{
+					svalue = pSubElement->Attribute("value");
+					if (svalue != nullptr)
+					{
+						texture = svalue;
+					}
+				}
+
+				if (!texture.empty())
+				{
+					render::TextureUnit* pTextureUnit = new render::TextureUnit();
+					pTextureUnit->setTexture(texture);
+					renderMaterial->addTextureUnit(pTextureUnit);
+
+					pSubElement = pElement->FirstChildElement("color_op");
+					if (pSubElement != nullptr)
+					{
+						render::LayerBlendOperation blendOperation = render::LBX_ADD;
+						render::LayerBlendSource blendSource1 = render::LBS_TEXTURE;
+						render::LayerBlendSource blendSource2 = render::LBS_CURRENT;
+						render::Color colorArg1 = render::Color::White;
+						render::Color colorArg2 = render::Color::White;
+						float manualBlend = 0.0f;
+
+						svalue = pSubElement->Attribute("operation");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendOperation = convertBlendOperation(value);
+						}
+
+						svalue = pSubElement->Attribute("source1");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendSource1 = convertBlendSource(value);
+						}
+
+						svalue = pSubElement->Attribute("source2");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendSource2 = convertBlendSource(value);
+						}
+
+						if (blendSource1 == render::LBS_MANUAL)
+						{
+							float r = 1.0f;
+							float g = 1.0f;
+							float b = 1.0f;
+							float a = 1.0f;
+
+							if (pSubElement->QueryDoubleAttribute("r1", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								r = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("g1", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								g = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("b1", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								b = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("a1", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								a = (float)dvalue;
+							}
+
+							colorArg1 = render::Color(r,g,b,a);
+						}
+
+						if (blendSource2 == render::LBS_MANUAL)
+						{
+							float r = 1.0f;
+							float g = 1.0f;
+							float b = 1.0f;
+							float a = 1.0f;
+
+							if (pSubElement->QueryDoubleAttribute("r2", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								r = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("g2", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								g = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("b2", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								b = (float)dvalue;
+							}
+
+							if (pSubElement->QueryDoubleAttribute("a2", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								a = (float)dvalue;
+							}
+
+							colorArg2 = render::Color(r,g,b,a);
+						}
+
+						if (blendOperation == render::LBX_BLEND_MANUAL)
+						{
+							if (pSubElement->QueryDoubleAttribute("manualBlend", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								manualBlend = (float)dvalue;
+							}
+						}
+
+						pTextureUnit->setColorOperation(blendOperation, blendSource1, blendSource2, colorArg1, colorArg2, manualBlend);
+					}
+
+					pSubElement = pElement->FirstChildElement("alpha_op");
+					if (pSubElement != nullptr)
+					{
+						render::LayerBlendOperation blendOperation = render::LBX_ADD;
+						render::LayerBlendSource blendSource1 = render::LBS_TEXTURE;
+						render::LayerBlendSource blendSource2 = render::LBS_CURRENT;
+						float arg1 = 1.0f;
+						float arg2 = 1.0f;
+						float manualBlend = 0.0f;
+
+						std::string value;
+						svalue = pSubElement->Attribute("operation");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendOperation = convertBlendOperation(value);
+						}
+
+						svalue = pSubElement->Attribute("source1");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendSource1 = convertBlendSource(value);
+						}
+
+						svalue = pSubElement->Attribute("source2");
+						if (svalue != nullptr)
+						{
+							value = svalue;
+							blendSource2 = convertBlendSource(value);
+						}
+
+						if (blendSource1 == render::LBS_MANUAL)
+						{
+							if (pSubElement->QueryDoubleAttribute("arg1", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								arg1 = (float)dvalue;
+							}
+						}
+
+						if (blendSource2 == render::LBS_MANUAL)
+						{
+							if (pSubElement->QueryDoubleAttribute("arg2", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								arg2 = (float)dvalue;
+							}
+						}
+
+						if (blendOperation == render::LBX_BLEND_MANUAL)
+						{
+							if (pSubElement->QueryDoubleAttribute("manualBlend", &dvalue) == tinyxml2::XML_SUCCESS)
+							{
+								manualBlend = (float)dvalue;
+							}
+						}
+
+						pTextureUnit->setAlphaOperation(blendOperation, blendSource1, blendSource2, arg1, arg2, manualBlend);
+					}
+
+					pSubElement = pElement->FirstChildElement("tex_coord_set");
+					if (pSubElement != nullptr)
+					{
+						if (pSubElement->QueryIntAttribute("manualBlend", &ivalue) == tinyxml2::XML_SUCCESS)
+						{
+							pTextureUnit->setTextureCoordSet((unsigned int)ivalue);
+						}
+					}
+				}
+
+				pElement = pElement->NextSiblingElement("texture_unit");
+			}
 		}
-		
-		//texture units
-		unsigned int i = 0;
-		std::string key = "texture_unit[" + core::intToString(i) + "]";
-		while (pConf->has(key))
+
+		if (dest->getResourceType() == RESOURCE_TYPE_PHYSICS_MATERIAL)
 		{
-			std::string texture;
-			if (pConf->has(key + ".texture[@value]"))
-				texture = pConf->getString(key + ".texture[@value]");
-
-			render::TextureUnit* pTextureUnit = new render::TextureUnit();
-			pTextureUnit->setTexture(texture);
-			renderMaterial->addTextureUnit(pTextureUnit);
-
-			if (pConf->has("color_op"))
+			pElement = pRoot->FirstChildElement("restitution");
+			if (pElement != nullptr)
 			{
-				std::string operation;
-				if (pConf->has(key + ".color_op[@operation]"))
-					operation = pConf->getString(key + ".color_op[@operation]");
-				std::string source1;
-				if (pConf->has(key + ".color_op[@source1]"))
-					source1 = pConf->getString(key + ".color_op[@source1]");
-				std::string source2;
-				if (pConf->has(key + ".color_op[@source2]"))
-					source2 = pConf->getString(key + ".color_op[@source2]");
-
-				render::LayerBlendOperation blendOperation = convertBlendOperation(operation);
-				render::LayerBlendSource blendSource1 = convertBlendSource(source1);
-				render::LayerBlendSource blendSource2 = convertBlendSource(source2);
-				render::Color colorArg1 = render::Color::White;
-				render::Color colorArg2 = render::Color::White;
-				float manualBlend = 0.0f;
-
-				if (blendSource1 == render::LBS_MANUAL)
+				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
-					float r = 1.0f;
-					float g = 1.0f;
-					float b = 1.0f;
-					float a = 1.0f;
-
-					if (pConf->has(key + ".color_op[@r1]"))
-						r = (float)pConf->getDouble(key + ".color_op[@r1]");
-					if (pConf->has(key + ".color_op[@g1]"))
-						g = (float)pConf->getDouble(key + ".color_op[@g1]");
-					if (pConf->has(key + ".color_op[@b1]"))
-						b = (float)pConf->getDouble(key + ".color_op[@b1]");
-					if (pConf->has(key + ".color_op[@a1]"))
-						a = (float)pConf->getDouble(key + ".color_op[@a1]");
-
-					colorArg1 = render::Color(r,g,b,a);
+					physicsMaterial->setRestitution((float)dvalue);
 				}
-
-				if (blendSource2 == render::LBS_MANUAL)
-				{
-					float r = 1.0f;
-					float g = 1.0f;
-					float b = 1.0f;
-					float a = 1.0f;
-
-					if (pConf->has(key + ".color_op[@r2]"))
-						r = (float)pConf->getDouble(key + ".color_op[@r2]");
-					if (pConf->has(key + ".color_op[@g2]"))
-						g = (float)pConf->getDouble(key + ".color_op[@g2]");
-					if (pConf->has(key + ".color_op[@b2]"))
-						b = (float)pConf->getDouble(key + ".color_op[@b2]");
-					if (pConf->has(key + ".color_op[@a2]"))
-						a = (float)pConf->getDouble(key + ".color_op[@a2]");
-
-					colorArg2 = render::Color(r,g,b,a);
-				}
-
-				if (blendOperation == render::LBX_BLEND_MANUAL)
-				{
-					if (pConf->has(key + ".color_op[@manualBlend]"))
-						manualBlend = (float)pConf->getDouble(key + ".color_op[@manualBlend]");
-				}
-
-				pTextureUnit->setColorOperation(blendOperation, blendSource1, blendSource2, colorArg1, colorArg2, manualBlend);
 			}
 
-			if (pConf->has("alpha_op"))
+			pElement = pRoot->FirstChildElement("static_friction");
+			if (pElement != nullptr)
 			{
-				std::string operation;
-				if (pConf->has(key + ".alpha_op[@operation]"))
-					operation = pConf->getString(key + ".alpha_op[@operation]");
-				std::string source1;
-				if (pConf->has(key + ".alpha_op[@source1]"))
-					source1 = pConf->getString(key + ".alpha_op[@source1]");
-				std::string source2;
-				if (pConf->has(key + ".alpha_op[@source2]"))
-					source2 = pConf->getString(key + ".alpha_op[@source2]");
-
-				render::LayerBlendOperation blendOperation = convertBlendOperation(operation);
-				render::LayerBlendSource blendSource1 = convertBlendSource(source1);
-				render::LayerBlendSource blendSource2 = convertBlendSource(source2);
-				float arg1 = 1.0f;
-				float arg2 = 1.0f;
-				float manualBlend = 0.0f;
-
-				if (blendSource1 == render::LBS_MANUAL)
+				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
-					if (pConf->has(key + ".alpha_op[@arg1]"))
-						arg1 = (float)pConf->getDouble(key + ".alpha_op[@arg1]");
+					physicsMaterial->setStaticFriction((float)dvalue);
 				}
-
-				if (blendSource2 == render::LBS_MANUAL)
-				{
-					if (pConf->has(key + ".alpha_op[@arg2]"))
-						arg2 = (float)pConf->getDouble(key + ".alpha_op[@arg2]");
-				}
-
-				if (blendOperation == render::LBX_BLEND_MANUAL)
-				{
-					if (pConf->has(key + ".alpha_op[@manualBlend]"))
-						manualBlend = (float)pConf->getDouble(key + ".alpha_op[@manualBlend]");
-				}
-
-				pTextureUnit->setAlphaOperation(blendOperation, blendSource1, blendSource2, arg1, arg2, manualBlend);
-			}
-		
-			if (pConf->has("tex_coord_set"))
-			{
-				unsigned int tex_coord_set = 0;
-				if (pConf->has(key + ".tex_coord_set[@value]"))
-					tex_coord_set = (unsigned int)pConf->getInt(key + ".tex_coord_set[@value]");
-				pTextureUnit->setTextureCoordSet(tex_coord_set);
 			}
 
-
-			key = "texture_unit[" + core::intToString(++i) + "]";
+			pElement = pRoot->FirstChildElement("dynamic_friction");
+			if (pElement != nullptr)
+			{
+				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					physicsMaterial->setDynamicFriction((float)dvalue);
+				}
+			}
 		}
 	}
-
-	if (dest->getResourceType() == RESOURCE_TYPE_PHYSICS_MATERIAL)
-	{
-		float resitution = 0.0f;
-		float static_friction = 0.0f;
-		float dynamic_friction = 0.0f;
-
-		if (pConf->has("restitution[@value]"))
-			resitution = (float)pConf->getDouble("restitution[@value]");
-		if (pConf->has("static_friction[@value]"))
-			static_friction = (float)pConf->getDouble("static_friction[@value]");
-		if (pConf->has("dynamic_friction[@value]"))
-			dynamic_friction = (float)pConf->getDouble("dynamic_friction[@value]");
-		
-		physicsMaterial->setRestitution(resitution);	
-		physicsMaterial->setStaticFriction(static_friction);
-		physicsMaterial->setDynamicFriction(dynamic_friction);
-	}
-	//////////////////////////////////////////////////////////////////////////
 
 	return true;
 }

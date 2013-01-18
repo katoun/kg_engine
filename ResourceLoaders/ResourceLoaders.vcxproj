@@ -98,7 +98,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;POCO_NO_AUTOMATIC_LIBS;RESOURCELOADERS_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

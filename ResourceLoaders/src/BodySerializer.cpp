@@ -33,9 +33,6 @@ THE SOFTWARE.
 #include <physics/PhysicsManager.h>
 #include <BodySerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
-
 #include <tinyxml2.h>
 
 #include <string>
@@ -80,24 +77,23 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
 
-	//TODO: replace Poco::XML with tinyxml2!!!
-	//////////////////////////////////////////////////////////////////////////
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("body");
+	if (pRoot != nullptr)
+	{
+		double dvalue = 0.0;
+		const char* svalue;
+		tinyxml2::XMLElement* pElement = nullptr;
 
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
-		return false;
-	}
-
-	if (pConf->has("type"))
-	{
-		std::string type;
-		if (pConf->has("type[@value]"))
-			type = pConf->getString("type[@value]");
+		std::string type = "static";
+		pElement = pRoot->FirstChildElement("type");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				type = svalue;
+			}
+		}
 
 		if (type == "dynamic")
 			pBodyData->setBodyType(physics::BT_DYNAMIC);
@@ -111,78 +107,108 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 			return false;
 		}
 
-		if (pConf->has("mass"))
+		pElement = pRoot->FirstChildElement("mass");
+		if (pElement != nullptr)
 		{
-			float mass = 0.0f;
-			if (pConf->has("mass[@value]"))
-				mass = (float)pConf->getDouble("mass[@value]");
-			pBodyData->setMass(mass);
+			if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				pBodyData->setMass((float)dvalue);
+			}
 		}
 
-		if (pConf->has("linear_damping"))
+		pElement = pRoot->FirstChildElement("linear_damping");
+		if (pElement != nullptr)
 		{
-			float linearDamping = 0.0f;
-			if (pConf->has("linearDamping[@value]"))
-				linearDamping = (float)pConf->getDouble("linearDamping[@value]");
-
-			pBodyData->setLinearDamping(linearDamping);
+			if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				pBodyData->setLinearDamping((float)dvalue);
+			}
 		}
 
-		if (pConf->has("angular_damping"))
+		pElement = pRoot->FirstChildElement("angular_damping");
+		if (pElement != nullptr)
 		{
-			float angularDamping = 0.0f;
-			if (pConf->has("angularDamping[@value]"))
-				angularDamping = (float)pConf->getDouble("angularDamping[@value]");
-
-			pBodyData->setAngularDamping(angularDamping);
+			if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				pBodyData->setAngularDamping((float)dvalue);
+			}
 		}
 
-		if (pConf->has("linear_velocity"))
+		pElement = pRoot->FirstChildElement("linear_velocity");
+		if (pElement != nullptr)
 		{
 			float x = 0.0f;
 			float y = 0.0f;
 			float z = 0.0f;
 
-			if (pConf->has("linear_velocity[@x]"))
-				x = (float)pConf->getDouble("linear_velocity[@x]");
-			if (pConf->has("linear_velocity[@y]"))
-				y = (float)pConf->getDouble("linear_velocity[@y]");
-			if (pConf->has("linear_velocity[@z]"))
-				z = (float)pConf->getDouble("linear_velocity[@z]");
+			if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				x = (float)dvalue;
+			}
+
+			if (pElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				y = (float)dvalue;
+			}
+
+			if (pElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				z = (float)dvalue;
+			}
 
 			pBodyData->setLinearVelocity(core::vector3d(x, y, z));
 		}
 
-		if (pConf->has("angular_velocity"))
+		pElement = pRoot->FirstChildElement("angular_velocity");
+		if (pElement != nullptr)
 		{
 			float x = 0.0f;
 			float y = 0.0f;
 			float z = 0.0f;
 
-			if (pConf->has("angular_velocity[@x]"))
-				x = (float)pConf->getDouble("angular_velocity[@x]");
-			if (pConf->has("angular_velocity[@y]"))
-				y = (float)pConf->getDouble("angular_velocity[@y]");
-			if (pConf->has("angular_velocity[@z]"))
-				z = (float)pConf->getDouble("angular_velocity[@z]");
+			if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				x = (float)dvalue;
+			}
+
+			if (pElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				y = (float)dvalue;
+			}
+
+			if (pElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				z = (float)dvalue;
+			}
 
 			pBodyData->setAngularVelocity(core::vector3d(x, y, z));
 		}
 
-		if (pConf->has("material"))
+		pElement = pRoot->FirstChildElement("material");
+		if (pElement != nullptr)
 		{
-			std::string material;
-			if (pConf->has("material[@value]"))
-				material = pConf->getString("material[@value]");
-
-			pBodyData->setMaterial(material);
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				std::string material = svalue;
+				pBodyData->setMaterial(material);
+			}
 		}
 
-		if (pConf->has("shape.type"))
+		pElement = pRoot->FirstChildElement("shape");
+		if (pElement != nullptr)
 		{
-			std::string type;
-			if (pConf->has("shape.type[@value]"))
-				type = pConf->getString("shape.type[@value]");
+			tinyxml2::XMLElement* pSubElement = nullptr;
+
+			pSubElement = pElement->FirstChildElement("type");
+			if (pSubElement != nullptr)
+			{
+				svalue = pSubElement->Attribute("value");
+				if (svalue != nullptr)
+				{
+					type = svalue;
+				}
+			}
 
 			physics::ShapeType shapeType = physics::SHAPE_TYPE_UNDEFINED;
 			if (type == "plane")
@@ -199,7 +225,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 				shapeType = physics::SHAPE_TYPE_MESH;
 			else
 				if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("BodySerializer", "Bad shape type attribute, valid parameters are 'plane', 'sphere', 'box', 'capsule', 'convex', or 'mesh'.", core::LOG_LEVEL_ERROR);
-	
+
 			if (shapeType != physics::SHAPE_TYPE_UNDEFINED)
 			{
 				physics::Shape* pShape = nullptr;
@@ -208,40 +234,58 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 
 				pBodyData->addShape(pShape);
 
-				if (pConf->has("shape.position"))
+				pSubElement = pElement->FirstChildElement("position");
+				if (pSubElement != nullptr)
 				{
 					float x = 0.0f;
 					float y = 0.0f;
 					float z = 0.0f;
 
-					if (pConf->has("shape.position[@x]"))
-						x = (float)pConf->getDouble("shape.position[@x]");
-					if (pConf->has("shape.position[@y]"))
-						y = (float)pConf->getDouble("shape.position[@y]");
-					if (pConf->has("shape.position[@z]"))
-						z = (float)pConf->getDouble("shape.position[@z]");
+					if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						x = (float)dvalue;
+					}
+
+					if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						y = (float)dvalue;
+					}
+
+					if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						z = (float)dvalue;
+					}
 
 					pShape->setPosition(core::vector3d(x, y, z));
 				}
 
-				if (pConf->has("shape.orientation"))
+				pSubElement = pElement->FirstChildElement("orientation");
+				if (pSubElement != nullptr)
 				{
 					float x = 0.0f;
 					float y = 0.0f;
 					float z = 0.0f;
 
-					if (pConf->has("shape.position[@x]"))
-						x = (float)pConf->getDouble("shape.position[@x]");
-					if (pConf->has("shape.position[@y]"))
-						y = (float)pConf->getDouble("shape.position[@y]");
-					if (pConf->has("shape.position[@z]"))
-						z = (float)pConf->getDouble("shape.position[@z]");
+					if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						x = (float)dvalue;
+					}
+
+					if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						y = (float)dvalue;
+					}
+
+					if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						z = (float)dvalue;
+					}
 
 					pShape->setOrientation(core::quaternion(x, y, z));
 				}
 
-				
-				if (pConf->has("shape.dimension"))
+				pSubElement = pElement->FirstChildElement("dimension");
+				if (pSubElement != nullptr)
 				{
 					switch(shapeType)
 					{
@@ -254,14 +298,26 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 								float y = 0.0f;
 								float z = 0.0f;
 								float d = 0.0f;
-								if (pConf->has("shape.dimension[@x]"))
-									x = (float)pConf->getDouble("shape.dimension[@x]");
-								if (pConf->has("shape.dimension[@y]"))
-									y = (float)pConf->getDouble("shape.dimension[@y]");
-								if (pConf->has("shape.dimension[@z]"))
-									z = (float)pConf->getDouble("shape.dimension[@z]");
-								if (pConf->has("shape.dimension[@d]"))
-									d = (float)pConf->getDouble("shape.dimension[@d]");
+
+								if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									x = (float)dvalue;
+								}
+
+								if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									y = (float)dvalue;
+								}
+
+								if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									z = (float)dvalue;
+								}
+
+								if (pSubElement->QueryDoubleAttribute("d", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									d = (float)dvalue;
+								}
 
 								planeShape->setDimension(core::vector3d(x, y, z), d);
 							}
@@ -272,11 +328,10 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 							physics::SphereShape* sphereShape = static_cast<physics::SphereShape*>(pShape);
 							if (sphereShape != nullptr)
 							{
-								float radius = 0.0f;
-								if (pConf->has("shape.dimension[@radius]"))
-									radius = (float)pConf->getDouble("shape.dimension[@radius]");
-
-								sphereShape->setDimension(radius);
+								if (pSubElement->QueryDoubleAttribute("radius", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									sphereShape->setDimension((float)dvalue);
+								}
 							}
 						}
 						break;
@@ -288,15 +343,21 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 								float x = 0.0f;
 								float y = 0.0f;
 								float z = 0.0f;
-								float d = 0.0f;
-								if (pConf->has("shape.dimension[@x]"))
-									x = (float)pConf->getDouble("shape.dimension[@x]");
-								if (pConf->has("shape.dimension[@y]"))
-									y = (float)pConf->getDouble("shape.dimension[@y]");
-								if (pConf->has("shape.dimension[@z]"))
-									z = (float)pConf->getDouble("shape.dimension[@z]");
-								if (pConf->has("shape.dimension[@d]"))
-									d = (float)pConf->getDouble("shape.dimension[@d]");
+
+								if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									x = (float)dvalue;
+								}
+
+								if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									y = (float)dvalue;
+								}
+
+								if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									z = (float)dvalue;
+								}
 
 								boxShape->setDimension(core::vector3d(x, y, z));
 							}
@@ -324,8 +385,6 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 			}
 		}
 	}
-
-	//////////////////////////////////////////////////////////////////////////
 
 	return true;
 }
