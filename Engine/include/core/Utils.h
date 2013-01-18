@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
 
-Copyright (c) 2006-2012 Catalin Alexandru Nastase
+Copyright (c) 2006-2013 Catalin Alexandru Nastase
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,8 @@ inline ENGINE_PUBLIC_EXPORT float stringToFloat(std::string& str);
 inline ENGINE_PUBLIC_EXPORT std::string intToString(unsigned int i);
 inline ENGINE_PUBLIC_EXPORT std::string intToString(signed int i);
 inline ENGINE_PUBLIC_EXPORT std::string floatToString(float f);
+
+inline ENGINE_PUBLIC_EXPORT void stringReplaceChar(std::string& str, const char src, const char dest);
 
 inline ENGINE_PUBLIC_EXPORT std::vector<std::string> splitString(const std::string& str, const std::string& delims = "\t\n ", unsigned int maxSplits = 0);
 

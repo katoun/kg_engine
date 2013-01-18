@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "..\Engine\Engine.vcxproj", "{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8164D41D-B053-405B-826C-CF37AC0EF176} = {8164D41D-B053-405B-826C-CF37AC0EF176}
@@ -28,20 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputDriver_Win32", "..\Inp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsDriver_Bullet", "..\PhysicsDrivers\Bullet\PhysicsDriver_Bullet.vcxproj", "{C669D783-FBC4-45BB-9935-D458B8D50B05}"
 	ProjectSection(ProjectDependencies) = postProject
-		{89867349-0DD0-A047-B8F7-5B33BD648AE5} = {89867349-0DD0-A047-B8F7-5B33BD648AE5}
-		{43A3C84A-7644-0744-B856-AA21D6E6AE7C} = {43A3C84A-7644-0744-B856-AA21D6E6AE7C}
 		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
-		{31CCB182-74B5-E641-BBD0-25554EA5CEBB} = {31CCB182-74B5-E641-BBD0-25554EA5CEBB}
-		{DB7CE393-BC38-4246-BF4D-BEE5BBD17805} = {DB7CE393-BC38-4246-BF4D-BEE5BBD17805}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletCollision", "..\dependencies\bullet\msvc\vs2010\BulletCollision.vcxproj", "{43A3C84A-7644-0744-B856-AA21D6E6AE7C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletDynamics", "..\dependencies\bullet\msvc\vs2010\BulletDynamics.vcxproj", "{89867349-0DD0-A047-B8F7-5B33BD648AE5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletSoftBody", "..\dependencies\bullet\msvc\vs2010\BulletSoftBody.vcxproj", "{31CCB182-74B5-E641-BBD0-25554EA5CEBB}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "..\dependencies\bullet\msvc\vs2010\LinearMath.vcxproj", "{DB7CE393-BC38-4246-BF4D-BEE5BBD17805}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlatformDriver", "..\PlatformDriver\PlatformDriver.vcxproj", "{7E92D214-577B-431D-A45C-E65470BCC455}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -123,22 +111,6 @@ Global
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Debug|Win32.Build.0 = Debug|Win32
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Release|Win32.ActiveCfg = Release|Win32
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Release|Win32.Build.0 = Release|Win32
-		{43A3C84A-7644-0744-B856-AA21D6E6AE7C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{43A3C84A-7644-0744-B856-AA21D6E6AE7C}.Debug|Win32.Build.0 = Debug|Win32
-		{43A3C84A-7644-0744-B856-AA21D6E6AE7C}.Release|Win32.ActiveCfg = Release|Win32
-		{43A3C84A-7644-0744-B856-AA21D6E6AE7C}.Release|Win32.Build.0 = Release|Win32
-		{89867349-0DD0-A047-B8F7-5B33BD648AE5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{89867349-0DD0-A047-B8F7-5B33BD648AE5}.Debug|Win32.Build.0 = Debug|Win32
-		{89867349-0DD0-A047-B8F7-5B33BD648AE5}.Release|Win32.ActiveCfg = Release|Win32
-		{89867349-0DD0-A047-B8F7-5B33BD648AE5}.Release|Win32.Build.0 = Release|Win32
-		{31CCB182-74B5-E641-BBD0-25554EA5CEBB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{31CCB182-74B5-E641-BBD0-25554EA5CEBB}.Debug|Win32.Build.0 = Debug|Win32
-		{31CCB182-74B5-E641-BBD0-25554EA5CEBB}.Release|Win32.ActiveCfg = Release|Win32
-		{31CCB182-74B5-E641-BBD0-25554EA5CEBB}.Release|Win32.Build.0 = Release|Win32
-		{DB7CE393-BC38-4246-BF4D-BEE5BBD17805}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DB7CE393-BC38-4246-BF4D-BEE5BBD17805}.Debug|Win32.Build.0 = Debug|Win32
-		{DB7CE393-BC38-4246-BF4D-BEE5BBD17805}.Release|Win32.ActiveCfg = Release|Win32
-		{DB7CE393-BC38-4246-BF4D-BEE5BBD17805}.Release|Win32.Build.0 = Release|Win32
 		{7E92D214-577B-431D-A45C-E65470BCC455}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7E92D214-577B-431D-A45C-E65470BCC455}.Debug|Win32.Build.0 = Debug|Win32
 		{7E92D214-577B-431D-A45C-E65470BCC455}.Release|Win32.ActiveCfg = Release|Win32

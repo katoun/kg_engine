@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
 
-Copyright (c) 2006-2012 Catalin Alexandru Nastase
+Copyright (c) 2006-2013 Catalin Alexandru Nastase
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ THE SOFTWARE.
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #    define DYNLIB_HANDLE hInstance
-#    define DYNLIB_LOAD( a ) LoadLibraryEx( a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH )
+#    define DYNLIB_LOAD( a ) LoadLibraryEx( a, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH )
 #    define DYNLIB_GETSYM( a, b ) GetProcAddress( a, b )
 #    define DYNLIB_UNLOAD( a ) !FreeLibrary( a )
 

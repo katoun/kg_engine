@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
 
-Copyright (c) 2006-2012 Catalin Alexandru Nastase
+Copyright (c) 2006-2013 Catalin Alexandru Nastase
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include <core/System.h>
 #include <engine/Plugin.h>
 #include <engine/EngineSettings.h>
+
+#include <Poco/SharedLibrary.h>
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
@@ -70,8 +72,7 @@ Plugin::Plugin(const std::string& name)
 #endif	
 #endif
 
-	if (EngineSettings::getInstance() != nullptr)
-		mFileName = EngineSettings::getInstance()->getWorkPath() + "/" + mFileName;
+	if (EngineSettings::getInstance() != nullptr) mFileName = EngineSettings::getInstance()->getWorkPath() + "/" + mFileName;
 
 	m_hInst = nullptr;
 }
@@ -102,8 +103,7 @@ bool Plugin::load()
 	// Call startup	
 	DLL_LOAD_PLUGIN pLoadFunc = (DLL_LOAD_PLUGIN)getSymbol("loadPlugin");
 
-	if (pLoadFunc != nullptr)
-		pLoadFunc();
+	if (pLoadFunc != nullptr) pLoadFunc();
 
 	return true;
 }
@@ -113,8 +113,7 @@ void Plugin::unload()
 	// Call shutdown
 	DLL_UNLOAD_PLUGIN pUnloadFunc = (DLL_UNLOAD_PLUGIN)getSymbol("unloadPlugin");
 
-	if (pUnloadFunc != nullptr)
-		pUnloadFunc();
+	if (pUnloadFunc != nullptr) pUnloadFunc();
 	
 	if (DYNLIB_UNLOAD(m_hInst))
 	{

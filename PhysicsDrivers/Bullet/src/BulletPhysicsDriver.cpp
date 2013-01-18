@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 KG game engine (http://katoun.github.com/kg_engine) is made available under the MIT License.
 
-Copyright (c) 2006-2012 Catalin Alexandru Nastase
+Copyright (c) 2006-2013 Catalin Alexandru Nastase
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -166,7 +166,7 @@ void BulletPhysicsDriver::initializeImpl()
 
 	mDynamicsWorld->setGravity(btVector3(0.0f, -9.81f, 0.0f));
 
-	mDynamicsWorld->getSolverInfo().m_solverMode = SOLVER_USE_FRICTION_WARMSTARTING | SOLVER_USE_2_FRICTION_DIRECTIONS |
+	mDynamicsWorld->getSolverInfo().m_solverMode = SOLVER_USE_WARMSTARTING | SOLVER_USE_2_FRICTION_DIRECTIONS |
 													SOLVER_RANDMIZE_ORDER | SOLVER_USE_WARMSTARTING | SOLVER_SIMD;
 	mDynamicsWorld->getDispatchInfo().m_allowedCcdPenetration = btScalar(0.0001);
 
@@ -215,13 +215,11 @@ void BulletPhysicsDriver::updateImpl(float elapsedTime)
 		if (contactManifold == nullptr)
 			continue;
 
-		btCollisionObject* collisionObjectA = static_cast<btCollisionObject*>(contactManifold->getBody0());
-		btCollisionObject* collisionObjectB = static_cast<btCollisionObject*>(contactManifold->getBody1());
-		if (collisionObjectA == nullptr || collisionObjectB == nullptr)
+		if (contactManifold->getBody0() == nullptr || contactManifold->getBody1() == nullptr)
 			continue;
 
-		Body* body1 = static_cast<Body*>(collisionObjectA->getUserPointer());
-		Body* body2 = static_cast<Body*>(collisionObjectB->getUserPointer());
+		Body* body1 = static_cast<Body*>(contactManifold->getBody0()->getUserPointer());
+		Body* body2 = static_cast<Body*>(contactManifold->getBody1()->getUserPointer());
 
 		if (body1 == nullptr || body2 == nullptr)
 			continue;
