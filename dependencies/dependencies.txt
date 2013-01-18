@@ -19,5 +19,3 @@ The following will be compiled alongside the project:
 POCO
 OpenInput
 alure
-libogg
-libvorbis
