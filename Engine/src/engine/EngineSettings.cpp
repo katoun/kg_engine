@@ -65,7 +65,6 @@ EngineSettings::EngineSettings()
 	}
 
 	core::stringReplaceChar(mWorkPath, '\\', '/');
-
 #endif
 }
 

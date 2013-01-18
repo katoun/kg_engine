@@ -58,7 +58,7 @@
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE"
 /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\poco\Foundation\include;$(ProjectDir)..\dependencies\poco\Util\include;$(ProjectDir)..\dependencies\poco\XML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;POCO_NO_AUTOMATIC_LIBS;RESOURCELOADERS_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -130,6 +130,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\BodySerializer.cpp" />
     <ClCompile Include="src\FontSerializer.cpp" />
     <ClCompile Include="src\MaterialSerializer.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="src\TextureSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h" />
     <ClInclude Include="include\BodySerializer.h" />
     <ClInclude Include="include\Config.h" />
     <ClInclude Include="include\FontSerializer.h" />

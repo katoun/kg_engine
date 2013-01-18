@@ -31,8 +31,7 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <FontSerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
 #include <string>
 
@@ -69,57 +68,69 @@ bool FontSerializer::importResource(Resource* dest, const std::string& filename)
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
-	}
 
-	//material
-	if (pConf->has("material[@value]"))
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("font");
+	if (pRoot != nullptr)
 	{
-		std::string material = pConf->getString("material[@value]");
-		font->setMaterial(material);
-	}
+		double dvalue = 0.0;
+		const char* svalue;
+		tinyxml2::XMLElement* pElement = nullptr;
+		
+		pElement = pRoot->FirstChildElement("material");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				std::string material = svalue;
+				font->setMaterial(material);
+			}
+		}
 
-	//chars
-	unsigned int i = 0;
-	std::string key = "char[" + core::intToString(i) + "]";
-	while (pConf->has(key))
-	{
-		std::string valuekey = key + "[@value]";
-		std::string u1key = key + "[@u1]";
-		std::string v1key = key + "[@v1]";
-		std::string u2key = key + "[@u2]";
-		std::string v2key = key + "[@v2]";
+		pElement = pRoot->FirstChildElement("char");
+		while (pElement != nullptr)
+		{
+			std::string value;
+			float u1 = 0.0f;
+			float v1 = 0.0f;
+			float u2 = 0.0f;
+			float v2 = 0.0f;
+			
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				value = svalue;
+			}
 
-		std::string value;
-		float u1 = 0.0f;
-		float v1 = 0.0f;
-		float u2 = 0.0f;
-		float v2 = 0.0f;
+			if (pElement->QueryDoubleAttribute("u1", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				u1 = (float)dvalue;
+			}
 
-		if (pConf->has(valuekey))
-			value = pConf->getString(valuekey);
-		if (pConf->has(u1key))
-			u1 = (float)pConf->getDouble(u1key);
-		if (pConf->has(v1key))
-			v1 = (float)pConf->getDouble(v1key);
-		if (pConf->has(u2key))
-			u2 = (float)pConf->getDouble(u2key);
-		if (pConf->has(v2key))
-			v2 = (float)pConf->getDouble(v2key);
+			if (pElement->QueryDoubleAttribute("v1", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				v1 = (float)dvalue;
+			}
 
-		font->setCharTexCoords(value[0], u1, v1, u2, v2);
+			if (pElement->QueryDoubleAttribute("u2", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				u2 = (float)dvalue;
+			}
 
-		key = "char[" + core::intToString(++i) + "]";
+			if (pElement->QueryDoubleAttribute("v2", &dvalue) == tinyxml2::XML_SUCCESS)
+			{
+				v2 = (float)dvalue;
+			}
+
+			font->setCharTexCoords(value[0], u1, v1, u2, v2);
+
+			pElement = pElement->NextSiblingElement("char");
+		}
 	}
 
 	return true;

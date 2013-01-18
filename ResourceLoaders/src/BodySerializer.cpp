@@ -36,6 +36,8 @@ THE SOFTWARE.
 #include <Poco/AutoPtr.h>
 #include <Poco/Util/XMLConfiguration.h>
 
+#include <tinyxml2.h>
+
 #include <string>
 
 namespace resource
@@ -73,6 +75,13 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 
 	//////////////////////////////////////////////////////////////////////////
 	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
+
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
+		return false;
+
+	//TODO: replace Poco::XML with tinyxml2!!!
+	//////////////////////////////////////////////////////////////////////////
 
 	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
 	try

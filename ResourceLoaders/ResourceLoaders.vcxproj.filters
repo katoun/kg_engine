@@ -5,6 +5,9 @@
       <UniqueIdentifier>{5f82ad1e-1478-4a6c-b133-74f7a1d5be17}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
     </Filter>
+    <Filter Include="tinyxml2">
+      <UniqueIdentifier>{eda3dc2b-e5f3-4737-bc81-eddd6be4c369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BodySerializer.cpp">
@@ -28,6 +31,9 @@
     <ClCompile Include="src\SceneSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp">
+      <Filter>tinyxml2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BodySerializer.h">
@@ -50,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="include\SceneSerializer.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h">
+      <Filter>tinyxml2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
