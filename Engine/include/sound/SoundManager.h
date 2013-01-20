@@ -44,11 +44,6 @@ class vector3d;
 class quaternion;
 }
 
-namespace scene
-{
-class Node;
-}
-
 namespace game
 {
 class ComponentFactory;

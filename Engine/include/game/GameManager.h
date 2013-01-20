@@ -55,11 +55,8 @@ public:
 	~GameManager();
 
 	//! Gets the current scene.
-	Scene* getScene();
+	Scene* getCurrentScene();
 	
-	//! Creates a scene to be managed by this game manager as the current scene.
-	void createScene();
-
 	//! Opens a scene to be managed by this game manager as the current scene.
 	void openScene(const std::string& filename);
 

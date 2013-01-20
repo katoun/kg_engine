@@ -39,11 +39,6 @@ THE SOFTWARE.
 #include <string>
 #include <map>
 
-namespace scene
-{
-class Node;
-}
-
 namespace game
 {
 class ComponentFactory;

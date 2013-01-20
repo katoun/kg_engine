@@ -7,14 +7,10 @@
 		<component type="model">
 			<resource value="meshes/Sphere1m.xml"/>
 		</component>
-		<game_object>
-			<component type="transform">
-			<position x="10" y="0" z="0"/>
-			</component>
-			<component type="model">
-				<resource value="meshes/Sphere1m.xml"/>
-			</component>
-		</game_object>
+		<component type="body">
+			<resource value="bodies/Sphere.xml"/>
+			<enabled value="true"/>
+		</component>
 		<game_object>
 			<component type="transform">
 				<position x="5" y="0" z="0"/>
@@ -23,5 +19,5 @@
 				<resource value="meshes/Sphere1m.xml"/>
 			</component>
 		</game_object>
-	</game_object>	
+	</game_object>
 </scene>

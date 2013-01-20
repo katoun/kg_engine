@@ -42,8 +42,7 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <SceneSerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
 #include <string>
 
@@ -118,22 +117,17 @@ bool SceneSerializer::importResource(Resource* dest, const std::string& filename
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
+
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("scene");
+	if (pRoot != nullptr)
+	{
+		importGameObjects(pRoot);
 	}
-
-	importGameObjects(pConf);
-
-	//////////////////////////////////////////////////////////////////////////
 
 	return true;
 }
@@ -143,47 +137,48 @@ bool SceneSerializer::exportResource(Resource* source, const std::string& filena
 	return false;
 }
 
-void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfiguration>& config, std::string key, game::GameObject* parent)
+void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game::GameObject* parent)
 {
-	//game objects
-	unsigned int i = 0;
-	std::string gkey = key.empty() ? "game_object[" + core::intToString(i) + "]" : key + ".game_object[" + core::intToString(i) + "]";
-	while (config->has(gkey))
+	if (rootElement == nullptr)
+		return;
+
+	if (game::GameManager::getInstance() == nullptr)
+		return;
+
+	double dvalue = 0.0;
+	const char* svalue;
+	tinyxml2::XMLElement* pElement = nullptr;
+	tinyxml2::XMLElement* pSubElement = nullptr;
+	tinyxml2::XMLElement* pComponentSubElement = nullptr;
+
+	pElement = rootElement->FirstChildElement("game_object");
+	while (pElement != nullptr)
 	{
 		game::GameObject* pGameObject = nullptr;
-		if (config->has(gkey + "[@name]"))
+
+		svalue = pElement->Attribute("name");
+		if (svalue != nullptr)
 		{
-			std::string name = config->getString(gkey + "[@name]");
-			if (game::GameManager::getInstance() != nullptr)
-				pGameObject = game::GameManager::getInstance()->createGameObject(name);
+			pGameObject = game::GameManager::getInstance()->createGameObject(svalue);
 		}
 		else
 		{
-			if (game::GameManager::getInstance() != nullptr)
-				pGameObject = game::GameManager::getInstance()->createGameObject();
+			pGameObject = game::GameManager::getInstance()->createGameObject();
 		}
 
 		if (pGameObject != nullptr)
 		{
-			if (parent != nullptr)
+			pGameObject->setParent(parent);
+
+			pSubElement = pElement->FirstChildElement("component");
+			while (pSubElement != nullptr)
 			{
-				pGameObject->setParent(parent);
-			}
-			
-			//components
-			unsigned int j = 0;
-			std::string ckey = gkey + ".component[" + core::intToString(j) + "]";
-			while (config->has(ckey))
-			{
-				if (config->has(ckey + "[@type]"))
+				svalue = pSubElement->Attribute("type");
+				if (svalue != nullptr)
 				{
-					std::string type = config->getString(ckey + "[@type]");
+					game::ComponentType componentType = convertComponentType(svalue);
 
-					game::ComponentType componentType = convertComponentType(type);
-
-					game::Component* pComponent = nullptr;
-					if (game::GameManager::getInstance() != nullptr)
-						pComponent = game::GameManager::getInstance()->createComponent(componentType);
+					game::Component* pComponent = game::GameManager::getInstance()->createComponent(componentType);
 					pGameObject->attachComponent(pComponent);
 
 					switch(componentType)
@@ -194,66 +189,83 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 							if (pTransform == nullptr)
 								break;
 
-							if (config->has(ckey + ".position"))
+							pComponentSubElement = pSubElement->FirstChildElement("position");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string xkey = ckey + ".position[@x]";
-								std::string ykey = ckey + ".position[@y]";
-								std::string zkey = ckey + ".position[@z]";
+								float x = 1.0f;
+								float y = 1.0f;
+								float z = 1.0f;
 
-								float x = 0.0f;
-								float y = 0.0f;
-								float z = 0.0f;
+								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									x = (float)dvalue;
+								}
 
-								if (config->has(xkey))
-									x = (float)config->getDouble(xkey);
-								if (config->has(ykey))
-									y = (float)config->getDouble(ykey);
-								if (config->has(zkey))
-									z = (float)config->getDouble(zkey);
+								if (pElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									y = (float)dvalue;
+								}
+
+								if (pElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									z = (float)dvalue;
+								}
 
 								pTransform->setPosition(x, y, z);
 							}
 
-							if (config->has(ckey + ".orientation"))
+							pComponentSubElement = pSubElement->FirstChildElement("orientation");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string xkey = ckey + ".orientation[@x]";
-								std::string ykey = ckey + ".orientation[@y]";
-								std::string zkey = ckey + ".orientation[@z]";
-								std::string wkey = ckey + ".orientation[@w]";
+								float x = 1.0f;
+								float y = 1.0f;
+								float z = 1.0f;
+								float w = 1.0f;
 
-								float x = 0.0f;
-								float y = 0.0f;
-								float z = 0.0f;
-								float w = 0.0f;
+								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									x = (float)dvalue;
+								}
 
-								if (config->has(xkey))
-									x = (float)config->getDouble(xkey);
-								if (config->has(ykey))
-									y = (float)config->getDouble(ykey);
-								if (config->has(zkey))
-									z = (float)config->getDouble(zkey);
-								if (config->has(wkey))
-									w = (float)config->getDouble(wkey);
+								if (pElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									y = (float)dvalue;
+								}
+
+								if (pElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									z = (float)dvalue;
+								}
+
+								if (pElement->QueryDoubleAttribute("w", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									w = (float)dvalue;
+								}
 
 								pTransform->setOrientation(x, y, z, w);
 							}
 
-							if (config->has(ckey + ".scale"))
+							pComponentSubElement = pSubElement->FirstChildElement("scale");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string xkey = ckey + ".scale[@x]";
-								std::string ykey = ckey + ".scale[@y]";
-								std::string zkey = ckey + ".scale[@z]";
+								float x = 1.0f;
+								float y = 1.0f;
+								float z = 1.0f;
 
-								float x = 0.0f;
-								float y = 0.0f;
-								float z = 0.0f;
+								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									x = (float)dvalue;
+								}
 
-								if (config->has(xkey))
-									x = (float)config->getDouble(xkey);
-								if (config->has(ykey))
-									y = (float)config->getDouble(ykey);
-								if (config->has(zkey))
-									z = (float)config->getDouble(zkey);
+								if (pElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									y = (float)dvalue;
+								}
+
+								if (pElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									z = (float)dvalue;
+								}
 
 								pTransform->setScale(x, y, z);
 							}
@@ -265,137 +277,179 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 							if (pLight == nullptr)
 								break;
 
-							if (config->has(ckey + ".type[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("type");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string type = config->getString(ckey + ".type[@value]");
-
-								render::LightType lightType = convertLightType(type);
-
-								pLight->setLightType(lightType);
-								
-								if (config->has(ckey + ".ambient_color"))
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
 								{
-									std::string rkey = ckey + ".ambient_color[@r]";
-									std::string gkey = ckey + ".ambient_color[@g]";
-									std::string bkey = ckey + ".ambient_color[@b]";
-									std::string akey = ckey + ".ambient_color[@a]";
-									
-									float r = 1.0f;
-									float g = 1.0f;
-									float b = 1.0f;
-									float a = 1.0f;
-									if (config->has(rkey))
-										r = (float)config->getDouble(rkey);
-									if (config->has(gkey))
-										g = (float)config->getDouble(gkey);
-									if (config->has(bkey))
-										b = (float)config->getDouble(bkey);
-									if (config->has(akey))
-										a = (float)config->getDouble(akey);
-									
-									pLight->setAmbientColor(render::Color(r,g,b,a));
+									render::LightType lightType = convertLightType(svalue);
+									pLight->setLightType(lightType);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("ambient_color");
+							if (pComponentSubElement != nullptr)
+							{
+								float r = 1.0f;
+								float g = 1.0f;
+								float b = 1.0f;
+								float a = 1.0f;
+
+								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									r = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".diffuse_color"))
+								if (pComponentSubElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									std::string rkey = ckey + ".diffuse_color[@r]";
-									std::string gkey = ckey + ".diffuse_color[@g]";
-									std::string bkey = ckey + ".diffuse_color[@b]";
-									std::string akey = ckey + ".diffuse_color[@a]";
-									
-									float r = 1.0f;
-									float g = 1.0f;
-									float b = 1.0f;
-									float a = 1.0f;
-									if (config->has(rkey))
-										r = (float)config->getDouble(rkey);
-									if (config->has(gkey))
-										g = (float)config->getDouble(gkey);
-									if (config->has(bkey))
-										b = (float)config->getDouble(bkey);
-									if (config->has(akey))
-										a = (float)config->getDouble(akey);
-									
-									pLight->setDiffuseColor(render::Color(r,g,b,a));
+									g = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".specular_color"))
+								if (pComponentSubElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									std::string rkey = ckey + ".specular_color[@r]";
-									std::string gkey = ckey + ".specular_color[@g]";
-									std::string bkey = ckey + ".specular_color[@b]";
-									std::string akey = ckey + ".specular_color[@a]";
-									
-									float r = 1.0f;
-									float g = 1.0f;
-									float b = 1.0f;
-									float a = 1.0f;
-									if (config->has(rkey))
-										r = (float)config->getDouble(rkey);
-									if (config->has(gkey))
-										g = (float)config->getDouble(gkey);
-									if (config->has(bkey))
-										b = (float)config->getDouble(bkey);
-									if (config->has(akey))
-										a = (float)config->getDouble(akey);
-									
-									pLight->setSpecularColor(render::Color(r,g,b,a));
+									b = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".attenuation_range[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float range = (float)config->getDouble(ckey + ".attenuation_range[@value]");
-
-									pLight->setAttenuationRange(range);
+									a = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".attenuation_constant[@value]"))
-								{
-									float constant = (float)config->getDouble(ckey + ".attenuation_constant[@value]");
+								pLight->setAmbientColor(render::Color(r,g,b,a));
+							}
 
-									pLight->setAttenuationConstant(constant);
+							pComponentSubElement = pSubElement->FirstChildElement("diffuse_color");
+							if (pComponentSubElement != nullptr)
+							{
+								float r = 1.0f;
+								float g = 1.0f;
+								float b = 1.0f;
+								float a = 1.0f;
+
+								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									r = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".attenuation_linear[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float linear = (float)config->getDouble(ckey + ".attenuation_linear[@value]");
-
-									pLight->setAttenuationLinear(linear);
+									g = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".attenuation_quadratic[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float quadratic = (float)config->getDouble(ckey + ".attenuation_quadratic[@value]");
-
-									pLight->setAttenuationQuadric(quadratic);
+									b = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".spotlight_inner_angle[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float innerAngle = (float)config->getDouble(ckey + ".spotlight_inner_angle[@value]");
-
-									pLight->setSpotlightInnerAngle(innerAngle);
+									a = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".spotlight_outer_angle[@value]"))
-								{
-									float outerAngle = (float)config->getDouble(ckey + ".spotlight_outer_angle[@value]");
+								pLight->setDiffuseColor(render::Color(r,g,b,a));
+							}
 
-									pLight->setSpotlightOuterAngle(outerAngle);
+							pComponentSubElement = pSubElement->FirstChildElement("specular_color");
+							if (pComponentSubElement != nullptr)
+							{
+								float r = 1.0f;
+								float g = 1.0f;
+								float b = 1.0f;
+								float a = 1.0f;
+
+								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									r = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".spotlight_falloff[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float falloff = (float)config->getDouble(ckey + ".spotlight_falloff[@value]");
-
-									pLight->setSpotlightFalloff(falloff);
+									g = (float)dvalue;
 								}
 
-								if (config->has(ckey + ".power_scale[@value]"))
+								if (pComponentSubElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
-									float scale = (float)config->getDouble(ckey + ".power_scale[@value]");
+									b = (float)dvalue;
+								}
 
-									pLight->setPowerScale(scale);
+								if (pComponentSubElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									a = (float)dvalue;
+								}
+
+								pLight->setSpecularColor(render::Color(r,g,b,a));
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("attenuation_range");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setAttenuationRange((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("attenuation_constant");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setAttenuationConstant((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("attenuation_linear");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setAttenuationLinear((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("attenuation_quadratic");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setAttenuationQuadric((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("spotlight_inner_angle");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setSpotlightInnerAngle((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("spotlight_outer_angle");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setSpotlightOuterAngle((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("spotlight_falloff");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setSpotlightFalloff((float)dvalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("power_scale");
+							if (pComponentSubElement != nullptr)
+							{
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pLight->setPowerScale((float)dvalue);
 								}
 							}
 						}
@@ -406,28 +460,40 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 							if (pCamera == nullptr)
 								break;
 
-							if (config->has(ckey + ".fov[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("fov");
+							if (pComponentSubElement != nullptr)
 							{
-								float fov = (float)config->getDouble(ckey + ".fov[@value]");
-								pCamera->setFOV(fov);
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pCamera->setFOV((float)dvalue);
+								}
 							}
 
-							if (config->has(ckey + ".near_clip_distance[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("near_clip_distance");
+							if (pComponentSubElement != nullptr)
 							{
-								float distance = (float)config->getDouble(ckey + ".near_clip_distance[@value]");
-								pCamera->setNearClipDistance(distance);
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pCamera->setNearClipDistance((float)dvalue);
+								}
 							}
 
-							if (config->has(ckey + ".far_clip_distance[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("far_clip_distance");
+							if (pComponentSubElement != nullptr)
 							{
-								float distance = (float)config->getDouble(ckey + ".far_clip_distance[@value]");
-								pCamera->setFarClipDistance(distance);
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pCamera->setFarClipDistance((float)dvalue);
+								}
 							}
 
-							if (config->has(ckey + ".aspect_ratio[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("aspect_ratio");
+							if (pComponentSubElement != nullptr)
 							{
-								float ratio = (float)config->getDouble(ckey + ".aspect_ratio[@value]");
-								pCamera->setAspectRatio(ratio);
+								if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+								{
+									pCamera->setAspectRatio((float)dvalue);
+								}
 							}
 						}
 						break;
@@ -437,23 +503,62 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 							if (pModel == nullptr)
 								break;
 
-							if (config->has(ckey + ".resource[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("resource");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string resource = config->getString(ckey + ".resource[@value]");
-
-								pModel->setMeshData(resource);
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									pModel->setMeshData(svalue);
+								}
 							}
 
-							if (config->has(ckey + ".material[@value]"))
+							pComponentSubElement = pSubElement->FirstChildElement("material");
+							if (pComponentSubElement != nullptr)
 							{
-								std::string material = config->getString(ckey + ".material[@value]");
-
-								pModel->setMaterial(material);
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									pModel->setMaterial(svalue);
+								}
 							}
 						}
 						break;
 					case game::COMPONENT_TYPE_BODY:
 						{
+							physics::Body* pBody = static_cast<physics::Body*>(pComponent);
+							if (pBody == nullptr)
+								break;
+
+							pComponentSubElement = pSubElement->FirstChildElement("resource");
+							if (pComponentSubElement != nullptr)
+							{
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									pBody->setBodyData(svalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("material");
+							if (pComponentSubElement != nullptr)
+							{
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									pBody->setMaterial(svalue);
+								}
+							}
+
+							pComponentSubElement = pSubElement->FirstChildElement("enabled");
+							if (pComponentSubElement != nullptr)
+							{
+								svalue = pComponentSubElement->Attribute("value");
+								if (svalue != nullptr)
+								{
+									pBody->setEnabled((std::string(svalue) == "true") ? true : false);
+								}
+							}
 						}
 						break;
 					case game::COMPONENT_TYPE_JOINT:
@@ -471,14 +576,14 @@ void SceneSerializer::importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfigurati
 					}
 				}
 
-				ckey = gkey + "component[" + core::intToString(++j) + "]";
+				pSubElement = pSubElement->NextSiblingElement("component");
 			}
 
 			//child game objects
-			importGameObjects(config, gkey, pGameObject);
+			importGameObjects(pElement, pGameObject);
 		}
 
-		gkey = key.empty() ? "game_object[" + core::intToString(++i) + "]" : key + ".game_object[" + core::intToString(++i) + "]";
+		pElement = pElement->NextSiblingElement("game_object");
 	}
 }
 

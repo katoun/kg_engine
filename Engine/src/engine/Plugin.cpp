@@ -30,8 +30,6 @@ THE SOFTWARE.
 #include <engine/Plugin.h>
 #include <engine/EngineSettings.h>
 
-#include <Poco/SharedLibrary.h>
-
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>

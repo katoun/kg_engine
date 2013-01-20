@@ -1,6 +1,5 @@
 Dependencies are located here.
 
-POCO				1.4.3p1					for Engine
 CPUInfo				1.0.0					for Engine
 tinyxml2			1.0.9					for Engine
 OpenInput			0.2.3					for InputDriver_Win32
@@ -16,6 +15,5 @@ wxMSW				2.9.4					for Editor
 
 
 The following will be compiled alongside the project:
-POCO
 OpenInput
 alure

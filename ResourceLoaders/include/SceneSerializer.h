@@ -33,8 +33,10 @@ THE SOFTWARE.
 
 #include <string>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+namespace tinyxml2
+{
+class XMLElement;
+}
 
 namespace game
 {
@@ -64,7 +66,7 @@ public:
 
 private:
 
-	void importGameObjects(Poco::AutoPtr<Poco::Util::XMLConfiguration>& config, std::string rootKey = "", game::GameObject* parent = nullptr);
+	void importGameObjects(tinyxml2::XMLElement* rootElement, game::GameObject* parent = nullptr);
 };
 
 }// end namespace resource

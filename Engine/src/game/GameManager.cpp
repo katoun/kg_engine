@@ -40,7 +40,8 @@ namespace game
 
 GameManager::GameManager(): core::System("GameManager")
 {
-	mNewSceneName = "NewScene";
+	mNewSceneName				= "NewScene";
+	mCurrentScene				= nullptr;
 
 	mDefaultSceneFactory		= new SceneFactory();
 
@@ -53,29 +54,9 @@ GameManager::~GameManager()
 	SAFE_DELETE(mDefaultTransformFactory);
 }
 
-Scene* GameManager::getScene()
+Scene* GameManager::getCurrentScene()
 {
 	return mCurrentScene;
-}
-
-void GameManager::createScene()
-{
-	if (resource::ResourceManager::getInstance() != nullptr)
-	{
-		Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SCENE, mNewSceneName));
-		if (pScene == nullptr)
-			return;
-
-		removeScene();
-
-		// Remove all Components
-		removeAllComponents();
-
-		// Remove all GameObjects
-		removeAllGameObjects();
-
-		mCurrentScene = pScene;
-	}
 }
 
 void GameManager::openScene(const std::string& filename)
@@ -323,7 +304,17 @@ void GameManager::removeComponentFactory(unsigned int type)
 	}
 }
 
-void GameManager::initializeImpl() {}
+void GameManager::initializeImpl()
+{
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		Scene* pScene = static_cast<Scene*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SCENE, mNewSceneName));
+		if (pScene == nullptr)
+			return;
+
+		mCurrentScene = pScene;
+	}
+}
 
 void GameManager::uninitializeImpl()
 {

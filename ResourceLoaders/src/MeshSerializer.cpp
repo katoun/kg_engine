@@ -37,8 +37,7 @@ THE SOFTWARE.
 #include <render/Color.h>
 #include <MeshSerializer.h>
 
-#include <Poco/AutoPtr.h>
-#include <Poco/Util/XMLConfiguration.h>
+#include <tinyxml2.h>
 
 #include <string>
 
@@ -76,265 +75,344 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + filename;
 
-	Poco::AutoPtr<Poco::Util::XMLConfiguration> pConf(new Poco::Util::XMLConfiguration());
-	try
-	{
-		pConf->load(filePath);
-	}
-	catch(...)
-	{
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(filePath.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
-	}
 
-	if (render::RenderManager::getInstance() == nullptr)
-			return false;
-
-	// Vertex buffers
-	if (pConf->has("vertexbuffer"))
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("mesh");
+	if (pRoot != nullptr)
 	{
-		bool positions = false;
-		if (pConf->has("vertexbuffer[@positions]"))
-			positions = pConf->getBool("vertexbuffer[@positions]");
-
-		if (!positions)
-			return false;
-
-		resource->setNewVertexData();
+		int ivalue = 0;
+		double dvalue = 0.0;
+		const char* svalue;
+		tinyxml2::XMLElement* pElement = nullptr;
+		tinyxml2::XMLElement* pSubElement = nullptr;
+		tinyxml2::XMLElement* pVertexSubElement = nullptr;
 		
-		render::VertexData* vertexData = resource->getVertexData();
-		vertexData->vertexStart = 0;
-
-		// unsigned int numVertices
-		unsigned int numVertices = 0;
-		if (pConf->has("vertexbuffer[@count]"))
-			numVertices = (unsigned int)pConf->getInt("vertexbuffer[@count]");
-		vertexData->vertexCount = numVertices;
-
-		unsigned int bindIdx = 0;
-		float *pFloat = nullptr;
-
-		// float* pVertices (x, y, z order x numVertices)
-		vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_POSITION);
-		render::VertexBuffer* vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
-		pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
-		if (pFloat == nullptr)
-			return false;
-		// Read direct into hardware buffer
-		for (unsigned int i = 0; i < vertexData->vertexCount; i++)
+		pElement = pRoot->FirstChildElement("vertexbuffer");
+		if (pElement != nullptr)
 		{
-			std::string xkey = "vertexbuffer.vertex[" + core::intToString(i) + "].position[@x]";
-			std::string ykey = "vertexbuffer.vertex[" + core::intToString(i) + "].position[@y]";
-			std::string zkey = "vertexbuffer.vertex[" + core::intToString(i) + "].position[@z]";
+			svalue = pElement->Attribute("positions");
+			if (svalue != nullptr)
+			{
+				if (std::string(svalue) != "true")
+					return false;
+			}
 
-			float x = 0.0f;
-			float y = 0.0f;
-			float z = 0.0f;
+			resource->setNewVertexData();
+		
+			render::VertexData* pVertexData = resource->getVertexData();
+			pVertexData->vertexStart = 0;
 
-			if (pConf->has(xkey))
-				x = (float)pConf->getDouble(xkey);
-			if (pConf->has(ykey))
-				y = (float)pConf->getDouble(ykey);
-			if (pConf->has(zkey))
-				z = (float)pConf->getDouble(zkey);
+			unsigned int numVertices = 0;
+			if (pElement->QueryIntAttribute("count", &ivalue) == tinyxml2::XML_SUCCESS)
+			{
+				numVertices = (unsigned int)ivalue;
+			}
+			pVertexData->vertexCount = numVertices;
 
-			pFloat[i * 3 + 0] = x;
-			pFloat[i * 3 + 1] = y;
-			pFloat[i * 3 + 2] = z;
-		}
+			unsigned int bindIdx = 0;
+			float *pFloat = nullptr;
 
-		//////////////////////////////////////////////////////////////////////////
-		core::aabox3d localBox;
-		core::vector3d min = core::vector3d::ORIGIN_3D;
-		core::vector3d max = core::vector3d::ORIGIN_3D;
-		bool first = true;
-		float maxSquaredRadius = -1.0f;
-
-		for (unsigned int vert = 0; vert < vertexData->vertexCount; ++vert)
-		{
-			core::vector3d vec(pFloat[0], pFloat[1], pFloat[2]);
-
-			// Update sphere bounds
-			if (vec.getLengthSQ() > maxSquaredRadius)
-				maxSquaredRadius = vec.getLengthSQ();
-
-			// Update box
-			if (vec.X < min.X) min.X = vec.X;
-			if (vec.Y < min.Y) min.Y = vec.Y;
-			if (vec.Z < min.Z) min.Z = vec.Z;
-
-			if (vec.X > max.X) max.X = vec.X;
-			if (vec.Y > max.Y) max.Y = vec.Y;
-			if (vec.Z > max.Z) max.Z = vec.Z;
-
-			pFloat += 3;
-		}
-		localBox.MinEdge = min;
-		localBox.MaxEdge = max;
-
-		resource->setBoundingBox(localBox);
-
-		// Pad out the sphere a little too
-		resource->setBoundingSphereRadius(core::sqrt(maxSquaredRadius) * 1.25f);
-		//////////////////////////////////////////////////////////////////////////
-		vbuf->unlock();
-		vertexData->vertexBufferBinding->setBinding(bindIdx, vbuf);
-		++bindIdx;
-
-		bool normals = false;
-		if (pConf->has("vertexbuffer[@normals]"))
-			normals = pConf->getBool("vertexbuffer[@normals]");
-
-		if (normals)
-		{
-			// float* pNormals (x, y, z order x numVertices)
-			vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_NORMAL);
-			vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
-			pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
+			// float* pVertices (x, y, z order x numVertices)
+			pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_POSITION);
+			render::VertexBuffer* pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+			pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 			if (pFloat == nullptr)
 				return false;
-			// Read direct into hardware buffer
-			for (unsigned int i = 0; i < vertexData->vertexCount; i++)
+
+			core::aabox3d localBox;
+			core::vector3d min = core::vector3d::ORIGIN_3D;
+			core::vector3d max = core::vector3d::ORIGIN_3D;
+			bool first = true;
+			float maxSquaredRadius = -1.0f;
+
+			unsigned int i = 0;
+			pSubElement = pElement->FirstChildElement("vertex");
+			while(pSubElement != nullptr)
 			{
-				std::string xkey = "vertexbuffer.vertex[" + core::intToString(i) + "].normal[@x]";
-				std::string ykey = "vertexbuffer.vertex[" + core::intToString(i) + "].normal[@y]";
-				std::string zkey = "vertexbuffer.vertex[" + core::intToString(i) + "].normal[@z]";
+				if (i >= pVertexData->vertexCount)
+					break;
 
-				float x = 0.0f;
-				float y = 0.0f;
-				float z = 0.0f;
+				pVertexSubElement = pSubElement->FirstChildElement("position");
+				if (pVertexSubElement != nullptr)
+				{
+					float x = 0.0f;
+					float y = 0.0f;
+					float z = 0.0f;
 
-				if (pConf->has(xkey))
-					x = (float)pConf->getDouble(xkey);
-				if (pConf->has(ykey))
-					y = (float)pConf->getDouble(ykey);
-				if (pConf->has(zkey))
-					z = (float)pConf->getDouble(zkey);
+					if (pVertexSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						x = (float)dvalue;
+					}
 
-				pFloat[i * 3 + 0] = x;
-				pFloat[i * 3 + 1] = y;
-				pFloat[i * 3 + 2] = z;
+					if (pVertexSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						y = (float)dvalue;
+					}
+
+					if (pVertexSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+					{
+						z = (float)dvalue;
+					}
+
+					pFloat[i * 3 + 0] = x;
+					pFloat[i * 3 + 1] = y;
+					pFloat[i * 3 + 2] = z;
+
+					core::vector3d vec(x, y, z);
+
+					// Update sphere bounds
+					if (vec.getLengthSQ() > maxSquaredRadius)
+						maxSquaredRadius = vec.getLengthSQ();
+
+					// Update box
+					if (vec.X < min.X) min.X = vec.X;
+					if (vec.Y < min.Y) min.Y = vec.Y;
+					if (vec.Z < min.Z) min.Z = vec.Z;
+
+					if (vec.X > max.X) max.X = vec.X;
+					if (vec.Y > max.Y) max.Y = vec.Y;
+					if (vec.Z > max.Z) max.Z = vec.Z;
+				}
+
+				i++;
+
+				pSubElement = pSubElement->NextSiblingElement("vertex");
 			}
-			vbuf->unlock();
-			vertexData->vertexBufferBinding->setBinding(bindIdx, vbuf);
+
+			localBox.MinEdge = min;
+			localBox.MaxEdge = max;
+
+			resource->setBoundingBox(localBox);
+
+			// Pad out the sphere a little too
+			resource->setBoundingSphereRadius(core::sqrt(maxSquaredRadius) * 1.25f);
+
+			pVertexBuffer->unlock();
+			pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
 			++bindIdx;
-		}
 
-		bool colours_diffuse = false;
-		if (pConf->has("vertexbuffer[@colours_diffuse]"))
-			colours_diffuse = pConf->getBool("vertexbuffer[@colours_diffuse]");
-
-		unsigned int* pRGBA = nullptr;
-		if (colours_diffuse)
-		{
-			// unsigned int* pColors (RGBA 8888 format x numVertices)
-			vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_COLOR, render::VES_DIFFUSE);
-			vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
-			pRGBA = (unsigned int*)(vbuf->lock(resource::BL_DISCARD));
-			if (pRGBA == nullptr)
-				return false;
-			// Read direct into hardware buffer
-			for (unsigned int i = 0; i < vertexData->vertexCount; i++)
+			bool normals = false;
+			svalue = pElement->Attribute("normals");
+			if (svalue != nullptr)
 			{
-				std::string key = "vertexbuffer.vertex[" + core::intToString(i) + "].colour_diffuse[@value]";
-
-				std::string RGBA;
-
-				if (pConf->has(key))
-					RGBA = pConf->getString(key);
-
-				std::vector<std::string> vecparams = core::splitString(RGBA, " \t");
-
-				float R = vecparams.size() > 1 ? core::stringToFloat(vecparams[0]) : 0.0f;
-				float G = vecparams.size() > 2 ? core::stringToFloat(vecparams[1]) : 0.0f;
-				float B = vecparams.size() > 3 ? core::stringToFloat(vecparams[2]) : 0.0f;
-				float A = vecparams.size() > 4 ? core::stringToFloat(vecparams[3]) : 0.0f;
-
-				render::Color color(R,G,B,A);
-
-				pRGBA[i] = color.getAsRGBA();
+				normals = std::string(svalue) == "true" ? true : false;
 			}
-			vbuf->unlock();
-			vertexData->vertexBufferBinding->setBinding(bindIdx, vbuf);
-			++bindIdx;
-		}
 
-		unsigned int texture_coords = false;
-		if (pConf->has("vertexbuffer[@texture_coords]"))
-			texture_coords = (unsigned int)pConf->getInt("vertexbuffer[@texture_coords]");
-
-		unsigned int texCoordSet = 0;
-		if (texture_coords > 0)
-		{
-			for (int t = 0; t < texture_coords; ++t)
+			if (normals)
 			{
-				// unsigned int dimensions    (1 for 1D, 2 for 2D, 3 for 3D)
-				unsigned int dim = 2;
-				// float* pTexCoords  (u [v] [w] order, dimensions x numVertices)
-				vertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, dim), render::VES_TEXTURE_COORDINATES, texCoordSet);
-				vbuf = render::RenderManager::getInstance()->createVertexBuffer(vertexData->vertexDeclaration->getVertexSize(bindIdx), vertexData->vertexCount, resource->getVertexBufferUsage());
-				pFloat = (float*)(vbuf->lock(resource::BL_DISCARD));
+				// float* pNormals (x, y, z order x numVertices)
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_NORMAL);
+				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
 					return false;
-				// Read direct into hardware buffer
-				for (unsigned int i = 0; i < vertexData->vertexCount; i++)
+
+				unsigned int i = 0;
+				pSubElement = pElement->FirstChildElement("vertex");
+				while(pSubElement != nullptr)
 				{
-					std::string ukey = "vertexbuffer.vertex[" + core::intToString(i) + "].texcoord[" + core::intToString(t) + "][@u]";
-					std::string vkey = "vertexbuffer.vertex[" + core::intToString(i) + "].texcoord[" + core::intToString(t) + "][@v]";
+					if (i >= pVertexData->vertexCount)
+						break;
 
-					float u = 0.0f;
-					float v = 0.0f;
+					pVertexSubElement = pSubElement->FirstChildElement("normal");
+					if (pVertexSubElement != nullptr)
+					{
+						float x = 0.0f;
+						float y = 0.0f;
+						float z = 0.0f;
 
-					if (pConf->has(ukey))
-						u = (float)pConf->getDouble(ukey);
-					if (pConf->has(vkey))
-						v = (float)pConf->getDouble(vkey);
+						if (pVertexSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							x = (float)dvalue;
+						}
 
-					pFloat[i * 2 + 0] = u;
-					pFloat[i * 2 + 1] = v;
+						if (pVertexSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							y = (float)dvalue;
+						}
+
+						if (pVertexSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							z = (float)dvalue;
+						}
+
+						pFloat[i * 3 + 0] = x;
+						pFloat[i * 3 + 1] = y;
+						pFloat[i * 3 + 2] = z;
+					}
+
+					i++;
+
+					pSubElement = pSubElement->NextSiblingElement("vertex");
 				}
-				vbuf->unlock();
-				vertexData->vertexBufferBinding->setBinding(bindIdx, vbuf);
+
+				pVertexBuffer->unlock();
+				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
 				++bindIdx;
-				++texCoordSet;
+			}
+
+			bool colours_diffuse = false;
+			svalue = pElement->Attribute("colours_diffuse");
+			if (svalue != nullptr)
+			{
+				colours_diffuse = std::string(svalue) == "true" ? true : false;
+			}
+
+			unsigned int* pRGBA = nullptr;
+			if (colours_diffuse)
+			{
+				// unsigned int* pColors (RGBA 8888 format x numVertices)
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_COLOR, render::VES_DIFFUSE);
+				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+				pRGBA = (unsigned int*)(pVertexBuffer->lock(resource::BL_DISCARD));
+				if (pRGBA == nullptr)
+					return false;
+
+				unsigned int i = 0;
+				pSubElement = pElement->FirstChildElement("vertex");
+				while(pSubElement != nullptr)
+				{
+					if (i >= pVertexData->vertexCount)
+						break;
+
+					pVertexSubElement = pSubElement->FirstChildElement("colour_diffuse");
+					if (pVertexSubElement != nullptr)
+					{
+						std::string RGBA;
+						svalue = pVertexSubElement->Attribute("value");
+						if (svalue != nullptr)
+						{
+							RGBA = svalue;
+						}
+
+						std::vector<std::string> vecparams = core::splitString(RGBA, " \t");
+
+						float R = vecparams.size() > 1 ? core::stringToFloat(vecparams[0]) : 0.0f;
+						float G = vecparams.size() > 2 ? core::stringToFloat(vecparams[1]) : 0.0f;
+						float B = vecparams.size() > 3 ? core::stringToFloat(vecparams[2]) : 0.0f;
+						float A = vecparams.size() > 4 ? core::stringToFloat(vecparams[3]) : 0.0f;
+
+						render::Color color(R,G,B,A);
+
+						pRGBA[i] = color.getAsRGBA();
+					}
+
+					i++;
+
+					pSubElement = pSubElement->NextSiblingElement("vertex");
+				}
+
+				pVertexBuffer->unlock();
+				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
+				++bindIdx;
+			}
+
+			unsigned int texture_coords = 0;
+			if (pElement->QueryIntAttribute("texture_coords", &ivalue) == tinyxml2::XML_SUCCESS)
+			{
+				texture_coords = (unsigned int)ivalue;
+			}
+
+			for (unsigned int t = 0; t < texture_coords; ++t)
+			{
+				// float* pTexCoords  (u v order, dimensions x numVertices)
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, 2), render::VES_TEXTURE_COORDINATES, t);
+				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
+				if (pFloat == nullptr)
+					return false;
+
+				unsigned int i = 0;
+				pSubElement = pElement->FirstChildElement("vertex");
+				while(pSubElement != nullptr)
+				{
+					if (i >= pVertexData->vertexCount)
+						break;
+
+					pVertexSubElement = pSubElement->FirstChildElement("texcoord");
+					for (unsigned int j = 1; j < texture_coords; ++j)
+					{
+						if (pVertexSubElement == nullptr)
+							break;
+						pVertexSubElement = pVertexSubElement->NextSiblingElement("texcoord");
+					}
+					
+					if (pVertexSubElement != nullptr)
+					{
+						float u = 0.0f;
+						float v = 0.0f;
+
+						if (pVertexSubElement->QueryDoubleAttribute("u", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							u = (float)dvalue;
+						}
+
+						if (pVertexSubElement->QueryDoubleAttribute("v", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							v = (float)dvalue;
+						}
+
+						pFloat[i * 2 + 0] = u;
+						pFloat[i * 2 + 1] = v;
+					}
+
+					i++;
+
+					pSubElement = pSubElement->NextSiblingElement("vertex");
+				}
+
+				pVertexBuffer->unlock();
+				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
+				++bindIdx;
 			}
 		}
-	}
-
-	if (pConf->has("indexbuffer"))
-	{
-		resource->setNewIndexData();
-
-		render::IndexData* indexData = resource->getIndexData();
-		indexData->indexStart = 0;
-
-		// unsigned int numIndexes
-		unsigned int numIndexes = 0;
-		if (pConf->has("indexbuffer[@count]"))
-			numIndexes = (unsigned int)pConf->getInt("indexbuffer[@count]");
-		indexData->indexCount = numIndexes;
-
-		render::IndexBuffer* ibuf = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, indexData->indexCount, resource->getIndexBufferUsage());
-		indexData->indexBuffer = ibuf;
-
-		unsigned int* pIdx = (unsigned int*)(ibuf->lock(resource::BL_DISCARD));
-		if (pIdx == nullptr)
-			return false;
-		// Read direct into hardware buffer
-		for (unsigned int i = 0; i < indexData->indexCount; i++)
+	
+		pElement = pRoot->FirstChildElement("indexbuffer");
+		if (pElement != nullptr)
 		{
-			std::string key = "indexbuffer.index[" + core::intToString(i) + "][@value]";
-			
-			unsigned int index = 0;
+			resource->setNewIndexData();
 
-			if (pConf->has(key))
-				index = pConf->getInt(key);
+			render::IndexData* pIndexData = resource->getIndexData();
+			pIndexData->indexStart = 0;
 
-			pIdx[i] = index;
+			unsigned int numIndexes = 0;
+			if (pElement->QueryIntAttribute("count", &ivalue) == tinyxml2::XML_SUCCESS)
+			{
+				numIndexes = (unsigned int)ivalue;
+			}
+			pIndexData->indexCount = numIndexes;
+
+			render::IndexBuffer* pIndexBuffer = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, pIndexData->indexCount, resource->getIndexBufferUsage());
+			pIndexData->indexBuffer = pIndexBuffer;
+
+			unsigned int* pIdx = (unsigned int*)(pIndexBuffer->lock(resource::BL_DISCARD));
+			if (pIdx == nullptr)
+				return false;
+
+			unsigned int i = 0;
+			pSubElement = pElement->FirstChildElement("index");
+			while(pSubElement != nullptr)
+			{
+				if (i >= pIndexData->indexCount)
+					break;
+				
+				unsigned int index = 0;
+				if (pSubElement->QueryIntAttribute("value", &ivalue) == tinyxml2::XML_SUCCESS)
+				{
+					index = (unsigned int)ivalue;
+				}
+
+				pIdx[i++] = index;
+
+				pSubElement = pSubElement->NextSiblingElement("index");
+			}
+
+			pIndexBuffer->unlock();
 		}
-		ibuf->unlock();
 	}
 
 	return true;

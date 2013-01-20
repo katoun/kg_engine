@@ -52,11 +52,6 @@ enum BufferUsage;
 enum PixelFormat;
 }
 
-namespace scene
-{
-class Node;
-}
-
 namespace game
 {
 class ComponentFactory;

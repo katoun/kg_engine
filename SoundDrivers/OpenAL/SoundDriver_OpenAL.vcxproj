@@ -58,8 +58,8 @@
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE"
 /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\poco\Foundation\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;POCO_NO_AUTOMATIC_LIBS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -71,9 +71,9 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engined.lib;PocoFoundationd.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engined.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\poco\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>
@@ -102,8 +102,8 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Confi
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\poco\Foundation\include;$(ProjectDir)..\..\dependencies\poco\Util\include;$(ProjectDir)..\..\dependencies\poco\XML\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;POCO_NO_AUTOMATIC_LIBS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -115,9 +115,9 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Confi
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engine.lib;PocoFoundation.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\poco\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2010\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2010\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
