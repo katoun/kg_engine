@@ -41,7 +41,7 @@ enum KeyCode;
 enum KeyModifier;
 
 //! A common base class for keyboard device.
-class ENGINE_PUBLIC_EXPORT Keyboard : public InputDevice
+class ENGINE_PUBLIC_EXPORT Keyboard: public InputDevice
 {
 public:
 

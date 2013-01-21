@@ -33,11 +33,11 @@ THE SOFTWARE.
 namespace render
 {
 
-struct CGShaderParameter: public ShaderParameter
+struct GLShaderParameter: public ShaderParameter
 {
-	CGShaderParameter();
+	GLShaderParameter();
 
-	CGparameter cgParameter;
+	//TODO!!!
 };
 
 class GL_PUBLIC_EXPORT GLShader: public Shader
@@ -59,6 +59,8 @@ public:
 	void setParameter(const std::string& name, const float* val, unsigned int count);
 	void setParameter(const std::string& name, const int* val, unsigned int count);
 
+	GLhandleARB getGLHandle() const;
+
 protected:
 
 	bool loadImpl();
@@ -67,14 +69,9 @@ protected:
 
 	ShaderParameter* createParameterImpl(const std::string& name);
 
-	CGcontext mCgContext;
-	CGprogram mCgProgram;// Program handle
-	CGprofile mSelectedCgProfile;
+	GLhandleARB mGLHandle;
 
-	char** mCgArguments;//Cg uses char** for arguments
-
-	static bool isSampler(CGtype type);
-	static ShaderParameterType getShaderPrameterType(CGtype type);
+	static GLenum getShaderType(ShaderType type);
 };
 
 } // end namespace render

@@ -37,7 +37,7 @@ THE SOFTWARE.
 namespace input
 {
 
-class Win32Keyboard : public Keyboard
+class Win32Keyboard: public Keyboard
 {
 public:
 

@@ -37,7 +37,7 @@ namespace resource
 {
 
 //! Class for serializing Fonts.
-class FontSerializer : public Serializer
+class FontSerializer: public Serializer
 { 
 public:
 	

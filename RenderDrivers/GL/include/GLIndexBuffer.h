@@ -33,7 +33,7 @@ THE SOFTWARE.
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLIndexBuffer : public IndexBuffer
+class GL_PUBLIC_EXPORT GLIndexBuffer: public IndexBuffer
 {
 public:
 

@@ -37,7 +37,7 @@ namespace input
 
 enum MouseButton;
 
-class Win32Mouse : public Mouse
+class Win32Mouse: public Mouse
 {
 public:
 

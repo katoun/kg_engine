@@ -597,11 +597,9 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 			shaderkeys[1] = "fragment_shader";
 			shaderkeys[2] = "geometry_shader";
 
-			for (int i = 0; i < shaderkeys.size(); ++i)
+			for (unsigned int i = 0; i < shaderkeys.size(); ++i)
 			{
-				std::string key = shaderkeys[i];
-
-				pElement = pRoot->FirstChildElement(key.c_str());
+				pElement = pRoot->FirstChildElement(shaderkeys[i].c_str());
 				if (pElement != nullptr)
 				{
 					std::string shader;
@@ -620,17 +618,17 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 
 					render::Shader* pShader = nullptr;
 				
-					if (key == "vertex_shader")
+					if (shaderkeys[i] == "vertex_shader")
 					{
 						renderMaterial->setVertexShader(shader);
 						pShader = renderMaterial->getVertexShader();
 					}
-					if (key == "fragment_shader")
+					if (shaderkeys[i] == "fragment_shader")
 					{
 						renderMaterial->setFragmentShader(shader);
 						pShader = renderMaterial->getFragmentShader();
 					}
-					if (key == "geometry_shader")
+					if (shaderkeys[i] == "geometry_shader")
 					{
 						renderMaterial->setGeometryShader(shader);
 						pShader = renderMaterial->getGeometryShader();

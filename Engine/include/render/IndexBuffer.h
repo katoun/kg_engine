@@ -40,7 +40,7 @@ enum IndexType
 };
 
 //! Class for index buffers, still abstract.
-class ENGINE_PUBLIC_EXPORT IndexBuffer : public resource::Buffer
+class ENGINE_PUBLIC_EXPORT IndexBuffer: public resource::Buffer
 {
 public:
 

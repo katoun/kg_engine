@@ -35,7 +35,7 @@ namespace physics
 // Forward definition of references
 class Shape;
 
-class BulletBody : public Body
+class BulletBody: public Body
 {
 public:
 

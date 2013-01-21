@@ -246,7 +246,6 @@ protected:
 	void removeDefaultFactoriesImpl();
 
 	FontFactory* mDefaultFontFactory;
-	MaterialFactory* mDefaultMaterialFactory;
 	MeshDataFactory* mDefaultMeshDataFactory;
 
 	game::ComponentFactory* mDefaultCameraFactory;

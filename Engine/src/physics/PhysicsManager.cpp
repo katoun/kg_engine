@@ -70,14 +70,8 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 
 PhysicsManager::~PhysicsManager()
 {
-	if (mCollisionEvent != nullptr)
-	{
-		delete mCollisionEvent;
-	}
-	if (mDefaultBodyDataFactory != nullptr)
-	{
-		delete mDefaultBodyDataFactory;
-	}
+	SAFE_DELETE(mCollisionEvent);
+	SAFE_DELETE(mDefaultBodyDataFactory);
 }
 
 void PhysicsManager::setHardware(bool state)

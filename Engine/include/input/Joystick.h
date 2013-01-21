@@ -41,7 +41,7 @@ enum KeyCode;
 enum KeyModifier;
 
 //! A common base class for joystick device.
-class ENGINE_PUBLIC_EXPORT Joystick : public InputDevice
+class ENGINE_PUBLIC_EXPORT Joystick: public InputDevice
 {
 public:
 

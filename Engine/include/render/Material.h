@@ -70,12 +70,12 @@ class TextureUnit;
 //! minimised. One of the most frequent render state changes are
 //! changes to materials, mostly to textures. An mesh can have 
 //! only one material.
-class ENGINE_PUBLIC_EXPORT Material : public resource::Resource
+class ENGINE_PUBLIC_EXPORT Material: public resource::Resource
 {
 public:
 
 	Material(const std::string& name, resource::Serializer* serializer);
-	~Material();
+	virtual ~Material();
 
 	//! Sets the ambient color reflectance properties of this material.
 	void setAmbient(float red, float green, float blue);

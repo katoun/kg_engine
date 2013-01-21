@@ -17,7 +17,7 @@ The above is a precis, please do read the full license agreement.
 
 #include <EditorConfig.h>
 
-class MainFrame : public wxFrame
+class MainFrame: public wxFrame
 {
 public:
 

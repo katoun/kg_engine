@@ -71,7 +71,6 @@ std::list<FrameEventReceiver*> RenderManager::mFrameEventReceivers;
 RenderManager::RenderManager(): core::System("RenderManager")
 {
 	mDefaultFontFactory = new FontFactory();
-	mDefaultMaterialFactory = new MaterialFactory();
 	mDefaultMeshDataFactory = new MeshDataFactory();
 	mDefaultCameraFactory = new CameraFactory();
 	mDefaultLightFactory = new LightFactory();
@@ -102,30 +101,11 @@ RenderManager::RenderManager(): core::System("RenderManager")
 
 RenderManager::~RenderManager()
 {
-	if (mDefaultFontFactory != nullptr)
-	{
-		delete mDefaultFontFactory;
-	}
-	if (mDefaultMaterialFactory != nullptr)
-	{
-		delete mDefaultMaterialFactory;
-	}
-	if (mDefaultMeshDataFactory != nullptr)
-	{
-		delete mDefaultMeshDataFactory;
-	}
-	if (mDefaultCameraFactory != nullptr)
-	{
-		delete mDefaultCameraFactory;
-	}
-	if (mDefaultLightFactory != nullptr)
-	{
-		delete mDefaultLightFactory;
-	}
-	if (mDefaultModelFactory != nullptr)
-	{
-		delete mDefaultModelFactory;
-	}
+	SAFE_DELETE(mDefaultFontFactory);
+	SAFE_DELETE(mDefaultMeshDataFactory);
+	SAFE_DELETE(mDefaultCameraFactory);
+	SAFE_DELETE(mDefaultLightFactory);
+	SAFE_DELETE(mDefaultModelFactory);
 }
 
 RenderWindow* RenderManager::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
@@ -696,7 +676,6 @@ void RenderManager::registerDefaultFactoriesImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_FONT, mDefaultFontFactory);
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, mDefaultMaterialFactory);
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
 	}
 
@@ -713,7 +692,6 @@ void RenderManager::removeDefaultFactoriesImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_FONT);
-		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
 	}
 

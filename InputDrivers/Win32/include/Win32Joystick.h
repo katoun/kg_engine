@@ -36,7 +36,7 @@ namespace input
 enum JoystickButton;
 enum PovDirection;
 
-class Win32Joystick : public Joystick
+class Win32Joystick: public Joystick
 {
 public:
 

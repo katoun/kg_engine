@@ -40,6 +40,12 @@
     <ClCompile Include="src\win32\Win32Window.cpp">
       <Filter>Source Files\win32</Filter>
     </ClCompile>
+    <ClCompile Include="src\GLMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GLMaterialFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GLConfig.h">
@@ -71,6 +77,12 @@
     </ClInclude>
     <ClInclude Include="include\win32\Win32Window.h">
       <Filter>Source Files\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GLMaterial.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GLMaterialFactory.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ THE SOFTWARE.
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLVertexBuffer : public VertexBuffer
+class GL_PUBLIC_EXPORT GLVertexBuffer: public VertexBuffer
 {
 public:
 

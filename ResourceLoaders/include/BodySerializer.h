@@ -37,7 +37,7 @@ namespace resource
 {
 
 //! Class for serializing Bodies.
-class BodySerializer : public Serializer
+class BodySerializer: public Serializer
 {
 public:
 	

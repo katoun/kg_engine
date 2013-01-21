@@ -37,7 +37,7 @@ namespace resource
 {
 
 //! Class for serializing Materials.
-class MaterialSerializer : public Serializer
+class MaterialSerializer: public Serializer
 {
 public:
 

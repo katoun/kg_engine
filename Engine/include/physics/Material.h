@@ -41,7 +41,7 @@ namespace physics
 {
 
 //! Class encapsulates properties of a body.
-class ENGINE_PUBLIC_EXPORT Material : public resource::Resource
+class ENGINE_PUBLIC_EXPORT Material: public resource::Resource
 {
 public:
 

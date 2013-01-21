@@ -55,10 +55,7 @@ SoundManager::SoundManager(): core::System("SoundManager")
 
 SoundManager::~SoundManager()
 {
-	if (mDefaultListenerFactory != nullptr)
-	{
-		delete mDefaultListenerFactory;
-	}
+	SAFE_DELETE(mDefaultListenerFactory);
 }
 
 void SoundManager::addSound(Sound* sound)

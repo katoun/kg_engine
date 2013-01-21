@@ -64,7 +64,7 @@ ResourceManager::ResourceManager(): core::System("ResourceManager")
 
 ResourceManager::~ResourceManager()
 {
-	delete mLoadEvent;
+	SAFE_DELETE(mLoadEvent);
 
 	// Update memory usage
 	mMemoryUsage = 0;

@@ -135,6 +135,8 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\GLIndexBuffer.cpp" />
+    <ClCompile Include="src\GLMaterial.cpp" />
+    <ClCompile Include="src\GLMaterialFactory.cpp" />
     <ClCompile Include="src\GLRenderDll.cpp" />
     <ClCompile Include="src\GLPixelFormat.cpp" />
     <ClCompile Include="src\GLRenderDriver.cpp" />
@@ -148,6 +150,8 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="include\GLConfig.h" />
     <ClInclude Include="include\GLIndexBuffer.h" />
+    <ClInclude Include="include\GLMaterial.h" />
+    <ClInclude Include="include\GLMaterialFactory.h" />
     <ClInclude Include="include\GLPixelFormat.h" />
     <ClInclude Include="include\GLRenderDriver.h" />
     <ClInclude Include="include\GLShader.h" />
