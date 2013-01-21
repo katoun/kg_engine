@@ -341,9 +341,6 @@
     <ClInclude Include="include\render\MeshDataFactory.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\MaterialFactory.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\BodyDataFactory.h">
       <Filter>physics</Filter>
     </ClInclude>
@@ -691,9 +688,6 @@
       <Filter>resource</Filter>
     </ClCompile>
     <ClCompile Include="src\render\FontFactory.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\MaterialFactory.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\MeshDataFactory.cpp">

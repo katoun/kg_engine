@@ -39,7 +39,7 @@ GLShaderParameter::GLShaderParameter(): ShaderParameter()
 
 GLShader::GLShader(const std::string& name, resource::Serializer* serializer): Shader(name, serializer)
 {
-	mGLHandle = 0;	
+	mGLHandle = 0;
 }
 
 GLShader::~GLShader()
@@ -141,102 +141,17 @@ bool GLShader::loadImpl()
 
 	mGLHandle = glCreateShaderObjectARB(getShaderType(mShaderType));
 
-	/*mCgContext = nullptr;
-	if (GLRenderDriver::getInstance() != nullptr)
-		mCgContext = GLRenderDriver::getInstance()->getCGContext();
-	if (mCgContext == nullptr)
-		return false;
-	
-	mSelectedCgProfile = cgGLGetLatestProfile(GLRenderDriver::getCGGLType(mShaderType));
-	cgGLSetOptimalOptions(mSelectedCgProfile);
-	if (GLRenderDriver::checkForCgError(mCgContext))
-		return false;
-	
-	mCgProgram = cgCreateProgram(mCgContext, CG_SOURCE, mSource.c_str(), mSelectedCgProfile, mEntryPoint.c_str(), const_cast<const char**>(mCgArguments));
-	if (GLRenderDriver::checkForCgError(mCgContext))
-		return false;
+	const char* source = mSource.c_str();
+	glShaderSourceARB(mGLHandle, 1, &source, NULL);
 
-	cgGLLoadProgram(mCgProgram);
-	if (GLRenderDriver::checkForCgError(mCgContext))
-		return false;*/
+	GLint compiled;
+	glCompileShaderARB(mGLHandle);
+	// check for compile errors
+	glGetObjectParameterivARB(mGLHandle, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
 
-	//populate parameters
-	/*CGparameter parameter = cgGetFirstParameter(mCgProgram, CG_PROGRAM);
-	while (parameter != 0)
-	{
-		CGtype paramType = cgGetParameterType(parameter);
-		CGbool paramRef = cgIsParameterReferenced(parameter);
+	//TODO!!!
 
-		if (cgGetParameterVariability(parameter) == CG_UNIFORM && cgGetParameterDirection(parameter) != CG_OUT && !isSampler(paramType))
-		{
-			if (paramType != CG_STRUCT && paramType != CG_ARRAY)// Normal path (leaf)
-			{
-				std::string paramName = cgGetParameterName(parameter);
-
-				CGresource res = cgGetParameterResource(parameter);
-				if (res != CG_COMBINER_STAGE_CONST0 && res != CG_COMBINER_STAGE_CONST1)// normal constant
-				{
-					ShaderParameterType type = getShaderPrameterType(paramType);
-
-					ShaderParameter* param = findParameter(paramName);
-					if (!param)
-					{
-						addParameter(paramName, getShaderPrameterType(paramType));
-						
-						ShaderParameter* param = findParameter(paramName);
-						CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-						if (cgParam) cgParam->cgParameter = parameter;
-					}
-					else
-					{
-						CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-						if (cgParam)
-						{
-							cgParam->cgParameter = parameter;
-
-							switch(type)
-							{
-							case SHADER_PARAMETER_TYPE_FLOAT:
-								cgSetParameter1fv(cgParam->cgParameter, getFloatPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_FLOAT2:
-								cgSetParameter2fv(cgParam->cgParameter, getFloatPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_FLOAT3:
-								cgSetParameter3fv(cgParam->cgParameter, getFloatPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_FLOAT4:
-								cgSetParameter4fv(cgParam->cgParameter, getFloatPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_INT:
-								cgSetParameter1iv(cgParam->cgParameter, getIntPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_INT2:
-								cgSetParameter2iv(cgParam->cgParameter, getIntPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_INT3:
-								cgSetParameter3iv(cgParam->cgParameter, getIntPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_INT4:
-								cgSetParameter4iv(cgParam->cgParameter, getIntPrameterData(cgParam->index));
-								break;
-							case SHADER_PARAMETER_TYPE_MATRIX_4X4:
-								cgSetMatrixParameterfr(cgParam->cgParameter, getFloatPrameterData(cgParam->index));
-								break;
-							}
-
-							if (GLRenderDriver::checkForCgError(mCgContext))
-								return false;
-						}
-					}
-				}
-			}
-		}
-
-		parameter = cgGetNextParameter(parameter);// Get next
-	}*/
-
-	return true;
+	return (compiled == 1);
 }
 
 void GLShader::unloadImpl()

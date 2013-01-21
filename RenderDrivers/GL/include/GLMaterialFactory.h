@@ -24,42 +24,30 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _ENGINE_RENDER_H_
-#define _ENGINE_RENDER_H_
+#ifndef _GL_MATERIAL_FACTORY_H_
+#define _GL_MATERIAL_FACTORY_H_
 
-#include <render/Color.h>
-#include <render/BlendMode.h>
-#include <render/IndexBuffer.h>
-#include <render/VertexBuffer.h>
-#include <render/VertexIndexData.h>
-#include <render/RenderDefines.h>
-#include <render/Camera.h>
-#include <render/CameraDefines.h>
-#include <render/Frustum.h>
-#include <render/FrustumDefines.h>
-#include <render/Light.h>
-#include <render/LightDefines.h>
-#include <render/Font.h>
-#include <render/FontFactory.h>
-#include <render/RenderDefines.h>
-#include <render/Model.h>
-#include <render/MeshData.h>
-#include <render/MeshDataFactory.h>
-#include <render/Material.h>
-#include <render/TextureUnit.h>
-#include <render/Texture.h>
-#include <render/TextureDefines.h>
-#include <render/Shader.h>
-#include <render/ShaderDefines.h>
-#include <render/ShaderParamData.h>
-#include <render/Viewport.h>
-#include <render/RenderTargetEvent.h>
-#include <render/RenderTargetEventReceiver.h>
-#include <render/RenderTarget.h>
-#include <render/RenderWindow.h>
-#include <render/FrameEventReceiver.h>
-#include <render/RenderDriver.h>
-#include <render/RenderManager.h>
+#include <GLConfig.h>
+#include <resource/ResourceFactory.h>
 
+namespace resource
+{
+class Resource;
+class Serializer;
+}
 
-#endif // _GAMERENDER_H_
+namespace render
+{
+
+class GL_PUBLIC_EXPORT GLMaterialFactory: public resource::ResourceFactory
+{
+public:
+
+	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
+
+	void destroyResource(resource::Resource* resource);
+};
+
+} // end namespace render
+
+#endif

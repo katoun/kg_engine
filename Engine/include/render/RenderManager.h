@@ -82,7 +82,6 @@ class IndexBuffer;
 class VertexDeclaration;
 class VertexBufferBinding;
 class FontFactory;
-class MaterialFactory;
 class MeshDataFactory;
 enum IndexType;
 enum ShaderType;

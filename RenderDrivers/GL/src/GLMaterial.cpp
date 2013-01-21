@@ -24,42 +24,32 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _ENGINE_RENDER_H_
-#define _ENGINE_RENDER_H_
+#include <GLMaterial.h>
 
-#include <render/Color.h>
-#include <render/BlendMode.h>
-#include <render/IndexBuffer.h>
-#include <render/VertexBuffer.h>
-#include <render/VertexIndexData.h>
-#include <render/RenderDefines.h>
-#include <render/Camera.h>
-#include <render/CameraDefines.h>
-#include <render/Frustum.h>
-#include <render/FrustumDefines.h>
-#include <render/Light.h>
-#include <render/LightDefines.h>
-#include <render/Font.h>
-#include <render/FontFactory.h>
-#include <render/RenderDefines.h>
-#include <render/Model.h>
-#include <render/MeshData.h>
-#include <render/MeshDataFactory.h>
-#include <render/Material.h>
-#include <render/TextureUnit.h>
-#include <render/Texture.h>
-#include <render/TextureDefines.h>
-#include <render/Shader.h>
-#include <render/ShaderDefines.h>
-#include <render/ShaderParamData.h>
-#include <render/Viewport.h>
-#include <render/RenderTargetEvent.h>
-#include <render/RenderTargetEventReceiver.h>
-#include <render/RenderTarget.h>
-#include <render/RenderWindow.h>
-#include <render/FrameEventReceiver.h>
-#include <render/RenderDriver.h>
-#include <render/RenderManager.h>
+namespace render
+{
+
+GLMaterial::GLMaterial(const std::string& name, resource::Serializer* serializer): Material(name, serializer)
+{
+	mGLHandle = 0;
+}
+
+GLMaterial::~GLMaterial() {}
+
+bool GLMaterial::loadImpl()
+{
+	mGLHandle = glCreateProgramObjectARB();
+
+	//TODO!!!
+
+	return true;
+}
+
+void GLMaterial::unloadImpl()
+{
+	glDeleteObjectARB(mGLHandle);
+	//TODO!!!
+}
 
 
-#endif // _GAMERENDER_H_
+} //namespace render

@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include <render/Camera.h>
 #include <render/CameraFactory.h>
 #include <render/Material.h>
-#include <render/MaterialFactory.h>
 #include <render/Model.h>
 #include <render/ModelFactory.h>
 #include <render/RenderDefines.h>

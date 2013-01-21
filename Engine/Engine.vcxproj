@@ -195,7 +195,6 @@
     <ClInclude Include="include\render\LightDefines.h" />
     <ClInclude Include="include\render\LightFactory.h" />
     <ClInclude Include="include\render\Material.h" />
-    <ClInclude Include="include\render\MaterialFactory.h" />
     <ClInclude Include="include\render\MeshData.h" />
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
@@ -318,7 +317,6 @@
     <ClCompile Include="src\render\Light.cpp" />
     <ClCompile Include="src\render\LightFactory.cpp" />
     <ClCompile Include="src\render\Material.cpp" />
-    <ClCompile Include="src\render\MaterialFactory.cpp" />
     <ClCompile Include="src\render\MeshData.cpp" />
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />

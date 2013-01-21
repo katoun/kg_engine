@@ -24,24 +24,35 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <render/MaterialFactory.h>
+#ifndef _GL_RENDERMATERIAL_H_
+#define _GL_RENDERMATERIAL_H_
+
+#include <GLConfig.h>
 #include <render/Material.h>
 
 namespace render
 {
 
-resource::Resource* MaterialFactory::createResource(const std::string& filename, resource::Serializer* serializer)
+class GL_PUBLIC_EXPORT GLMaterial: public Material
 {
-	return new Material(filename, serializer);
-}
+public:
 
-void MaterialFactory::destroyResource(resource::Resource* resource)
-{
-	Material* material = static_cast<Material*>(resource);
+	GLMaterial(const std::string& name, resource::Serializer* serializer);
+	~GLMaterial();
 
-	assert(material != nullptr);
-	if (material != nullptr) delete material;
-}
+	//TODO!!!
+
+protected:
+
+	bool loadImpl();
+
+	void unloadImpl();
 
 
-} // end namespace render
+	GLhandleARB mGLHandle;
+	//TODO!!!
+};
+
+} //namespace render
+
+#endif
