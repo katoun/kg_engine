@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mesh>
-	<vertexbuffer count="4" positions="true" normals="true" colours_diffuse="true" texture_coords="1">
+	<vertexbuffer count="4" positions="true" normals="true" colours_diffuse="true" texture_coords="true">
 		<vertex>
 			<position y="0.000000" x="10.000000" z="-10.000000"/>
 			<normal y="1.000000" x="0.000000" z="0.000000"/>

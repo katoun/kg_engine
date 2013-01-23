@@ -31,18 +31,17 @@ THE SOFTWARE.
 namespace render
 {
 
-VertexElement::VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index)
+VertexElement::VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
 {
 	mSource = source;
 	mOffset = offset;
 	mType = theType; 
 	mSemantic = semantic;
-	mIndex = index;
 }
 
 inline bool VertexElement::operator== (const VertexElement& rhs) const
 {
-	if (mType != rhs.mType || mIndex != rhs.mIndex || mOffset != rhs.mOffset || mSemantic != rhs.mSemantic || mSource != rhs.mSource)
+	if (mType != rhs.mType || mOffset != rhs.mOffset || mSemantic != rhs.mSemantic || mSource != rhs.mSource)
 		return false;
 	else
 		return true;
@@ -66,11 +65,6 @@ VertexElementType VertexElement::getType() const
 VertexElementSemantic VertexElement::getSemantic() const
 {
 	return mSemantic;
-}
-
-unsigned short int VertexElement::getIndex() const 
-{
-	return mIndex;
 }
 
 unsigned int VertexElement::getSize() const
@@ -204,9 +198,9 @@ const std::list<VertexElement*>& VertexDeclaration::getElements() const
 	return mVertexElements;
 }
 
-const VertexElement* VertexDeclaration::addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index)
+const VertexElement* VertexDeclaration::addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
 {
-	VertexElement* newVertexElement = new VertexElement(source, offset, theType, semantic, index);
+	VertexElement* newVertexElement = new VertexElement(source, offset, theType, semantic);
 	mVertexElements.push_back(newVertexElement);
 
 	return newVertexElement;
@@ -223,12 +217,12 @@ void VertexDeclaration::removeElement(unsigned short int elem_index)
 	delete (*i);
 }
 
-void VertexDeclaration::removeElement(VertexElementSemantic semantic, unsigned short int index)
+void VertexDeclaration::removeElement(VertexElementSemantic semantic)
 {
 	std::list<VertexElement*>::iterator i;
 	for (i = mVertexElements.begin(); i != mVertexElements.end(); ++i)
 	{
-		if ((*i)->getSemantic() == semantic && (*i)->getIndex() == index)
+		if ((*i)->getSemantic() == semantic)
 		{
 			mVertexElements.erase(i);
 			delete (*i);
@@ -247,7 +241,7 @@ void VertexDeclaration::removeAllElements()
 	mVertexElements.clear();
 }
 
-void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index)
+void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
 {
 	assert(elem_index < mVertexElements.size());
 
@@ -260,15 +254,15 @@ void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned sh
 		(*i) = nullptr;
 	}
 
-	(*i) = new VertexElement(source, offset, theType, semantic, index);
+	(*i) = new VertexElement(source, offset, theType, semantic);
 }
 
-const VertexElement* VertexDeclaration::findElementBySemantic(VertexElementSemantic sem, unsigned short int index)
+const VertexElement* VertexDeclaration::findElementBySemantic(VertexElementSemantic sem)
 {
 	std::list<VertexElement*>::const_iterator i;
 	for (i = mVertexElements.begin(); i != mVertexElements.end(); ++i)
 	{
-		if ((*i)->getSemantic() == sem && (*i)->getIndex() == index)
+		if ((*i)->getSemantic() == sem)
 		{
 			return (*i);
 		}

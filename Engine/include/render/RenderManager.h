@@ -213,8 +213,6 @@ public:
 	//! Removes all vertex buffer bindings.
 	void removeAllVertexBufferBindings();
 
-	void setFog(FogMode mode = FM_NONE, const Color& color = Color::White, float density = 0.001f, float start = 0.0f, float end = 1.0f);
-
 	//! Converts a uniform projection matrix suitable for the current render system.
 	void convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest);
 
@@ -332,8 +330,6 @@ protected:
 	std::vector<TransparentModel> mTransparentModels;
 	std::vector<DistanceLight> mDistanceLights;
 
-	std::list<Light*> mLightsAffectingFrustum;
-
 	//! Shader auto parameter data.
 	ShaderParamData mShaderParamData;
 
@@ -345,13 +341,6 @@ protected:
 	std::list<Viewport*> mUpdatedViewports;
 
 	Frustum* mFrustum;
-
-	// Fog
-	FogMode mFogMode;
-	Color mFogColor;
-	float mFogDensity;
-	float mFogStart;
-	float mFogEnd;
 
 	int mLastViewportWidth;
 	int mLastViewportHeight;
@@ -379,17 +368,11 @@ protected:
 
 	void beginFrame(Viewport* viewport);
 
-	void findLightsAffectingFrustum(Camera* camera);
-
-	void findLightsAffectingModel(Model* model);
-
 	void findVisibleModels(Camera* camera);
 
 	void renderVisibleModels();
 
 	void renderSingleModel(Model* model);
-
-	void setMaterial(Material* material);
 
 	void endFrame();
 };

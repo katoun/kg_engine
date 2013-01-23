@@ -311,16 +311,17 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				++bindIdx;
 			}
 
-			unsigned int texture_coords = 0;
-			if (pElement->QueryIntAttribute("texture_coords", &ivalue) == tinyxml2::XML_SUCCESS)
+			bool texture_coords = false;
+			svalue = pElement->Attribute("texture_coords");
+			if (svalue != nullptr)
 			{
-				texture_coords = (unsigned int)ivalue;
+				texture_coords = std::string(svalue) == "true" ? true : false;
 			}
 
-			for (unsigned int t = 0; t < texture_coords; ++t)
+			if (texture_coords)
 			{
 				// float* pTexCoords  (u v order, dimensions x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, 2), render::VES_TEXTURE_COORDINATES, t);
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, 2), render::VES_TEXTURE_COORDINATES);
 				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
@@ -334,13 +335,6 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 						break;
 
 					pVertexSubElement = pSubElement->FirstChildElement("texcoord");
-					for (unsigned int j = 1; j < texture_coords; ++j)
-					{
-						if (pVertexSubElement == nullptr)
-							break;
-						pVertexSubElement = pVertexSubElement->NextSiblingElement("texcoord");
-					}
-					
 					if (pVertexSubElement != nullptr)
 					{
 						float u = 0.0f;

@@ -48,7 +48,7 @@ void GLMaterial::resourceLoaded(const resource::ResourceEvent& evt)
 			GLShader* pGLShader = static_cast<GLShader*>(mVertexShader);
 			if (pGLShader != nullptr)
 			{
-				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+				glAttachShader(mGLHandle, pGLShader->getGLHandle());
 			}
 		}
 
@@ -57,7 +57,7 @@ void GLMaterial::resourceLoaded(const resource::ResourceEvent& evt)
 			GLShader* pGLShader = static_cast<GLShader*>(mFragmentShader);
 			if (pGLShader != nullptr)
 			{
-				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+				glAttachShader(mGLHandle, pGLShader->getGLHandle());
 			}
 		}
 
@@ -66,7 +66,7 @@ void GLMaterial::resourceLoaded(const resource::ResourceEvent& evt)
 			GLShader* pGLShader = static_cast<GLShader*>(mGeometryShader);
 			if (pGLShader != nullptr)
 			{
-				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+				glAttachShader(mGLHandle, pGLShader->getGLHandle());
 			}
 		}
 
@@ -76,9 +76,9 @@ void GLMaterial::resourceLoaded(const resource::ResourceEvent& evt)
 		{
 
 			GLint linked;
-			glLinkProgramARB(mGLHandle);
+			glLinkProgram(mGLHandle);
 
-			glGetObjectParameterivARB(mGLHandle, GL_OBJECT_LINK_STATUS_ARB, &linked);
+			glGetProgramiv(mGLHandle, GL_LINK_STATUS, &linked);
 		}
 	}
 }
@@ -91,14 +91,14 @@ bool GLMaterial::loadImpl()
 {
 	if (!Material::loadImpl()) return false;
 
-	mGLHandle = glCreateProgramObjectARB();
+	mGLHandle = glCreateProgram();
 
 	return true;
 }
 
 void GLMaterial::unloadImpl()
 {
-	glDeleteObjectARB(mGLHandle);
+	glDeleteProgram(mGLHandle);
 }
 
 

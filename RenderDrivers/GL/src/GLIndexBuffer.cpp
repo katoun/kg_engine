@@ -35,7 +35,7 @@ namespace render
 GLIndexBuffer::GLIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage)
 : IndexBuffer(idxType, numIndexes, usage)
 {
-	glGenBuffersARB(1, &mBufferId);
+	glGenBuffers(1, &mBufferId);
 
 	if (!mBufferId)
 	{
@@ -43,40 +43,40 @@ GLIndexBuffer::GLIndexBuffer(IndexType idxType, unsigned int numIndexes, resourc
 		return;
 	}
 
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
 	// Initialize buffer and set usage
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
 }
 
 GLIndexBuffer::~GLIndexBuffer() 
 {
-	glDeleteBuffersARB(1, &mBufferId);
+	glDeleteBuffers(1, &mBufferId);
 }
 
 void GLIndexBuffer::readData(unsigned int offset, unsigned int length, void* pDest)
 {
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
-	glGetBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, offset, length, pDest);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, length, pDest);
 }
 
 void GLIndexBuffer::writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer)
 {
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
 	if (offset == 0 && length == mSizeInBytes)
 	{
-		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, pSource, GLRenderDriver::getGLUsage(mUsage));
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, pSource, GLRenderDriver::getGLUsage(mUsage));
 	}
 	else
 	{
 		if(discardWholeBuffer)
 		{
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 		}
 
 		// Now update the real buffer
-		glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, offset, length, pSource);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, length, pSource);
 	}
 }
 
@@ -95,13 +95,13 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 		return nullptr;
 	}
 
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
 	if(options == resource::BL_DISCARD)
 	{
-		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 
 	}
 	else if(options == resource::BL_READ_ONLY)
@@ -111,11 +111,11 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock a write-only index buffer as read-only", core::LOG_LEVEL_ERROR);
 			return nullptr;
 		}
-		access = GL_READ_ONLY_ARB;
+		access = GL_READ_ONLY;
 	}
 	else if(options == resource::BL_NORMAL || options == resource::BL_NO_OVERWRITE)
 	{
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 	}
 	else
 	{	
@@ -123,7 +123,7 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 		return nullptr;
 	}
 
-	void* pBuffer = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, access);
+	void* pBuffer = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, access);
 
 	if(pBuffer == nullptr)
 	{		
@@ -138,9 +138,9 @@ void* GLIndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource
 
 void GLIndexBuffer::unlockImpl()
 {
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
-	if(!glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB))
+	if(!glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER))
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
 		return;

@@ -136,22 +136,22 @@ bool GLShader::loadImpl()
 	if (!Shader::loadImpl())
 		return false;
 
-	mGLHandle = glCreateShaderObjectARB(getShaderType(mShaderType));
+	mGLHandle = glCreateShader(getShaderType(mShaderType));
 
 	const char* source = mSource.c_str();
-	glShaderSourceARB(mGLHandle, 1, &source, NULL);
+	glShaderSource(mGLHandle, 1, &source, NULL);
 
 	GLint compiled;
-	glCompileShaderARB(mGLHandle);
+	glCompileShader(mGLHandle);
 	// check for compile errors
-	glGetObjectParameterivARB(mGLHandle, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+	glGetShaderiv(mGLHandle, GL_COMPILE_STATUS, &compiled);
 
 	return (compiled == 1);
 }
 
 void GLShader::unloadImpl()
 {
-	glDeleteObjectARB(mGLHandle);
+	glDeleteShader(mGLHandle);
 
 	Shader::unloadImpl();
 }
@@ -168,11 +168,11 @@ GLenum GLShader::getShaderType(ShaderType type)
 	switch(type)
 	{
 	case SHADER_TYPE_VERTEX:
-		return GL_VERTEX_SHADER_ARB;
+		return GL_VERTEX_SHADER;
 	case SHADER_TYPE_FRAGMENT:
-		return GL_FRAGMENT_SHADER_ARB;
+		return GL_FRAGMENT_SHADER;
 	case SHADER_TYPE_GEOMETRY:
-		return GL_GEOMETRY_SHADER_EXT;
+		return GL_GEOMETRY_SHADER;
 	default:
 		return 0x0000;
 	}

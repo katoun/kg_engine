@@ -77,7 +77,7 @@ class ENGINE_PUBLIC_EXPORT VertexElement
 {
 public:
 	/// Constructor, should not be called directly, call VertexDeclaration::addElement
-	VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index = 0);
+	VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
 
 	inline bool operator== (const VertexElement& rhs) const;
 	
@@ -89,8 +89,6 @@ public:
 	VertexElementType getType() const;
 	//! Gets the meaning of this element
 	VertexElementSemantic getSemantic() const;
-	//! Gets the index of this element, only applicable for repeating elements.
-	unsigned short int getIndex() const;
 	//! Gets the size of this element in bytes.
 	unsigned int getSize() const;
 	//! Utility method for helping to calculate offsets.
@@ -111,8 +109,6 @@ protected:
 	VertexElementType mType;
 	//! The meaning of the element
 	VertexElementSemantic mSemantic;
-	//! Index of the item, only applicable for some elements like texture coords
-	unsigned short int mIndex;
 };
 
 //! This class declares the format of a set of vertex inputs, which can be issued to the rendering API. 
@@ -128,7 +124,7 @@ protected:
 //! You must not have unused gaps in your buffers which are not referenced by any VertexElement.
 //! You must not cause the buffer & offset settings of 2 VertexElements to overlap.
 //!
-//! Whilst GL and more modern graphics cards in D3D will allow you to defy these rules, 
+//! Whilst GL and more modern graphics cards in D3D will allow you to defy these rules,
 //! sticking to them will ensure that your buffers have the maximum compatibility. 
 class ENGINE_PUBLIC_EXPORT VertexDeclaration
 {
@@ -151,26 +147,22 @@ public:
 	//!@param semantic The meaning of the data (position, normal, diffuse color etc)
 	//!@param index Optional index for multi-input elements like texture coordinates
 	//!@returns A reference to the VertexElement added.
-	virtual const VertexElement* addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index = 0);
+	virtual const VertexElement* addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
 
 	//! Remove the element at the given index from this declaration.
 	virtual void removeElement(unsigned short int elem_index);
 
-	//! Remove the element with the given semantic and usage index. 
-	//!
-	//! In this case 'index' means the usage index for repeating elements such
-	//! as texture coordinates. For other elements this will always be 0 and does
-	//! not refer to the index in the list.
-	virtual void removeElement(VertexElementSemantic semantic, unsigned short int index = 0);
+	//! Remove the element with the given semantic. 
+	virtual void removeElement(VertexElementSemantic semantic);
 
 	//! Remove all elements. 
 	virtual void removeAllElements();
 
 	//! Modify an element in-place, params as addElement. 
-	virtual void modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic, unsigned short int index = 0);
+	virtual void modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
 
 	//! Finds a VertexElement with the given semantic, and index if there is more than 
-	virtual const VertexElement* findElementBySemantic(VertexElementSemantic sem, unsigned short int index = 0);
+	virtual const VertexElement* findElementBySemantic(VertexElementSemantic sem);
 
 	//! Gets a list of elements which use a given source. 
 	virtual std::list<VertexElement*> findElementsBySource(unsigned short int source);

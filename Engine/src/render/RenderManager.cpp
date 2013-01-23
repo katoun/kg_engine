@@ -83,12 +83,6 @@ RenderManager::RenderManager(): core::System("RenderManager")
 
 	mFrustum = nullptr;
 
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.0f;
-	mFogStart = 0.0f;
-	mFogEnd = 0.0f;
-
 	mLastViewportWidth = 0;
 	mLastViewportHeight = 0;
 
@@ -514,15 +508,6 @@ void RenderManager::removeAllVertexBufferBindings()
 	mVertexBufferBindings.clear();
 }
 
-void RenderManager::setFog(FogMode mode, const Color& color, float density, float start, float end)
-{
-	mFogMode = mode;
-	mFogColor = color;
-	mFogDensity = density;
-	mFogStart = start;
-	mFogEnd = end;
-}
-
 void RenderManager::convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest)
 {
 	if (mRenderDriver)
@@ -606,8 +591,6 @@ void RenderManager::uninitializeImpl()
 	mTransparentModels.clear();
 	// Remove DistanceLights
 	mDistanceLights.clear();
-
-	mLightsAffectingFrustum.clear();		
 
 	mMainWindow = nullptr;
 	mFrustum = nullptr;
@@ -780,8 +763,6 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 		mLastViewportHeight = viewport->getActualHeight();
 	}
 
-	findLightsAffectingFrustum(camera);
-
 	findVisibleModels(camera);
 
 	beginGeometryCount();
@@ -858,94 +839,6 @@ void RenderManager::beginFrame(Viewport* viewport)
 	
 	// Clear the viewport if required
 	mRenderDriver->beginFrame(viewport);
-}
-
-void RenderManager::findLightsAffectingFrustum(Camera* camera)
-{
-	if (camera == nullptr)
-		return;
-	
-	mLightsAffectingFrustum.clear();
-
-	mFrustum = camera->getFrustum();
-
-	core::sphere3d sphere;
-	std::map<unsigned int, Light*>::const_iterator li;
-	for (li = mLights.begin(); li != mLights.end(); ++li)
-	{
-		mLightsAffectingFrustum.push_back(li->second);//Katoun TEMP for testings!!!
-
-		//////////////////////////////////////////////////////////////////////////
-
-		//if (li->second->getLightType() == LIGHT_TYPE_DIRECTIONAL)
-		//{
-		//	mLightsAffectingFrustum.push_back(li->second);
-		//}
-		//else
-		//{
-		//	// Just see if the lights attenuation range is within the frustum
-		//	sphere.set(li->second->getAbsolutePosition(), li->second->getAttenuationRange());
-		//	
-		//	if (mFrustum->isVisible(sphere))
-		//	{
-		//		mLightsAffectingFrustum.push_back(li->second);
-		//	}
-		//}
-	}
-}
-
-void RenderManager::findLightsAffectingModel(Model* model)
-{
-	if (model == nullptr)
-		return;
-	
-	mDistanceLights.clear();
-
-	std::list<Light*>::const_iterator i;
-	for (i = mLightsAffectingFrustum.begin(); i!= mLightsAffectingFrustum.end(); ++i)
-	{
-		Light* pLight = (*i);
-		if (pLight != nullptr)
-		{
-			if (pLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
-			{
-				DistanceLight newLight;
-				newLight.light = pLight;
-				newLight.distance = 0;
-				// No distance
-				mDistanceLights.push_back(newLight);
-			}
-			else
-			{
-				// Calculate squared distance
-				float distance = 0.0f;
-				game::Transform* pLightTransform = nullptr;
-				game::Transform* pModelTransform = nullptr;
-				if (pLight->getGameObject() != nullptr && model->getGameObject() != nullptr)
-				{
-					pLightTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					pModelTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					if (pLightTransform != nullptr && pModelTransform)
-					{
-						distance = (pLightTransform->getAbsolutePosition() - pModelTransform->getAbsolutePosition()).getLengthSQ();
-					}
-				}
-
-				// only add in-range lights
-				float range = pLight->getAttenuationRange();
-				float maxDist = range + model->getBoundingSphere().Radius;
-				//if (distance <= (maxDist * maxDist))//Katoun TEMP REM for testing!!!
-				{
-					DistanceLight newLight;
-					newLight.light = pLight;
-					newLight.distance = distance;
-					mDistanceLights.push_back(newLight);
-				}
-			}
-		}	
-	}
-
-	std::sort(mDistanceLights.begin(), mDistanceLights.end());
 }
 
 void RenderManager::findVisibleModels(Camera* camera)
@@ -1054,105 +947,6 @@ void RenderManager::renderSingleModel(Model* model)
 				mRenderDriver->renderModel(model, mDefaultMaterial);
 		}
 	}
-}
-
-void RenderManager::setMaterial(Material* material)
-{
-	if (material == nullptr)
-		return;
-
-	bool surfaceAndLightParams = true;
-	bool fogParams = true;
-
-	if (material->hasVertexShader())
-	{
-		material->getVertexShader()->updateAutoParameters(mShaderParamData);
-		mRenderDriver->bindShader(material->getVertexShader());
-
-		surfaceAndLightParams = false;//material->getVertexProgram()->getSurfaceAndLightStates();
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_VERTEX))
-			mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-	}
-
-	if (material->hasGeometryShader())
-	{
-		mRenderDriver->bindShader(material->getGeometryShader());
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_GEOMETRY))
-			mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-	}
-	
-	if (surfaceAndLightParams)
-	{
-		if (material->getLightingEnabled())
-		{
-			mRenderDriver->setSurfaceParams(material->getAmbient(), material->getDiffuse(), material->getSpecular(), material->getEmissive(), material->getShininess());
-		}
-	}
-
-	if (material->hasFragmentShader())
-	{
-		material->getFragmentShader()->updateAutoParameters(mShaderParamData);
-		mRenderDriver->bindShader(material->getFragmentShader());
-
-		fogParams = true;//material->getFragmentShader()->getFogStates();
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_FRAGMENT))
-			mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-	}
-
-	if (fogParams)
-	{
-		// New fog params can either be from scene or from material
-		FogMode newFogMode;
-		Color newFogColor;
-		float newFogDensity, newFogStart, newFogEnd;
-		if (material->getFogOverride())
-		{
-			// New fog params from material
-			newFogMode = material->getFogMode();
-			newFogColor = material->getFogColor();
-			newFogStart = material->getFogStart();
-			newFogEnd = material->getFogEnd();
-			newFogDensity = material->getFogDensity();
-		}
-		else
-		{
-			// New fog params from scene
-			newFogMode = mFogMode;
-			newFogColor = mFogColor;
-			newFogStart = mFogStart;
-			newFogEnd = mFogEnd;
-			newFogDensity = mFogDensity;
-		}
-
-		mRenderDriver->setFog(newFogMode, newFogColor, newFogDensity, newFogStart, newFogEnd);
-	}
-
-	mRenderDriver->setSceneBlending(material->getSourceBlendFactor(), material->getDestBlendFactor());
-
-	for (unsigned int i=0; i<ENGINE_MAX_TEXTURE_LAYERS; ++i)
-	{
-		TextureUnit* tu = material->getTextureUnit(i);
-
-		mRenderDriver->setTextureUnitSettings(i, tu);
-	}
-
-	// Disable remaining texture units
-	mRenderDriver->disableTextureUnitsFrom(material->getNumTextureUnits());
-
-	mRenderDriver->setDepthBufferCheckEnabled(material->getDepthCheckEnabled());
-	mRenderDriver->setDepthBufferWriteEnabled(material->getDepthWriteEnabled());
-
-	// Shading
-	mRenderDriver->setShadingType(material->getShadingMode());
 }
 
 void RenderManager::endFrame()

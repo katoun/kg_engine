@@ -66,18 +66,6 @@ public:
 
 	void renderModel(Model* model, Material* material);
 
-	void renderGridPlane(unsigned int zfar);
-
-	void renderWorldAxes();
-
-	void renderAxes(const core::vector3d& position, const core::quaternion& orientation);
-
-	void renderBoundingSphere(const core::sphere3d& sphere);
-
-	void renderBoundingBox(const core::aabox3d& box);
-
-	void renderFrustumVolume(const core::vector3d* corners);
-
 	void endFrame();
 
 	void setViewport(Viewport* viewport);
@@ -89,26 +77,6 @@ public:
 	void setProjectionMatrix(const core::matrix4 &m);
 
 	//////////////////////////////////////////////////////////
-
-	void setShadingType(ShadeOptions so);
-
-	void setSceneBlending(SceneBlendFactor sourceFactor, SceneBlendFactor destFactor);
-
-	void setSurfaceParams(const Color& ambient, const Color& diffuse, const Color& specular, const Color& emissive, float shininess);
-
-	void setTexture(bool enabled, unsigned int unit, Texture* tex);
-
-	void setTextureBlendMode(unsigned int unit, const LayerBlendMode& bm);
-
-	void setLights(const std::vector<Light*>& lights);
-
-	void setDepthBufferCheckEnabled(bool enabled = true);
-
-	void setDepthBufferWriteEnabled(bool enabled = true);
-
-	void setFog(FogMode mode = FM_NONE, const Color& color = Color::White, float expDensity = 1.0f, float linearStart = 0.0f, float linearEnd = 1.0f);
-
-	unsigned int getNumTextureUnits();
 
 	float getMinimumDepthInputValue();
 
@@ -132,8 +100,6 @@ protected:
 	void updateImpl(float elapsedTime);
 
 	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
-	void setGLLight(unsigned int index, Light* light);
-	void setGLLightPositionDirection(unsigned int index, Light* light);
 	static GLint getGLBlendMode(SceneBlendFactor gameBlend);
 
 	//! Utility function to get the correct GL type based on VET's.

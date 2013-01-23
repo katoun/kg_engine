@@ -312,14 +312,6 @@ THE SOFTWARE.
 
 #define ENGINE_UNIT_M 1
 
-#define ENGINE_MAX_TEXTURE_COORD_SETS 6
-
-//! Define max number of texture layers allowed per pass on any card.
-#define ENGINE_MAX_TEXTURE_LAYERS 16
-
-//! Define max number of lights allowed per pass.
-#define ENGINE_MAX_SIMULTANEOUS_LIGHTS 8
-
 #define MAX_PATH_SIZE 255
 
 #define SAFE_DELETE(object_ptr) if(object_ptr != nullptr) { delete object_ptr; object_ptr = nullptr; }
