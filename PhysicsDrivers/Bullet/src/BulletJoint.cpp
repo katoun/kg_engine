@@ -57,8 +57,8 @@ BulletSphericalJoint::~BulletSphericalJoint()
 	if (mSphericalConstraint)
 	{
 		pDynamicsWorld->removeConstraint(mSphericalConstraint);
-		delete mSphericalConstraint;
 	}
+	SAFE_DELETE(mSphericalConstraint);
 }
 
 void BulletSphericalJoint::initializeImpl()
@@ -130,8 +130,8 @@ BulletHingeJoint::~BulletHingeJoint()
 	if (mHingeConstraint)
 	{
 		pDynamicsWorld->removeConstraint(mHingeConstraint);
-		delete mHingeConstraint;
 	}
+	SAFE_DELETE(mHingeConstraint);
 }
 
 void BulletHingeJoint::initializeImpl()
@@ -198,8 +198,8 @@ BulletSliderJoint::~BulletSliderJoint()
 	if (mSliderConstraint)
 	{
 		pDynamicsWorld->removeConstraint(mSliderConstraint);
-		delete mSliderConstraint;
 	}
+	SAFE_DELETE(mSliderConstraint);
 }
 
 void BulletSliderJoint::initializeImpl()
@@ -258,8 +258,8 @@ BulletGenericJoint::~BulletGenericJoint()
 	if (mGenericConstraint)
 	{
 		pDynamicsWorld->removeConstraint(mGenericConstraint);
-		delete mGenericConstraint;
 	}
+	SAFE_DELETE(mGenericConstraint);
 }
 
 void BulletGenericJoint::initializeImpl()
@@ -319,8 +319,8 @@ BulletRigidJoint::~BulletRigidJoint()
 	if (mRigidConstraint)
 	{
 		pDynamicsWorld->removeConstraint(mRigidConstraint);
-		delete mRigidConstraint;
 	}
+	SAFE_DELETE(mRigidConstraint);
 }
 
 void BulletRigidJoint::initializeImpl()

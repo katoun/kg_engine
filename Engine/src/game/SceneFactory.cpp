@@ -40,8 +40,7 @@ void SceneFactory::destroyResource(resource::Resource* resource)
 	Scene* pScene = static_cast<Scene*>(resource);
 
 	assert(pScene != nullptr);
-	if (pScene != nullptr)
-		delete pScene;
+	SAFE_DELETE(pScene);
 }
 
 } // end namespace game

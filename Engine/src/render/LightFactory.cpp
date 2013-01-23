@@ -54,8 +54,7 @@ void LightFactory::destroyComponent(game::Component* component)
 		RenderManager::getInstance()->removeLight(pLight);
 
 	assert(pLight != nullptr);
-	if (pLight != nullptr)
-		delete pLight;
+	SAFE_DELETE(pLight);
 }
 
 } // end namespace game

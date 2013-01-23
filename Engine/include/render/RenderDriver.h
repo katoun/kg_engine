@@ -114,20 +114,11 @@ public:
 
 	virtual void setViewport(Viewport *vp) = 0;
 
-	virtual void setWorldMatrix(const core::matrix4& m) = 0;
+	virtual void setWorldMatrix(const core::matrix4& m);
 
-	virtual void setViewMatrix(const core::matrix4& m) = 0;
+	virtual void setViewMatrix(const core::matrix4& m);
 
-	virtual void setProjectionMatrix(const core::matrix4& m) = 0;
-
-	core::matrix4& getWorldMatrix();
-
-	core::matrix4& getViewMatrix();
-
-	core::matrix4& getProjectionMatrix();
-
-	//! Converts a uniform projection matrix to suitable for this render system.
-	virtual void convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest);
+	virtual void setProjectionMatrix(const core::matrix4& m);
 
 	//////////////////////////////////////////////////////////
 

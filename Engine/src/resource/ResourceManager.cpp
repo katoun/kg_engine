@@ -295,7 +295,7 @@ void ResourceManager::removeResource(const unsigned int& id)
 		if (resourceFactory)
 			resourceFactory->destroyResource(resource);
 		else
-			delete resource;
+			SAFE_DELETE(resource);
 	}
 }
 
@@ -317,7 +317,7 @@ void ResourceManager::removeAllResources()
 		if (resourceFactory != nullptr)
 			resourceFactory->destroyResource(resource);
 		else
-			delete resource;
+			SAFE_DELETE(resource);
 	}
 
 	mResources.clear();

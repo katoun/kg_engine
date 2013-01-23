@@ -213,9 +213,6 @@ public:
 	//! Removes all vertex buffer bindings.
 	void removeAllVertexBufferBindings();
 
-	//! Converts a uniform projection matrix suitable for the current render system.
-	void convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest);
-
 	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
 	float getMinimumDepthInputValue();
 	//! Gets the maximum (farthest) depth value to be used when rendering using identity transforms.

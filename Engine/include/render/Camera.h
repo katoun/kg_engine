@@ -142,9 +142,6 @@ public:
 	//! Retrieves the current aspect ratio.
 	float getAspectRatio();
 
-	//! Gets the projection matrix for this frustum adjusted for the current rendersystem specifics.
-	const core::matrix4& getProjectionMatrixRS();
-
 	//! Gets the projection matrix for this camera.
 	//! The projection matrix which conforms to standard right-handed rules and
 	//! uses depth range [-1,+1].
@@ -182,7 +179,6 @@ protected:
 
 	bool mVisibleFrustum;
 
-	core::matrix4 mProjMatrixRS;	// Pre-calced projection matrix for the specific render system
 	core::matrix4 mProjMatrix;		// Pre-calced projection matrix
 	core::matrix4 mViewMatrix;		// Pre-calced view matrix	
 	

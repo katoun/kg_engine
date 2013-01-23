@@ -74,72 +74,48 @@ void BulletShapeFactory::destroyShape(Shape* shape)
 	{
 	case SHAPE_TYPE_UNDEFINED:
 		{
-			if (shape != nullptr)
-			{
-				delete shape;
-			}
+			SAFE_DELETE(shape);
 		}
 		break;
 	case SHAPE_TYPE_PLANE:
 		{
 			BulletPlaneShape* bulletShape = static_cast<BulletPlaneShape*>(shape);
 			assert(bulletShape != nullptr);
-			if (bulletShape != nullptr)
-			{
-				delete bulletShape;
-			}
+			SAFE_DELETE(bulletShape);
 		}
 		break;
 	case SHAPE_TYPE_SPHERE:
 		{
 			BulletSphereShape* bulletShape = static_cast<BulletSphereShape*>(shape);
 			assert(bulletShape != nullptr);
-			if (bulletShape != nullptr)
-			{
-				delete bulletShape;
-			}
+			SAFE_DELETE(bulletShape);
 		}
 		break;
 	case SHAPE_TYPE_BOX:
 		{
 			BulletBoxShape* bulletShape = static_cast<BulletBoxShape*>(shape);
 			assert(bulletShape != nullptr);
-			if (bulletShape != nullptr)
-			{
-				delete bulletShape;
-			}
+			SAFE_DELETE(bulletShape);
 		}
 		break;
 	case SHAPE_TYPE_CAPSULE:
 		{
-			if (shape != nullptr)
-			{
-				delete shape;
-			}
+			SAFE_DELETE(shape);
 		}
 		break;
 	case SHAPE_TYPE_CONVEX:
 		{
-			if (shape != nullptr)
-			{
-				delete shape;
-			}
+			SAFE_DELETE(shape);
 		}
 		break;
 	case SHAPE_TYPE_MESH:
 		{
-			if (shape != nullptr)
-			{
-				delete shape;
-			}
+			SAFE_DELETE(shape);
 		}
 		break;
 	default:
 		{
-			if (shape != nullptr)
-			{
-				delete shape;
-			}
+			SAFE_DELETE(shape);
 		}
 		break;	
 	}

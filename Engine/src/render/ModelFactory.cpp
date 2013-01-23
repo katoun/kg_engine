@@ -54,8 +54,7 @@ void ModelFactory::destroyComponent(game::Component* component)
 		RenderManager::getInstance()->removeModel(pModel);
 
 	assert(pModel != nullptr);
-	if (pModel != nullptr)
-		delete pModel;
+	SAFE_DELETE(pModel);
 }
 
 } // end namespace game

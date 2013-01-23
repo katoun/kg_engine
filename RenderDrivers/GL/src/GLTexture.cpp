@@ -55,6 +55,7 @@ bool GLTexture::loadImpl()
 		// Create the GL texture
 		glGenTextures(1, &mTextureID);
 
+		glActiveTexture(GL_TEXTURE15);
 		// Set texture type
 		glBindTexture(getGLTextureType(), mTextureID);
 
@@ -124,6 +125,7 @@ bool GLTexture::loadImpl()
 			}
 		}
 
+		glBindTexture(getGLTextureType(), 0);
 	}
 
 	return true;

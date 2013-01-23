@@ -61,7 +61,6 @@ Camera::Camera(): game::Component()
 	// Init matrices
 	mViewMatrix = core::matrix4::ZERO;
 	mProjMatrix = core::matrix4::ZERO;
-	mProjMatrixRS = core::matrix4::ZERO;
 
 	mProjectionNeedsUpdate = true;
 	mViewNeedsUpdate = true;
@@ -70,10 +69,7 @@ Camera::Camera(): game::Component()
 
 Camera::~Camera()
 {
-	if (mFrustum != nullptr)
-	{
-		delete mFrustum;
-	}
+	SAFE_DELETE(mFrustum);
 }
 
 void Camera::setProjectionType(ProjectionType pt)
@@ -166,11 +162,6 @@ float Camera::getAspectRatio()
 	return mAspect;
 }
 
-const core::matrix4& Camera::getProjectionMatrixRS()
-{
-	return mProjMatrixRS;
-}
-
 const core::matrix4& Camera::getProjectionMatrix()
 {
 	return mProjMatrix;
@@ -238,9 +229,6 @@ void Camera::updateProjection()
 			mProjMatrix.buildProjectionMatrixOrtho(width, height, mNearDist, mFarDist);
 		}
 		
-		if (RenderManager::getInstance() != nullptr)
-			RenderManager::getInstance()->convertProjectionMatrix(mProjMatrix, mProjMatrixRS);
-
 		mProjectionNeedsUpdate = false;
 		mFrustumNeedsUpdate = true;
 	}

@@ -50,8 +50,7 @@ void BulletBodyFactory::destroyComponent(game::Component* component)
 		PhysicsManager::getInstance()->removeBody(pBody);
 
 	assert(pBody != nullptr);
-	if (pBody != nullptr)
-		delete pBody;
+	SAFE_DELETE(pBody);
 }
 
 } // end namespace physics

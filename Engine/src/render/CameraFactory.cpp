@@ -54,8 +54,7 @@ void CameraFactory::destroyComponent(game::Component* component)
 		RenderManager::getInstance()->removeCamera(pCamera);
 
 	assert(pCamera != nullptr);
-	if (pCamera != nullptr)
-		delete pCamera;
+	SAFE_DELETE(pCamera);
 }
 
 } // end namespace game

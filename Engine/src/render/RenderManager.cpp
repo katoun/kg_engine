@@ -141,7 +141,7 @@ void RenderManager::removeRenderWindow(const unsigned int& id)
 	std::map<unsigned int, RenderWindow*>::iterator i = mRenderWindows.find(id);
 	if (i != mRenderWindows.end())
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		mRenderWindows.erase(i);
 	}
 }
@@ -151,7 +151,7 @@ void RenderManager::removeAllRenderWindows()
 	std::map<unsigned int, RenderWindow*>::iterator i; 
 	for (i = mRenderWindows.begin(); i != mRenderWindows.end(); ++i)
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		i->second = nullptr;
 	}
 
@@ -358,7 +358,7 @@ void RenderManager::removeShader(const unsigned int& id)
 	std::map<unsigned int, Shader*>::iterator i = mShaders.find(id);
 	if (i != mShaders.end())
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		mShaders.erase(i);
 	}
 }
@@ -373,8 +373,10 @@ VertexBuffer* RenderManager::createVertexBuffer(unsigned int vertexSize, unsigne
 	if (mRenderDriver)
 	{
 		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexSize, numVertices, usage);
-		if (buf)
+		if (buf != nullptr)
+		{
 			mVertexBuffers.push_back(buf);
+		}
 
 		return buf;
 	}
@@ -390,8 +392,10 @@ void RenderManager::removeVertexBuffer(VertexBuffer* buf)
 		{
 			mVertexBuffers.erase(i);
 
-			if (mRenderDriver)
+			if (mRenderDriver != nullptr)
+			{
 				mRenderDriver->removeVertexBuffer((*i));
+			}
 			return;
 		}
 	}
@@ -402,8 +406,10 @@ void RenderManager::removeAllVertexBuffers()
 	std::list<VertexBuffer*>::iterator i;
 	for (i = mVertexBuffers.begin(); i != mVertexBuffers.end(); ++i)
 	{
-		if (mRenderDriver)
+		if (mRenderDriver != nullptr)
+		{
 			mRenderDriver->removeVertexBuffer((*i));
+		}
 	}
 	mVertexBuffers.clear();
 }
@@ -413,8 +419,10 @@ IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int nu
 	if (mRenderDriver)
 	{
 		IndexBuffer* buf = mRenderDriver->createIndexBuffer(idxType, numIndexes, usage);
-		if (buf)
+		if (buf != nullptr)
+		{
 			mIndexBuffers.push_back(buf);
+		}
 
 		return buf;
 	}
@@ -430,8 +438,10 @@ void RenderManager::removeIndexBuffer(IndexBuffer* buf)
 		{
 			mIndexBuffers.erase(i);
 
-			if (mRenderDriver)
+			if (mRenderDriver != nullptr)
+			{
 				mRenderDriver->removeIndexBuffer((*i));
+			}
 			return;
 		}
 	}
@@ -442,8 +452,10 @@ void RenderManager::removeAllIndexBuffers()
 	std::list<IndexBuffer*>::iterator i;
 	for (i = mIndexBuffers.begin(); i != mIndexBuffers.end(); ++i)
 	{
-		if (mRenderDriver)
+		if (mRenderDriver != nullptr)
+		{
 			mRenderDriver->removeIndexBuffer((*i));
+		}
 	}
 	mIndexBuffers.clear();
 }
@@ -462,7 +474,7 @@ void RenderManager::removeVertexDeclaration(VertexDeclaration* decl)
 	{
 		if ((*i) == decl)
 		{
-			delete decl;
+			SAFE_DELETE(decl);
 			mVertexDeclarations.erase(i);
 			return;
 		}
@@ -473,7 +485,10 @@ void RenderManager::removeAllVertexDeclarations()
 {
 	std::list<VertexDeclaration*>::iterator i;
 	for (i = mVertexDeclarations.begin(); i != mVertexDeclarations.end(); ++i)
-		delete (*i);
+	{
+		VertexDeclaration* pVertexDeclaration = (*i);
+		SAFE_DELETE(pVertexDeclaration);
+	}
 
 	mVertexDeclarations.clear();
 }
@@ -492,7 +507,7 @@ void RenderManager::removeVertexBufferBinding(VertexBufferBinding* binding)
 	{
 		if ((*i) == binding)
 		{
-			delete binding;
+			SAFE_DELETE(binding);
 			mVertexBufferBindings.erase(i);
 			return;
 		}
@@ -503,15 +518,12 @@ void RenderManager::removeAllVertexBufferBindings()
 {
 	std::list<VertexBufferBinding*>::iterator i;
 	for (i = mVertexBufferBindings.begin(); i != mVertexBufferBindings.end(); ++i)
-		delete (*i);
+	{
+		VertexBufferBinding* pVertexBufferBinding = (*i);
+		SAFE_DELETE(pVertexBufferBinding);
+	}
 
 	mVertexBufferBindings.clear();
-}
-
-void RenderManager::convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest)
-{
-	if (mRenderDriver)
-		mRenderDriver->convertProjectionMatrix( matrix, dest);
 }
 
 float RenderManager::getMinimumDepthInputValue()
@@ -771,7 +783,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	mShaderParamData.setCurrentCamera(camera);
 
-	mRenderDriver->setProjectionMatrix(camera->getProjectionMatrixRS());
+	mRenderDriver->setProjectionMatrix(camera->getProjectionMatrix());
 	mRenderDriver->setViewMatrix(camera->getViewMatrix());
 
 	renderVisibleModels();

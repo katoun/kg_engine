@@ -59,13 +59,7 @@ void Scene::removeGameObject(const unsigned int& id)
 	std::map<unsigned int, GameObject*>::iterator i = mGameObjects.find(id);
 	if (i != mGameObjects.end())
 	{
-		GameObject* pGameObject = i->second;
-		if (pGameObject != nullptr)
-		{
-			delete pGameObject;
-			i->second = nullptr;
-		}
-
+		SAFE_DELETE(i->second);
 		mGameObjects.erase(i);
 	}
 }
@@ -75,12 +69,7 @@ void Scene::removeAllGameObjects()
 	std::map<unsigned int, GameObject*>::iterator i;
 	for (i = mGameObjects.begin(); i != mGameObjects.end(); ++i)
 	{
-		GameObject* pGameObject = i->second;
-		if (pGameObject != nullptr)
-		{
-			delete pGameObject;
-			i->second = nullptr;
-		}
+		SAFE_DELETE(i->second);
 	}
 	
 	mGameObjects.clear();

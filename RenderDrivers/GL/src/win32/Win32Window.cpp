@@ -55,7 +55,7 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	HINSTANCE hInst = GetModuleHandle(nullptr);
 
 	char name[255];
-	sprintf_s(name, "K_Game OpenGL window%d", mID);
+	sprintf_s(name, "KG game engine OpenGL window%d", mID);
 
 	mHWnd = 0;
 	mIsFullScreen = fullScreen;

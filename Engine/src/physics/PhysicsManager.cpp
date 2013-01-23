@@ -203,7 +203,7 @@ void PhysicsManager::removeJoint(const unsigned int& id)
 	std::map<unsigned int, Joint*>::iterator i = mJoints.find(id);
 	if (i != mJoints.end())
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		mJoints.erase(i);
 	}
 }
@@ -213,7 +213,7 @@ void PhysicsManager::removeAllJoints()
 	std::map<unsigned int, Joint*>::iterator i;
 	for (i = mJoints.begin(); i != mJoints.end(); ++i)
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 	}
 
 	mJoints.clear();

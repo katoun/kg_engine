@@ -39,7 +39,7 @@ Mouse::Mouse()
 
 Mouse::~Mouse()
 {
-	delete mEvent;
+	SAFE_DELETE(mEvent);
 }
 
 void Mouse::addMouseEventReceiver(input::MouseEventReceiver* newEventReceiver)

@@ -392,7 +392,7 @@ bool Shader::loadImpl()
 			fread(pBuffer, mSize, 1, pFile);
 
 			mSource.insert(0, (const char*)pBuffer, mSize);
-			delete []pBuffer;
+			SAFE_DELETE_ARRAY(pBuffer);
 
 			fclose(pFile);
 
@@ -469,8 +469,7 @@ void Shader::removeAllParameters()
 	hashmap<std::string, ShaderParameter*>::iterator i;
 	for (i = mParameters.begin(); i != mParameters.end(); ++i)
 	{
-		delete i->second;
-		i->second = nullptr;
+		SAFE_DELETE(i->second);
 	}
 
 	mParameters.clear();

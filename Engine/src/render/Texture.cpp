@@ -70,8 +70,7 @@ void Texture::setBuffer(unsigned char* buffer, unsigned int size)
 {
 	if (buffer)
 	{
-		if (mBuffer)
-			delete []mBuffer;
+		SAFE_DELETE_ARRAY(mBuffer);
 
 		mBuffer = new unsigned char[size];
 		mSize = size;
@@ -162,8 +161,7 @@ bool Texture::hasAlpha()
 
 void Texture::unloadImpl()
 {
-	if (mBuffer)
-		delete []mBuffer;
+	SAFE_DELETE_ARRAY(mBuffer);
 
 	mPixelFormat = resource::PF_UNKNOWN;
 

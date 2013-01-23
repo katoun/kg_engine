@@ -41,7 +41,7 @@ void BulletMaterialFactory::destroyResource(resource::Resource* resource)
 	Material* bulletMaterial = static_cast<Material*>(resource);
 
 	assert(bulletMaterial != nullptr);
-	if (bulletMaterial != nullptr) delete bulletMaterial;
+	SAFE_DELETE(bulletMaterial);
 }
 
 

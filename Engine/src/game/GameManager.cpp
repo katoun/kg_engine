@@ -163,7 +163,7 @@ void GameManager::removeGameObject(const unsigned int& id)
 			}
 			else*/
 			{
-				delete pGameObject;
+				SAFE_DELETE(pGameObject);
 			}
 			i->second = nullptr;
 		}
@@ -185,7 +185,7 @@ void GameManager::removeAllGameObjects()
 			}
 			else*/
 			{
-				delete pGameObject;
+				SAFE_DELETE(pGameObject);
 			}
 			i->second = nullptr;
 		}
@@ -249,7 +249,7 @@ void GameManager::removeComponent(const unsigned int& id)
 			}
 			else
 			{
-				delete pComponent;
+				SAFE_DELETE(pComponent);
 			}
 			i->second = nullptr;
 
@@ -277,7 +277,7 @@ void GameManager::removeAllComponents()
 			}
 			else
 			{
-				delete pComponent;
+				SAFE_DELETE(pComponent);
 			}
 			i->second = nullptr;
 		}

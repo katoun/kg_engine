@@ -214,7 +214,8 @@ void VertexDeclaration::removeElement(unsigned short int elem_index)
 	std::advance(i, elem_index);
 
 	mVertexElements.erase(i);
-	delete (*i);
+	VertexElement* pVertexElement = (*i);
+	SAFE_DELETE(pVertexElement);
 }
 
 void VertexDeclaration::removeElement(VertexElementSemantic semantic)
@@ -225,7 +226,8 @@ void VertexDeclaration::removeElement(VertexElementSemantic semantic)
 		if ((*i)->getSemantic() == semantic)
 		{
 			mVertexElements.erase(i);
-			delete (*i);
+			VertexElement* pVertexElement = (*i);
+			SAFE_DELETE(pVertexElement);
 			break;
 		}
 	}
@@ -236,7 +238,8 @@ void VertexDeclaration::removeAllElements()
 	std::list<VertexElement*>::iterator i;
 	for (i = mVertexElements.begin(); i != mVertexElements.end(); ++i)
 	{
-		delete (*i);
+		VertexElement* pVertexElement = (*i);
+		SAFE_DELETE(pVertexElement);
 	}
 	mVertexElements.clear();
 }
@@ -248,13 +251,10 @@ void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned sh
 	std::list<VertexElement*>::iterator i = mVertexElements.begin();
 	std::advance(i, elem_index);
 	
-	if ((*i))
-	{
-		delete (*i);
-		(*i) = nullptr;
-	}
+	VertexElement* pVertexElement = (*i);
+	SAFE_DELETE(pVertexElement);
 
-	(*i) = new VertexElement(source, offset, theType, semantic);
+	pVertexElement = new VertexElement(source, offset, theType, semantic);
 }
 
 const VertexElement* VertexDeclaration::findElementBySemantic(VertexElementSemantic sem)

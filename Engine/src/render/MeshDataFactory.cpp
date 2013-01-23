@@ -40,7 +40,7 @@ void MeshDataFactory::destroyResource(resource::Resource* resource)
 	MeshData* meshData = static_cast<MeshData*>(resource);
 
 	assert(meshData != nullptr);
-	if (meshData != nullptr) delete meshData;
+	SAFE_DELETE(meshData);
 }
 
 

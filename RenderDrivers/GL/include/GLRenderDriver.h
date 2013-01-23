@@ -70,12 +70,6 @@ public:
 
 	void setViewport(Viewport* viewport);
 
-	void setWorldMatrix(const core::matrix4 &m);
-
-	void setViewMatrix(const core::matrix4 &m);
-
-	void setProjectionMatrix(const core::matrix4 &m);
-
 	//////////////////////////////////////////////////////////
 
 	float getMinimumDepthInputValue();

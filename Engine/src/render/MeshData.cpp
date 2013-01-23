@@ -132,11 +132,8 @@ float MeshData::getBoundingSphereRadius()
 
 void MeshData::unloadImpl()
 {
-	if (mVertexData)
-		delete mVertexData;
-
-	if (mIndexData)
-		delete mIndexData;
+	SAFE_DELETE(mVertexData);
+	SAFE_DELETE(mIndexData);
 
 	mMaterial = nullptr;
 

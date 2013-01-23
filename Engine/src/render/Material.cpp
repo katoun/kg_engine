@@ -306,7 +306,8 @@ void Material::removeTextureUnit(unsigned int index)
 	for (unsigned int j=0; j<index; ++j)
 		++i;
 
-	delete (*i);
+	TextureUnit* pTextureUnit = (*i);
+	SAFE_DELETE(pTextureUnit);
 
 	mTextureUnits.erase(i);
 }
@@ -315,7 +316,10 @@ void Material::removeAllTextureUnits()
 {
 	std::list<TextureUnit*>::iterator i;
 	for (i = mTextureUnits.begin(); i != mTextureUnits.end(); ++i)
-		delete (*i);
+	{
+		TextureUnit* pTextureUnit = (*i);
+		SAFE_DELETE(pTextureUnit);
+	}
 
 	mTextureUnits.clear();
 }

@@ -335,7 +335,7 @@ const core::matrix4& ShaderParamData::getProjectionMatrix()
 	{
 		if (mCurrentCamera != nullptr)
 		{
-			mProjectionMatrix = mCurrentCamera->getProjectionMatrixRS();
+			mProjectionMatrix = mCurrentCamera->getProjectionMatrix();
 		}
 		mProjMatrixDirty = false;
 	}

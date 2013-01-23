@@ -44,25 +44,19 @@ RenderDriver::RenderDriver(const std::string& name): core::SystemDriver(name)
 
 RenderDriver::~RenderDriver() {}
 
-core::matrix4& RenderDriver::getWorldMatrix()
+void RenderDriver::setWorldMatrix(const core::matrix4& m)
 {
-	return mWorldMatrix;
+	mWorldMatrix = m;
 }
 
-core::matrix4& RenderDriver::getViewMatrix()
+void RenderDriver::setViewMatrix(const core::matrix4& m)
 {
-	return mViewMatrix;
+	mViewMatrix = m;
 }
 
-core::matrix4& RenderDriver::getProjectionMatrix()
-{
-	return mProjMatrix;
-}
-
-void RenderDriver::convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest)
-{
-	// no any convertion
-	dest = matrix;
+void RenderDriver::setProjectionMatrix(const core::matrix4& m)
+{	
+	mProjMatrix = m;
 }
 
 void RenderDriver::updateShaderAutoParameters(Shader* shader, ShaderParamData& data)

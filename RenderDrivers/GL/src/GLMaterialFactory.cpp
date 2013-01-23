@@ -40,7 +40,7 @@ void GLMaterialFactory::destroyResource(resource::Resource* resource)
 	GLMaterial* material = static_cast<GLMaterial*>(resource);
 
 	assert(material != nullptr);
-	if (material != nullptr) delete material;
+	SAFE_DELETE(material);
 }
 
 

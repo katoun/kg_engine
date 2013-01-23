@@ -219,8 +219,7 @@ bool TextureSerializer::importResource(Resource* dest, const std::string& filena
 
 	tex->setBuffer(pBuffer, size);
 
-	if (pBuffer != nullptr)
-		delete []pBuffer;
+	SAFE_DELETE_ARRAY(pBuffer);
 
 	tex->setWidth(width);
 	tex->setHeight(height);

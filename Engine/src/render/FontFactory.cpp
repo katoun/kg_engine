@@ -40,7 +40,7 @@ void FontFactory::destroyResource(resource::Resource* resource)
 	Font* font = static_cast<Font*>(resource);
 
 	assert(font != nullptr);
-	if (font != nullptr) delete font;
+	SAFE_DELETE(font);
 }
 
 

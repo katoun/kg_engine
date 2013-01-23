@@ -316,14 +316,13 @@ void BulletBody::uninitializeImpl()
 	if (pDynamicsWorld == nullptr)
 		return;
 	
-	if (mMotionState != nullptr)
-		delete mMotionState;
+	SAFE_DELETE(mMotionState);
 
 	if (mRigidBody != nullptr)
 	{
 		pDynamicsWorld->removeRigidBody(mRigidBody);
-		delete mRigidBody;
 	}
+	SAFE_DELETE(mRigidBody);
 }
 
 void BulletBody::updateImpl(float elapsedTime)

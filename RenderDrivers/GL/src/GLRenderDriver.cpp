@@ -91,7 +91,7 @@ void GLRenderDriver::removeVertexBuffer(VertexBuffer* buf)
 	GLVertexBuffer* GLbuf = static_cast<GLVertexBuffer*>(buf);
 
 	assert(GLbuf);
-	delete GLbuf;
+	SAFE_DELETE(GLbuf);
 }
 
 IndexBuffer* GLRenderDriver::createIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage)
@@ -106,7 +106,7 @@ void GLRenderDriver::removeIndexBuffer(IndexBuffer* buf)
 	GLIndexBuffer* GLbuf = static_cast<GLIndexBuffer*>(buf);
 
 	assert(GLbuf);
-	delete GLbuf;
+	SAFE_DELETE(GLbuf);
 }
 
 void GLRenderDriver::beginFrame(Viewport* vp)
@@ -149,7 +149,6 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 		GLTexture* glTex = static_cast<GLTexture*>(tu->getTexture());
 
 		glActiveTexture(GL_TEXTURE0);
-		glEnable(GL_TEXTURE_2D);										// Enable Texture Mapping	
 		glBindTexture(GL_TEXTURE_2D, glTex->getGLID());
 		glUniform1i(glTex->getGLID(), 0);
 	}
@@ -274,39 +273,6 @@ void GLRenderDriver::setViewport(Viewport* viewport)
 	glScissor(x, y, w, h);
 }
 
-void GLRenderDriver::setWorldMatrix(const core::matrix4& m)
-{
-	mWorldMatrix = m;
-
-	/*GLfloat mat[16];
-	makeGLMatrix(mat, mViewMatrix * mWorldMatrix);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(mat);*/
-}
-
-void GLRenderDriver::setViewMatrix(const core::matrix4& m)
-{
-	mViewMatrix = m;
-
-	/*GLfloat mat[16];
-	makeGLMatrix(mat, mViewMatrix * mWorldMatrix);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(mat);*/
-}
-
-void GLRenderDriver::setProjectionMatrix(const core::matrix4& m)
-{	
-	mProjMatrix = m;
-
-	/*GLfloat mat[16];
-	makeGLMatrix(mat, mProjMatrix);
-	
-	glMatrixMode(GL_PROJECTION);// Select The Projection Matrix
-	glLoadMatrixf(mat);	
-
-	glMatrixMode(GL_MODELVIEW);// Select The Modelview Matrix*/
-}
-
 float GLRenderDriver::getMinimumDepthInputValue()
 {
 	// Range [-1.0f, 1.0f]
@@ -386,7 +352,7 @@ void GLRenderDriver::initializeImpl()
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	std::string str_source = "";
-	str_source += "attribute vec4 position;\n";
+	str_source += "attribute vec3 position;\n";
 	str_source += "attribute vec3 normal;\n";
 	str_source += "attribute vec2 texCoords0;\n";
 	str_source += "\n";
@@ -397,7 +363,7 @@ void GLRenderDriver::initializeImpl()
 	str_source += "void main()\n";
 	str_source += "{\n";
 	str_source += "	texCoords = texCoords0;\n";
-	str_source += "	gl_Position = worldViewProj * position;\n";
+	str_source += "	gl_Position = worldViewProj * vec4(position, 1.0);\n";
 	str_source += "}";
 	
 	const char* source = str_source.c_str();
@@ -466,13 +432,14 @@ void GLRenderDriver::initializeImpl()
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
 
-	GLuint PositionID		= glGetUniformLocation(ProgramID, "position");
-	GLuint NormalID			= glGetUniformLocation(ProgramID, "normal");
-	GLuint TexCoords0ID		= glGetUniformLocation(ProgramID, "texCoords0");
-	
-	GLuint MatrixID			= glGetUniformLocation(ProgramID, "worldViewProj");
 
-	GLuint DiffuseTextureID	= glGetUniformLocation(ProgramID, "diffuseMap");
+	PositionID			= glGetAttribLocation(ProgramID, "position");
+	NormalID			= glGetAttribLocation(ProgramID, "normal");
+	TexCoords0ID		= glGetAttribLocation(ProgramID, "texCoords0");
+	
+	MatrixID			= glGetUniformLocation(ProgramID, "worldViewProj");
+
+	DiffuseTextureID	= glGetUniformLocation(ProgramID, "diffuseMap");
 
 	int x = 3;
 	//////////TEMP FOR TESING/////////////

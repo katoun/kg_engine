@@ -39,7 +39,7 @@ Keyboard::Keyboard()
 
 Keyboard::~Keyboard()
 {
-	delete mEvent;
+	SAFE_DELETE(mEvent);
 }
 
 void Keyboard::addKeyEventReceiver(input::KeyEventReceiver* newEventReceiver)
