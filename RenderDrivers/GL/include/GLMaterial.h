@@ -40,6 +40,9 @@ public:
 	GLMaterial(const std::string& name, resource::Serializer* serializer);
 	~GLMaterial();
 
+	void resourceLoaded(const resource::ResourceEvent& evt);
+	void resourceUnloaded(const resource::ResourceEvent& evt);
+
 	//TODO!!!
 
 protected:

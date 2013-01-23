@@ -87,7 +87,7 @@ ShaderParamData::ShaderParamData()
 	mAmbientLightColor = Color::Black;
 }
 
-void ShaderParamData::setWorldMatrices(const core::matrix4& m)
+void ShaderParamData::setWorldMatrix(const core::matrix4& m)
 {
 	mWorldMatrix = m;
 	mWorldMatrixDirty = true;

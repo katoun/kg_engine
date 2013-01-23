@@ -25,6 +25,9 @@ THE SOFTWARE.
 */
 
 #include <GLMaterial.h>
+#include <GLShader.h>
+#include <render/Shader.h>
+#include <resource/ResourceEvent.h>
 
 namespace render
 {
@@ -36,11 +39,59 @@ GLMaterial::GLMaterial(const std::string& name, resource::Serializer* serializer
 
 GLMaterial::~GLMaterial() {}
 
+void GLMaterial::resourceLoaded(const resource::ResourceEvent& evt)
+{
+	if (evt.source != nullptr)
+	{
+		if (evt.source == mVertexShader)
+		{
+			GLShader* pGLShader = static_cast<GLShader*>(mVertexShader);
+			if (pGLShader != nullptr)
+			{
+				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+			}
+		}
+
+		if (evt.source == mFragmentShader)
+		{
+			GLShader* pGLShader = static_cast<GLShader*>(mFragmentShader);
+			if (pGLShader != nullptr)
+			{
+				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+			}
+		}
+
+		if (evt.source == mGeometryShader)
+		{
+			GLShader* pGLShader = static_cast<GLShader*>(mGeometryShader);
+			if (pGLShader != nullptr)
+			{
+				glAttachObjectARB(mGLHandle, pGLShader->getGLHandle());
+			}
+		}
+
+		if ((mVertexShader != nullptr && mVertexShader->getState() == resource::RESOURCE_STATE_LOADED) &&
+			(mFragmentShader != nullptr && mFragmentShader->getState() == resource::RESOURCE_STATE_LOADED) &&
+			(mGeometryShader != nullptr && mGeometryShader->getState() == resource::RESOURCE_STATE_LOADED))
+		{
+
+			GLint linked;
+			glLinkProgramARB(mGLHandle);
+
+			glGetObjectParameterivARB(mGLHandle, GL_OBJECT_LINK_STATUS_ARB, &linked);
+		}
+	}
+}
+
+void GLMaterial::resourceUnloaded(const resource::ResourceEvent& evt)
+{
+}
+
 bool GLMaterial::loadImpl()
 {
-	mGLHandle = glCreateProgramObjectARB();
+	if (!Material::loadImpl()) return false;
 
-	//TODO!!!
+	mGLHandle = glCreateProgramObjectARB();
 
 	return true;
 }
@@ -48,7 +99,6 @@ bool GLMaterial::loadImpl()
 void GLMaterial::unloadImpl()
 {
 	glDeleteObjectARB(mGLHandle);
-	//TODO!!!
 }
 
 

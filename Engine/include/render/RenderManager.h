@@ -213,8 +213,6 @@ public:
 	//! Removes all vertex buffer bindings.
 	void removeAllVertexBufferBindings();
 
-	void setAmbientLight(const Color& ambient = Color::White);
-
 	void setFog(FogMode mode = FM_NONE, const Color& color = Color::White, float density = 0.001f, float start = 0.0f, float end = 1.0f);
 
 	//! Converts a uniform projection matrix suitable for the current render system.
@@ -336,9 +334,6 @@ protected:
 
 	std::list<Light*> mLightsAffectingFrustum;
 
-	//! Current ambient light.
-	Color mAmbientLight;
-
 	//! Shader auto parameter data.
 	ShaderParamData mShaderParamData;
 
@@ -370,7 +365,7 @@ protected:
 
 	void beginGeometryCount();
 
-	void addGeometruCount(Model* model);
+	void addGeometryCount(Model* model);
 
 	unsigned int getVertexCount();
 

@@ -48,7 +48,7 @@ public:
 
 	ShaderParamData();
 
-	void setWorldMatrices(const core::matrix4& m);
+	void setWorldMatrix(const core::matrix4& m);
 	void setCurrentModel(Model* model);
 	void setCurrentCamera(Camera* cam);
 	void setCurrentViewport(Viewport* viewport);

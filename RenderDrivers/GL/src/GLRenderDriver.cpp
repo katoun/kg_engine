@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <render/Model.h>
 #include <render/Viewport.h>
 #include <render/Shader.h>
+#include <render/TextureUnit.h>
 #include <render/VertexIndexData.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
@@ -57,10 +58,7 @@ template<> render::GLRenderDriver* core::Singleton<render::GLRenderDriver>::m_Si
 namespace render
 {
 
-GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver")
-{
-	mCgContext = nullptr;
-}
+GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver") {}
 
 GLRenderDriver::~GLRenderDriver() {}
 
@@ -128,14 +126,36 @@ void GLRenderDriver::beginFrame(Viewport* vp)
 	}
 }
 
-void GLRenderDriver::renderModel(Model* model)
+void GLRenderDriver::renderModel(Model* model, Material* material)
 {
 	if (model == nullptr)
 		return;
 
 	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
 		return;
-	
+
+	glUseProgram(ProgramID);
+
+	core::matrix4 mWorldViewProjectionMatrix = mProjMatrix * mViewMatrix * mWorldMatrix;
+
+	GLfloat mat[16];
+	makeGLMatrix(mat, mWorldViewProjectionMatrix);
+
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mat[0]);
+
+	TextureUnit* tu = material->getTextureUnit(0);
+	if (tu != nullptr)
+	{
+		GLTexture* glTex = static_cast<GLTexture*>(tu->getTexture());
+
+		glActiveTextureARB(GL_TEXTURE0);
+		glEnable(GL_TEXTURE_2D);										// Enable Texture Mapping	
+		glBindTexture(GL_TEXTURE_2D, glTex->getGLID());
+		glUniform1i(glTex->getGLID(), 0);
+	}
+
+	////////////////////
+
 	void* pBufferData = nullptr;
 
 	const std::list<VertexElement*>& elems = model->getVertexData()->vertexDeclaration->getElements();
@@ -146,39 +166,45 @@ void GLRenderDriver::renderModel(Model* model)
 
 		VertexBuffer* vertexBuffer = model->getVertexData()->vertexBufferBinding->getBuffer(elem->getSource());
 
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
+		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
 		pBufferData = VBO_BUFFER_OFFSET(elem->getOffset());
 
 		switch(elem->getSemantic())
 		{
 		case VES_POSITION:
-			glVertexPointer(VertexElement::getTypeCount(elem->getType()), 
+			/*glVertexPointer(VertexElement::getTypeCount(elem->getType()), 
 				getGLType(elem->getType()), 
 				(GLsizei)(vertexBuffer->getVertexSize()), 
 				pBufferData);
-			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_VERTEX_ARRAY);*/
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(
+								PositionID,  // The attribute we want to configure
+								3,                            // size
+								GL_FLOAT,                     // type
+								GL_FALSE,                     // normalized?
+								0,                            // stride
+								(void*)0                      // array buffer offset
+								);
 			break;
 		case VES_NORMAL:
-			glNormalPointer(
+			/*glNormalPointer(
 				getGLType(elem->getType()), 
 				(GLsizei)(vertexBuffer->getVertexSize()), 
 				pBufferData);
-			glEnableClientState(GL_NORMAL_ARRAY);
+			glEnableClientState(GL_NORMAL_ARRAY);*/
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(
+								NormalID,    // The attribute we want to configure
+								3,                            // size
+								GL_FLOAT,                     // type
+								GL_FALSE,                     // normalized?
+								0,                            // stride
+								(void*)0                      // array buffer offset
+								);
 			break;
-		case VES_DIFFUSE:
-			glColorPointer(4, 
-				getGLType(elem->getType()), 
-				(GLsizei)(vertexBuffer->getVertexSize()), 
-				pBufferData);
-			glEnableClientState(GL_COLOR_ARRAY);
-			break;
-		//case VES_SPECULAR:
-		//	glSecondaryColorPointerEXT(4, 
-		//		getGLType(elem->getType()), 
-		//		(GLsizei)(vertexBuffer->getVertexSize()), 
-		//		pBufferData);
-		//	glEnableClientState(GL_SECONDARY_COLOR_ARRAY);
-		//	break;
 		case VES_TEXTURE_COORDINATES:
 			for (unsigned int j = 0; j < mDisabledTexUnitsFrom; ++j)
 			{
@@ -227,25 +253,19 @@ void GLRenderDriver::renderModel(Model* model)
 		break;
 	}
 
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
 	pBufferData = VBO_BUFFER_OFFSET(0);
 	
 	GLenum indexType = (model->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	
 	glDrawElements(primType, model->getIndexData()->indexCount, indexType, pBufferData);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-	for (unsigned int j = 0; j < ENGINE_MAX_TEXTURE_COORD_SETS; ++j)
-	{
-		glClientActiveTextureARB(GL_TEXTURE0 + j);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	glClientActiveTextureARB(GL_TEXTURE0);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
-	glColor4f(1.0f,1.0f,1.0f,1.0f);
-	//glSecondaryColor3fEXT(0.0f, 0.0f, 0.0f);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
+
 }
 
 void GLRenderDriver::renderGridPlane(unsigned int zfar)
@@ -601,34 +621,33 @@ void GLRenderDriver::setWorldMatrix(const core::matrix4& m)
 {
 	mWorldMatrix = m;
 
-	GLfloat mat[16];
+	/*GLfloat mat[16];
 	makeGLMatrix(mat, mViewMatrix * mWorldMatrix);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(mat);
+	glLoadMatrixf(mat);*/
 }
 
 void GLRenderDriver::setViewMatrix(const core::matrix4& m)
 {
 	mViewMatrix = m;
 
-	GLfloat mat[16];
+	/*GLfloat mat[16];
 	makeGLMatrix(mat, mViewMatrix * mWorldMatrix);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(mat);
+	glLoadMatrixf(mat);*/
 }
 
 void GLRenderDriver::setProjectionMatrix(const core::matrix4& m)
 {	
-	GLfloat mat[16];
-	
 	mProjMatrix = m;
-	
+
+	/*GLfloat mat[16];
 	makeGLMatrix(mat, mProjMatrix);
 	
 	glMatrixMode(GL_PROJECTION);// Select The Projection Matrix
 	glLoadMatrixf(mat);	
 
-	glMatrixMode(GL_MODELVIEW);// Select The Modelview Matrix
+	glMatrixMode(GL_MODELVIEW);// Select The Modelview Matrix*/
 }
 
 void GLRenderDriver::setShadingType(ShadeOptions so)
@@ -692,6 +711,7 @@ void GLRenderDriver::setTexture(bool enabled, unsigned int unit, Texture* tex)
 	{
 		glEnable(GL_TEXTURE_2D);										// Enable Texture Mapping	
 		glBindTexture(GL_TEXTURE_2D, glTex->getGLID());
+		glUniform1i(glTex->getGLID(), unit);
 	}
 	else
 	{
@@ -910,20 +930,6 @@ void GLRenderDriver::setTextureBlendMode(unsigned int unit, const LayerBlendMode
 	glActiveTextureARB(GL_TEXTURE0);
 }
 
-void GLRenderDriver::setLightingEnabled(bool enabled)
-{
-	if (enabled)
-		glEnable(GL_LIGHTING);
-	else
-		glDisable(GL_LIGHTING);
-}
-
-void GLRenderDriver::setAmbientLight(float red, float green, float blue, float alpha)
-{
-	GLfloat f4vals[4] = {red, green, blue, alpha};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, f4vals);
-}
-
 void GLRenderDriver::setLights(const std::vector<Light*>& lights)
 {
 	std::vector<Light*>::const_iterator i;
@@ -1019,11 +1025,6 @@ float GLRenderDriver::getVerticalTexelOffset()
 {
 	// No offset in GL
 	return 0.0f;
-}
-
-CGcontext GLRenderDriver::getCGContext()
-{
-	return mCgContext;
 }
 
 GLenum GLRenderDriver::getGLUsage(resource::BufferUsage usage)
@@ -1237,52 +1238,120 @@ void GLRenderDriver::initializeImpl()
 		//setCapability(RSC_VBO);
 	}
 
-	mCgContext = cgCreateContext();
-	
-	CGerror error = cgGetError();
-	if (error != CG_NO_ERROR)
-	{
-		std::string message = "Unable to destroy Cg context: " + std::string(cgGetErrorString(error));
-		if (error == CG_COMPILER_ERROR)
-		{
-			// Get listing with full compile errors
-			message += "\n" + std::string(cgGetLastListing(mCgContext));
-		}
-		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderSystem", message, core::LOG_LEVEL_ERROR);
-
-		return;
-	}
-	cgSetParameterSettingMode(mCgContext, CG_DEFERRED_PARAMETER_SETTING);
-	cgGLSetManageTextureParameters(mCgContext,  true);
-
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-
 	glClearDepth(1.0f);
-	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
-	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
+	glColor4f(1.0f,1.0f,1.0f,1.0f);						// Set Color to initial value
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS);
 
 	glDepthMask(GL_TRUE);
 
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				// Use The Good Calculations
-	glEnable(GL_LINE_SMOOTH);							// Enable Anti-Aliasing
+	// Cull triangles which normal is not towards the camera
+	glEnable(GL_CULL_FACE);
 
-	for (unsigned int i = 0; i < mDisabledTexUnitsFrom; ++i)
+	glDisable(GL_BLEND);								// Turn Blending Off
+
+
+	//////////TEMP FOR TESING/////////////
+	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+	std::string str_source = "";
+	str_source += "attribute vec4 position;\n";
+	str_source += "attribute vec3 normal;\n";
+	str_source += "attribute vec2 texCoords0;\n";
+	str_source += "\n";
+	str_source += "uniform mat4 worldViewProj;\n";
+	str_source += "\n";
+	str_source += "varying vec2 texCoords;\n";
+	str_source += "\n";
+	str_source += "void main()\n";
+	str_source += "{\n";
+	str_source += "	texCoords = texCoords0;\n";
+	str_source += "	gl_Position = worldViewProj * position;\n";
+	str_source += "}";
+	
+	const char* source = str_source.c_str();
+	glShaderSource(VertexShaderID, 1, &source, NULL);
+
+	int InfoLogLength;
+	GLint compiled;
+	glCompileShader(VertexShaderID);
+	// check for compile errors
+	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0)
 	{
-		glActiveTextureARB(GL_TEXTURE0 + i);
-		glDisable(GL_TEXTURE_2D);		
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		printf("%s\n", &VertexShaderErrorMessage[0]);
+		int x = 3;
 	}
 
-	glDisable(GL_LIGHTING);								// Disable Lighting
-	glDisable(GL_BLEND);								// Turn Blending Off
-	glDisable(GL_FOG);									// Turn Fog Off
-	glColor4f(1.0f,1.0f,1.0f,1.0f);						// Set Color to initial value
+	str_source = "";
+	str_source += "uniform sampler2D diffuseMap;\n";
+	str_source += "\n";
+	str_source += "varying vec2 texCoords;\n";
+	str_source += "\n";
+	str_source += "void main()\n";
+	str_source += "{\n";
+	str_source += "	vec4 diffuse = texture2D(diffuseMap, texCoords);\n";
+	str_source += "\n";
+	str_source += "	gl_FragColor = diffuse;\n";
+	str_source += "}";
+
+	source = str_source.c_str();
+	glShaderSource(FragmentShaderID, 1, &source, NULL);
+
+	compiled;
+	glCompileShader(FragmentShaderID);
+	// check for compile errors
+	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0)
+	{
+		std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+		printf("%s\n", &FragmentShaderErrorMessage[0]);
+		int x = 3;
+	}
+
+
+	ProgramID = glCreateProgram();
+	glAttachShader(ProgramID, VertexShaderID);
+	glAttachShader(ProgramID, FragmentShaderID);
+
+	GLint linked;
+	glLinkProgram(ProgramID);
+
+	glGetProgramiv(ProgramID, GL_LINK_STATUS, &linked);
+	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if ( InfoLogLength > 0 )
+	{
+		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
+		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+		printf("%s\n", &ProgramErrorMessage[0]);
+		int x = 3;
+	}
+
+	glDeleteShader(VertexShaderID);
+	glDeleteShader(FragmentShaderID);
+
+	GLuint PositionID		= glGetUniformLocation(ProgramID, "position");
+	GLuint NormalID			= glGetUniformLocation(ProgramID, "normal");
+	GLuint TexCoords0ID		= glGetUniformLocation(ProgramID, "texCoords0");
+	
+	GLuint MatrixID			= glGetUniformLocation(ProgramID, "worldViewProj");
+
+	GLuint DiffuseTextureID	= glGetUniformLocation(ProgramID, "diffuseMap");
+
+	int x = 3;
+	//////////TEMP FOR TESING/////////////
 }
 
-void GLRenderDriver::uninitializeImpl()
-{
-	if (mCgContext != nullptr)
-		cgDestroyContext(mCgContext);
-}
+void GLRenderDriver::uninitializeImpl() {}
 
 void GLRenderDriver::updateImpl(float elapsedTime) {}
 
@@ -1330,21 +1399,6 @@ GLenum GLRenderDriver::getGLType(ShaderType type)
 	}
 }
 
-CGGLenum GLRenderDriver::getCGGLType(ShaderType type)
-{
-	switch(type)
-	{
-	case SHADER_TYPE_VERTEX:
-		return CG_GL_VERTEX;
-	case SHADER_TYPE_FRAGMENT:
-		return CG_GL_FRAGMENT;
-	case SHADER_TYPE_GEOMETRY:
-		return CG_GL_GEOMETRY;
-	default:
-		return CG_GL_VERTEX;
-	}
-}
-
 GLenum GLRenderDriver::getGLType(VertexElementType type)
 {
 	switch(type)
@@ -1364,27 +1418,6 @@ GLenum GLRenderDriver::getGLType(VertexElementType type)
 	default:
 		return 0;
 	};
-}
-
-bool GLRenderDriver::checkForCgError(CGcontext context)
-{
-	if (context == nullptr) return false;
-
-	CGerror error = cgGetError();
-	if (error == CG_NO_ERROR) return false;
-
-#ifdef _DEBUG
-	std::string msg(cgGetErrorString(error));
-	if (error == CG_COMPILER_ERROR)
-	{
-		// Get listing with full compile errors
-		msg = msg + "\n" + cgGetLastListing(context);
-	}
-
-	std::cout<<msg<<std::endl;
-#endif
-
-	return true;
 }
 
 GLRenderDriver* GLRenderDriver::getInstance()

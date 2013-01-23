@@ -107,7 +107,7 @@ public:
 	virtual void beginFrame(Viewport *vp) = 0;
 
 	//! Render a model to the active viewport.
-	virtual void renderModel(Model* model) = 0;
+	virtual void renderModel(Model* model, Material* material) = 0;
 
 	virtual void renderGridPlane(unsigned int zfar) = 0;
 
@@ -138,8 +138,13 @@ public:
 
 	core::matrix4& getProjectionMatrix();
 
+	//! Render a model to the active viewport.
+	virtual void setMaterial(Material* material) = 0;
+
 	//! Converts a uniform projection matrix to suitable for this render system.
 	virtual void convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest);
+
+	//////////////////////////////////////////////////////////
 
 	virtual void setShadingType(ShadeOptions so) = 0;
 
@@ -188,10 +193,6 @@ public:
 	//! \param unit: Texture unit.
 	//! \param bm: Details of the blending mode.
 	virtual void setTextureBlendMode(unsigned int unit, const LayerBlendMode& bm) = 0;
-
-	virtual void setLightingEnabled(bool enabled) = 0;
-
-	virtual void setAmbientLight(float red, float green, float blue, float alpha) = 0;
 
 	///! Sets a list of lights to the renderer.
 	virtual void setLights(const std::vector<Light*>& lights) = 0;

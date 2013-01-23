@@ -136,9 +136,6 @@ bool GLShader::loadImpl()
 	if (!Shader::loadImpl())
 		return false;
 
-	//if (GLRenderDriver::getInstance() == nullptr)
-	//	return false;
-
 	mGLHandle = glCreateShaderObjectARB(getShaderType(mShaderType));
 
 	const char* source = mSource.c_str();
@@ -148,8 +145,6 @@ bool GLShader::loadImpl()
 	glCompileShaderARB(mGLHandle);
 	// check for compile errors
 	glGetObjectParameterivARB(mGLHandle, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
-
-	//TODO!!!
 
 	return (compiled == 1);
 }

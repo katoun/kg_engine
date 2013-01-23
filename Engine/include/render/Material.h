@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <resource/Resource.h>
 #include <render/Color.h>
 #include <render/BlendMode.h>
+#include <resource/ResourceEventReceiver.h>
 
 #include <string>
 #include <list>
@@ -70,7 +71,7 @@ class TextureUnit;
 //! minimised. One of the most frequent render state changes are
 //! changes to materials, mostly to textures. An mesh can have 
 //! only one material.
-class ENGINE_PUBLIC_EXPORT Material: public resource::Resource
+class ENGINE_PUBLIC_EXPORT Material: public resource::Resource, public resource::ResourceEventReceiver
 {
 public:
 

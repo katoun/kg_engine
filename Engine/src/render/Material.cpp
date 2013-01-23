@@ -330,6 +330,9 @@ void Material::setVertexShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mVertexShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_VERTEX);
+
+		if (mVertexShader != nullptr)
+			mVertexShader->addResourceEventReceiver(this);
 	}
 }
 

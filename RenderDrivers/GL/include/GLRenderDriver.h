@@ -64,7 +64,7 @@ public:
 
 	void beginFrame(Viewport* vp);
 
-	void renderModel(Model* model);
+	void renderModel(Model* model, Material* material);
 
 	void renderGridPlane(unsigned int zfar);
 
@@ -88,6 +88,8 @@ public:
 
 	void setProjectionMatrix(const core::matrix4 &m);
 
+	//////////////////////////////////////////////////////////
+
 	void setShadingType(ShadeOptions so);
 
 	void setSceneBlending(SceneBlendFactor sourceFactor, SceneBlendFactor destFactor);
@@ -97,10 +99,6 @@ public:
 	void setTexture(bool enabled, unsigned int unit, Texture* tex);
 
 	void setTextureBlendMode(unsigned int unit, const LayerBlendMode& bm);
-
-	void setLightingEnabled(bool enabled);
-
-	void setAmbientLight(float red, float green, float blue, float alpha);
 
 	void setLights(const std::vector<Light*>& lights);
 
@@ -120,15 +118,10 @@ public:
 
 	float getVerticalTexelOffset();
 
-	CGcontext getCGContext();
-
 	//! Utility function to get the correct GL usage based on HBU's.
 	static GLenum getGLUsage(resource::BufferUsage usage);
 
 	static GLenum getGLType(ShaderType type);
-	static CGGLenum getCGGLType(ShaderType type);
-
-	static bool checkForCgError(CGcontext context);
 
 	static GLRenderDriver* getInstance();
 
@@ -138,8 +131,6 @@ protected:
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
 
-	CGcontext mCgContext;
-
 	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
 	void setGLLight(unsigned int index, Light* light);
 	void setGLLightPositionDirection(unsigned int index, Light* light);
@@ -147,6 +138,18 @@ protected:
 
 	//! Utility function to get the correct GL type based on VET's.
 	static GLenum getGLType(VertexElementType type);
+
+	//////////TEMP FOR TESING/////////////
+	GLuint ProgramID;
+	
+	GLuint PositionID;
+	GLuint NormalID;
+	GLuint TexCoords0ID;
+	
+	GLuint MatrixID;
+
+	GLuint DiffuseTextureID;
+	//////////TEMP FOR TESING/////////////
 };
 
 } // end namespace render

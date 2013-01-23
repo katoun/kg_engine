@@ -79,8 +79,6 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mRenderDriver = nullptr;
 	mCurrentViewport = nullptr;
 
-	mAmbientLight = Color::Black;
-
 	mDefaultMaterial = nullptr;
 
 	mFrustum = nullptr;
@@ -516,11 +514,6 @@ void RenderManager::removeAllVertexBufferBindings()
 	mVertexBufferBindings.clear();
 }
 
-void RenderManager::setAmbientLight(const Color& ambient)
-{
-	mAmbientLight = ambient;
-}
-
 void RenderManager::setFog(FogMode mode, const Color& color, float density, float start, float end)
 {
 	mFogMode = mode;
@@ -728,7 +721,7 @@ void RenderManager::beginGeometryCount()
 	mFaceCount = 0;
 }
 
-void RenderManager::addGeometruCount(Model* model)
+void RenderManager::addGeometryCount(Model* model)
 {
 	if (model == nullptr)
 		return;
@@ -781,8 +774,6 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	mShaderParamData.setCurrentViewport(viewport);
 
-	mRenderDriver->setAmbientLight(mAmbientLight.R, mAmbientLight.G, mAmbientLight.B, mAmbientLight.A);
-
 	if (mLastViewportWidth != viewport->getActualWidth() || mLastViewportHeight != viewport->getActualHeight())
 	{
 		mLastViewportWidth = viewport->getActualWidth();
@@ -802,92 +793,6 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 	mRenderDriver->setProjectionMatrix(camera->getProjectionMatrixRS());
 	mRenderDriver->setViewMatrix(camera->getViewMatrix());
 
-	mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);//it seems this resets the world matrix before transforming the geometry
-
-	setMaterial(mDefaultMaterial);
-
-	mRenderDriver->setLightingEnabled(false);
-	
-	mRenderDriver->renderGridPlane(100 * ENGINE_UNIT_M);
-	
-	mRenderDriver->disableTextureUnitsFrom(0);
-	mRenderDriver->renderWorldAxes();
-
-	// Go through all the cameras
-	std::map<unsigned int, Camera*>::const_iterator ci;
-	for (ci = mCameras.begin(); ci != mCameras.end(); ++ci)
-	{
-		Camera* pCamera = ci->second;
-		if (pCamera != nullptr && pCamera->getID() != camera->getID())
-		{
-			game::Transform* pTransform = nullptr;
-			if (pCamera->getGameObject() != nullptr)
-			{
-				pTransform = static_cast<game::Transform*>(pCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			}
-
-			if ((pTransform != nullptr && pTransform->getVisibleAxis()) || pCamera->getVisibleFrustum())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				if (pCamera->getVisibleFrustum())
-				{
-					mFrustum = pCamera->getFrustum();
-					if (mFrustum != nullptr)
-						mRenderDriver->renderFrustumVolume(mFrustum->getCorners());
-				}
-				if (pTransform != nullptr && pTransform->getVisibleAxis())
-				{
-					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-				}
-			}
-		}
-	}
-
-	// Go through all the lights
-	std::map<unsigned int, Light*>::const_iterator li;
-	for (li = mLights.begin(); li != mLights.end(); ++li)
-	{
-		Light* pLight = li->second;
-		if (pLight != nullptr)
-		{
-			game::Transform* pTransform = nullptr;
-			if (pLight->getGameObject() != nullptr)
-			{
-				pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			}
-
-			if (pTransform != nullptr && pTransform->getVisibleAxis())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-			}
-		}
-	}
-	
 	renderVisibleModels();
 
 	mRenderDriver->setViewMatrix(core::matrix4::IDENTITY);
@@ -1137,59 +1042,16 @@ void RenderManager::renderSingleModel(Model* model)
 		game::Transform* pTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			if (pTransform->getVisibleAxis() || model->getVisibleBoundingBox() || model->getVisibleBoundingSphere())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				if (pTransform->getVisibleAxis())
-					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-				if (model->getVisibleBoundingBox())
-					mRenderDriver->renderBoundingBox(model->getBoundingBox());
-				if (model->getVisibleBoundingSphere())
-					mRenderDriver->renderBoundingSphere(model->getBoundingSphere());
-			}
-
-			findLightsAffectingModel(model);
-
-			// Create local light list for faster light iteration setup
-			static std::vector<Light*> localLightList;
-
-			for (unsigned int i = 0; i < mDistanceLights.size(); ++i)
-			{
-				localLightList.push_back(mDistanceLights[i].light);
-			}
-
-			mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-			mRenderDriver->setLights(localLightList);
-			
 			mRenderDriver->setWorldMatrix(model->getWorldMatrix());
 
 			mShaderParamData.setCurrentModel(model);
-			if (mDistanceLights.size() != 0)
-			{
-				mShaderParamData.setCurrentLight(mDistanceLights[0].light);
-			}
 
-			localLightList.clear();
+			addGeometryCount(model);
 
 			if (model->getMaterial() != nullptr)
-				setMaterial(model->getMaterial());
+				mRenderDriver->renderModel(model, model->getMaterial());
 			else
-				setMaterial(mDefaultMaterial);
-
-			addGeometruCount(model);
-			mRenderDriver->renderModel(model);
+				mRenderDriver->renderModel(model, mDefaultMaterial);
 		}
 	}
 }
@@ -1231,8 +1093,6 @@ void RenderManager::setMaterial(Material* material)
 		{
 			mRenderDriver->setSurfaceParams(material->getAmbient(), material->getDiffuse(), material->getSpecular(), material->getEmissive(), material->getShininess());
 		}
-
-		mRenderDriver->setLightingEnabled(material->getLightingEnabled());
 	}
 
 	if (material->hasFragmentShader())

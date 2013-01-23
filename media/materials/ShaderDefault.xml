@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <material>
 	<vertex_shader>
-		<shader value="shaders/Shader_vp.cg"/>
-		<entry_point value="main_vp"/>
+		<shader value="shaders/BasicShader_vp.glsl"/>
 		<param_auto name="worldViewProjMatrix" type="worldviewproj_matrix"/>
 		<param_auto name="lightPosition" type="light_position_object_space"/>
 		<param_auto name="cameraPosition" type="camera_position_object_space"/>
 	</vertex_shader>
 	
 	<fragment_shader>
-		<shader value="shaders/Shader_fp.cg"/>
-		<entry_point value="main_fp"/>
+		<shader value="shaders/BasicShader_fp.glsl"/>
 		<param_auto name="lightDiffuse" type="light_diffuse_colour"/>
 		<param_auto name="lightSpecular" type="light_specular_colour"/>
 	</fragment_shader>
