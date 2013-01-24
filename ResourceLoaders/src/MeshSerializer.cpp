@@ -117,7 +117,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			float *pFloat = nullptr;
 
 			// float* pVertices (x, y, z order x numVertices)
-			pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_POSITION);
+			pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_POSITION);
 			render::VertexBuffer* pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 			pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 			if (pFloat == nullptr)
@@ -205,7 +205,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (normals)
 			{
 				// float* pNormals (x, y, z order x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_FLOAT3, render::VES_NORMAL);
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_NORMAL);
 				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
@@ -255,62 +255,6 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				++bindIdx;
 			}
 
-			bool colours_diffuse = false;
-			svalue = pElement->Attribute("colours_diffuse");
-			if (svalue != nullptr)
-			{
-				colours_diffuse = std::string(svalue) == "true" ? true : false;
-			}
-
-			unsigned int* pRGBA = nullptr;
-			if (colours_diffuse)
-			{
-				// unsigned int* pColors (RGBA 8888 format x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VET_COLOR, render::VES_DIFFUSE);
-				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
-				pRGBA = (unsigned int*)(pVertexBuffer->lock(resource::BL_DISCARD));
-				if (pRGBA == nullptr)
-					return false;
-
-				unsigned int i = 0;
-				pSubElement = pElement->FirstChildElement("vertex");
-				while(pSubElement != nullptr)
-				{
-					if (i >= pVertexData->vertexCount)
-						break;
-
-					pVertexSubElement = pSubElement->FirstChildElement("colour_diffuse");
-					if (pVertexSubElement != nullptr)
-					{
-						std::string RGBA;
-						svalue = pVertexSubElement->Attribute("value");
-						if (svalue != nullptr)
-						{
-							RGBA = svalue;
-						}
-
-						std::vector<std::string> vecparams = core::splitString(RGBA, " \t");
-
-						float R = vecparams.size() > 1 ? core::stringToFloat(vecparams[0]) : 0.0f;
-						float G = vecparams.size() > 2 ? core::stringToFloat(vecparams[1]) : 0.0f;
-						float B = vecparams.size() > 3 ? core::stringToFloat(vecparams[2]) : 0.0f;
-						float A = vecparams.size() > 4 ? core::stringToFloat(vecparams[3]) : 0.0f;
-
-						render::Color color(R,G,B,A);
-
-						pRGBA[i] = color.getAsRGBA();
-					}
-
-					i++;
-
-					pSubElement = pSubElement->NextSiblingElement("vertex");
-				}
-
-				pVertexBuffer->unlock();
-				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
-				++bindIdx;
-			}
-
 			bool texture_coords = false;
 			svalue = pElement->Attribute("texture_coords");
 			if (svalue != nullptr)
@@ -321,7 +265,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (texture_coords)
 			{
 				// float* pTexCoords  (u v order, dimensions x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VET_FLOAT1, 2), render::VES_TEXTURE_COORDINATES);
+				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VERTEX_ELEMENT_TYPE_FLOAT1, 2), render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES);
 				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)

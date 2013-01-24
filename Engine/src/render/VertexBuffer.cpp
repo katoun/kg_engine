@@ -72,27 +72,32 @@ unsigned int VertexElement::getSize() const
 	return getTypeSize(mType);
 }
 
+unsigned short int VertexElement::getCount() const
+{
+	return getTypeCount(mType);
+}
+
 unsigned int VertexElement::getTypeSize(VertexElementType etype)
 {
 	switch(etype)
 	{
-	case VET_COLOR:
+	case VERTEX_ELEMENT_TYPE_COLOR:
 		return sizeof(unsigned int);
-	case VET_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
 		return sizeof(float);
-	case VET_FLOAT2:
+	case VERTEX_ELEMENT_TYPE_FLOAT2:
 		return sizeof(float)*2;
-	case VET_FLOAT3:
+	case VERTEX_ELEMENT_TYPE_FLOAT3:
 		return sizeof(float)*3;
-	case VET_FLOAT4:
+	case VERTEX_ELEMENT_TYPE_FLOAT4:
 		return sizeof(float)*4;
-	case VET_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT1:
 		return sizeof(signed short int);
-	case VET_SHORT2:
+	case VERTEX_ELEMENT_TYPE_SHORT2:
 		return sizeof(signed short int)*2;
-	case VET_SHORT3:
+	case VERTEX_ELEMENT_TYPE_SHORT3:
 		return sizeof(signed short int)*3;
-	case VET_SHORT4:
+	case VERTEX_ELEMENT_TYPE_SHORT4:
 		return sizeof(signed short int)*4;
 	}
 	return 0;
@@ -102,23 +107,23 @@ unsigned short int VertexElement::getTypeCount(VertexElementType etype)
 {
 	switch (etype)
 	{
-	case VET_COLOR:
+	case VERTEX_ELEMENT_TYPE_COLOR:
 		return 1;
-	case VET_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
 		return 1;
-	case VET_FLOAT2:
+	case VERTEX_ELEMENT_TYPE_FLOAT2:
 		return 2;
-	case VET_FLOAT3:
+	case VERTEX_ELEMENT_TYPE_FLOAT3:
 		return 3;
-	case VET_FLOAT4:
+	case VERTEX_ELEMENT_TYPE_FLOAT4:
 		return 4;
-	case VET_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT1:
 		return 1;
-	case VET_SHORT2:
+	case VERTEX_ELEMENT_TYPE_SHORT2:
 		return 2;
-	case VET_SHORT3:
+	case VERTEX_ELEMENT_TYPE_SHORT3:
 		return 3;
-	case VET_SHORT4:
+	case VERTEX_ELEMENT_TYPE_SHORT4:
 		return 4;
 	default:
 		return 0;
@@ -129,38 +134,38 @@ VertexElementType VertexElement::multiplyTypeCount(VertexElementType baseType, u
 {
 	switch (baseType)
 	{
-	case VET_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
 		switch(count)
 		{
 		case 1:
-			return VET_FLOAT1;
+			return VERTEX_ELEMENT_TYPE_FLOAT1;
 		case 2:
-			return VET_FLOAT2;
+			return VERTEX_ELEMENT_TYPE_FLOAT2;
 		case 3:
-			return VET_FLOAT3;
+			return VERTEX_ELEMENT_TYPE_FLOAT3;
 		case 4:
-			return VET_FLOAT4;
+			return VERTEX_ELEMENT_TYPE_FLOAT4;
 		default:
-			return VET_FLOAT1;
+			return VERTEX_ELEMENT_TYPE_FLOAT1;
 		}
 		break;
-	case VET_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT1:
 		switch(count)
 		{
 		case 1:
-			return VET_SHORT1;
+			return VERTEX_ELEMENT_TYPE_SHORT1;
 		case 2:
-			return VET_SHORT2;
+			return VERTEX_ELEMENT_TYPE_SHORT2;
 		case 3:
-			return VET_SHORT3;
+			return VERTEX_ELEMENT_TYPE_SHORT3;
 		case 4:
-			return VET_SHORT4;
+			return VERTEX_ELEMENT_TYPE_SHORT4;
 		default:
-			return VET_SHORT1;
+			return VERTEX_ELEMENT_TYPE_SHORT1;
 		}
 		break;
 	default:
-		return VET_FLOAT1;
+		return VERTEX_ELEMENT_TYPE_FLOAT1;
 	}
 }
 

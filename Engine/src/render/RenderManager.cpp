@@ -563,9 +563,7 @@ void RenderManager::initializeImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
-	mSolidModels.reserve(1024);
-	mTransparentModels.reserve(1024);
-	mDistanceLights.reserve(512);
+	mModelMaterialPairs.reserve(1024);
 }
 
 void RenderManager::uninitializeImpl()
@@ -597,12 +595,8 @@ void RenderManager::uninitializeImpl()
 	//! Removes all Index Buffers.
 	removeAllIndexBuffers();
 
-	// Remove SolidModels
-	mSolidModels.clear();
-	// Remove TransparentModels
-	mTransparentModels.clear();
-	// Remove DistanceLights
-	mDistanceLights.clear();
+	// Remove ModelMaterialPairs
+	mModelMaterialPairs.clear();
 
 	mMainWindow = nullptr;
 	mFrustum = nullptr;
@@ -858,8 +852,7 @@ void RenderManager::findVisibleModels(Camera* camera)
 	if (camera == nullptr)
 		return;
 
-	mSolidModels.clear();
-	mTransparentModels.clear();
+	mModelMaterialPairs.clear();
 
 	mFrustum = camera->getFrustum();
 	if (mFrustum == nullptr)
@@ -876,64 +869,23 @@ void RenderManager::findVisibleModels(Camera* camera)
 			{
 				Material* pMaterial = pModel->getMaterial();
 
-				if (pMaterial != nullptr)
-				{
-					if (pMaterial->isTransparent())
-					{
-						TransparentModel newTransparentModel;
-						newTransparentModel.model = pModel;
-						newTransparentModel.distance = 0.0f;
-
-						game::Transform* pCameraTransform = nullptr;
-						game::Transform* pModelTransform = nullptr;
-						if (camera->getGameObject() != nullptr && pModel->getGameObject() != nullptr)
-						{
-							pCameraTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-							pModelTransform = static_cast<game::Transform*>(pModel->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-							if (pCameraTransform != nullptr && pModelTransform != nullptr)
-							{
-								// Calculate squared distance
-								newTransparentModel.distance = (pModelTransform->getAbsolutePosition() - pCameraTransform->getAbsolutePosition()).getLengthSQ();
-							}
-						}
-
-						mTransparentModels.push_back(newTransparentModel);
-					}
-					else
-					{
-						SolidModel newSolidModel;
-						newSolidModel.model = pModel;
-						newSolidModel.materialID = mDefaultMaterial->getID();
-						mSolidModels.push_back(newSolidModel);
-					}
-				}
-				else
-				{
-					SolidModel newSolidModel;
-					newSolidModel.model = pModel;
-					newSolidModel.materialID = mDefaultMaterial->getID();
-					mSolidModels.push_back(newSolidModel);
-				}
+				ModelMaterialPair newPair;
+				newPair.model = pModel;
+				newPair.materialID = pMaterial != nullptr ? pMaterial->getID() : mDefaultMaterial->getID();
+				mModelMaterialPairs.push_back(newPair);
 			}
 		}
 	}
 
-	std::sort(mSolidModels.begin(), mSolidModels.end());
-	std::sort(mTransparentModels.begin(), mTransparentModels.end());
+	std::sort(mModelMaterialPairs.begin(), mModelMaterialPairs.end());
 }
 
 void RenderManager::renderVisibleModels()
 {
-	// Go through all the solid models	
-	for (unsigned int i = 0; i < mSolidModels.size(); ++i)
+	// Go through all the model material pairs	
+	for (unsigned int i = 0; i < mModelMaterialPairs.size(); ++i)
 	{
-		renderSingleModel(mSolidModels[i].model);
-	}
-
-	// Go through all the transparent models
-	for (unsigned int i = 0; i < mTransparentModels.size(); ++i)
-	{
-		renderSingleModel(mTransparentModels[i].model);
+		renderSingleModel(mModelMaterialPairs[i].model);
 	}
 }
 

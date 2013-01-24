@@ -28,7 +28,6 @@ THE SOFTWARE.
 #define _ENGINE_RENDER_H_
 
 #include <render/Color.h>
-#include <render/BlendMode.h>
 #include <render/IndexBuffer.h>
 #include <render/VertexBuffer.h>
 #include <render/VertexIndexData.h>
@@ -46,7 +45,6 @@ THE SOFTWARE.
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
 #include <render/Material.h>
-#include <render/TextureUnit.h>
 #include <render/Texture.h>
 #include <render/TextureDefines.h>
 #include <render/Shader.h>

@@ -39,29 +39,24 @@ namespace render
 //! Vertex element semantics, used to identify the meaning of vertex buffer contents.
 enum VertexElementSemantic
 {
-	VES_POSITION,				//! Position, 3 reals per vertex
-	VES_NORMAL,					//! Normal, 3 reals per vertex
-	VES_BLEND_WEIGHTS,			//! Blending weights
-	VES_BLEND_INDICES,			//! Blending indixes
-	VES_DIFFUSE,				//! Diffuse colors
-	VES_SPECULAR,				//! Specular colors
-	VES_TEXTURE_COORDINATES,	//! Texture coordinates
-	VES_BINORMAL,				//! Binormal (Y axis if normal is Z)
-	VES_TANGENT					//! Tangent (X axis if normal is Z)
+	VERTEX_ELEMENT_SEMANTIC_POSITION,				//! Position, 3 reals per vertex
+	VERTEX_ELEMENT_SEMANTIC_NORMAL,					//! Normal, 3 reals per vertex
+	VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES,	//! Texture coordinates
+	VERTEX_ELEMENT_SEMANTIC_COUNT
 };
 
 //! Vertex element type, used to identify the base types of the vertex contents.
 enum VertexElementType
 {
-	VET_FLOAT1,
-	VET_FLOAT2,
-	VET_FLOAT3,
-	VET_FLOAT4,
-	VET_COLOR,
-	VET_SHORT1,
-	VET_SHORT2,
-	VET_SHORT3,
-	VET_SHORT4
+	VERTEX_ELEMENT_TYPE_FLOAT1,
+	VERTEX_ELEMENT_TYPE_FLOAT2,
+	VERTEX_ELEMENT_TYPE_FLOAT3,
+	VERTEX_ELEMENT_TYPE_FLOAT4,
+	VERTEX_ELEMENT_TYPE_COLOR,
+	VERTEX_ELEMENT_TYPE_SHORT1,
+	VERTEX_ELEMENT_TYPE_SHORT2,
+	VERTEX_ELEMENT_TYPE_SHORT3,
+	VERTEX_ELEMENT_TYPE_SHORT4
 };
 
 /** This class declares the usage of a single vertex buffer as a component
@@ -77,7 +72,7 @@ class ENGINE_PUBLIC_EXPORT VertexElement
 {
 public:
 	/// Constructor, should not be called directly, call VertexDeclaration::addElement
-	VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
+	VertexElement(unsigned short int source, unsigned int offset, VertexElementType type, VertexElementSemantic semantic);
 
 	inline bool operator== (const VertexElement& rhs) const;
 	
@@ -91,6 +86,8 @@ public:
 	VertexElementSemantic getSemantic() const;
 	//! Gets the size of this element in bytes.
 	unsigned int getSize() const;
+	//! Gets the count of this element in bytes.
+	unsigned short int getCount() const;
 	//! Utility method for helping to calculate offsets.
 	static unsigned int getTypeSize(VertexElementType etype);
 	//! Utility method which returns the count of values in a given type.

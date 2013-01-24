@@ -272,15 +272,15 @@ protected:
 	std::list<VertexBuffer*> mVertexBuffers;
 	std::list<IndexBuffer*> mIndexBuffers;
 
-	struct SolidModel
+	struct ModelMaterialPair
 	{
-		SolidModel()
+		ModelMaterialPair()
 		{
 			model = nullptr;
 			materialID = 0;
 		}
 
-		bool operator < (const SolidModel& other) const
+		bool operator < (const ModelMaterialPair& other) const
 		{
 			return (materialID < other.materialID);
 		}
@@ -288,44 +288,8 @@ protected:
 		Model* model;
 		unsigned int materialID;//Renderable material ID
 	};
-
-	struct TransparentModel
-	{
-		TransparentModel()
-		{
-			model = nullptr;
-			distance = 0;
-		}
-
-		bool operator < (const TransparentModel& other) const
-		{
-			return (distance > other.distance);
-		}
-
-		Model* model;
-		float distance;//Renderable distance to camera
-	};
-
-	struct DistanceLight
-	{
-		DistanceLight()
-		{
-			light = nullptr;
-			distance = 0;
-		}
-
-		bool operator < (const DistanceLight& other) const
-		{
-			return (distance < other.distance);
-		}
-
-		Light* light;
-		float distance;//Light distance to renderable
-	};
 	
-	std::vector<SolidModel> mSolidModels;
-	std::vector<TransparentModel> mTransparentModels;
-	std::vector<DistanceLight> mDistanceLights;
+	std::vector<ModelMaterialPair> mModelMaterialPairs;
 
 	//! Shader auto parameter data.
 	ShaderParamData mShaderParamData;

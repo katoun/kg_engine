@@ -33,7 +33,6 @@ THE SOFTWARE.
 #include <core/Matrix4.h>
 #include <core/SystemDriver.h>
 #include <render/Material.h>
-#include <render/BlendMode.h>
 #include <render/Color.h>
 
 #include <vector>
@@ -119,8 +118,6 @@ public:
 	virtual void setViewMatrix(const core::matrix4& m);
 
 	virtual void setProjectionMatrix(const core::matrix4& m);
-
-	//////////////////////////////////////////////////////////
 
 	//! update Shader parameters to a given Shader.
 	virtual void updateShaderAutoParameters(Shader* shader, ShaderParamData& data);

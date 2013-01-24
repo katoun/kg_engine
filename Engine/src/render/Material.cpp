@@ -26,8 +26,9 @@ THE SOFTWARE.
 
 #include <render/Material.h>
 #include <render/Shader.h>
-#include <render/TextureUnit.h>
+#include <render/Texture.h>
 #include <render/RenderManager.h>
+#include <resource/ResourceManager.h>
 
 namespace render
 {
@@ -35,26 +36,6 @@ namespace render
 Material::Material(const std::string& name, resource::Serializer* serializer): resource::Resource(name, serializer)
 {
 	mResourceType = resource::RESOURCE_TYPE_RENDER_MATERIAL;
-
-	mAmbient = mDiffuse = Color::White;
-	mSpecular = mEmissive = Color::Black;
-	mShininess = 0.0f;
-	mLightingEnabled = false;
-	mShadeOptions = SO_GOURAUD;
-
-	mFogOverride = false;
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.001f;
-	mFogStart = 0.0f;
-	mFogEnd = 1.0f;
-
-	// Default blending
-	mSourceBlendFactor = SBF_ONE;
-	mDestBlendFactor = SBF_ZERO;
-
-	mDepthCheck = true;
-	mDepthWrite = true;
 
 	mTextureUnits.clear();
 
@@ -65,230 +46,30 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 
 Material::~Material() {}
 
-void Material::setAmbient(float red, float green, float blue)
+void Material::addTextureUnit(const std::string& filename)
 {
-	mAmbient = Color(red, green, blue);
+	Texture* pTexture = nullptr;
+	
+	if (resource::ResourceManager::getInstance() != nullptr)
+		pTexture = static_cast<Texture*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_TEXTURE, filename));
+
+	addTextureUnit(pTexture);
 }
 
-void Material::setAmbient(const Color& ambient)
+void Material::addTextureUnit(Texture* texture)
 {
-	mAmbient = ambient;
-}
-
-void Material::setDiffuse(float red, float green, float blue)
-{
-	mDiffuse = Color(red, green, blue);
-}
-
-void Material::setDiffuse(const Color& diffuse)
-{
-	mDiffuse = diffuse;
-}
-
-void Material::setSpecular(float red, float green, float blue)
-{
-	mSpecular = Color(red, green, blue);
-}
-
-void Material::setSpecular(const Color& specular)
-{
-	mSpecular = specular;
-}
-
-void Material::setEmissive(float red, float green, float blue)
-{
-	mEmissive = Color(red, green, blue);
-}
-
-void Material::setEmissive(const Color& emissive)
-{
-	mEmissive = emissive;
-}
-
-void Material::setShininess(float shininess)
-{
-	mShininess = shininess;
-}
-
-const Color& Material::getAmbient() const
-{
-	return mAmbient;
-}
-
-const Color& Material::getDiffuse() const
-{
-	return mDiffuse;
-}
-
-const Color& Material::getSpecular() const
-{
-	return mSpecular;
-}
-
-const Color& Material::getEmissive() const
-{
-	return mEmissive;
-}
-
-float Material::getShininess() const
-{
-	return mShininess;
-}
-
-void Material::setLightingEnabled(bool enabled)
-{
-	mLightingEnabled = enabled;
-}
-
-bool Material::getLightingEnabled() const
-{
-	return mLightingEnabled;
-}
-
-void Material::setShadingMode(ShadeOptions mode)
-{
-	mShadeOptions = mode;
-}
-
-ShadeOptions Material::getShadingMode() const
-{
-	return mShadeOptions;
-}
-
-void Material::setFog(bool overrideScene, FogMode mode, const Color& color, float density, float start, float end)
-{
-	mFogOverride = overrideScene;
-	if (overrideScene)
-	{
-		mFogMode = mode;
-		mFogColor = color;
-		mFogDensity = density;
-		mFogStart = start;
-		mFogEnd = end;
-	}
-}
-
-bool Material::getFogOverride() const
-{
-	 return mFogOverride;
-}
-
-FogMode Material::getFogMode() const
-{
-	return mFogMode;
-}
-
-const Color& Material::getFogColor() const
-{
-	return mFogColor;
-}
-
-float Material::getFogDensity() const
-{
-	return mFogDensity;
-}
-
-float Material::getFogStart() const
-{
-	return mFogStart;
-}
-
-float Material::getFogEnd() const
-{
-	return mFogEnd;
-}
-
-void Material::setSceneBlending(const SceneBlendType sbt)
-{
-	// Turn predefined type into blending factors
-	switch (sbt)
-	{
-	case SBT_TRANSPARENT_ALPHA:
-		setSceneBlending(SBF_SOURCE_ALPHA, SBF_ONE_MINUS_SOURCE_ALPHA);
-		break;
-	case SBT_TRANSPARENT_COLOR:
-		setSceneBlending(SBF_SOURCE_COLOR, SBF_ONE_MINUS_SOURCE_COLOR);
-		break;
-	case SBT_ADD:
-		setSceneBlending(SBF_ONE, SBF_ONE);
-		break;
-	case SBT_MODULATE:
-		setSceneBlending(SBF_DEST_COLOR, SBF_ZERO);
-		break;
-	case SBT_REPLACE:
-		setSceneBlending(SBF_ONE, SBF_ZERO);
-		break;
-	// TODO: more
-	}
-}
-
-void Material::setSceneBlending(const SceneBlendFactor sourceFactor, const SceneBlendFactor destFactor)
-{
-	mSourceBlendFactor = sourceFactor;
-	mDestBlendFactor = destFactor;
-}
-
-SceneBlendFactor Material::getSourceBlendFactor() const
-{
-	return mSourceBlendFactor;
-}
-
-SceneBlendFactor Material::getDestBlendFactor() const
-{
-	return mDestBlendFactor;
-}
-
-bool Material::isTransparent() const
-{
-	// Transparent if any of the destination color is taken into account
-	if (mDestBlendFactor == SBF_ZERO &&
-		mSourceBlendFactor != SBF_DEST_COLOR &&
-		mSourceBlendFactor != SBF_ONE_MINUS_DEST_COLOR &&
-		mSourceBlendFactor != SBF_DEST_ALPHA &&
-		mSourceBlendFactor != SBF_ONE_MINUS_DEST_ALPHA)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-void Material::setDepthCheckEnabled(bool enabled)
-{
-	mDepthCheck = enabled;
-}
-
-bool Material::getDepthCheckEnabled() const
-{
-	return mDepthCheck;
-}
-
-void Material::setDepthWriteEnabled(bool enabled)
-{
-	mDepthWrite = enabled;
-}
-
-bool Material::getDepthWriteEnabled() const
-{
-	return mDepthWrite;
-}
-
-void Material::addTextureUnit(TextureUnit* tu)
-{
-	if (tu == nullptr)
+	if (texture == nullptr)
 		return;
 
-	mTextureUnits.push_back(tu);
+	mTextureUnits.push_back(texture);
 }
 
-TextureUnit* Material::getTextureUnit(unsigned int index) const
+Texture* Material::getTextureUnit(unsigned int index) const
 {
 	if (index >= mTextureUnits.size())
 		return nullptr;
 
-	std::list<TextureUnit*>::const_iterator i = mTextureUnits.begin();
+	std::list<Texture*>::const_iterator i = mTextureUnits.begin();
 	for (unsigned int j=0; j<index; ++j)
 		++i;
 
@@ -302,25 +83,14 @@ unsigned int Material::getNumTextureUnits() const
 
 void Material::removeTextureUnit(unsigned int index)
 {
-	std::list<TextureUnit*>::iterator i = mTextureUnits.begin();
+	std::list<Texture*>::iterator i = mTextureUnits.begin();
 	for (unsigned int j=0; j<index; ++j)
 		++i;
-
-	TextureUnit* pTextureUnit = (*i);
-	SAFE_DELETE(pTextureUnit);
-
 	mTextureUnits.erase(i);
 }
 
 void Material::removeAllTextureUnits()
 {
-	std::list<TextureUnit*>::iterator i;
-	for (i = mTextureUnits.begin(); i != mTextureUnits.end(); ++i)
-	{
-		TextureUnit* pTextureUnit = (*i);
-		SAFE_DELETE(pTextureUnit);
-	}
-
 	mTextureUnits.clear();
 }
 
@@ -405,10 +175,6 @@ Shader* Material::getGeometryShader()
 	return mGeometryShader;
 }
 
-bool Material::isProgrammable()
-{
-	return (mVertexShader != nullptr || mFragmentShader != nullptr || mGeometryShader != nullptr);
-}
 bool Material::hasVertexShader()
 {
 	return mVertexShader != nullptr;
@@ -428,27 +194,6 @@ void Material::unloadImpl()
 {
 	// Remove all TextureUnits
 	removeAllTextureUnits();
-
-	// Default to white ambient & diffuse, no specular / emissive
-	mAmbient = mDiffuse = Color::White;
-	mSpecular = mEmissive = Color::Black;
-	mShininess = 0.0f;
-	mLightingEnabled = false;
-	mShadeOptions = SO_GOURAUD;
-
-	mFogOverride = false;
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.001f;
-	mFogStart = 0.0f;
-	mFogEnd = 1.0f;
-
-	// Default blending
-	mSourceBlendFactor = SBF_ONE;
-	mDestBlendFactor = SBF_ZERO;
-
-	mDepthCheck = true;
-	mDepthWrite = true;
 
 	mVertexShader = nullptr;
 	mFragmentShader = nullptr;

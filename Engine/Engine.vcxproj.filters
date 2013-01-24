@@ -99,9 +99,6 @@
     <ClInclude Include="include\core\Vector4d.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\BlendMode.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Camera.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -163,9 +160,6 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\TextureDefines.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\TextureUnit.h">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\VertexBuffer.h">
@@ -488,9 +482,6 @@
     <ClCompile Include="src\core\Vector4d.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\BlendMode.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\Camera.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -543,9 +534,6 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Texture.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\TextureUnit.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\VertexBuffer.cpp">

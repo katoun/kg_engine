@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include <render/Model.h>
 #include <render/Viewport.h>
 #include <render/Shader.h>
-#include <render/TextureUnit.h>
 #include <render/VertexIndexData.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
@@ -143,94 +142,65 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mat[0]);
 
-	TextureUnit* tu = material->getTextureUnit(0);
-	if (tu != nullptr)
+	/////////////Textures/////////////
+	for (unsigned int i=0; i<material->getNumTextureUnits(); ++i)
 	{
-		GLTexture* glTex = static_cast<GLTexture*>(tu->getTexture());
+		GLTexture* glTex = static_cast<GLTexture*>(material->getTextureUnit(i));
 
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, glTex->getGLID());
-		glUniform1i(glTex->getGLID(), 0);
+		glUniform1i(glTex->getGLID(), i);
 	}
+	//////////////////////////////////
 
-	////////////////////
-
+	/////////////Buffers/////////////
 	void* pBufferData = nullptr;
 
 	const std::list<VertexElement*>& elems = model->getVertexData()->vertexDeclaration->getElements();
 	std::list<VertexElement*>::const_iterator i;
 	for (i = elems.begin(); i != elems.end(); ++i)
 	{
-		VertexElement* elem = (*i);
+		VertexElement* pVertexElement = (*i);
 
-		VertexBuffer* vertexBuffer = model->getVertexData()->vertexBufferBinding->getBuffer(elem->getSource());
+		VertexBuffer* vertexBuffer = model->getVertexData()->vertexBufferBinding->getBuffer(pVertexElement->getSource());
 
 		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
-		pBufferData = VBO_BUFFER_OFFSET(elem->getOffset());
+		pBufferData = VBO_BUFFER_OFFSET(pVertexElement->getOffset());
 
-		switch(elem->getSemantic())
+		GLuint index = 0;
+		GLint size = pVertexElement->getCount();
+		GLenum type = getGLType(pVertexElement->getType());
+		GLsizei stride = (GLsizei)(vertexBuffer->getVertexSize());
+
+		switch(pVertexElement->getSemantic())
 		{
-		case VES_POSITION:
-			glVertexAttribPointer(
-								PositionID,  // The attribute we want to configure
-								3,                            // size
-								GL_FLOAT,                     // type
-								GL_FALSE,                     // normalized?
-								0,                            // stride
-								(void*)0                      // array buffer offset
-								);
-			glEnableVertexAttribArray(PositionID);
+		case VERTEX_ELEMENT_SEMANTIC_POSITION:
+			index = PositionID;
 			break;
-		case VES_NORMAL:
-			glVertexAttribPointer(
-								NormalID,    // The attribute we want to configure
-								3,                            // size
-								GL_FLOAT,                     // type
-								GL_FALSE,                     // normalized?
-								0,                            // stride
-								(void*)0                      // array buffer offset
-								);
-			glEnableVertexAttribArray(NormalID);
+		case VERTEX_ELEMENT_SEMANTIC_NORMAL:
+			index = NormalID;
 			break;
-		case VES_TEXTURE_COORDINATES:
-				glVertexAttribPointer(
-					TexCoords0ID,				// The attribute we want to configure
-					2,                            // size
-					GL_FLOAT,                     // type
-					GL_FALSE,                     // normalized?
-					0,                            // stride
-					(void*)0                      // array buffer offset
-					);
-				glEnableVertexAttribArray(TexCoords0ID);
+		case VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES:
+			index = TexCoords0ID;
 			break;
 		default:
 			break;
 		}
+
+		glVertexAttribPointer(
+							index,			// The attribute we want to configure
+							size,			// size
+							type,			// type
+							GL_FALSE,		// normalized?
+							stride,			// stride
+							pBufferData		// array buffer offset
+							);
+		glEnableVertexAttribArray(index);
 	}
+	//////////////////////////////////
 
 	// Find the correct type to render
-	GLint primType = GL_TRIANGLES;
-	switch (model->getRenderOperationType())
-	{
-	case render::ROT_POINT_LIST:
-		primType = GL_POINTS;
-		break;
-	case render::ROT_LINE_LIST:
-		primType = GL_LINES;
-		break;
-	case render::ROT_LINE_STRIP:
-		primType = GL_LINE_STRIP;
-		break;
-	case render::ROT_TRIANGLE_LIST:
-		primType = GL_TRIANGLES;
-		break;
-	case render::ROT_TRIANGLE_STRIP:
-		primType = GL_TRIANGLE_STRIP;
-		break;
-	case render::ROT_TRIANGLE_FAN:
-		primType = GL_TRIANGLE_FAN;
-		break;
-	}
+	GLenum primType = getGLType(model->getRenderOperationType());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
 	pBufferData = VBO_BUFFER_OFFSET(0);
@@ -242,7 +212,6 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 	glDisableVertexAttribArray(PositionID);
 	glDisableVertexAttribArray(NormalID);
 	glDisableVertexAttribArray(TexCoords0ID);
-
 }
 
 void GLRenderDriver::endFrame()
@@ -295,23 +264,6 @@ float GLRenderDriver::getVerticalTexelOffset()
 {
 	// No offset in GL
 	return 0.0f;
-}
-
-GLenum GLRenderDriver::getGLUsage(resource::BufferUsage usage)
-{
-	switch(usage)
-	{
-	case resource::BU_STATIC:
-	case resource::BU_STATIC_WRITE_ONLY:
-		return GL_STATIC_DRAW;
-	case resource::BU_DYNAMIC:
-	case resource::BU_DYNAMIC_WRITE_ONLY:
-		return GL_DYNAMIC_DRAW;
-	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
-		return GL_STREAM_DRAW;
-	default:
-		return GL_DYNAMIC_DRAW;
-	};
 }
 
 void GLRenderDriver::initializeImpl()
@@ -484,34 +436,21 @@ void GLRenderDriver::makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
 	gl_matrix[15] = m[15];
 }
 
-
-GLint GLRenderDriver::getGLBlendMode(SceneBlendFactor gameBlend)
+GLenum GLRenderDriver::getGLUsage(resource::BufferUsage usage)
 {
-	switch(gameBlend)
+	switch(usage)
 	{
-	case SBF_ONE:
-		return GL_ONE;
-	case SBF_ZERO:
-		return GL_ZERO;
-	case SBF_DEST_COLOR:
-		return GL_DST_COLOR;
-	case SBF_SOURCE_COLOR:
-		return GL_SRC_COLOR;
-	case SBF_ONE_MINUS_DEST_COLOR:
-		return GL_ONE_MINUS_DST_COLOR;
-	case SBF_ONE_MINUS_SOURCE_COLOR:
-		return GL_ONE_MINUS_SRC_COLOR;
-	case SBF_DEST_ALPHA:
-		return GL_DST_ALPHA;
-	case SBF_SOURCE_ALPHA:
-		return GL_SRC_ALPHA;
-	case SBF_ONE_MINUS_DEST_ALPHA:
-		return GL_ONE_MINUS_DST_ALPHA;
-	case SBF_ONE_MINUS_SOURCE_ALPHA:
-		return GL_ONE_MINUS_SRC_ALPHA;
+	case resource::BU_STATIC:
+	case resource::BU_STATIC_WRITE_ONLY:
+		return GL_STATIC_DRAW;
+	case resource::BU_DYNAMIC:
+	case resource::BU_DYNAMIC_WRITE_ONLY:
+		return GL_DYNAMIC_DRAW;
+	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+		return GL_STREAM_DRAW;
+	default:
+		return GL_DYNAMIC_DRAW;
 	};
-
-	return GL_ONE;
 }
 
 GLenum GLRenderDriver::getGLType(ShaderType type)
@@ -533,21 +472,42 @@ GLenum GLRenderDriver::getGLType(VertexElementType type)
 {
 	switch(type)
 	{
-	case VET_FLOAT1:
-	case VET_FLOAT2:
-	case VET_FLOAT3:
-	case VET_FLOAT4:
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT2:
+	case VERTEX_ELEMENT_TYPE_FLOAT3:
+	case VERTEX_ELEMENT_TYPE_FLOAT4:
 		return GL_FLOAT;
-	case VET_SHORT1:
-	case VET_SHORT2:
-	case VET_SHORT3:
-	case VET_SHORT4:
+	case VERTEX_ELEMENT_TYPE_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT2:
+	case VERTEX_ELEMENT_TYPE_SHORT3:
+	case VERTEX_ELEMENT_TYPE_SHORT4:
 		return GL_SHORT;
-	case VET_COLOR:
+	case VERTEX_ELEMENT_TYPE_COLOR:
 		return GL_UNSIGNED_BYTE;
 	default:
 		return 0;
-	};
+	}
+}
+
+GLenum GLRenderDriver::getGLType(RenderOperationType type)
+{
+	switch (type)
+	{
+	case render::ROT_POINT_LIST:
+		 return GL_POINTS;
+	case render::ROT_LINE_LIST:
+		return GL_LINES;
+	case render::ROT_LINE_STRIP:
+		return GL_LINE_STRIP;
+	case render::ROT_TRIANGLE_LIST:
+		return GL_TRIANGLES;
+	case render::ROT_TRIANGLE_STRIP:
+		return GL_TRIANGLE_STRIP;
+	case render::ROT_TRIANGLE_FAN:
+		return GL_TRIANGLE_FAN;
+	default:
+		return GL_FLOAT;
+	}
 }
 
 GLRenderDriver* GLRenderDriver::getInstance()

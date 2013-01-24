@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _GL_RENDER_DRIVER_H_
 
 #include <GLConfig.h>
+#include <render/RenderDefines.h>
 #include <render/RenderDriver.h>
 #include <render/VertexBuffer.h>
 #include <core/Singleton.h>
@@ -80,10 +81,11 @@ public:
 
 	float getVerticalTexelOffset();
 
-	//! Utility function to get the correct GL usage based on HBU's.
+	//! Utility function to get the correct GL types.
 	static GLenum getGLUsage(resource::BufferUsage usage);
-
 	static GLenum getGLType(ShaderType type);
+	static GLenum getGLType(VertexElementType type);
+	static GLenum getGLType(RenderOperationType type);
 
 	static GLRenderDriver* getInstance();
 
@@ -94,10 +96,6 @@ protected:
 	void updateImpl(float elapsedTime);
 
 	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
-	static GLint getGLBlendMode(SceneBlendFactor gameBlend);
-
-	//! Utility function to get the correct GL type based on VET's.
-	static GLenum getGLType(VertexElementType type);
 
 	//////////TEMP FOR TESING/////////////
 	GLuint ProgramID;
