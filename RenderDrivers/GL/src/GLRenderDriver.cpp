@@ -324,12 +324,19 @@ void GLRenderDriver::initializeImpl()
 		return;
 	}
 
+	// Check for OpenGL 2.0
+	if(!GLEW_VERSION_2_0)
+	{
+		MessageBox(nullptr, "Can't Initialize OpenGL 2.0.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}
+
 	// Check for OpenGL 4.2
-	if(!GLEW_VERSION_4_2)
+	/*if(!GLEW_VERSION_4_2)
 	{
 		MessageBox(nullptr, "Can't Initialize OpenGL 4.2.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
-	}
+	}*/
 
 	glClearDepth(1.0f);
 	glColor4f(1.0f,1.0f,1.0f,1.0f);						// Set Color to initial value
@@ -440,6 +447,11 @@ void GLRenderDriver::initializeImpl()
 	MatrixID			= glGetUniformLocation(ProgramID, "worldViewProj");
 
 	DiffuseTextureID	= glGetUniformLocation(ProgramID, "diffuseMap");
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		int x = 3;
+	}
 
 	int x = 3;
 	//////////TEMP FOR TESING/////////////

@@ -70,6 +70,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Engined.lib;opengl32.lib;glu32.lib;glew32.lib;cg.lib;cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -90,6 +91,9 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
