@@ -37,7 +37,7 @@ struct GLShaderParameter: public ShaderParameter
 {
 	GLShaderParameter();
 
-	//TODO!!!
+	GLuint ParameterID;
 };
 
 class GL_PUBLIC_EXPORT GLMaterial: public Material
@@ -64,7 +64,7 @@ protected:
 
 	void unloadImpl();
 
-	ShaderParameter* createParameterImpl(const std::string& name);
+	ShaderParameter* createParameterImpl(const std::string& name, ShaderParameterType type);
 
 	GLhandleARB mGLHandle;
 };

@@ -137,10 +137,7 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 
 	core::matrix4 mWorldViewProjectionMatrix = mProjMatrix * mViewMatrix * mWorldMatrix;
 
-	GLfloat mat[16];
-	makeGLMatrix(mat, mWorldViewProjectionMatrix);
-
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mat[0]);
+	glUniformMatrix4fv(MatrixID, 1, GL_TRUE/*GL_FALSE*/, mWorldViewProjectionMatrix.get());
 
 	/////////////Textures/////////////
 	for (unsigned int i=0; i<material->getNumTextureUnits(); ++i)
@@ -199,12 +196,10 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 	}
 	//////////////////////////////////
 
-	// Find the correct type to render
-	GLenum primType = getGLType(model->getRenderOperationType());
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
 	pBufferData = VBO_BUFFER_OFFSET(0);
-	
+
+	GLenum primType = getGLType(model->getRenderOperationType());
 	GLenum indexType = (model->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	
 	glDrawElements(primType, model->getIndexData()->indexCount, indexType, pBufferData);
@@ -411,29 +406,6 @@ void GLRenderDriver::initializeImpl()
 void GLRenderDriver::uninitializeImpl() {}
 
 void GLRenderDriver::updateImpl(float elapsedTime) {}
-
-void GLRenderDriver::makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m)
-{
-	gl_matrix[ 0] = m[ 0];
-	gl_matrix[ 1] = m[ 4];
-	gl_matrix[ 2] = m[ 8];
-	gl_matrix[ 3] = m[12];
-
-	gl_matrix[ 4] = m[ 1];
-	gl_matrix[ 5] = m[ 5];
-	gl_matrix[ 6] = m[ 9];
-	gl_matrix[ 7] = m[13];
-
-	gl_matrix[ 8] = m[ 2];
-	gl_matrix[ 9] = m[ 6];
-	gl_matrix[10] = m[10];
-	gl_matrix[11] = m[14];
-
-	gl_matrix[12] = m[ 3];
-	gl_matrix[13] = m[ 7];
-	gl_matrix[14] = m[11];
-	gl_matrix[15] = m[15];
-}
 
 GLenum GLRenderDriver::getGLUsage(resource::BufferUsage usage)
 {

@@ -95,8 +95,6 @@ protected:
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
 
-	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
-
 	//////////TEMP FOR TESING/////////////
 	GLuint ProgramID;
 	

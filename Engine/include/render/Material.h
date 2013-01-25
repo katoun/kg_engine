@@ -52,6 +52,7 @@ namespace render
 
 class Shader;
 class Texture;
+class VertexBuffer;
 
 struct ENGINE_PUBLIC_EXPORT ShaderParameter
 {
@@ -114,6 +115,8 @@ public:
 	virtual void setParameter(const std::string& name, const float* val, unsigned int count);
 	virtual void setParameter(const std::string& name, const int* val, unsigned int count);
 
+	virtual void setParameter(const std::string& name, VertexBuffer* vertexBuffer);
+
 	virtual void addParameter(const std::string& name, ShaderParameterType type);
 
 	void setAutoParameter(const std::string& name, ShaderAutoParameterType type);
@@ -130,7 +133,7 @@ protected:
 	Shader* mGeometryShader;
 
 	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type, unsigned int index, unsigned int elemCount);
-	virtual ShaderParameter* createParameterImpl(const std::string& name);
+	virtual ShaderParameter* createParameterImpl(const std::string& name, ShaderParameterType type);
 
 	ShaderParameter* findParameter(const std::string& name);
 	void writedParameterData(unsigned int index, const float* val, unsigned int count);

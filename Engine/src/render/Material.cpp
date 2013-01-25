@@ -375,13 +375,13 @@ void Material::setParameter(const std::string& name, const core::matrix4& m)
 	ShaderParameter* param = findParameter(name);
 	if (param == nullptr)
 	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_MATRIX_4X4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX_4X4));
+		param = createParameter(name, SHADER_PARAMETER_TYPE_MATRIX4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4));
 
 		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX_4X4), 0.0f);
+		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4), 0.0f);
 	}
 
-	writedParameterData(param->index, m.get(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX_4X4));
+	writedParameterData(param->index, m.get(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4));
 }
 
 void Material::setParameter(const std::string& name, const float* val, unsigned int count)
@@ -416,6 +416,18 @@ void Material::setParameter(const std::string& name, const int* val, unsigned in
 	}
 
 	writedParameterData(param->index, val, count);
+}
+
+void Material::setParameter(const std::string& name, VertexBuffer* vertexBuffer)
+{
+	if (vertexBuffer == nullptr)
+		return;
+
+	ShaderParameter* param = findParameter(name);
+	if (param == nullptr)
+	{
+		param = createParameter(name, SHADER_PARAMETER_TYPE_VERTEX, 0, 0);
+	}
 }
 
 void Material::addParameter(const std::string& name, ShaderParameterType type)
@@ -487,7 +499,7 @@ void Material::unloadImpl()
 
 ShaderParameter* Material::createParameter(const std::string& name, ShaderParameterType type, unsigned int index, unsigned int elemCount)
 {
-	ShaderParameter* paramDef = createParameterImpl(name);
+	ShaderParameter* paramDef = createParameterImpl(name, type);
 	paramDef->paramType = type;
 	paramDef->index = index;
 	paramDef->elemCount = elemCount;
@@ -496,7 +508,7 @@ ShaderParameter* Material::createParameter(const std::string& name, ShaderParame
 	return paramDef;
 }
 
-ShaderParameter* Material::createParameterImpl(const std::string& name)
+ShaderParameter* Material::createParameterImpl(const std::string& name, ShaderParameterType type)
 {
 	return new ShaderParameter();
 }
@@ -568,9 +580,6 @@ bool Material::isFloat(ShaderParameterType type)
 	case SHADER_PARAMETER_TYPE_SAMPLER1D:
 	case SHADER_PARAMETER_TYPE_SAMPLER2D:
 	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-	case SHADER_PARAMETER_TYPE_SAMPLERCUBE:
-	case SHADER_PARAMETER_TYPE_SAMPLER1DSHADOW:
-	case SHADER_PARAMETER_TYPE_SAMPLER2DSHADOW:
 		return false;
 	default:
 		return true;
@@ -589,9 +598,6 @@ bool Material::isSampler(ShaderParameterType type)
 	case SHADER_PARAMETER_TYPE_SAMPLER1D:
 	case SHADER_PARAMETER_TYPE_SAMPLER2D:
 	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-	case SHADER_PARAMETER_TYPE_SAMPLERCUBE:
-	case SHADER_PARAMETER_TYPE_SAMPLER1DSHADOW:
-	case SHADER_PARAMETER_TYPE_SAMPLER2DSHADOW:
 		return true;
 	default:
 		return false;
@@ -607,9 +613,6 @@ unsigned int Material::getElementCount(ShaderParameterType type)
 	case SHADER_PARAMETER_TYPE_SAMPLER1D:
 	case SHADER_PARAMETER_TYPE_SAMPLER2D:
 	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-	case SHADER_PARAMETER_TYPE_SAMPLERCUBE:
-	case SHADER_PARAMETER_TYPE_SAMPLER1DSHADOW:
-	case SHADER_PARAMETER_TYPE_SAMPLER2DSHADOW:
 		return 1;
 	case SHADER_PARAMETER_TYPE_FLOAT2:
 	case SHADER_PARAMETER_TYPE_INT2:
@@ -620,20 +623,11 @@ unsigned int Material::getElementCount(ShaderParameterType type)
 	case SHADER_PARAMETER_TYPE_FLOAT4:
 	case SHADER_PARAMETER_TYPE_INT4:
 		return 4;
-	case SHADER_PARAMETER_TYPE_MATRIX_2X2:
+	case SHADER_PARAMETER_TYPE_MATRIX2:
 		return 4;
-	case SHADER_PARAMETER_TYPE_MATRIX_2X3:
-	case SHADER_PARAMETER_TYPE_MATRIX_3X2:
-		return 6;
-	case SHADER_PARAMETER_TYPE_MATRIX_2X4:
-	case SHADER_PARAMETER_TYPE_MATRIX_4X2:
-		return 8; 
-	case SHADER_PARAMETER_TYPE_MATRIX_3X3:
+	case SHADER_PARAMETER_TYPE_MATRIX3:
 		return 9;
-	case SHADER_PARAMETER_TYPE_MATRIX_3X4:
-	case SHADER_PARAMETER_TYPE_MATRIX_4X3:
-		return 12; 
-	case SHADER_PARAMETER_TYPE_MATRIX_4X4:
+	case SHADER_PARAMETER_TYPE_MATRIX4:
 		return 16; 
 	default:
 		return 4;
@@ -701,6 +695,11 @@ ShaderParameterType Material::getType(ShaderAutoParameterType type)
 {
 	switch(type)
 	{
+	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_POSITION:
+	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_NORMAL:
+	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_TEXTURE_COORDINATES:
+		return SHADER_PARAMETER_TYPE_VERTEX;
+
 	case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
@@ -725,7 +724,7 @@ ShaderParameterType Material::getType(ShaderAutoParameterType type)
 	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-		return SHADER_PARAMETER_TYPE_MATRIX_4X4;
+		return SHADER_PARAMETER_TYPE_MATRIX4;
 	
 	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT:
 		return SHADER_PARAMETER_TYPE_INT;
