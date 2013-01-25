@@ -297,7 +297,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 								a = (float)dvalue;
 							}
 
-							pShader->setParameter(name, render::Color(r,g,b,a));
+							renderMaterial->setParameter(name, render::Color(r,g,b,a));
 						}
 						else if (type == "vector2d")
 						{
@@ -314,7 +314,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 								y = (float)dvalue;
 							}
 
-							pShader->setParameter(name, core::vector2d(x,y));
+							renderMaterial->setParameter(name, core::vector2d(x,y));
 						}
 						else if (type == "vector3d")
 						{
@@ -337,7 +337,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 								z = (float)dvalue;
 							}
 
-							pShader->setParameter(name, core::vector3d(x,y,z));
+							renderMaterial->setParameter(name, core::vector3d(x,y,z));
 						}
 						else if (type == "vector4d")
 						{
@@ -366,7 +366,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 								w = (float)dvalue;
 							}
 
-							pShader->setParameter(name, core::vector4d(x,y,z,w));
+							renderMaterial->setParameter(name, core::vector4d(x,y,z,w));
 						}
 						else if (type == "matrix4x4")
 						{
@@ -472,7 +472,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 									m33 = core::stringToFloat(vecparams[3]);
 							}
 
-							pShader->setParameter(name, core::matrix4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33));
+							renderMaterial->setParameter(name, core::matrix4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33));
 						}
 						else if (type == "float")
 						{
@@ -490,7 +490,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							for(unsigned int i = 0; i < count; ++i)
 								floatBuffer[i] = core::stringToFloat(vecparams[i]);
 
-							pShader->setParameter(name, floatBuffer, count);
+							renderMaterial->setParameter(name, floatBuffer, count);
 						}
 						else if (type == "int")
 						{
@@ -508,7 +508,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							for(unsigned int i = 0; i < count; ++i)
 								intBuffer[i] = core::stringToInt(vecparams[i]);
 
-							pShader->setParameter(name, intBuffer, count);
+							renderMaterial->setParameter(name, intBuffer, count);
 						}
 						else
 						{
@@ -537,7 +537,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							value = svalue;
 						}
 
-						pShader->setAutoParameter(value, paramAutoType);
+						renderMaterial->setAutoParameter(value, paramAutoType);
 
 						pSubElement = pSubElement->NextSiblingElement("param_auto");
 					}

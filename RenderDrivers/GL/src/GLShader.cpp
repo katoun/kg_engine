@@ -32,99 +32,12 @@ THE SOFTWARE.
 namespace render
 {
 
-GLShaderParameter::GLShaderParameter(): ShaderParameter()
-{
-	//TODO!!!
-}
-
 GLShader::GLShader(const std::string& name, resource::Serializer* serializer): Shader(name, serializer)
 {
 	mGLHandle = 0;
 }
 
-GLShader::~GLShader()
-{
-}
-
-void GLShader::bind()
-{
-	//TODOO!!!
-}
-
-void GLShader::unbind()
-{
-	//TODO!!!
-}
-
-void GLShader::setParameter(const std::string& name, const Color& col)
-{
-	Shader::setParameter(name, col);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameter4fv(cgParam->cgParameter, col.get());
-}
-
-void GLShader::setParameter(const std::string& name, const core::vector2d& vec)
-{
-	Shader::setParameter(name, vec);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameter2fv(cgParam->cgParameter, vec.get());
-}
-
-void GLShader::setParameter(const std::string& name, const core::vector3d& vec)
-{
-	Shader::setParameter(name, vec);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameter3fv(cgParam->cgParameter, vec.get());
-}
-
-void GLShader::setParameter(const std::string& name, const core::vector4d& vec)
-{
-	Shader::setParameter(name, vec);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameter4fv(cgParam->cgParameter, vec.get());
-}
-
-void GLShader::setParameter(const std::string& name, const core::matrix4& m)
-{
-	Shader::setParameter(name, m);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetMatrixParameterfr(cgParam->cgParameter, m.get());
-}
-
-void GLShader::setParameter(const std::string& name, const float* val, unsigned int count)
-{
-	Shader::setParameter(name, val, count);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameterValuefr(cgParam->cgParameter, count, val);
-}
-
-void GLShader::setParameter(const std::string& name, const int* val, unsigned int count)
-{
-	Shader::setParameter(name, val, count);
-
-	ShaderParameter* param = findParameter(name);
-	//TODO!!!
-	//CGShaderParameter* cgParam = static_cast<CGShaderParameter*>(param);
-	//if (cgParam && cgParam->cgParameter) cgSetParameterValueir(cgParam->cgParameter, count, val);
-}
+GLShader::~GLShader() {}
 
 GLhandleARB GLShader::getGLHandle() const
 {
@@ -154,13 +67,6 @@ void GLShader::unloadImpl()
 	glDeleteShader(mGLHandle);
 
 	Shader::unloadImpl();
-}
-
-ShaderParameter* GLShader::createParameterImpl(const std::string& name)
-{
-	GLShaderParameter* glParam = new GLShaderParameter();
-
-	return glParam;
 }
 
 GLenum GLShader::getShaderType(ShaderType type)

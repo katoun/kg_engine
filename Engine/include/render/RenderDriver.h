@@ -119,9 +119,6 @@ public:
 
 	virtual void setProjectionMatrix(const core::matrix4& m);
 
-	//! update Shader parameters to a given Shader.
-	virtual void updateShaderAutoParameters(Shader* shader, ShaderParamData& data);
-
 	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
 	virtual float getMinimumDepthInputValue() = 0;
 	//! Gets the maximum (farthest) depth value to be used when rendering using identity transforms.

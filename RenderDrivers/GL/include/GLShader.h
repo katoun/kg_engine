@@ -33,31 +33,12 @@ THE SOFTWARE.
 namespace render
 {
 
-struct GLShaderParameter: public ShaderParameter
-{
-	GLShaderParameter();
-
-	//TODO!!!
-};
-
 class GL_PUBLIC_EXPORT GLShader: public Shader
 {
 public:
 
 	GLShader(const std::string& name, resource::Serializer* serializer);
 	~GLShader();
-
-	void bind();
-
-	void unbind();
-
-	void setParameter(const std::string& name, const Color& col);
-	void setParameter(const std::string& name, const core::vector2d& vec);
-	void setParameter(const std::string& name, const core::vector3d& vec);
-	void setParameter(const std::string& name, const core::vector4d& vec);
-	void setParameter(const std::string& name, const core::matrix4& m);
-	void setParameter(const std::string& name, const float* val, unsigned int count);
-	void setParameter(const std::string& name, const int* val, unsigned int count);
 
 	GLhandleARB getGLHandle() const;
 
@@ -66,8 +47,6 @@ protected:
 	bool loadImpl();
 
 	void unloadImpl();
-
-	ShaderParameter* createParameterImpl(const std::string& name);
 
 	GLhandleARB mGLHandle;
 

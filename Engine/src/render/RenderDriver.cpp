@@ -58,12 +58,4 @@ void RenderDriver::setProjectionMatrix(const core::matrix4& m)
 	mProjMatrix = m;
 }
 
-void RenderDriver::updateShaderAutoParameters(Shader* shader, ShaderParamData& data)
-{
-	if (shader == nullptr)
-		return;
-
-	shader->updateAutoParameters(data);
-}
-
 } // end namespace render

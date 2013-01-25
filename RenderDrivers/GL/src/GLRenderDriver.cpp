@@ -391,7 +391,6 @@ void GLRenderDriver::initializeImpl()
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
 
-
 	PositionID			= glGetAttribLocation(ProgramID, "position");
 	NormalID			= glGetAttribLocation(ProgramID, "normal");
 	TexCoords0ID		= glGetAttribLocation(ProgramID, "texCoords0");
