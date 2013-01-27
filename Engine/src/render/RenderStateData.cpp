@@ -24,7 +24,7 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <render/ShaderParamData.h>
+#include <render/RenderStateData.h>
 #include <render/Light.h>
 #include <render/Camera.h>
 #include <render/Model.h>
@@ -35,7 +35,7 @@ THE SOFTWARE.
 namespace render
 {
 
-ShaderParamData::ShaderParamData()
+RenderStateData::RenderStateData()
 {
 	mWorldMatrix = core::matrix4::IDENTITY;
 	mInverseWorldMatrix = core::matrix4::IDENTITY;
@@ -87,13 +87,18 @@ ShaderParamData::ShaderParamData()
 	mAmbientLightColor = Color::Black;
 }
 
-void ShaderParamData::setWorldMatrix(const core::matrix4& m)
+void RenderStateData::setWorldMatrix(const core::matrix4& m)
 {
 	mWorldMatrix = m;
 	mWorldMatrixDirty = true;
 }
 
-void ShaderParamData::setCurrentModel(Model* model)
+void RenderStateData::setCurrentMaterial(Material* material)
+{
+	mCurrentMaterial = material;
+}
+
+void RenderStateData::setCurrentModel(Model* model)
 {
 	mCurrentModel = model;
 	
@@ -114,7 +119,7 @@ void ShaderParamData::setCurrentModel(Model* model)
 	mInverseTransposeWorldViewMatrixDirty = true;
 }
 
-void ShaderParamData::setCurrentCamera(Camera* cam)
+void RenderStateData::setCurrentCamera(Camera* cam)
 {
 	mCurrentCamera = cam;
 
@@ -135,17 +140,27 @@ void ShaderParamData::setCurrentCamera(Camera* cam)
 	mInverseTransposeWorldViewMatrixDirty = true;
 }
 
-void ShaderParamData::setCurrentViewport(Viewport* viewport)
+void RenderStateData::setCurrentViewport(Viewport* viewport)
 {
 	mCurrentViewport = viewport;
 }
 
-void ShaderParamData::setCurrentLight(Light* light)
+void RenderStateData::setCurrentLight(Light* light)
 {
 	mCurrentLight = light;
 }
 
-const core::vector3d& ShaderParamData::getCameraPosition()
+Material* RenderStateData::getCurrentMaterial() const
+{
+	return mCurrentMaterial;
+}
+
+Model* RenderStateData::getCurrentModel() const
+{
+	return mCurrentModel;
+}
+
+const core::vector3d& RenderStateData::getCameraPosition()
 {
 	if(mCameraPositionDirty)
 	{
@@ -163,7 +178,7 @@ const core::vector3d& ShaderParamData::getCameraPosition()
 	return mCameraPosition;
 }
 
-const core::vector3d& ShaderParamData::getCameraPositionObjectSpace()
+const core::vector3d& RenderStateData::getCameraPositionObjectSpace()
 {
 	if(mCameraPositionObjectSpaceDirty)
 	{
@@ -182,7 +197,7 @@ const core::vector3d& ShaderParamData::getCameraPositionObjectSpace()
 	return mCameraPositionObjectSpace;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightPosition()
+const core::vector3d& RenderStateData::getCurrentLightPosition()
 {
 	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
 	{
@@ -196,7 +211,7 @@ const core::vector3d& ShaderParamData::getCurrentLightPosition()
 	return mLightPosition;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightPositionObjectSpace()
+const core::vector3d& RenderStateData::getCurrentLightPositionObjectSpace()
 {
 	mLightPositionObjectSpace = getCurrentLightPosition();
 
@@ -215,7 +230,7 @@ const core::vector3d& ShaderParamData::getCurrentLightPositionObjectSpace()
 	return mLightPositionObjectSpace;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightPositionViewSpace()
+const core::vector3d& RenderStateData::getCurrentLightPositionViewSpace()
 {
 	mLightPositionViewSpace = getCurrentLightPosition();
 
@@ -224,7 +239,7 @@ const core::vector3d& ShaderParamData::getCurrentLightPositionViewSpace()
 	return mLightPositionViewSpace;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightDirection()
+const core::vector3d& RenderStateData::getCurrentLightDirection()
 {
 	if (mCurrentLight != nullptr)
 		
@@ -241,7 +256,7 @@ const core::vector3d& ShaderParamData::getCurrentLightDirection()
 	return mLightDirection;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightDirectionObjectSpace()
+const core::vector3d& RenderStateData::getCurrentLightDirectionObjectSpace()
 {
 	mLightDirectionObjectSpace = getCurrentLightDirection();
 
@@ -251,7 +266,7 @@ const core::vector3d& ShaderParamData::getCurrentLightDirectionObjectSpace()
 	return mLightDirectionObjectSpace;
 }
 
-const core::vector3d& ShaderParamData::getCurrentLightDirectionViewSpace()
+const core::vector3d& RenderStateData::getCurrentLightDirectionViewSpace()
 {
 	mLightDirectionViewSpace = getCurrentLightDirection();
 
@@ -261,31 +276,31 @@ const core::vector3d& ShaderParamData::getCurrentLightDirectionViewSpace()
 	return mLightDirectionViewSpace;
 }
 
-void ShaderParamData::setAmbientLightColor(const Color& ambient)
+void RenderStateData::setAmbientLightColor(const Color& ambient)
 {
 	mAmbientLightColor = ambient;
 }
 
-const Color& ShaderParamData::getAmbientLightColour() const
+const Color& RenderStateData::getAmbientLightColour() const
 {
 	return mAmbientLightColor;
 }
 
-const Color& ShaderParamData::getCurrentLightDiffuseColour() const
+const Color& RenderStateData::getCurrentLightDiffuseColour() const
 {
 	if (mCurrentLight) return mCurrentLight->getDiffuseColor();
 
 	return Color::White;
 }
 
-const Color& ShaderParamData::getCurrentLightSpecularColour() const
+const Color& RenderStateData::getCurrentLightSpecularColour() const
 {
 	if (mCurrentLight) return mCurrentLight->getSpecularColor();
 
 	return Color::Black;
 }
 
-core::vector4d ShaderParamData::getCurrentLightAttenuation() const
+core::vector4d RenderStateData::getCurrentLightAttenuation() const
 {
 	core::vector4d lightAttenuation(1000.0f, 1.0f, 0.0f, 0.0f);
 
@@ -301,7 +316,7 @@ core::vector4d ShaderParamData::getCurrentLightAttenuation() const
 	return lightAttenuation;
 }
 
-const core::matrix4& ShaderParamData::getWorldMatrix()
+const core::matrix4& RenderStateData::getWorldMatrix()
 {
 	if (mWorldMatrixDirty)
 	{
@@ -315,7 +330,7 @@ const core::matrix4& ShaderParamData::getWorldMatrix()
 	return mWorldMatrix;
 }
 
-const core::matrix4& ShaderParamData::getViewMatrix()
+const core::matrix4& RenderStateData::getViewMatrix()
 {
 	 if (mViewMatrixDirty)
 	 {
@@ -329,7 +344,7 @@ const core::matrix4& ShaderParamData::getViewMatrix()
 	return mViewMatrix;
 }
 
-const core::matrix4& ShaderParamData::getProjectionMatrix()
+const core::matrix4& RenderStateData::getProjectionMatrix()
 {
 	if (mProjMatrixDirty)
 	{
@@ -343,7 +358,7 @@ const core::matrix4& ShaderParamData::getProjectionMatrix()
 	return mProjectionMatrix;
 }
 
-const core::matrix4& ShaderParamData::getWorldViewMatrix()
+const core::matrix4& RenderStateData::getWorldViewMatrix()
 {
 	if (mWorldViewMatrixDirty)
 	{
@@ -354,7 +369,7 @@ const core::matrix4& ShaderParamData::getWorldViewMatrix()
 	return mWorldViewMatrix;
 }
 
-const core::matrix4& ShaderParamData::getViewProjectionMatrix()
+const core::matrix4& RenderStateData::getViewProjectionMatrix()
 {
 	if (mProjMatrixDirty)
 	{
@@ -365,7 +380,7 @@ const core::matrix4& ShaderParamData::getViewProjectionMatrix()
 	return mViewProjMatrix;
 }
 
-const core::matrix4& ShaderParamData::getWorldViewProjMatrix()
+const core::matrix4& RenderStateData::getWorldViewProjMatrix()
 {
 	if (mWorldViewProjMatrixDirty)
 	{
@@ -376,7 +391,7 @@ const core::matrix4& ShaderParamData::getWorldViewProjMatrix()
 	return mWorldViewProjMatrix;
 }
 
-const core::matrix4& ShaderParamData::getInverseWorldMatrix()
+const core::matrix4& RenderStateData::getInverseWorldMatrix()
 {
 	if (mInverseWorldMatrixDirty)
 	{
@@ -387,7 +402,7 @@ const core::matrix4& ShaderParamData::getInverseWorldMatrix()
 	return mInverseWorldMatrix;
 }
 
-const core::matrix4& ShaderParamData::getInverseViewMatrix()
+const core::matrix4& RenderStateData::getInverseViewMatrix()
 {
 	if (mInverseViewMatrixDirty)
 	{
@@ -397,12 +412,12 @@ const core::matrix4& ShaderParamData::getInverseViewMatrix()
 	return mInverseViewMatrix;
 }
 
-core::matrix4 ShaderParamData::getInverseProjectionMatrix()
+core::matrix4 RenderStateData::getInverseProjectionMatrix()
 {
 	return getProjectionMatrix().getInverse();
 }
 
-const core::matrix4& ShaderParamData::getInverseWorldViewMatrix()
+const core::matrix4& RenderStateData::getInverseWorldViewMatrix()
 {
 	if (mInverseWorldViewMatrixDirty)
 	{
@@ -412,47 +427,47 @@ const core::matrix4& ShaderParamData::getInverseWorldViewMatrix()
 	return mInverseWorldViewMatrix;
 }
 
-core::matrix4 ShaderParamData::getInverseViewProjectionMatrix()
+core::matrix4 RenderStateData::getInverseViewProjectionMatrix()
 {
 	return getViewProjectionMatrix().getInverse();
 }
 
-core::matrix4 ShaderParamData::getInverseWorldViewProjMatrix()
+core::matrix4 RenderStateData::getInverseWorldViewProjMatrix()
 {
 	return getWorldViewProjMatrix().getInverse();
 }
 
-core::matrix4 ShaderParamData::getTransposedWorldMatrix()
+core::matrix4 RenderStateData::getTransposedWorldMatrix()
 {
 	return getWorldMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getTransposedViewMatrix()
+core::matrix4 RenderStateData::getTransposedViewMatrix()
 {
 	return getViewMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getTransposedProjectionMatrix()
+core::matrix4 RenderStateData::getTransposedProjectionMatrix()
 {
 	return getProjectionMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getTransposedWorldViewMatrix()
+core::matrix4 RenderStateData::getTransposedWorldViewMatrix()
 {
 	return getWorldViewMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getTransposedViewProjectionMatrix()
+core::matrix4 RenderStateData::getTransposedViewProjectionMatrix()
 {
 	return getViewProjectionMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getTransposedWorldViewProjMatrix()
+core::matrix4 RenderStateData::getTransposedWorldViewProjMatrix()
 {
 	return getWorldViewProjMatrix().getTransposed();
 }
 
-const core::matrix4& ShaderParamData::getInverseTransposedWorldMatrix()
+const core::matrix4& RenderStateData::getInverseTransposedWorldMatrix()
 {
 	if (mInverseTransposeWorldMatrixDirty)
 	{
@@ -463,17 +478,17 @@ const core::matrix4& ShaderParamData::getInverseTransposedWorldMatrix()
 	return mInverseTransposeWorldMatrix;
 }
 
-core::matrix4 ShaderParamData::getInverseTransposedViewMatrix()
+core::matrix4 RenderStateData::getInverseTransposedViewMatrix()
 {
 	return getInverseViewMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getInverseTransposedProjectionMatrix()
+core::matrix4 RenderStateData::getInverseTransposedProjectionMatrix()
 {
 	return getInverseProjectionMatrix().getTransposed();
 }
 
-const core::matrix4& ShaderParamData::getInverseTransposedWorldViewMatrix()
+const core::matrix4& RenderStateData::getInverseTransposedWorldViewMatrix()
 {
 	if (mInverseTransposeWorldViewMatrixDirty)
 	{
@@ -484,12 +499,12 @@ const core::matrix4& ShaderParamData::getInverseTransposedWorldViewMatrix()
 	return mInverseTransposeWorldViewMatrix;
 }
 
-core::matrix4 ShaderParamData::getInverseTransposedViewProjectionMatrix()
+core::matrix4 RenderStateData::getInverseTransposedViewProjectionMatrix()
 {
 	return getInverseViewProjectionMatrix().getTransposed();
 }
 
-core::matrix4 ShaderParamData::getInverseTransposedWorldViewProjMatrix()
+core::matrix4 RenderStateData::getInverseTransposedWorldViewProjMatrix()
 {
 	return getInverseWorldViewProjMatrix().getTransposed();
 }

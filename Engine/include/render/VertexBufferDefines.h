@@ -24,62 +24,35 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_RENDERMATERIAL_H_
-#define _GL_RENDERMATERIAL_H_
-
-#include <GLConfig.h>
-#include <render/Material.h>
-#include <render/ShaderParameter.h>
+#ifndef _VERTEX_BUFFER_DEFINES_H_
+#define _VERTEX_BUFFER_DEFINES_H_
 
 namespace render
 {
 
-struct GLShaderParameter: public ShaderParameter
+//! Vertex element semantics, used to identify the meaning of vertex buffer contents.
+enum VertexElementSemantic
 {
-	GLShaderParameter();
-
-	GLuint ParameterID;
+	VERTEX_ELEMENT_SEMANTIC_POSITION,				//! Position, 3 reals per vertex
+	VERTEX_ELEMENT_SEMANTIC_NORMAL,					//! Normal, 3 reals per vertex
+	VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES,	//! Texture coordinates
+	VERTEX_ELEMENT_SEMANTIC_COUNT
 };
 
-struct GLShaderVertexParameter: public ShaderVertexParameter
+//! Vertex element type, used to identify the base types of the vertex contents.
+enum VertexElementType
 {
-	GLShaderVertexParameter();
-
-	GLuint ParameterID;
+	VERTEX_ELEMENT_TYPE_FLOAT1,
+	VERTEX_ELEMENT_TYPE_FLOAT2,
+	VERTEX_ELEMENT_TYPE_FLOAT3,
+	VERTEX_ELEMENT_TYPE_FLOAT4,
+	VERTEX_ELEMENT_TYPE_COLOR,
+	VERTEX_ELEMENT_TYPE_SHORT1,
+	VERTEX_ELEMENT_TYPE_SHORT2,
+	VERTEX_ELEMENT_TYPE_SHORT3,
+	VERTEX_ELEMENT_TYPE_SHORT4
 };
 
-class GL_PUBLIC_EXPORT GLMaterial: public Material
-{
-public:
+}// end namespace render
 
-	GLMaterial(const std::string& name, resource::Serializer* serializer);
-	~GLMaterial();
-
-	void resourceLoaded(const resource::ResourceEvent& evt);
-	void resourceUnloaded(const resource::ResourceEvent& evt);
-
-	GLhandleARB getGLHandle() const;
-
-protected:
-
-	bool loadImpl();
-
-	void unloadImpl();
-
-	ShaderVertexParameter* createVertexParameterImpl();
-	ShaderParameter* createParameterImpl();
-
-	void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
-
-	static GLenum getGLType(ShaderParameterType type);
-
-	GLhandleARB mGLHandle;
-};
-
-} //namespace render
-
-#endif
+#endif// _VERTEX_BUFFER_DEFINES_H_

@@ -65,7 +65,7 @@ public:
 
 	void beginFrame(Viewport* vp);
 
-	void renderModel(Model* model, Material* material);
+	void render(RenderStateData& renderStateData);
 
 	void endFrame();
 

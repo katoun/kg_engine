@@ -117,7 +117,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			float *pFloat = nullptr;
 
 			// float* pVertices (x, y, z order x numVertices)
-			pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_POSITION);
+			pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_POSITION);
 			render::VertexBuffer* pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 			pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 			if (pFloat == nullptr)
@@ -205,7 +205,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (normals)
 			{
 				// float* pNormals (x, y, z order x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_NORMAL);
+				pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_NORMAL);
 				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
@@ -265,7 +265,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (texture_coords)
 			{
 				// float* pTexCoords  (u v order, dimensions x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, 0, render::VertexElement::multiplyTypeCount(render::VERTEX_ELEMENT_TYPE_FLOAT1, 2), render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES);
+				pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT2, render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES);
 				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)

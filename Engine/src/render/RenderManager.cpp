@@ -761,7 +761,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	setCurrentViewport(viewport);
 
-	mShaderParamData.setCurrentViewport(viewport);
+	mRenderStateData.setCurrentViewport(viewport);
 
 	if (mLastViewportWidth != viewport->getActualWidth() || mLastViewportHeight != viewport->getActualHeight())
 	{
@@ -775,14 +775,9 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	beginFrame(viewport);
 
-	mShaderParamData.setCurrentCamera(camera);
-
-	mRenderDriver->setProjectionMatrix(camera->getProjectionMatrix());
-	mRenderDriver->setViewMatrix(camera->getViewMatrix());
+	mRenderStateData.setCurrentCamera(camera);
 
 	renderVisibleModels();
-
-	mRenderDriver->setViewMatrix(core::matrix4::IDENTITY);
 	
 	endFrame();
 
@@ -899,16 +894,16 @@ void RenderManager::renderSingleModel(Model* model)
 		game::Transform* pTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			mRenderDriver->setWorldMatrix(model->getWorldMatrix());
+			if (model->getMaterial() != nullptr)
+				mRenderStateData.setCurrentMaterial(model->getMaterial());
+			else
+				mRenderStateData.setCurrentMaterial(mDefaultMaterial);
 
-			mShaderParamData.setCurrentModel(model);
+			mRenderStateData.setCurrentModel(model);
 
 			addGeometryCount(model);
 
-			if (model->getMaterial() != nullptr)
-				mRenderDriver->renderModel(model, model->getMaterial());
-			else
-				mRenderDriver->renderModel(model, mDefaultMaterial);
+			mRenderDriver->render(mRenderStateData);
 		}
 	}
 }

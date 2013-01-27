@@ -24,62 +24,32 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_RENDERMATERIAL_H_
-#define _GL_RENDERMATERIAL_H_
-
-#include <GLConfig.h>
-#include <render/Material.h>
 #include <render/ShaderParameter.h>
 
 namespace render
 {
 
-struct GLShaderParameter: public ShaderParameter
+ShaderParameter::ShaderParameter()
 {
-	GLShaderParameter();
+	mName = "";
+	mParameterType = SHADER_PARAMETER_TYPE_UNKNOWN;
+}
 
-	GLuint ParameterID;
-};
-
-struct GLShaderVertexParameter: public ShaderVertexParameter
+ShaderVertexParameter::ShaderVertexParameter()
 {
-	GLShaderVertexParameter();
+	mName = "";
+	mVertexBufferType = VERTEX_ELEMENT_SEMANTIC_COUNT;
+}
 
-	GLuint ParameterID;
-};
-
-class GL_PUBLIC_EXPORT GLMaterial: public Material
+ShaderTextureParameter::ShaderTextureParameter()
 {
-public:
+	mParameter = nullptr;
+}
 
-	GLMaterial(const std::string& name, resource::Serializer* serializer);
-	~GLMaterial();
+ShaderAutoParameter::ShaderAutoParameter()
+{
+	mParameter = nullptr;
+	mAutoParameterType = SHADER_AUTO_PARAMETER_TYPE_NONE;
+}
 
-	void resourceLoaded(const resource::ResourceEvent& evt);
-	void resourceUnloaded(const resource::ResourceEvent& evt);
-
-	GLhandleARB getGLHandle() const;
-
-protected:
-
-	bool loadImpl();
-
-	void unloadImpl();
-
-	ShaderVertexParameter* createVertexParameterImpl();
-	ShaderParameter* createParameterImpl();
-
-	void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
-
-	static GLenum getGLType(ShaderParameterType type);
-
-	GLhandleARB mGLHandle;
-};
-
-} //namespace render
-
-#endif
+} // end namespace render

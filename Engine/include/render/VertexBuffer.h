@@ -29,35 +29,13 @@ THE SOFTWARE.
 
 #include <core/Config.h>
 #include <resource/Buffer.h>
+#include <render/VertexBufferDefines.h>
 
 #include <list>
 #include <map>
 
 namespace render
 {
-
-//! Vertex element semantics, used to identify the meaning of vertex buffer contents.
-enum VertexElementSemantic
-{
-	VERTEX_ELEMENT_SEMANTIC_POSITION,				//! Position, 3 reals per vertex
-	VERTEX_ELEMENT_SEMANTIC_NORMAL,					//! Normal, 3 reals per vertex
-	VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES,	//! Texture coordinates
-	VERTEX_ELEMENT_SEMANTIC_COUNT
-};
-
-//! Vertex element type, used to identify the base types of the vertex contents.
-enum VertexElementType
-{
-	VERTEX_ELEMENT_TYPE_FLOAT1,
-	VERTEX_ELEMENT_TYPE_FLOAT2,
-	VERTEX_ELEMENT_TYPE_FLOAT3,
-	VERTEX_ELEMENT_TYPE_FLOAT4,
-	VERTEX_ELEMENT_TYPE_COLOR,
-	VERTEX_ELEMENT_TYPE_SHORT1,
-	VERTEX_ELEMENT_TYPE_SHORT2,
-	VERTEX_ELEMENT_TYPE_SHORT3,
-	VERTEX_ELEMENT_TYPE_SHORT4
-};
 
 /** This class declares the usage of a single vertex buffer as a component
 of a complete VertexDeclaration. 
@@ -72,14 +50,12 @@ class ENGINE_PUBLIC_EXPORT VertexElement
 {
 public:
 	/// Constructor, should not be called directly, call VertexDeclaration::addElement
-	VertexElement(unsigned short int source, unsigned int offset, VertexElementType type, VertexElementSemantic semantic);
+	VertexElement(unsigned short int source, VertexElementType type, VertexElementSemantic semantic);
 
 	inline bool operator== (const VertexElement& rhs) const;
 	
 	//! Gets the vertex buffer index from where this element draws it's values.
 	unsigned short int getSource() const;
-	//! Gets the offset into the buffer where this element starts.
-	unsigned int getOffset() const;
 	//! Gets the data format of this element.
 	VertexElementType getType() const;
 	//! Gets the meaning of this element
@@ -92,16 +68,11 @@ public:
 	static unsigned int getTypeSize(VertexElementType etype);
 	//! Utility method which returns the count of values in a given type.
 	static unsigned short int getTypeCount(VertexElementType etype);
-	//! Simple converter function which will turn a single-value type into a
-	//! multi-value type based on a parameter.
-	static VertexElementType multiplyTypeCount(VertexElementType baseType, unsigned short count);
 
 protected:
 
 	//! The source vertex buffer, as bound to an index using VertexBufferBinding
 	unsigned short int mSource;
-	//! The offset in the buffer that this element starts at
-	unsigned int mOffset;
 	//! The type of element
 	VertexElementType mType;
 	//! The meaning of the element
@@ -144,7 +115,7 @@ public:
 	//!@param semantic The meaning of the data (position, normal, diffuse color etc)
 	//!@param index Optional index for multi-input elements like texture coordinates
 	//!@returns A reference to the VertexElement added.
-	virtual const VertexElement* addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
+	virtual const VertexElement* addElement(unsigned short int source, VertexElementType theType, VertexElementSemantic semantic);
 
 	//! Remove the element at the given index from this declaration.
 	virtual void removeElement(unsigned short int elem_index);
@@ -156,7 +127,7 @@ public:
 	virtual void removeAllElements();
 
 	//! Modify an element in-place, params as addElement. 
-	virtual void modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic);
+	virtual void modifyElement(unsigned short int elem_index, unsigned short int source, VertexElementType type, VertexElementSemantic semantic);
 
 	//! Finds a VertexElement with the given semantic, and index if there is more than 
 	virtual const VertexElement* findElementBySemantic(VertexElementSemantic sem);

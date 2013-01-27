@@ -24,62 +24,50 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_RENDERMATERIAL_H_
-#define _GL_RENDERMATERIAL_H_
+#ifndef _SHADER_PARAMETER_H_
+#define _SHADER_PARAMETER_H_
 
-#include <GLConfig.h>
-#include <render/Material.h>
-#include <render/ShaderParameter.h>
+#include <core/Config.h>
+#include <render/VertexBufferDefines.h>
+#include <render/ShaderParameterDefines.h>
+
+#include <string>
 
 namespace render
 {
 
-struct GLShaderParameter: public ShaderParameter
+struct ENGINE_PUBLIC_EXPORT ShaderParameter
 {
-	GLShaderParameter();
+	ShaderParameter();
 
-	GLuint ParameterID;
+	std::string mName;
+	ShaderParameterType mParameterType;
 };
 
-struct GLShaderVertexParameter: public ShaderVertexParameter
+struct ENGINE_PUBLIC_EXPORT ShaderVertexParameter
 {
-	GLShaderVertexParameter();
+	ShaderVertexParameter();
 
-	GLuint ParameterID;
+	std::string mName;
+	VertexElementSemantic mVertexBufferType;
 };
 
-class GL_PUBLIC_EXPORT GLMaterial: public Material
+struct ENGINE_PUBLIC_EXPORT ShaderTextureParameter
 {
-public:
+	ShaderTextureParameter();
 
-	GLMaterial(const std::string& name, resource::Serializer* serializer);
-	~GLMaterial();
-
-	void resourceLoaded(const resource::ResourceEvent& evt);
-	void resourceUnloaded(const resource::ResourceEvent& evt);
-
-	GLhandleARB getGLHandle() const;
-
-protected:
-
-	bool loadImpl();
-
-	void unloadImpl();
-
-	ShaderVertexParameter* createVertexParameterImpl();
-	ShaderParameter* createParameterImpl();
-
-	void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
-
-	static GLenum getGLType(ShaderParameterType type);
-
-	GLhandleARB mGLHandle;
+	ShaderParameter* mParameter;
 };
 
-} //namespace render
+struct ENGINE_PUBLIC_EXPORT ShaderAutoParameter
+{
+	ShaderAutoParameter();
+
+	ShaderParameter* mParameter;
+
+	ShaderAutoParameterType mAutoParameterType;
+};
+
+} // end namespace render
 
 #endif

@@ -52,8 +52,6 @@ namespace render
 class Light;
 class Texture;
 
-
-
 //! Abstract class representing a Shader resource.
 //!
 //! This class defines the low-level program in assembler code,

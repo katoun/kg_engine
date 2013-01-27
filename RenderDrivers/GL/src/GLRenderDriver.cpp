@@ -43,14 +43,13 @@ THE SOFTWARE.
 #include <GLRenderDriver.h>
 #include <GLTexture.h>
 #include <GLShader.h>
+#include <GLMaterial.h>
 #include <GLVertexBuffer.h>
 #include <GLIndexBuffer.h>
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #include <win32/Win32Window.h>
 #endif
-
-#define VBO_BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 template<> render::GLRenderDriver* core::Singleton<render::GLRenderDriver>::m_Singleton = nullptr;
 
@@ -125,64 +124,198 @@ void GLRenderDriver::beginFrame(Viewport* vp)
 	}
 }
 
-void GLRenderDriver::renderModel(Model* model, Material* material)
+void GLRenderDriver::render(RenderStateData& renderStateData)
 {
-	if (model == nullptr)
+	if (renderStateData.getCurrentMaterial() == nullptr)
 		return;
 
-	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
+	GLMaterial* pGLMaterial = static_cast<GLMaterial*>(renderStateData.getCurrentMaterial());
+	if (pGLMaterial == nullptr)
 		return;
 
-	glUseProgram(ProgramID);
+	Model* pModel = renderStateData.getCurrentModel();
 
-	core::matrix4 mWorldViewProjectionMatrix = mProjMatrix * mViewMatrix * mWorldMatrix;
+	if (pModel == nullptr)
+		return;
 
-	glUniformMatrix4fv(MatrixID, 1, GL_TRUE/*GL_FALSE*/, mWorldViewProjectionMatrix.get());
+	if (pModel->getVertexData() == nullptr || pModel->getIndexData() == nullptr)
+		return;
+
+	glUseProgram(pGLMaterial->getGLHandle());
+
+	GLShaderParameter* pGLShaderParameter = nullptr;
+	GLShaderVertexParameter* pGLShaderVertexParameter = nullptr;
 
 	/////////////Textures/////////////
-	for (unsigned int i=0; i<material->getNumTextureUnits(); ++i)
+	std::vector<ShaderTextureParameter*> shaderTextureParameters = pGLMaterial->getTextureParameters();
+	std::list<ShaderTextureParameter*>::const_iterator ti;
+	for (unsigned int i = 0; i < shaderTextureParameters.size(); ++i)
 	{
-		GLTexture* glTex = static_cast<GLTexture*>(material->getTextureUnit(i));
-
+		ShaderTextureParameter* pTextureParameter = shaderTextureParameters[i];
+		if (pTextureParameter == nullptr)
+			continue;
+		
+		pGLShaderParameter = static_cast<GLShaderParameter*>(pTextureParameter->mParameter);
+		GLTexture* glTexture = static_cast<GLTexture*>(pGLMaterial->getTextureUnit(i));
+		if (glTexture == nullptr || pGLShaderParameter == nullptr)
+			continue;
+		
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, glTex->getGLID());
-		glUniform1i(glTex->getGLID(), i);
+		glBindTexture(GL_TEXTURE_2D, glTexture->getGLID());
+		glUniform1i(pGLShaderParameter->ParameterID, i);
 	}
 	//////////////////////////////////
 
-	/////////////Buffers/////////////
-	void* pBufferData = nullptr;
-
-	const std::list<VertexElement*>& elems = model->getVertexData()->vertexDeclaration->getElements();
-	std::list<VertexElement*>::const_iterator i;
-	for (i = elems.begin(); i != elems.end(); ++i)
+	//////////AutoParameters//////////
+	std::list<ShaderAutoParameter*> shaderAutoParameters = pGLMaterial->getAutoParameters();
+	std::list<ShaderAutoParameter*>::const_iterator ai;
+	for (ai = shaderAutoParameters.begin(); ai != shaderAutoParameters.end(); ++ai)
 	{
-		VertexElement* pVertexElement = (*i);
+		ShaderAutoParameter* pAutoParameter = (*ai);
+		if (pAutoParameter == nullptr)
+			continue;
+		
+		pGLShaderParameter = static_cast<GLShaderParameter*>(pAutoParameter->mParameter);
+		if (pGLShaderParameter == nullptr)
+			continue;
 
-		VertexBuffer* vertexBuffer = model->getVertexData()->vertexBufferBinding->getBuffer(pVertexElement->getSource());
+		switch (pAutoParameter->mAutoParameterType)
+		{
+		case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getWorldMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getWorldViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getWorldViewProjMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldViewProjMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldViewProjMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldViewProjMatrix());
+			break;
+
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightPosition());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightPositionObjectSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightPositionViewSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightDirection());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightDirectionObjectSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightDirectionViewSpace());
+			break;
+		
+		case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getAmbientLightColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightDiffuseColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightSpecularColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightAttenuation());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCameraPosition());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCameraPositionObjectSpace());
+			break;
+		}
+	}
+	//////////////////////////////////
+
+	/////////////Buffers//////////////
+	std::vector<ShaderVertexParameter*> vertexParameters = pGLMaterial->getVertexParameters();
+	const std::list<VertexElement*>& elems = pModel->getVertexData()->vertexDeclaration->getElements();
+	std::list<VertexElement*>::const_iterator vi;
+	for (vi = elems.begin(); vi != elems.end(); ++vi)
+	{
+		VertexElement* pVertexElement = (*vi);
+
+		pGLShaderVertexParameter = static_cast<GLShaderVertexParameter*>(vertexParameters[(std::size_t)pVertexElement->getSemantic()]);
+
+		if (pGLShaderParameter == nullptr)
+			continue;
+
+		VertexBuffer* vertexBuffer = pModel->getVertexData()->vertexBufferBinding->getBuffer(pVertexElement->getSource());
 
 		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
-		pBufferData = VBO_BUFFER_OFFSET(pVertexElement->getOffset());
 
-		GLuint index = 0;
+		GLuint index = pGLShaderVertexParameter->ParameterID;
 		GLint size = pVertexElement->getCount();
 		GLenum type = getGLType(pVertexElement->getType());
 		GLsizei stride = (GLsizei)(vertexBuffer->getVertexSize());
-
-		switch(pVertexElement->getSemantic())
-		{
-		case VERTEX_ELEMENT_SEMANTIC_POSITION:
-			index = PositionID;
-			break;
-		case VERTEX_ELEMENT_SEMANTIC_NORMAL:
-			index = NormalID;
-			break;
-		case VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES:
-			index = TexCoords0ID;
-			break;
-		default:
-			break;
-		}
 
 		glVertexAttribPointer(
 							index,			// The attribute we want to configure
@@ -190,23 +323,28 @@ void GLRenderDriver::renderModel(Model* model, Material* material)
 							type,			// type
 							GL_FALSE,		// normalized?
 							stride,			// stride
-							pBufferData		// array buffer offset
+							(void*)0		// array buffer offset
 							);
 		glEnableVertexAttribArray(index);
 	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(pModel->getIndexData()->indexBuffer))->getGLBufferId());
+
+	GLenum primType = getGLType(renderStateData.getCurrentModel()->getRenderOperationType());
+	GLenum indexType = (renderStateData.getCurrentModel()->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+	
+	glDrawElements(primType, renderStateData.getCurrentModel()->getIndexData()->indexCount, indexType, (void*)0);
 	//////////////////////////////////
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(model->getIndexData()->indexBuffer))->getGLBufferId());
-	pBufferData = VBO_BUFFER_OFFSET(0);
+	for (unsigned int i = 0; i < vertexParameters.size(); ++i)
+	{
+		pGLShaderVertexParameter = static_cast<GLShaderVertexParameter*>(vertexParameters[i]);
 
-	GLenum primType = getGLType(model->getRenderOperationType());
-	GLenum indexType = (model->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
-	
-	glDrawElements(primType, model->getIndexData()->indexCount, indexType, pBufferData);
+		if (pGLShaderVertexParameter == nullptr)
+			continue;
 
-	glDisableVertexAttribArray(PositionID);
-	glDisableVertexAttribArray(NormalID);
-	glDisableVertexAttribArray(TexCoords0ID);
+		glDisableVertexAttribArray(pGLShaderVertexParameter->ParameterID);
+	}
 }
 
 void GLRenderDriver::endFrame()
@@ -302,7 +440,7 @@ void GLRenderDriver::initializeImpl()
 
 
 	//////////TEMP FOR TESING/////////////
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	/*GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	std::string str_source = "";
@@ -399,7 +537,7 @@ void GLRenderDriver::initializeImpl()
 		int x = 3;
 	}
 
-	int x = 3;
+	int x = 3;*/
 	//////////TEMP FOR TESING/////////////
 }
 

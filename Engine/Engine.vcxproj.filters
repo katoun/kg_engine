@@ -153,9 +153,6 @@
     <ClInclude Include="include\render\ShaderDefines.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\ShaderParamData.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Texture.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -426,6 +423,18 @@
     <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h">
       <Filter>tinyxml2</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\RenderStateData.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ShaderParameter.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\VertexBufferDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ShaderParameterDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -528,9 +537,6 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Shader.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\ShaderParamData.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Texture.cpp">
@@ -737,6 +743,12 @@
     </ClCompile>
     <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp">
       <Filter>tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RenderStateData.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderParameter.cpp">
+      <Filter>render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -50,14 +50,24 @@ bool GLShader::loadImpl()
 		return false;
 
 	mGLHandle = glCreateShader(getShaderType(mShaderType));
-
+	
 	const char* source = mSource.c_str();
 	glShaderSource(mGLHandle, 1, &source, NULL);
 
+	int InfoLogLength;
 	GLint compiled;
 	glCompileShader(mGLHandle);
 	// check for compile errors
 	glGetShaderiv(mGLHandle, GL_COMPILE_STATUS, &compiled);
+#ifdef _DEBUG	
+	glGetShaderiv(mGLHandle, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0)
+	{
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(mGLHandle, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		printf("%s\n", &VertexShaderErrorMessage[0]);
+	}
+#endif
 
 	return (compiled == 1);
 }

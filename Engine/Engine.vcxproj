@@ -211,10 +211,13 @@
     <ClInclude Include="include\render\RenderWindow.h" />
     <ClInclude Include="include\render\Shader.h" />
     <ClInclude Include="include\render\ShaderDefines.h" />
-    <ClInclude Include="include\render\ShaderParamData.h" />
+    <ClInclude Include="include\render\RenderStateData.h" />
+    <ClInclude Include="include\render\ShaderParameter.h" />
+    <ClInclude Include="include\render\ShaderParameterDefines.h" />
     <ClInclude Include="include\render\Texture.h" />
     <ClInclude Include="include\render\TextureDefines.h" />
     <ClInclude Include="include\render\VertexBuffer.h" />
+    <ClInclude Include="include\render\VertexBufferDefines.h" />
     <ClInclude Include="include\render\VertexIndexData.h" />
     <ClInclude Include="include\render\Viewport.h" />
     <ClInclude Include="include\resource\ResourceEvent.h" />
@@ -329,7 +332,8 @@
     <ClCompile Include="src\render\RenderTargetEventReceiver.cpp" />
     <ClCompile Include="src\render\RenderWindow.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
-    <ClCompile Include="src\render\ShaderParamData.cpp" />
+    <ClCompile Include="src\render\RenderStateData.cpp" />
+    <ClCompile Include="src\render\ShaderParameter.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\render\VertexBuffer.cpp" />
     <ClCompile Include="src\render\VertexIndexData.cpp" />

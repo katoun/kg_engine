@@ -40,6 +40,22 @@ THE SOFTWARE.
 namespace resource
 {
 
+render::VertexElementSemantic convertVertexParameterType(const std::string& param)
+{
+	if (param == "vertex_position")
+		return render::VERTEX_ELEMENT_SEMANTIC_POSITION;
+	else if (param == "vertex_normal")
+		return render::VERTEX_ELEMENT_SEMANTIC_NORMAL;
+	else if (param == "vertex_texture_coordinates")
+		return render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES;
+	else
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid vertex parameter type, using default.", core::LOG_LEVEL_ERROR);
+
+		return render::VERTEX_ELEMENT_SEMANTIC_POSITION;
+	}
+}
+
 render::ShaderAutoParameterType convertAutoParameterType(const std::string& param)
 {
 	if (param == "world_matrix")
@@ -121,6 +137,7 @@ render::ShaderAutoParameterType convertAutoParameterType(const std::string& para
 		return render::SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION;
 	else if (param == "camera_position_object_space")
 		return render::SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE;
+	else
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid auto parameter type, using default.", core::LOG_LEVEL_ERROR);
 
@@ -249,274 +266,27 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 						}
 					}
 
-					pSubElement = pElement->FirstChildElement("param_named");
+					pSubElement = pElement->FirstChildElement("param_vertex");
 					while (pSubElement != nullptr)
 					{
-						std::string name;
-						std::string type;
-
-						svalue = pSubElement->Attribute("name");
-						if (svalue != nullptr)
-						{
-							name = svalue;
-						}
+						render::VertexElementSemantic vertexType = render::VERTEX_ELEMENT_SEMANTIC_POSITION;
 
 						svalue = pSubElement->Attribute("type");
 						if (svalue != nullptr)
 						{
-							type = svalue;
+							value = svalue;
+							vertexType = convertVertexParameterType(value);
 						}
 
-						if (name.empty() && type.empty())
-							continue;
-
-						if (type == "color")
+						svalue = pSubElement->Attribute("name");
+						if (svalue != nullptr)
 						{
-							float r = 1.0f;
-							float g = 1.0f;
-							float b = 1.0f;
-							float a = 1.0f;
-
-							if (pSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								r = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								g = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								b = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								a = (float)dvalue;
-							}
-
-							renderMaterial->setParameter(name, render::Color(r,g,b,a));
-						}
-						else if (type == "vector2d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
-
-							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								x = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								y = (float)dvalue;
-							}
-
-							renderMaterial->setParameter(name, core::vector2d(x,y));
-						}
-						else if (type == "vector3d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
-							float z = 0.0f;
-
-							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								x = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								y = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								z = (float)dvalue;
-							}
-
-							renderMaterial->setParameter(name, core::vector3d(x,y,z));
-						}
-						else if (type == "vector4d")
-						{
-							float x = 0.0f;
-							float y = 0.0f;
-							float z = 0.0f;
-							float w = 0.0f;
-
-							if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								x = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								y = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								z = (float)dvalue;
-							}
-
-							if (pSubElement->QueryDoubleAttribute("w", &dvalue) == tinyxml2::XML_SUCCESS)
-							{
-								w = (float)dvalue;
-							}
-
-							renderMaterial->setParameter(name, core::vector4d(x,y,z,w));
-						}
-						else if (type == "matrix4x4")
-						{
-							float m00 = 0.0f;
-							float m01 = 0.0f;
-							float m02 = 0.0f;
-							float m03 = 0.0f;
-							float m10 = 0.0f;
-							float m11 = 0.0f;
-							float m12 = 0.0f;
-							float m13 = 0.0f;
-							float m20 = 0.0f;
-							float m21 = 0.0f;
-							float m22 = 0.0f;
-							float m23 = 0.0f;
-							float m30 = 0.0f;
-							float m31 = 0.0f;
-							float m32 = 0.0f;
-							float m33 = 0.0f;
-
-							tinyxml2::XMLElement* pRowSubElement = nullptr;
-							pRowSubElement = pSubElement->FirstChildElement("row0");
-							if (pRowSubElement != nullptr)
-							{
-								svalue = pRowSubElement->Attribute("value");
-								if (svalue != nullptr)
-								{
-									value = svalue;
-								}
-
-								std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-								if (vecparams.size() > 0)
-									m00 = core::stringToFloat(vecparams[0]);
-								if (vecparams.size() > 1)
-									m01 = core::stringToFloat(vecparams[1]);
-								if (vecparams.size() > 2)
-									m02 = core::stringToFloat(vecparams[2]);
-								if (vecparams.size() > 3)
-									m03 = core::stringToFloat(vecparams[3]);
-							}
-
-							pRowSubElement = pSubElement->FirstChildElement("row1");
-							if (pRowSubElement != nullptr)
-							{
-								svalue = pRowSubElement->Attribute("value");
-								if (svalue != nullptr)
-								{
-									value = svalue;
-								}
-
-								std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-								if (vecparams.size() > 0)
-									m10 = core::stringToFloat(vecparams[0]);
-								if (vecparams.size() > 1)
-									m11 = core::stringToFloat(vecparams[1]);
-								if (vecparams.size() > 2)
-									m12 = core::stringToFloat(vecparams[2]);
-								if (vecparams.size() > 3)
-									m13 = core::stringToFloat(vecparams[3]);
-							}
-
-							pRowSubElement = pSubElement->FirstChildElement("row2");
-							if (pRowSubElement != nullptr)
-							{
-								svalue = pRowSubElement->Attribute("value");
-								if (svalue != nullptr)
-								{
-									value = svalue;
-								}
-
-								std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-								if (vecparams.size() > 0)
-									m20 = core::stringToFloat(vecparams[0]);
-								if (vecparams.size() > 1)
-									m21 = core::stringToFloat(vecparams[1]);
-								if (vecparams.size() > 2)
-									m22 = core::stringToFloat(vecparams[2]);
-								if (vecparams.size() > 3)
-									m23 = core::stringToFloat(vecparams[3]);
-							}
-
-							pRowSubElement = pSubElement->FirstChildElement("row3");
-							if (pRowSubElement != nullptr)
-							{
-								svalue = pRowSubElement->Attribute("value");
-								if (svalue != nullptr)
-								{
-									value = svalue;
-								}
-
-								std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-								if (vecparams.size() > 0)
-									m30 = core::stringToFloat(vecparams[0]);
-								if (vecparams.size() > 1)
-									m31 = core::stringToFloat(vecparams[1]);
-								if (vecparams.size() > 2)
-									m32 = core::stringToFloat(vecparams[2]);
-								if (vecparams.size() > 3)
-									m33 = core::stringToFloat(vecparams[3]);
-							}
-
-							renderMaterial->setParameter(name, core::matrix4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33));
-						}
-						else if (type == "float")
-						{
-							svalue = pElement->Attribute("value");
-							if (svalue != nullptr)
-							{
-								value = svalue;
-							}
-
-							std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-							unsigned int count = vecparams.size();
-							float* floatBuffer = new float[count];
-
-							for(unsigned int i = 0; i < count; ++i)
-								floatBuffer[i] = core::stringToFloat(vecparams[i]);
-
-							renderMaterial->setParameter(name, floatBuffer, count);
-						}
-						else if (type == "int")
-						{
-							svalue = pElement->Attribute("value");
-							if (svalue != nullptr)
-							{
-								value = svalue;
-							}
-
-							std::vector<std::string> vecparams = core::splitString(value, " \t");
-
-							unsigned int count = vecparams.size();
-							int* intBuffer = new int[count];
-
-							for(unsigned int i = 0; i < count; ++i)
-								intBuffer[i] = core::stringToInt(vecparams[i]);
-
-							renderMaterial->setParameter(name, intBuffer, count);
-						}
-						else
-						{
-							std::string message = "Invalid param_named attribute - unrecognized parameter type " + type + " .";
-							if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", message, core::LOG_LEVEL_ERROR);
+							value = svalue;
 						}
 
-						pSubElement = pSubElement->NextSiblingElement("param_named");
+						renderMaterial->addVertexParameter(value, vertexType);
+
+						pSubElement = pSubElement->NextSiblingElement("param_vertex");
 					}
 
 					pSubElement = pElement->FirstChildElement("param_auto");
@@ -537,7 +307,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 							value = svalue;
 						}
 
-						renderMaterial->setAutoParameter(value, paramAutoType);
+						renderMaterial->addAutoParameter(value, paramAutoType);
 
 						pSubElement = pSubElement->NextSiblingElement("param_auto");
 					}

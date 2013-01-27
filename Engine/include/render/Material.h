@@ -30,9 +30,10 @@ THE SOFTWARE.
 #include <core/Config.h>
 #include <resource/Resource.h>
 #include <resource/ResourceEventReceiver.h>
-#include <render/ShaderDefines.h>
-#include <render/ShaderParamData.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderStateData.h>
 #include <render/TextureDefines.h>
+#include <render/VertexBufferDefines.h>
 #include <render/Color.h>
 #include <core/Vector2d.h>
 #include <core/Vector3d.h>
@@ -41,6 +42,7 @@ THE SOFTWARE.
 
 #include <string>
 #include <list>
+#include <vector>
 
 namespace resource
 {
@@ -50,19 +52,12 @@ class Serializer;
 namespace render
 {
 
-class Shader;
 class Texture;
-class VertexBuffer;
-
-struct ENGINE_PUBLIC_EXPORT ShaderParameter
-{
-	ShaderParameter();
-
-	ShaderParameterType paramType;			// Param type
-	ShaderAutoParameterType autoParamType;	// Auto Param type
-	unsigned int index;						// Start index in buffer (either float, int or texture buffer)
-	unsigned int elemCount;					// Number of elements
-};
+class Shader;
+struct ShaderParameter;
+struct ShaderVertexParameter;
+struct ShaderTextureParameter;
+struct ShaderAutoParameter;
 
 //! Class encapsulates surface properties of a mesh.
 //!
@@ -105,21 +100,26 @@ public:
 	void setGeometryShader(Shader* shader);
 	Shader* getGeometryShader();
 
-	virtual void updateAutoParameters(ShaderParamData& data);
+	std::vector<ShaderVertexParameter*>& getVertexParameters();
+	std::vector<ShaderTextureParameter*>& getTextureParameters();
+	std::list<ShaderAutoParameter*>& getAutoParameters();
 
-	virtual void setParameter(const std::string& name, const Color& col);
-	virtual void setParameter(const std::string& name, const core::vector2d& vec);
-	virtual void setParameter(const std::string& name, const core::vector3d& vec);
-	virtual void setParameter(const std::string& name, const core::vector4d& vec);
-	virtual void setParameter(const std::string& name, const core::matrix4& m);
-	virtual void setParameter(const std::string& name, const float* val, unsigned int count);
-	virtual void setParameter(const std::string& name, const int* val, unsigned int count);
+	void addVertexParameter(const std::string& name, VertexElementSemantic type);
+	void addTextureParameter(const std::string& name, ShaderParameterType type);
+	void addAutoParameter(const std::string& name, ShaderAutoParameterType type);
 
-	virtual void setParameter(const std::string& name, VertexBuffer* vertexBuffer);
+	void addParameter(const std::string& name, ShaderParameterType type);
 
-	virtual void addParameter(const std::string& name, ShaderParameterType type);
-
-	void setAutoParameter(const std::string& name, ShaderAutoParameterType type);
+	void setParameter(const std::string& name, const Color& col);
+	void setParameter(ShaderParameter* parameter, const Color& col);
+	void setParameter(const std::string& name, const core::vector2d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector2d& vec);
+	void setParameter(const std::string& name, const core::vector3d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector3d& vec);
+	void setParameter(const std::string& name, const core::vector4d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector4d& vec);
+	void setParameter(const std::string& name, const core::matrix4& m);
+	void setParameter(ShaderParameter* parameter, const core::matrix4& m);
 
 protected:
 
@@ -132,32 +132,30 @@ protected:
 	Shader* mFragmentShader;
 	Shader* mGeometryShader;
 
-	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type, unsigned int index, unsigned int elemCount);
-	virtual ShaderParameter* createParameterImpl(const std::string& name, ShaderParameterType type);
+	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type);
+
+	virtual ShaderVertexParameter* createVertexParameterImpl();
+	virtual ShaderParameter* createParameterImpl();
 
 	ShaderParameter* findParameter(const std::string& name);
-	void writedParameterData(unsigned int index, const float* val, unsigned int count);
-	void writedParameterData(unsigned int index, const int* val, unsigned int count);
-
-	float* getFloatPrameterData(unsigned int index);
-	const float* getFloatPrameterData(unsigned int index) const;
-
-	int* getIntPrameterData(unsigned int index);
-	const int* getIntPrameterData(unsigned int index) const;
+	ShaderTextureParameter* findTextureParameter(ShaderParameter* parameter);
+	ShaderAutoParameter* findAutoParameter(ShaderParameter* parameter);
 
 	void removeAllParameters();
 
-	static bool isFloat(ShaderParameterType type);
-	static bool isFloat(ShaderAutoParameterType type);
-	static bool isSampler(ShaderParameterType type);
-	static unsigned int getElementCount(ShaderParameterType type);
-	static unsigned int getElementCount(ShaderAutoParameterType type);
+	virtual void setParameterImpl(ShaderParameter* parameter, const Color& col);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
+
 	static ShaderParameterType getType(ShaderAutoParameterType type);
 	static ShaderParameterType getType(TextureType type);
 
-	std::vector<float> mFloatParameterData;
-	std::vector<int> mIntParameterData;
 	hashmap<std::string, ShaderParameter*> mParameters;
+	std::vector<ShaderVertexParameter*> mVertexParameters;
+	std::vector<ShaderTextureParameter*> mTextureParameters;
+	std::list<ShaderAutoParameter*> mAutoParameters;
 };
 
 } //namespace render

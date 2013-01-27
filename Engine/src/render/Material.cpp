@@ -28,20 +28,13 @@ THE SOFTWARE.
 #include <core/LogDefines.h>
 #include <render/Material.h>
 #include <render/Shader.h>
+#include <render/ShaderParameter.h>
 #include <render/Texture.h>
 #include <render/RenderManager.h>
 #include <resource/ResourceManager.h>
 
 namespace render
 {
-
-ShaderParameter::ShaderParameter()
-{
-	paramType = SHADER_PARAMETER_TYPE_UNKNOWN;
-	autoParamType = SHADER_AUTO_PARAMETER_TYPE_NONE;
-	index = 0;
-	elemCount = 0;
-}
 
 Material::Material(const std::string& name, resource::Serializer* serializer): resource::Resource(name, serializer)
 {
@@ -52,6 +45,9 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 	mVertexShader = nullptr;
 	mFragmentShader = nullptr;
 	mGeometryShader = nullptr;
+
+	mVertexParameters.reserve(VERTEX_ELEMENT_SEMANTIC_COUNT);
+	mVertexParameters.resize(VERTEX_ELEMENT_SEMANTIC_COUNT, nullptr);
 }
 
 Material::~Material()
@@ -146,6 +142,9 @@ void Material::setFragmentShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mFragmentShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_FRAGMENT);
+
+		if (mFragmentShader != nullptr)
+			mFragmentShader->addResourceEventReceiver(this);
 	}
 }
 
@@ -172,6 +171,9 @@ void Material::setGeometryShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mGeometryShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_GEOMETRY);
+
+		if (mGeometryShader != nullptr)
+			mGeometryShader->addResourceEventReceiver(this);
 	}
 }
 
@@ -188,245 +190,99 @@ Shader* Material::getGeometryShader()
 	return mGeometryShader;
 }
 
-void Material::updateAutoParameters(ShaderParamData& data)
+std::vector<ShaderVertexParameter*>& Material::getVertexParameters()
 {
-	hashmap<std::string, ShaderParameter*>::iterator i;
-	for (i = mParameters.begin(); i != mParameters.end(); ++i)
+	return mVertexParameters;
+}
+
+std::vector<ShaderTextureParameter*>& Material::getTextureParameters()
+{
+	return mTextureParameters;
+}
+
+std::list<ShaderAutoParameter*>& Material::getAutoParameters()
+{
+	return mAutoParameters;
+}
+
+void Material::addVertexParameter(const std::string& name, VertexElementSemantic type)
+{
+	ShaderVertexParameter* pVertexParam = mVertexParameters[(std::size_t)type];
+	if (pVertexParam == nullptr)
 	{
-		ShaderParameter* param = i->second;
-		std::string name = i->first;
+		pVertexParam = createVertexParameterImpl();
+	}
 
-		if (!param) continue;
+	if (pVertexParam == nullptr)
+		return;
 
-		switch (param->autoParamType)
+	pVertexParam->mName = name;
+	pVertexParam->mVertexBufferType = type;
+	mVertexParameters[(std::size_t)type] = pVertexParam;
+}
+
+void Material::addTextureParameter(const std::string& name, ShaderParameterType type)
+{
+	if (type != SHADER_PARAMETER_TYPE_SAMPLER1D && type != SHADER_PARAMETER_TYPE_SAMPLER2D && type != SHADER_PARAMETER_TYPE_SAMPLER3D)
+		return;
+	
+	ShaderParameter* param = findParameter(name);
+
+	if (param != nullptr)
+	{
+		if (param->mParameterType != type)
 		{
-		case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
-			setParameter(name, data.getWorldMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
-			setParameter(name, data.getInverseWorldMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
-			setParameter(name, data.getTransposedWorldMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX:
-			setParameter(name, data.getInverseTransposedWorldMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
-			setParameter(name, data.getViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
-			setParameter(name, data.getInverseViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX:
-			setParameter(name, data.getTransposedViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX:
-			setParameter(name, data.getInverseTransposedViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
-			setParameter(name, data.getProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
-			setParameter(name, data.getInverseProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX:
-			setParameter(name, data.getTransposedProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX:
-			setParameter(name, data.getInverseTransposedProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX:
-			setParameter(name, data.getViewProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX:
-			setParameter(name, data.getInverseViewProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX:
-			setParameter(name, data.getTransposedViewProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX:
-			setParameter(name, data.getInverseTransposedViewProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX:
-			setParameter(name, data.getWorldViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX:
-			setParameter(name, data.getInverseWorldViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX:
-			setParameter(name, data.getTransposedWorldViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
-			setParameter(name, data.getInverseTransposedWorldViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX:
-			setParameter(name, data.getWorldViewProjMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
-			setParameter(name, data.getInverseWorldViewProjMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-			setParameter(name, data.getTransposedWorldViewProjMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-			setParameter(name, data.getInverseTransposedWorldViewProjMatrix());
-			break;
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid texture parameter type found.", core::LOG_LEVEL_ERROR);
 
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
-			setParameter(name, data.getCurrentLightPosition());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
-			setParameter(name, data.getCurrentLightPositionObjectSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
-			setParameter(name, data.getCurrentLightPositionViewSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
-			setParameter(name, data.getCurrentLightDirection());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
-			setParameter(name, data.getCurrentLightDirectionObjectSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
-			setParameter(name, data.getCurrentLightDirectionViewSpace());
-			break;
-		
-		case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
-			setParameter(name, data.getAmbientLightColour());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
-			setParameter(name, data.getCurrentLightDiffuseColour());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
-			setParameter(name, data.getCurrentLightSpecularColour());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
-			setParameter(name, data.getCurrentLightAttenuation());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
-			setParameter(name, data.getCameraPosition());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
-			setParameter(name, data.getCameraPositionObjectSpace());
-			break;
+			return;
+		}
+	}
+	else
+	{
+		param = createParameter(name, type);
+	}
+
+	if (param != nullptr)
+	{
+		ShaderTextureParameter* textureParam = findTextureParameter(param);
+		if (textureParam == nullptr)
+		{
+			textureParam = new ShaderTextureParameter();
+			textureParam->mParameter = param;
+			mTextureParameters.push_back(textureParam);
 		}
 	}
 }
 
-void Material::setParameter(const std::string& name, const Color& col)
+void Material::addAutoParameter(const std::string& name, ShaderAutoParameterType type)
 {
 	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
 
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4), 0.0f);
+	if (param != nullptr)
+	{
+		if (param->mParameterType != getType(type))
+		{
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid auto parameter type found.", core::LOG_LEVEL_ERROR);
+
+			return;
+		}
+	}
+	else
+	{
+		param = createParameter(name, getType(type));
 	}
 
-	writedParameterData(param->index, col.get(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
-}
-
-void Material::setParameter(const std::string& name, const core::vector2d& vec)
-{
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
+	if (param != nullptr)
 	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT2, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT2));
+		ShaderAutoParameter* autoParam = findAutoParameter(param);
+		if (autoParam == nullptr)
+		{
+			autoParam = new ShaderAutoParameter();
+			autoParam->mParameter = param;
+			mAutoParameters.push_back(autoParam);
+		}
 
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT2), 0.0f);
-	}
-
-	writedParameterData(param->index, vec.get(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT2));
-}
-
-void Material::setParameter(const std::string& name, const core::vector3d& vec)
-{
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT3, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT3));
-
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT3), 0.0f);
-	}
-
-	writedParameterData(param->index, vec.get(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT3));
-}
-
-void Material::setParameter(const std::string& name, const core::vector4d& vec)
-{
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
-
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4), 0.0f);
-	}
-
-	writedParameterData(param->index, vec.get(), getElementCount(SHADER_PARAMETER_TYPE_FLOAT4));
-}
-
-void Material::setParameter(const std::string& name, const core::matrix4& m)
-{
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_MATRIX4, mFloatParameterData.size(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4));
-
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4), 0.0f);
-	}
-
-	writedParameterData(param->index, m.get(), getElementCount(SHADER_PARAMETER_TYPE_MATRIX4));
-}
-
-void Material::setParameter(const std::string& name, const float* val, unsigned int count)
-{
-	if (count == 0)
-		return;
-
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_FLOAT, mFloatParameterData.size(), count);
-		
-		// Expand at buffer end
-		mFloatParameterData.insert(mFloatParameterData.end(), count, 0.0f);
-	}
-
-	writedParameterData(param->index, val, count);
-}
-
-void Material::setParameter(const std::string& name, const int* val, unsigned int count)
-{
-	if (count == 0)
-		return;
-
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_INT, mIntParameterData.size(), count);
-
-		// Expand at buffer end
-		mIntParameterData.insert(mIntParameterData.end(), count, 0);
-	}
-
-	writedParameterData(param->index, val, count);
-}
-
-void Material::setParameter(const std::string& name, VertexBuffer* vertexBuffer)
-{
-	if (vertexBuffer == nullptr)
-		return;
-
-	ShaderParameter* param = findParameter(name);
-	if (param == nullptr)
-	{
-		param = createParameter(name, SHADER_PARAMETER_TYPE_VERTEX, 0, 0);
+		autoParam->mAutoParameterType = type;
 	}
 }
 
@@ -436,55 +292,93 @@ void Material::addParameter(const std::string& name, ShaderParameterType type)
 
 	if (param == nullptr)
 	{
-		if (isFloat(type))
-		{
-			param = createParameter(name, type, mFloatParameterData.size(), getElementCount(type));
-
-			// Expand at buffer end
-			mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(type), 0.0f);
-		}
-		else
-		{
-			param = createParameter(name, type, mIntParameterData.size(), getElementCount(type));
-
-			// Expand at buffer end
-			mIntParameterData.insert(mIntParameterData.end(), getElementCount(type), 0);
-		}
+		param = createParameter(name, type);
 	}
 }
 
-void Material::setAutoParameter(const std::string& name, ShaderAutoParameterType type)
+void Material::setParameter(const std::string& name, const Color& col)
 {
 	ShaderParameter* param = findParameter(name);
+	setParameter(param, col);
+}
 
-	if (param != nullptr)
-	{
-		if (isFloat(param->paramType) != isFloat(type) || getElementCount(param->paramType) != getElementCount(type))
-		{
-			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid auto parameter type or element count found.", core::LOG_LEVEL_ERROR);
+void Material::setParameter(ShaderParameter* parameter, const Color& col)
+{
+	if (parameter == nullptr)
+		return;
 
-			return;
-		}
-	}
-	else
-	{
-		if (isFloat(type))
-		{
-			param = createParameter(name, getType(type), mFloatParameterData.size(), getElementCount(type));
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
+		return;
 
-			// Expand at buffer end
-			mFloatParameterData.insert(mFloatParameterData.end(), getElementCount(type), 0.0f);
-		}
-		else
-		{
-			param = createParameter(name, getType(type), mIntParameterData.size(), getElementCount(type));
+	setParameterImpl(parameter, col);
+}
 
-			// Expand at buffer end
-			mIntParameterData.insert(mIntParameterData.end(), getElementCount(type), 0);
-		}
-	}
+void Material::setParameter(const std::string& name, const core::vector2d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
 
-	param->autoParamType = type;
+void Material::setParameter(ShaderParameter* parameter, const core::vector2d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT2)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::vector3d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::vector3d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT3)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::vector4d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::vector4d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::matrix4& m)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, m);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::matrix4& m)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_MATRIX4)
+		return;
+
+	setParameterImpl(parameter, m);
 }
 
 void Material::unloadImpl()
@@ -497,20 +391,28 @@ void Material::unloadImpl()
 	mGeometryShader = nullptr;
 }
 
-ShaderParameter* Material::createParameter(const std::string& name, ShaderParameterType type, unsigned int index, unsigned int elemCount)
+ShaderParameter* Material::createParameter(const std::string& name, ShaderParameterType type)
 {
-	ShaderParameter* paramDef = createParameterImpl(name, type);
-	paramDef->paramType = type;
-	paramDef->index = index;
-	paramDef->elemCount = elemCount;
-	mParameters[name] = paramDef;
+	ShaderParameter* pShaderParameter = createParameterImpl();
 
-	return paramDef;
+	if (pShaderParameter != nullptr)
+	{
+		pShaderParameter->mName = name;
+		pShaderParameter->mParameterType = type;
+		mParameters[name] = pShaderParameter;
+	}
+
+	return pShaderParameter;
 }
 
-ShaderParameter* Material::createParameterImpl(const std::string& name, ShaderParameterType type)
+ShaderVertexParameter* Material::createVertexParameterImpl()
 {
-	return new ShaderParameter();
+	return nullptr;
+}
+
+ShaderParameter* Material::createParameterImpl()
+{
+	return nullptr;
 }
 
 ShaderParameter* Material::findParameter(const std::string& name)
@@ -521,39 +423,33 @@ ShaderParameter* Material::findParameter(const std::string& name)
 	return i->second;
 }
 
-void Material::writedParameterData(unsigned int index, const float* val, unsigned int count)
+ShaderTextureParameter* Material::findTextureParameter(ShaderParameter* parameter)
 {
-	assert(index + count <= mFloatParameterData.size());
-	memcpy(&mFloatParameterData[index], val, sizeof(int) * count);
+	if (parameter == nullptr)
+		return nullptr;
+
+	for (unsigned int i = 0; i < mTextureParameters.size(); ++i)
+	{
+		if (mTextureParameters[i]->mParameter == parameter)
+			return mTextureParameters[i];
+	}
+
+	return nullptr;
 }
 
-void Material::writedParameterData(unsigned int index, const int* val, unsigned int count)
+ShaderAutoParameter* Material::findAutoParameter(ShaderParameter* parameter)
 {
-	assert(index + count <= mIntParameterData.size());
-	memcpy(&mIntParameterData[index], val, sizeof(int) * count);
-}
+	if (parameter == nullptr)
+		return nullptr;
 
-float* Material::getFloatPrameterData(unsigned int index)
-{
-	assert(index < mFloatParameterData.size());
-	return &mFloatParameterData[index];
-}
-const float* Material::getFloatPrameterData(unsigned int index) const
-{
-	assert(index < mFloatParameterData.size());
-	return &mFloatParameterData[index];
-}
+	std::list<ShaderAutoParameter*>::const_iterator i;
+	for (i = mAutoParameters.begin(); i != mAutoParameters.end(); ++i)
+	{
+		if ((*i)->mParameter == parameter)
+			return (*i);
+	}
 
-int* Material::getIntPrameterData(unsigned int index)
-{
-	assert(index < mIntParameterData.size());
-	return &mIntParameterData[index];
-}
-
-const int* Material::getIntPrameterData(unsigned int index) const
-{
-	assert(index < mIntParameterData.size());
-	return &mIntParameterData[index];
+	return nullptr;
 }
 
 void Material::removeAllParameters()
@@ -565,141 +461,20 @@ void Material::removeAllParameters()
 	}
 
 	mParameters.clear();
-	mFloatParameterData.clear();
-	mIntParameterData.clear();
+	mTextureParameters.clear();
+	mAutoParameters.clear();
 }
 
-bool Material::isFloat(ShaderParameterType type)
-{
-	switch(type)
-	{
-	case SHADER_PARAMETER_TYPE_INT:
-	case SHADER_PARAMETER_TYPE_INT2:
-	case SHADER_PARAMETER_TYPE_INT3:
-	case SHADER_PARAMETER_TYPE_INT4:
-	case SHADER_PARAMETER_TYPE_SAMPLER1D:
-	case SHADER_PARAMETER_TYPE_SAMPLER2D:
-	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-		return false;
-	default:
-		return true;
-	};
-}
-
-bool Material::isFloat(ShaderAutoParameterType type)
-{
-	return true;
-}
-
-bool Material::isSampler(ShaderParameterType type)
-{
-	switch(type)
-	{
-	case SHADER_PARAMETER_TYPE_SAMPLER1D:
-	case SHADER_PARAMETER_TYPE_SAMPLER2D:
-	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-		return true;
-	default:
-		return false;
-	}
-}
-
-unsigned int Material::getElementCount(ShaderParameterType type)
-{
-	switch(type)
-	{
-	case SHADER_PARAMETER_TYPE_FLOAT:
-	case SHADER_PARAMETER_TYPE_INT:
-	case SHADER_PARAMETER_TYPE_SAMPLER1D:
-	case SHADER_PARAMETER_TYPE_SAMPLER2D:
-	case SHADER_PARAMETER_TYPE_SAMPLER3D:
-		return 1;
-	case SHADER_PARAMETER_TYPE_FLOAT2:
-	case SHADER_PARAMETER_TYPE_INT2:
-		return 2;
-	case SHADER_PARAMETER_TYPE_FLOAT3:
-	case SHADER_PARAMETER_TYPE_INT3:
-		return 3;
-	case SHADER_PARAMETER_TYPE_FLOAT4:
-	case SHADER_PARAMETER_TYPE_INT4:
-		return 4;
-	case SHADER_PARAMETER_TYPE_MATRIX2:
-		return 4;
-	case SHADER_PARAMETER_TYPE_MATRIX3:
-		return 9;
-	case SHADER_PARAMETER_TYPE_MATRIX4:
-		return 16; 
-	default:
-		return 4;
-	}
-}
-
-unsigned int Material::getElementCount(ShaderAutoParameterType type)
-{
-	switch(type)
-	{
-	case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-		return 16;
-
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT:
-		return 1;
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
-		return 3;
-
-	case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
-		return 4;
-	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POWER_SCALE:
-		return 4;
-
-	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
-	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
-		return 3;
-
-	default:
-		return 4;
-	}
-}
+void Material::setParameterImpl(ShaderParameter* parameter, const Color& col) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::matrix4& m) {}
 
 ShaderParameterType Material::getType(ShaderAutoParameterType type)
 {
 	switch(type)
 	{
-	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_POSITION:
-	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_NORMAL:
-	case SHADER_AUTO_PARAMETER_TYPE_VERTEX_TEXTURE_COORDINATES:
-		return SHADER_PARAMETER_TYPE_VERTEX;
-
 	case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
 	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
@@ -749,7 +524,7 @@ ShaderParameterType Material::getType(ShaderAutoParameterType type)
 		return SHADER_PARAMETER_TYPE_FLOAT3;
 	
 	default:
-		return SHADER_PARAMETER_TYPE_FLOAT;
+		return SHADER_PARAMETER_TYPE_UNKNOWN;
 	}
 }
 

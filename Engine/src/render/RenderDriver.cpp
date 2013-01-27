@@ -30,32 +30,8 @@ THE SOFTWARE.
 namespace render
 {
 
-RenderDriver::RenderDriver(const std::string& name): core::SystemDriver(name)
-{
-	mWorldMatrix = core::matrix4::IDENTITY;
-	mViewMatrix = core::matrix4::IDENTITY;
-	mProjMatrix = core::matrix4::IDENTITY;
-
-	mCurrentVertexShader = nullptr;
-	mCurrentFragmentShader = nullptr;
-	mCurrentGeometryShader = nullptr;
-}
+RenderDriver::RenderDriver(const std::string& name): core::SystemDriver(name) {}
 
 RenderDriver::~RenderDriver() {}
-
-void RenderDriver::setWorldMatrix(const core::matrix4& m)
-{
-	mWorldMatrix = m;
-}
-
-void RenderDriver::setViewMatrix(const core::matrix4& m)
-{
-	mViewMatrix = m;
-}
-
-void RenderDriver::setProjectionMatrix(const core::matrix4& m)
-{	
-	mProjMatrix = m;
-}
 
 } // end namespace render

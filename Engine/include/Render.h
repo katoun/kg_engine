@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include <render/Color.h>
 #include <render/IndexBuffer.h>
 #include <render/VertexBuffer.h>
+#include <render/VertexBufferDefines.h>
 #include <render/VertexIndexData.h>
 #include <render/RenderDefines.h>
 #include <render/Camera.h>
@@ -40,7 +41,6 @@ THE SOFTWARE.
 #include <render/LightDefines.h>
 #include <render/Font.h>
 #include <render/FontFactory.h>
-#include <render/RenderDefines.h>
 #include <render/Model.h>
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
@@ -49,7 +49,9 @@ THE SOFTWARE.
 #include <render/TextureDefines.h>
 #include <render/Shader.h>
 #include <render/ShaderDefines.h>
-#include <render/ShaderParamData.h>
+#include <render/ShaderParameter.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderStateData.h>
 #include <render/Viewport.h>
 #include <render/RenderTargetEvent.h>
 #include <render/RenderTargetEventReceiver.h>

@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <core/SystemDriver.h>
 #include <render/Material.h>
 #include <render/Color.h>
+#include <render/RenderStateData.h>
 
 #include <vector>
 
@@ -65,7 +66,7 @@ class Shader;
 class VertexBuffer;
 class IndexBuffer;
 class Texture;
-class ShaderParamData;
+class RenderStateData;
 enum IndexType;
 enum ShaderType;
 
@@ -105,19 +106,13 @@ public:
 	//! several times per complete frame if multiple viewports exist.
 	virtual void beginFrame(Viewport *vp) = 0;
 
-	//! Render a model to the active viewport.
-	virtual void renderModel(Model* model, Material* material) = 0;
+	//! Render the current rendere state to the active viewport.
+	virtual void render(RenderStateData& renderStateData) = 0;
 
 	//! Ends rendering of a frame to the current viewport.
 	virtual void endFrame() = 0;
 
 	virtual void setViewport(Viewport *vp) = 0;
-
-	virtual void setWorldMatrix(const core::matrix4& m);
-
-	virtual void setViewMatrix(const core::matrix4& m);
-
-	virtual void setProjectionMatrix(const core::matrix4& m);
 
 	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
 	virtual float getMinimumDepthInputValue() = 0;
@@ -128,16 +123,6 @@ public:
 	virtual float getHorizontalTexelOffset() = 0;
 	//! Returns the vertical texel offset value required for mapping texel origins to pixel origins.
 	virtual float getVerticalTexelOffset() = 0;
-
-protected:
-	
-	core::matrix4 mWorldMatrix;
-	core::matrix4 mViewMatrix;
-	core::matrix4 mProjMatrix;
-
-	Shader* mCurrentVertexShader;
-	Shader* mCurrentFragmentShader;
-	Shader* mCurrentGeometryShader;
 };
 
 } // end namespace render

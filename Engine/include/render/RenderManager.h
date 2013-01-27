@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <core/Singleton.h>
 #include <render/Color.h>
 #include <render/Material.h>
-#include <render/ShaderParamData.h>
+#include <render/RenderStateData.h>
 
 #include <string>
 #include <list>
@@ -292,7 +292,7 @@ protected:
 	std::vector<ModelMaterialPair> mModelMaterialPairs;
 
 	//! Shader auto parameter data.
-	ShaderParamData mShaderParamData;
+	RenderStateData mRenderStateData;
 
 	//! The default material.
 	Material* mDefaultMaterial;

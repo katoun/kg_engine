@@ -40,19 +40,24 @@ namespace render
 class Light;
 class Camera;
 class Model;
+class Material;
 class Viewport;
 
-class ENGINE_PUBLIC_EXPORT ShaderParamData
+class ENGINE_PUBLIC_EXPORT RenderStateData
 {
 public:
 
-	ShaderParamData();
+	RenderStateData();
 
 	void setWorldMatrix(const core::matrix4& m);
+	void setCurrentMaterial(Material* material);
 	void setCurrentModel(Model* model);
 	void setCurrentCamera(Camera* cam);
 	void setCurrentViewport(Viewport* viewport);
 	void setCurrentLight(Light* light);
+
+	Material* getCurrentMaterial() const;
+	Model* getCurrentModel() const;
 
 	const core::vector3d& getCameraPosition();
 	const core::vector3d& getCameraPositionObjectSpace();
@@ -155,6 +160,7 @@ protected:
 	bool mCameraPositionDirty;
 	bool mCameraPositionObjectSpaceDirty;
 
+	Material* mCurrentMaterial;
 	Model* mCurrentModel;
 	Camera* mCurrentCamera;
 	Light* mCurrentLight;

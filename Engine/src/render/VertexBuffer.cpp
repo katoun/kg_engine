@@ -31,17 +31,16 @@ THE SOFTWARE.
 namespace render
 {
 
-VertexElement::VertexElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
+VertexElement::VertexElement(unsigned short int source, VertexElementType theType, VertexElementSemantic semantic)
 {
 	mSource = source;
-	mOffset = offset;
 	mType = theType; 
 	mSemantic = semantic;
 }
 
 inline bool VertexElement::operator== (const VertexElement& rhs) const
 {
-	if (mType != rhs.mType || mOffset != rhs.mOffset || mSemantic != rhs.mSemantic || mSource != rhs.mSource)
+	if (mType != rhs.mType || mSemantic != rhs.mSemantic || mSource != rhs.mSource)
 		return false;
 	else
 		return true;
@@ -50,11 +49,6 @@ inline bool VertexElement::operator== (const VertexElement& rhs) const
 unsigned short int VertexElement::getSource() const
 {
 	return mSource;
-}
-
-unsigned int VertexElement::getOffset() const
-{
-	return mOffset;
 }
 
 VertexElementType VertexElement::getType() const
@@ -130,45 +124,6 @@ unsigned short int VertexElement::getTypeCount(VertexElementType etype)
 	}
 }
 
-VertexElementType VertexElement::multiplyTypeCount(VertexElementType baseType, unsigned short count)
-{
-	switch (baseType)
-	{
-	case VERTEX_ELEMENT_TYPE_FLOAT1:
-		switch(count)
-		{
-		case 1:
-			return VERTEX_ELEMENT_TYPE_FLOAT1;
-		case 2:
-			return VERTEX_ELEMENT_TYPE_FLOAT2;
-		case 3:
-			return VERTEX_ELEMENT_TYPE_FLOAT3;
-		case 4:
-			return VERTEX_ELEMENT_TYPE_FLOAT4;
-		default:
-			return VERTEX_ELEMENT_TYPE_FLOAT1;
-		}
-		break;
-	case VERTEX_ELEMENT_TYPE_SHORT1:
-		switch(count)
-		{
-		case 1:
-			return VERTEX_ELEMENT_TYPE_SHORT1;
-		case 2:
-			return VERTEX_ELEMENT_TYPE_SHORT2;
-		case 3:
-			return VERTEX_ELEMENT_TYPE_SHORT3;
-		case 4:
-			return VERTEX_ELEMENT_TYPE_SHORT4;
-		default:
-			return VERTEX_ELEMENT_TYPE_SHORT1;
-		}
-		break;
-	default:
-		return VERTEX_ELEMENT_TYPE_FLOAT1;
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 VertexDeclaration::VertexDeclaration() {}
@@ -203,9 +158,9 @@ const std::list<VertexElement*>& VertexDeclaration::getElements() const
 	return mVertexElements;
 }
 
-const VertexElement* VertexDeclaration::addElement(unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
+const VertexElement* VertexDeclaration::addElement(unsigned short int source, VertexElementType theType, VertexElementSemantic semantic)
 {
-	VertexElement* newVertexElement = new VertexElement(source, offset, theType, semantic);
+	VertexElement* newVertexElement = new VertexElement(source, theType, semantic);
 	mVertexElements.push_back(newVertexElement);
 
 	return newVertexElement;
@@ -249,7 +204,7 @@ void VertexDeclaration::removeAllElements()
 	mVertexElements.clear();
 }
 
-void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned short int source, unsigned int offset, VertexElementType theType, VertexElementSemantic semantic)
+void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned short int source, VertexElementType type, VertexElementSemantic semantic)
 {
 	assert(elem_index < mVertexElements.size());
 
@@ -259,7 +214,7 @@ void VertexDeclaration::modifyElement(unsigned short int elem_index, unsigned sh
 	VertexElement* pVertexElement = (*i);
 	SAFE_DELETE(pVertexElement);
 
-	pVertexElement = new VertexElement(source, offset, theType, semantic);
+	pVertexElement = new VertexElement(source, type, semantic);
 }
 
 const VertexElement* VertexDeclaration::findElementBySemantic(VertexElementSemantic sem)

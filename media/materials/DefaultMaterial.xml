@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <material>
-	<ambient r="1.0" g="1.0" b="1.0"/>
-	<diffuse r="1.0" g="1.0" b="1.0"/>
-	<lighting value="true"/>
-
 	<vertex_shader>
 		<shader value="shaders/BasicShader_vp.glsl"/>
-		<param_auto name="worldViewProjMatrix" type="worldviewproj_matrix"/>
+		<param_vertex name="position" type="vertex_position"/>
+		<param_vertex name="normal" type="vertex_normal"/>
+		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
+		<param_auto name="modelViewProjMatrix" type="worldviewproj_matrix"/>
 	</vertex_shader>
-	
 	<fragment_shader>
 		<shader value="shaders/BasicShader_fp.glsl"/>
 	</fragment_shader>
-
 	<texture_unit>
 		<texture value="textures/Grid1x1m.tga"/>
-	</texture_unit>	
+	</texture_unit>
 </material>
