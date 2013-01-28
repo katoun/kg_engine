@@ -33,6 +33,8 @@ THE SOFTWARE.
 #include <game/Component.h>
 #include <game/TransformDefines.h>
 
+#include <glm/gtc/quaternion.hpp>
+
 #include <string>
 
 namespace game

@@ -59,7 +59,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -105,7 +105,7 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Confi
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

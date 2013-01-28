@@ -2,6 +2,7 @@ Dependencies are located here.
 
 CPUInfo				1.0.0					for Engine
 tinyxml2			1.0.9					for Engine
+glm					0.9.4.1					for Engine
 OpenInput			0.2.3					for InputDriver_Win32
 Bullet				2.81					for PhysicsDriver_Bullet
 GLew				1.9.0					for RenderDriver_GL
