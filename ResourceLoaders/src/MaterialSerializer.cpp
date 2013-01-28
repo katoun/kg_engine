@@ -40,19 +40,19 @@ THE SOFTWARE.
 namespace resource
 {
 
-render::VertexElementSemantic convertVertexParameterType(const std::string& param)
+render::VertexBufferType convertVertexParameterType(const std::string& param)
 {
 	if (param == "vertex_position")
-		return render::VERTEX_ELEMENT_SEMANTIC_POSITION;
+		return render::VERTEX_BUFFER_TYPE_POSITION;
 	else if (param == "vertex_normal")
-		return render::VERTEX_ELEMENT_SEMANTIC_NORMAL;
+		return render::VERTEX_BUFFER_TYPE_NORMAL;
 	else if (param == "vertex_texture_coordinates")
-		return render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES;
+		return render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES;
 	else
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid vertex parameter type, using default.", core::LOG_LEVEL_ERROR);
 
-		return render::VERTEX_ELEMENT_SEMANTIC_POSITION;
+		return render::VERTEX_BUFFER_TYPE_POSITION;
 	}
 }
 
@@ -269,7 +269,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 					pSubElement = pElement->FirstChildElement("param_vertex");
 					while (pSubElement != nullptr)
 					{
-						render::VertexElementSemantic vertexType = render::VERTEX_ELEMENT_SEMANTIC_POSITION;
+						render::VertexBufferType vertexType = render::VERTEX_BUFFER_TYPE_POSITION;
 
 						svalue = pSubElement->Attribute("type");
 						if (svalue != nullptr)

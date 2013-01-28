@@ -46,9 +46,6 @@ THE SOFTWARE.
 #	include <OpenGL/glext.h>
 #endif
 
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
-
 // Export Section
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 // If we're not including this from a client build, specify that the stuff

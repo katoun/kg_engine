@@ -30,13 +30,13 @@ THE SOFTWARE.
 namespace render
 {
 
-//! Vertex element semantics, used to identify the meaning of vertex buffer contents.
-enum VertexElementSemantic
+//! Vertex buffer type, used to identify the meaning of vertex buffer contents.
+enum VertexBufferType
 {
-	VERTEX_ELEMENT_SEMANTIC_POSITION,				//! Position, 3 reals per vertex
-	VERTEX_ELEMENT_SEMANTIC_NORMAL,					//! Normal, 3 reals per vertex
-	VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES,	//! Texture coordinates
-	VERTEX_ELEMENT_SEMANTIC_COUNT
+	VERTEX_BUFFER_TYPE_POSITION,				//! Position, 3 reals per vertex
+	VERTEX_BUFFER_TYPE_NORMAL,					//! Normal, 3 reals per vertex
+	VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES,	//! Texture coordinates
+	VERTEX_BUFFER_TYPE_COUNT
 };
 
 //! Vertex element type, used to identify the base types of the vertex contents.

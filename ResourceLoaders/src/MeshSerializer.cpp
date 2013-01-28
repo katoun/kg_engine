@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include <render/MeshData.h>
 #include <render/VertexBuffer.h>
 #include <render/IndexBuffer.h>
-#include <render/VertexIndexData.h>
 #include <render/RenderManager.h>
 #include <render/Color.h>
 #include <MeshSerializer.h>
@@ -101,24 +100,16 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 					return false;
 			}
 
-			resource->setNewVertexData();
-		
-			render::VertexData* pVertexData = resource->getVertexData();
-			pVertexData->vertexStart = 0;
-
 			unsigned int numVertices = 0;
 			if (pElement->QueryIntAttribute("count", &ivalue) == tinyxml2::XML_SUCCESS)
 			{
 				numVertices = (unsigned int)ivalue;
 			}
-			pVertexData->vertexCount = numVertices;
 
-			unsigned int bindIdx = 0;
 			float *pFloat = nullptr;
 
 			// float* pVertices (x, y, z order x numVertices)
-			pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_POSITION);
-			render::VertexBuffer* pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+			render::VertexBuffer* pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_POSITION, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource->getVertexBufferUsage());
 			pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 			if (pFloat == nullptr)
 				return false;
@@ -133,7 +124,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			pSubElement = pElement->FirstChildElement("vertex");
 			while(pSubElement != nullptr)
 			{
-				if (i >= pVertexData->vertexCount)
+				if (i >= numVertices)
 					break;
 
 				pVertexSubElement = pSubElement->FirstChildElement("position");
@@ -192,8 +183,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			resource->setBoundingSphereRadius(core::sqrt(maxSquaredRadius) * 1.25f);
 
 			pVertexBuffer->unlock();
-			pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
-			++bindIdx;
+			resource->setVertexBuffer(render::VERTEX_BUFFER_TYPE_POSITION, pVertexBuffer);
 
 			bool normals = false;
 			svalue = pElement->Attribute("normals");
@@ -205,8 +195,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (normals)
 			{
 				// float* pNormals (x, y, z order x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT3, render::VERTEX_ELEMENT_SEMANTIC_NORMAL);
-				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_NORMAL, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
 					return false;
@@ -215,7 +204,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				pSubElement = pElement->FirstChildElement("vertex");
 				while(pSubElement != nullptr)
 				{
-					if (i >= pVertexData->vertexCount)
+					if (i >= numVertices)
 						break;
 
 					pVertexSubElement = pSubElement->FirstChildElement("normal");
@@ -251,8 +240,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				}
 
 				pVertexBuffer->unlock();
-				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
-				++bindIdx;
+				resource->setVertexBuffer(render::VERTEX_BUFFER_TYPE_NORMAL, pVertexBuffer);
 			}
 
 			bool texture_coords = false;
@@ -265,8 +253,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			if (texture_coords)
 			{
 				// float* pTexCoords  (u v order, dimensions x numVertices)
-				pVertexData->vertexDeclaration->addElement(bindIdx, render::VERTEX_ELEMENT_TYPE_FLOAT2, render::VERTEX_ELEMENT_SEMANTIC_TEXTURE_COORDINATES);
-				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(pVertexData->vertexDeclaration->getVertexSize(bindIdx), pVertexData->vertexCount, resource->getVertexBufferUsage());
+				pVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES, render::VERTEX_ELEMENT_TYPE_FLOAT2, numVertices, resource->getVertexBufferUsage());
 				pFloat = (float*)(pVertexBuffer->lock(resource::BL_DISCARD));
 				if (pFloat == nullptr)
 					return false;
@@ -275,7 +262,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				pSubElement = pElement->FirstChildElement("vertex");
 				while(pSubElement != nullptr)
 				{
-					if (i >= pVertexData->vertexCount)
+					if (i >= numVertices)
 						break;
 
 					pVertexSubElement = pSubElement->FirstChildElement("texcoord");
@@ -304,28 +291,21 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				}
 
 				pVertexBuffer->unlock();
-				pVertexData->vertexBufferBinding->setBinding(bindIdx, pVertexBuffer);
-				++bindIdx;
+				resource->setVertexBuffer(render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES, pVertexBuffer);
 			}
 		}
 	
 		pElement = pRoot->FirstChildElement("indexbuffer");
 		if (pElement != nullptr)
 		{
-			resource->setNewIndexData();
-
-			render::IndexData* pIndexData = resource->getIndexData();
-			pIndexData->indexStart = 0;
-
 			unsigned int numIndexes = 0;
 			if (pElement->QueryIntAttribute("count", &ivalue) == tinyxml2::XML_SUCCESS)
 			{
 				numIndexes = (unsigned int)ivalue;
 			}
-			pIndexData->indexCount = numIndexes;
 
-			render::IndexBuffer* pIndexBuffer = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, pIndexData->indexCount, resource->getIndexBufferUsage());
-			pIndexData->indexBuffer = pIndexBuffer;
+			render::IndexBuffer* pIndexBuffer = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, numIndexes, resource->getIndexBufferUsage());
+			resource->setIndexBuffer(pIndexBuffer);
 
 			unsigned int* pIdx = (unsigned int*)(pIndexBuffer->lock(resource::BL_DISCARD));
 			if (pIdx == nullptr)
@@ -335,7 +315,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			pSubElement = pElement->FirstChildElement("index");
 			while(pSubElement != nullptr)
 			{
-				if (i >= pIndexData->indexCount)
+				if (i >= numIndexes)
 					break;
 				
 				unsigned int index = 0;

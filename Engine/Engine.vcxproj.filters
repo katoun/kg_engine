@@ -162,9 +162,6 @@
     <ClInclude Include="include\render\VertexBuffer.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\VertexIndexData.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Viewport.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -435,6 +432,9 @@
     <ClInclude Include="include\render\ShaderParameterDefines.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\IndexBufferDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -543,9 +543,6 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\VertexBuffer.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\VertexIndexData.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Viewport.cpp">

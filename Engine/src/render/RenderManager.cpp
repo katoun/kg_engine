@@ -39,8 +39,9 @@ THE SOFTWARE.
 #include <render/ModelFactory.h>
 #include <render/RenderDefines.h>
 #include <render/VertexBuffer.h>
+#include <render/VertexBufferDefines.h>
 #include <render/IndexBuffer.h>
-#include <render/VertexIndexData.h>
+#include <render/IndexBufferDefines.h>
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
 #include <render/Shader.h>
@@ -368,11 +369,11 @@ void RenderManager::removeAllShaders()
 	mShaders.clear();
 }
 
-VertexBuffer* RenderManager::createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
+VertexBuffer* RenderManager::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
 {
 	if (mRenderDriver)
 	{
-		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexSize, numVertices, usage);
+		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
 		if (buf != nullptr)
 		{
 			mVertexBuffers.push_back(buf);
@@ -460,104 +461,6 @@ void RenderManager::removeAllIndexBuffers()
 	mIndexBuffers.clear();
 }
 
-VertexDeclaration* RenderManager::createVertexDeclaration()
-{
-	VertexDeclaration* decl = new VertexDeclaration();
-	mVertexDeclarations.push_back(decl);
-	return decl;
-}
-
-void RenderManager::removeVertexDeclaration(VertexDeclaration* decl)
-{
-	std::list<VertexDeclaration*>::iterator i;
-	for (i = mVertexDeclarations.begin(); i != mVertexDeclarations.end(); ++i)
-	{
-		if ((*i) == decl)
-		{
-			SAFE_DELETE(decl);
-			mVertexDeclarations.erase(i);
-			return;
-		}
-	}
-}
-
-void RenderManager::removeAllVertexDeclarations()
-{
-	std::list<VertexDeclaration*>::iterator i;
-	for (i = mVertexDeclarations.begin(); i != mVertexDeclarations.end(); ++i)
-	{
-		VertexDeclaration* pVertexDeclaration = (*i);
-		SAFE_DELETE(pVertexDeclaration);
-	}
-
-	mVertexDeclarations.clear();
-}
-
-VertexBufferBinding* RenderManager::createVertexBufferBinding()
-{
-	VertexBufferBinding* binding = new VertexBufferBinding();
-	mVertexBufferBindings.push_back(binding);
-	return binding;
-}
-
-void RenderManager::removeVertexBufferBinding(VertexBufferBinding* binding)
-{
-	std::list<VertexBufferBinding*>::iterator i;
-	for (i = mVertexBufferBindings.begin(); i != mVertexBufferBindings.end(); ++i)
-	{
-		if ((*i) == binding)
-		{
-			SAFE_DELETE(binding);
-			mVertexBufferBindings.erase(i);
-			return;
-		}
-	}
-}
-
-void RenderManager::removeAllVertexBufferBindings()
-{
-	std::list<VertexBufferBinding*>::iterator i;
-	for (i = mVertexBufferBindings.begin(); i != mVertexBufferBindings.end(); ++i)
-	{
-		VertexBufferBinding* pVertexBufferBinding = (*i);
-		SAFE_DELETE(pVertexBufferBinding);
-	}
-
-	mVertexBufferBindings.clear();
-}
-
-float RenderManager::getMinimumDepthInputValue()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getMinimumDepthInputValue();
-
-	return -1.0f;
-}
-
-float RenderManager::getMaximumDepthInputValue()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getMaximumDepthInputValue();
-
-	return 1.0f;
-}
-
-float RenderManager::getHorizontalTexelOffset()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getHorizontalTexelOffset();
-
-	return 0.0f;
-}
-
-float RenderManager::getVerticalTexelOffset()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getVerticalTexelOffset();
-
-	return 0.0f;
-}
-
 void RenderManager::initializeImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
@@ -582,12 +485,6 @@ void RenderManager::uninitializeImpl()
 
 	// Remove all Render Windows
 	removeAllRenderWindows();
-
-	// Remove all Vertex Declarations
-	removeAllVertexDeclarations();
-
-	// Remove all VertexBuffer Bindings
-	removeAllVertexBufferBindings();
 
 	//! Removes all Vertex Buffers.
 	removeAllVertexBuffers();
@@ -716,10 +613,10 @@ void RenderManager::addGeometryCount(Model* model)
 		return;
 	
 	// Update stats
-	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
+	if (model->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION) == nullptr && model->getIndexBuffer() == nullptr)
 		return;
 
-	unsigned int val = model->getIndexData()->indexCount;
+	unsigned int val = model->getIndexBuffer()->getNumIndexes();
 	
 	switch(model->getRenderOperationType())
 	{
@@ -736,7 +633,7 @@ void RenderManager::addGeometryCount(Model* model)
 		break;
 	}
 
-	mVertexCount += model->getVertexData()->vertexCount;
+	mVertexCount += model->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION)->getNumVertices();
 }
 
 unsigned int RenderManager::getVertexCount()

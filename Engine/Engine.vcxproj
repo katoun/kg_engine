@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -194,6 +194,7 @@
     <ClInclude Include="include\render\Frustum.h" />
     <ClInclude Include="include\render\FrustumDefines.h" />
     <ClInclude Include="include\render\IndexBuffer.h" />
+    <ClInclude Include="include\render\IndexBufferDefines.h" />
     <ClInclude Include="include\render\Light.h" />
     <ClInclude Include="include\render\LightDefines.h" />
     <ClInclude Include="include\render\LightFactory.h" />
@@ -218,7 +219,6 @@
     <ClInclude Include="include\render\TextureDefines.h" />
     <ClInclude Include="include\render\VertexBuffer.h" />
     <ClInclude Include="include\render\VertexBufferDefines.h" />
-    <ClInclude Include="include\render\VertexIndexData.h" />
     <ClInclude Include="include\render\Viewport.h" />
     <ClInclude Include="include\resource\ResourceEvent.h" />
     <ClInclude Include="include\resource\ResourceEventReceiver.h" />
@@ -336,7 +336,6 @@
     <ClCompile Include="src\render\ShaderParameter.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\render\VertexBuffer.cpp" />
-    <ClCompile Include="src\render\VertexIndexData.cpp" />
     <ClCompile Include="src\render\Viewport.cpp" />
     <ClCompile Include="src\resource\LoadEvent.cpp" />
     <ClCompile Include="src\resource\ResourceEvent.cpp" />

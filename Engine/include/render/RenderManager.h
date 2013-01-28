@@ -83,6 +83,8 @@ class VertexDeclaration;
 class VertexBufferBinding;
 class FontFactory;
 class MeshDataFactory;
+enum VertexBufferType;
+enum VertexElementType;
 enum IndexType;
 enum ShaderType;
 
@@ -186,7 +188,7 @@ public:
 	void removeAllShaders();
 
 	//! Create a vertex buffer.
-	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
 	//! Removes a vertex buffer.
 	void removeVertexBuffer(VertexBuffer* buf);
 	//! Removes all vertex buffers.
@@ -198,30 +200,6 @@ public:
 	void removeIndexBuffer(IndexBuffer* buf);
 	//! Removes all index buffers.
 	void removeAllIndexBuffers();
-
-	//! Creates a vertex declaration.
-	VertexDeclaration* createVertexDeclaration();
-	//! Removes a vertex declaration.
-	void removeVertexDeclaration(VertexDeclaration* decl);
-	//! Removes all vertex declarations.
-	void removeAllVertexDeclarations();
-
-	//! Creates a new vertex buffer binding.
-	VertexBufferBinding* createVertexBufferBinding();
-	//! Removes a vertex buffer binding.
-	void removeVertexBufferBinding(VertexBufferBinding* binding);
-	//! Removes all vertex buffer bindings.
-	void removeAllVertexBufferBindings();
-
-	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
-	float getMinimumDepthInputValue();
-	//! Gets the maximum (farthest) depth value to be used when rendering using identity transforms.
-	float getMaximumDepthInputValue();
-
-	//! Returns the horizontal texel offset value required for mapping texel origins to pixel origins.
-	float getHorizontalTexelOffset();
-	//! Returns the vertical texel offset value required for mapping texel origins to pixel origins.
-	float getVerticalTexelOffset();
 
 	static RenderManager* getInstance();
 
@@ -267,8 +245,6 @@ protected:
 	//! Central list of shaders - for easy memory management and lookup.
 	std::map<unsigned int, Shader*> mShaders;
 
-	std::list<VertexDeclaration*> mVertexDeclarations;
-	std::list<VertexBufferBinding*> mVertexBufferBindings;
 	std::list<VertexBuffer*> mVertexBuffers;
 	std::list<IndexBuffer*> mIndexBuffers;
 

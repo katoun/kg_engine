@@ -73,9 +73,9 @@
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engined.lib;opengl32.lib;glu32.lib;glew32.lib;cg.lib;cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engined.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\glew\lib;$(ProjectDir)..\..\dependencies\cg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>
@@ -84,9 +84,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
-copy "$(ProjectDir)..\..\dependencies\cg\bin\cg.dll" "$(OutDir)"
-copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)..\..\dependencies\glew\bin\glew32.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -117,9 +115,9 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engine.lib;opengl32.lib;glu32.lib;glew32.lib;cg.lib;cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\glew\lib;$(ProjectDir)..\..\dependencies\cg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -129,9 +127,7 @@ copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
-copy "$(ProjectDir)..\..\dependencies\cg\bin\cg.dll" "$(OutDir)"
-copy "$(ProjectDir)..\..\dependencies\cg\bin\cgGL.dll" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)..\..\dependencies\glew\bin\glew32.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

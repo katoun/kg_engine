@@ -34,7 +34,8 @@ THE SOFTWARE.
 #include <render/Model.h>
 #include <render/Viewport.h>
 #include <render/Shader.h>
-#include <render/VertexIndexData.h>
+#include <render/VertexBuffer.h>
+#include <render/IndexBuffer.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 #include <game/GameObject.h>
@@ -77,9 +78,9 @@ RenderWindow* GLRenderDriver::createRenderWindow(int width, int height, int colo
 	return pRenderWindow;
 }
 
-VertexBuffer* GLRenderDriver::createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
+VertexBuffer* GLRenderDriver::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
 {
-	VertexBuffer* buf = new GLVertexBuffer(vertexSize, numVertices, usage);
+	VertexBuffer* buf = new GLVertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
 
 	return buf;
 }
@@ -138,7 +139,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	if (pModel == nullptr)
 		return;
 
-	if (pModel->getVertexData() == nullptr || pModel->getIndexData() == nullptr)
+	if (pModel->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION) == nullptr || pModel->getIndexBuffer() == nullptr)
 		return;
 
 	glUseProgram(pGLMaterial->getGLHandle());
@@ -297,24 +298,51 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 
 	/////////////Buffers//////////////
 	std::vector<ShaderVertexParameter*> vertexParameters = pGLMaterial->getVertexParameters();
-	const std::list<VertexElement*>& elems = pModel->getVertexData()->vertexDeclaration->getElements();
-	std::list<VertexElement*>::const_iterator vi;
-	for (vi = elems.begin(); vi != elems.end(); ++vi)
+	for (std::size_t vertexType = VERTEX_BUFFER_TYPE_POSITION; vertexType != VERTEX_BUFFER_TYPE_COUNT; ++vertexType)
 	{
-		VertexElement* pVertexElement = (*vi);
-
-		pGLShaderVertexParameter = static_cast<GLShaderVertexParameter*>(vertexParameters[(std::size_t)pVertexElement->getSemantic()]);
+		pGLShaderVertexParameter = static_cast<GLShaderVertexParameter*>(vertexParameters[vertexType]);
 
 		if (pGLShaderParameter == nullptr)
 			continue;
 
-		VertexBuffer* vertexBuffer = pModel->getVertexData()->vertexBufferBinding->getBuffer(pVertexElement->getSource());
+		VertexBuffer* vertexBuffer = pModel->getVertexBuffer((VertexBufferType)vertexType);
 
 		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
 
 		GLuint index = pGLShaderVertexParameter->ParameterID;
-		GLint size = pVertexElement->getCount();
-		GLenum type = getGLType(pVertexElement->getType());
+		GLenum type = getGLType(vertexBuffer->getVertexElementType());
+		GLint size = 0;
+		switch (vertexBuffer->getVertexElementType())
+		{
+		case VERTEX_ELEMENT_TYPE_COLOR:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT1:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT2:
+			size = 2;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT3:
+			size = 3;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT4:
+			size = 4;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT1:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT2:
+			size = 2;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT3:
+			size = 3;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT4:
+			size = 4;
+			break;
+		}
+
 		GLsizei stride = (GLsizei)(vertexBuffer->getVertexSize());
 
 		glVertexAttribPointer(
@@ -328,12 +356,12 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 		glEnableVertexAttribArray(index);
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(pModel->getIndexData()->indexBuffer))->getGLBufferId());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((GLIndexBuffer*)(pModel->getIndexBuffer()))->getGLBufferId());
 
-	GLenum primType = getGLType(renderStateData.getCurrentModel()->getRenderOperationType());
-	GLenum indexType = (renderStateData.getCurrentModel()->getIndexData()->indexBuffer->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+	GLenum primType = getGLType(pModel->getRenderOperationType());
+	GLenum indexType = (pModel->getIndexBuffer()->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 	
-	glDrawElements(primType, renderStateData.getCurrentModel()->getIndexData()->indexCount, indexType, (void*)0);
+	glDrawElements(primType, pModel->getIndexBuffer()->getNumIndexes(), indexType, (void*)0);
 	//////////////////////////////////
 
 	for (unsigned int i = 0; i < vertexParameters.size(); ++i)
@@ -375,30 +403,6 @@ void GLRenderDriver::setViewport(Viewport* viewport)
 	glScissor(x, y, w, h);
 }
 
-float GLRenderDriver::getMinimumDepthInputValue()
-{
-	// Range [-1.0f, 1.0f]
-	return -1.0f;
-}
-
-float GLRenderDriver::getMaximumDepthInputValue()
-{
-	// Range [-1.0f, 1.0f]
-	return 1.0f;
-}
-
-float GLRenderDriver::getHorizontalTexelOffset()
-{
-	// No offset in GL
-	return 0.0f;
-}
-	  
-float GLRenderDriver::getVerticalTexelOffset()
-{
-	// No offset in GL
-	return 0.0f;
-}
-
 void GLRenderDriver::initializeImpl()
 {
 	GLenum err = glewInit();
@@ -409,10 +413,10 @@ void GLRenderDriver::initializeImpl()
 		return;
 	}
 
-	// Check for OpenGL 2.0
-	if(!GLEW_VERSION_2_0)
+	// Check for OpenGL 3.1
+	if(!GLEW_VERSION_3_1)
 	{
-		MessageBox(nullptr, "Can't Initialize OpenGL 2.0.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Initialize OpenGL 3.1.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
 
@@ -437,108 +441,6 @@ void GLRenderDriver::initializeImpl()
 	glEnable(GL_CULL_FACE);
 
 	glDisable(GL_BLEND);								// Turn Blending Off
-
-
-	//////////TEMP FOR TESING/////////////
-	/*GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
-	std::string str_source = "";
-	str_source += "attribute vec3 position;\n";
-	str_source += "attribute vec3 normal;\n";
-	str_source += "attribute vec2 texCoords0;\n";
-	str_source += "\n";
-	str_source += "uniform mat4 worldViewProj;\n";
-	str_source += "\n";
-	str_source += "varying vec2 texCoords;\n";
-	str_source += "\n";
-	str_source += "void main()\n";
-	str_source += "{\n";
-	str_source += "	texCoords = texCoords0;\n";
-	str_source += "	gl_Position = worldViewProj * vec4(position, 1.0);\n";
-	str_source += "}";
-	
-	const char* source = str_source.c_str();
-	glShaderSource(VertexShaderID, 1, &source, NULL);
-
-	int InfoLogLength;
-	GLint compiled;
-	glCompileShader(VertexShaderID);
-	// check for compile errors
-	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &compiled);
-	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0)
-	{
-		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-		printf("%s\n", &VertexShaderErrorMessage[0]);
-		int x = 3;
-	}
-
-	str_source = "";
-	str_source += "uniform sampler2D diffuseMap;\n";
-	str_source += "\n";
-	str_source += "varying vec2 texCoords;\n";
-	str_source += "\n";
-	str_source += "void main()\n";
-	str_source += "{\n";
-	str_source += "	vec4 diffuse = texture2D(diffuseMap, texCoords);\n";
-	str_source += "\n";
-	str_source += "	gl_FragColor = diffuse;\n";
-	str_source += "}";
-
-	source = str_source.c_str();
-	glShaderSource(FragmentShaderID, 1, &source, NULL);
-
-	compiled;
-	glCompileShader(FragmentShaderID);
-	// check for compile errors
-	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &compiled);
-	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0)
-	{
-		std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
-		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		printf("%s\n", &FragmentShaderErrorMessage[0]);
-		int x = 3;
-	}
-
-
-	ProgramID = glCreateProgram();
-	glAttachShader(ProgramID, VertexShaderID);
-	glAttachShader(ProgramID, FragmentShaderID);
-
-	GLint linked;
-	glLinkProgram(ProgramID);
-
-	glGetProgramiv(ProgramID, GL_LINK_STATUS, &linked);
-	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if ( InfoLogLength > 0 )
-	{
-		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
-		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		printf("%s\n", &ProgramErrorMessage[0]);
-		int x = 3;
-	}
-
-	glDeleteShader(VertexShaderID);
-	glDeleteShader(FragmentShaderID);
-
-	PositionID			= glGetAttribLocation(ProgramID, "position");
-	NormalID			= glGetAttribLocation(ProgramID, "normal");
-	TexCoords0ID		= glGetAttribLocation(ProgramID, "texCoords0");
-	
-	MatrixID			= glGetUniformLocation(ProgramID, "worldViewProj");
-
-	DiffuseTextureID	= glGetUniformLocation(ProgramID, "diffuseMap");
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		int x = 3;
-	}
-
-	int x = 3;*/
-	//////////TEMP FOR TESING/////////////
 }
 
 void GLRenderDriver::uninitializeImpl() {}

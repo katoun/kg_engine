@@ -28,16 +28,11 @@ THE SOFTWARE.
 #define _INDEX_BUFFER_H_
 
 #include <core/Config.h>
+#include <render/IndexBufferDefines.h>
 #include <resource/Buffer.h>
 
 namespace render
 {
-
-enum IndexType
-{
-	IT_16BIT,
-	IT_32BIT
-};
 
 //! Class for index buffers, still abstract.
 class ENGINE_PUBLIC_EXPORT IndexBuffer: public resource::Buffer

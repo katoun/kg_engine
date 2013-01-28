@@ -29,9 +29,9 @@ THE SOFTWARE.
 
 #include <render/Color.h>
 #include <render/IndexBuffer.h>
+#include <render/IndexBufferDefines.h>
 #include <render/VertexBuffer.h>
 #include <render/VertexBufferDefines.h>
-#include <render/VertexIndexData.h>
 #include <render/RenderDefines.h>
 #include <render/Camera.h>
 #include <render/CameraDefines.h>

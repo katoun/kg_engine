@@ -67,6 +67,8 @@ class VertexBuffer;
 class IndexBuffer;
 class Texture;
 class RenderStateData;
+enum VertexBufferType;
+enum vertexElementType;
 enum IndexType;
 enum ShaderType;
 
@@ -93,7 +95,7 @@ public:
 		bool fullScreen, int left = 0, int top = 0, bool depthBuffer = true, void* windowId = nullptr) = 0;
 
 	//! Create a vertex buffer.
-	virtual VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage) = 0;
+	virtual VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage) = 0;
 	//! Removes a vertex buffer.
 	virtual void removeVertexBuffer(VertexBuffer* buf) = 0;
 
@@ -113,16 +115,6 @@ public:
 	virtual void endFrame() = 0;
 
 	virtual void setViewport(Viewport *vp) = 0;
-
-	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
-	virtual float getMinimumDepthInputValue() = 0;
-	//! Gets the maximum (farthest) depth value to be used when rendering using identity transforms.
-	virtual float getMaximumDepthInputValue() = 0;
-
-	//! Returns the horizontal texel offset value required for mapping texel origins to pixel origins.
-	virtual float getHorizontalTexelOffset() = 0;
-	//! Returns the vertical texel offset value required for mapping texel origins to pixel origins.
-	virtual float getVerticalTexelOffset() = 0;
 };
 
 } // end namespace render

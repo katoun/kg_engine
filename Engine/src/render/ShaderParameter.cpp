@@ -38,7 +38,7 @@ ShaderParameter::ShaderParameter()
 ShaderVertexParameter::ShaderVertexParameter()
 {
 	mName = "";
-	mVertexBufferType = VERTEX_ELEMENT_SEMANTIC_COUNT;
+	mVertexBufferType = VERTEX_BUFFER_TYPE_COUNT;
 }
 
 ShaderTextureParameter::ShaderTextureParameter()

@@ -46,8 +46,8 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 	mFragmentShader = nullptr;
 	mGeometryShader = nullptr;
 
-	mVertexParameters.reserve(VERTEX_ELEMENT_SEMANTIC_COUNT);
-	mVertexParameters.resize(VERTEX_ELEMENT_SEMANTIC_COUNT, nullptr);
+	mVertexParameters.reserve(VERTEX_BUFFER_TYPE_COUNT);
+	mVertexParameters.resize(VERTEX_BUFFER_TYPE_COUNT, nullptr);
 }
 
 Material::~Material()
@@ -205,7 +205,7 @@ std::list<ShaderAutoParameter*>& Material::getAutoParameters()
 	return mAutoParameters;
 }
 
-void Material::addVertexParameter(const std::string& name, VertexElementSemantic type)
+void Material::addVertexParameter(const std::string& name, VertexBufferType type)
 {
 	ShaderVertexParameter* pVertexParam = mVertexParameters[(std::size_t)type];
 	if (pVertexParam == nullptr)

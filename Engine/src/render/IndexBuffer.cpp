@@ -34,6 +34,7 @@ IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, resource::B
 {
 	mIndexType = idxType;
 	mNumIndexes = numIndexes;
+	mIndexSize = 0;
 
 	// Calculate the size of the indexes
 	switch (mIndexType)

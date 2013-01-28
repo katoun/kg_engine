@@ -5,7 +5,6 @@ tinyxml2			1.0.9					for Engine
 OpenInput			0.2.3					for InputDriver_Win32
 Bullet				2.81					for PhysicsDriver_Bullet
 GLew				1.9.0					for RenderDriver_GL
-CG					3.1 April 2012			for RenderDriver_GL
 FreeImage			3.15.3					for RenderDriver_GL
 OpenAL soft			1.15.1					for SoundDriver_OpenAL
 alure				1.2						for SoundDriver_OpenAL

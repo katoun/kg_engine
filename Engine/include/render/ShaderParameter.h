@@ -49,7 +49,7 @@ struct ENGINE_PUBLIC_EXPORT ShaderVertexParameter
 	ShaderVertexParameter();
 
 	std::string mName;
-	VertexElementSemantic mVertexBufferType;
+	VertexBufferType mVertexBufferType;
 };
 
 struct ENGINE_PUBLIC_EXPORT ShaderTextureParameter

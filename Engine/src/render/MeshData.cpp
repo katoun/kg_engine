@@ -25,7 +25,8 @@ THE SOFTWARE.
 */
 
 #include <render/MeshData.h>
-#include <render/VertexIndexData.h>
+#include <render/VertexBuffer.h>
+#include <render/IndexBuffer.h>
 #include <render/Material.h>
 #include <resource/Buffer.h>
 #include <resource/ResourceManager.h>
@@ -43,8 +44,7 @@ MeshData::MeshData(const std::string& name, resource::Serializer* serializer): r
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 
-	mVertexData = nullptr;
-	mIndexData = nullptr;
+	mIndexBuffer = nullptr;
 	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 
@@ -59,24 +59,24 @@ const RenderOperationType& MeshData::getRenderOperationType()
 	return mRenderOperationType;
 }
 
-void MeshData::setNewVertexData()
+VertexBuffer* MeshData::getVertexBuffer(VertexBufferType type)
 {
-	mVertexData = new VertexData();
+	return mVertexBuffers[type];
 }
 
-VertexData* MeshData::getVertexData()
+void MeshData::setVertexBuffer(VertexBufferType type, VertexBuffer* buffer)
 {
-	return mVertexData;
+	mVertexBuffers[type] = buffer;
 }
 
-void MeshData::setNewIndexData()
+IndexBuffer* MeshData::getIndexBuffer()
 {
-	mIndexData = new IndexData();
+	return mIndexBuffer;
 }
 
-IndexData* MeshData::getIndexData()
+void MeshData::setIndexBuffer(IndexBuffer* buffer)
 {
-	return mIndexData;
+	mIndexBuffer = buffer;
 }
 
 void MeshData::setVertexBufferPolicy(resource::BufferUsage usage)
@@ -132,15 +132,12 @@ float MeshData::getBoundingSphereRadius()
 
 void MeshData::unloadImpl()
 {
-	SAFE_DELETE(mVertexData);
-	SAFE_DELETE(mIndexData);
-
 	mMaterial = nullptr;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 
-	mVertexData = nullptr;
-	mIndexData = nullptr;
+	mVertexBuffers.clear();
+	mIndexBuffer = nullptr;
 	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 

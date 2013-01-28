@@ -32,8 +32,10 @@ THE SOFTWARE.
 #include <resource/Resource.h>
 #include <render/Color.h>
 #include <render/RenderDefines.h>
+#include <render/VertexBufferDefines.h>
 
 #include <string>
+#include <map>
 
 namespace resource
 {
@@ -46,8 +48,8 @@ namespace render
 
 class Model;
 class Material;
-class VertexData;
-class IndexData;
+class VertexBuffer;
+class IndexBuffer;
 
 //! Defines a mesh resource.
 class ENGINE_PUBLIC_EXPORT MeshData: public resource::Resource
@@ -60,17 +62,17 @@ public:
 	//! Gets render operation type.
 	const RenderOperationType& getRenderOperationType();
 
-	//! Sets new vertex data for this Mesh.
-	void setNewVertexData();
+	//! Gets the vertex buffer by type for this Mesh.
+	VertexBuffer* getVertexBuffer(VertexBufferType type);
 
-	//! Gets the vertex data for this Mesh.
-	VertexData* getVertexData();
+	//! Sets new vertex buffer by type for this Mesh.
+	void setVertexBuffer(VertexBufferType type, VertexBuffer* buffer);
 
-	//! Sets new vertex data for this Mesh.
-	void setNewIndexData();
+	//! Gets the index buffer for this Mesh.
+	IndexBuffer* getIndexBuffer();
 
-	//! Gets the index data for this Mesh.
-	IndexData* getIndexData();
+	//! Sets new index buffer for this Mesh.
+	void setIndexBuffer(IndexBuffer* buffer);
 
 	//! Sets the policy for the vertex buffers to be used when loading this Mesh.
 	//! You can define the approach to a Mesh by changing the default parameters to 
@@ -116,14 +118,14 @@ private:
 	//! The render operation type used to render this mesh.
 	RenderOperationType mRenderOperationType;
 
-	//! Dedicated vertex data.
-	VertexData* mVertexData;
-
-	//! Face index data.
-	IndexData* mIndexData;
-
 	resource::BufferUsage mVertexBufferUsage;
 	resource::BufferUsage mIndexBufferUsage;
+
+	//! Dedicated vertex data.
+	std::map<VertexBufferType, VertexBuffer*> mVertexBuffers;
+
+	//! Face index buffer.
+	IndexBuffer* mIndexBuffer;
 
 	//! Local bounding box volume.
 	core::aabox3d mAABB;

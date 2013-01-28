@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include <game/ComponentDefines.h>
 #include <game/MessageDefines.h>
 #include <render/RenderDefines.h>
-#include <render/VertexIndexData.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 #include <core/Utils.h>
@@ -59,8 +58,6 @@ Model::Model(): game::Component()
 	mWorldMatrix = core::matrix4::IDENTITY;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
-	mVertexData = nullptr;
-	mIndexData = nullptr;
 }
 
 Model::~Model()
@@ -199,14 +196,20 @@ const RenderOperationType& Model::getRenderOperationType()
 	return mRenderOperationType;
 }
 
-VertexData* Model::getVertexData()
+VertexBuffer* Model::getVertexBuffer(VertexBufferType type)
 {
-	return mVertexData;
+	if (mMeshData == nullptr)
+		return nullptr;
+
+	return mMeshData->getVertexBuffer(type);
 }
 
-IndexData* Model::getIndexData()
+IndexBuffer* Model::getIndexBuffer()
 {
-	return mIndexData;
+	if (mMeshData == nullptr)
+		return nullptr;
+
+	return mMeshData->getIndexBuffer();
 }
 
 void Model::resourceLoaded(const resource::ResourceEvent& evt)
@@ -226,8 +229,6 @@ void Model::resourceLoaded(const resource::ResourceEvent& evt)
 			}
 
 			mRenderOperationType = mMeshData->getRenderOperationType();
-			mVertexData = mMeshData->getVertexData();
-			mIndexData = mMeshData->getIndexData();
 		
 			initialize();
 		}
@@ -244,8 +245,6 @@ void Model::resourceUnloaded(const resource::ResourceEvent& evt)
 	if (evt.source && evt.source == mMeshData)
 	{
 		mRenderOperationType = ROT_TRIANGLE_LIST;
-		mVertexData = nullptr;
-		mIndexData = nullptr;
 
 		uninitialize();
 	}

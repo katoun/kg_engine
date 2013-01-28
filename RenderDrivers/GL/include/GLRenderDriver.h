@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include <GLConfig.h>
 #include <render/RenderDefines.h>
 #include <render/RenderDriver.h>
-#include <render/VertexBuffer.h>
 #include <core/Singleton.h>
 
 namespace resource
@@ -42,9 +41,11 @@ class Serializer;
 namespace render
 {
 
-class BufferManager;
-class ShaderParameters;
-enum ShaderType;
+class VertexBuffer;
+class IndexBuffer;
+enum VertexBufferType;
+enum VertexElementType;
+enum IndexType;
 
 class GLRenderDriver: public RenderDriver, public core::Singleton<GLRenderDriver>
 {
@@ -55,7 +56,7 @@ public:
 
 	RenderWindow* createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left = 0, int top = 0, bool												depthBuffer = true, void* windowId = nullptr);
 
-	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
 	
 	void removeVertexBuffer(VertexBuffer* buf);
 
@@ -71,16 +72,6 @@ public:
 
 	void setViewport(Viewport* viewport);
 
-	//////////////////////////////////////////////////////////
-
-	float getMinimumDepthInputValue();
-
-	float getMaximumDepthInputValue();
-
-	float getHorizontalTexelOffset();
-
-	float getVerticalTexelOffset();
-
 	//! Utility function to get the correct GL types.
 	static GLenum getGLUsage(resource::BufferUsage usage);
 	static GLenum getGLType(ShaderType type);
@@ -94,18 +85,6 @@ protected:
 	void initializeImpl();
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
-
-	//////////TEMP FOR TESING/////////////
-	GLuint ProgramID;
-	
-	GLuint PositionID;
-	GLuint NormalID;
-	GLuint TexCoords0ID;
-	
-	GLuint MatrixID;
-
-	GLuint DiffuseTextureID;
-	//////////TEMP FOR TESING/////////////
 };
 
 } // end namespace render

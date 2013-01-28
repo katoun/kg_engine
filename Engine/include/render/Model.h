@@ -45,12 +45,13 @@ struct ResourceEvent;
 namespace render
 {
 
-class VertexData;
-class IndexData;
+class VertexBuffer;
+class IndexBuffer;
 class Material;
 class MeshData;
 class MeshProperties;
 enum RenderOperationType;
+enum VertexBufferType;
 
 //! Representation of a model in the render world.
 class ENGINE_PUBLIC_EXPORT Model: public game::Component, public resource::ResourceEventReceiver
@@ -87,9 +88,9 @@ public:
 
 	const RenderOperationType& getRenderOperationType();
 
-	VertexData* getVertexData();
+	VertexBuffer* getVertexBuffer(VertexBufferType type);
 
-	IndexData* getIndexData();
+	IndexBuffer* getIndexBuffer();
 
 	void resourceLoaded(const resource::ResourceEvent& evt);
 	void resourceUnloaded(const resource::ResourceEvent& evt);
@@ -117,12 +118,6 @@ protected:
 
 	//! The type of rendering operation.
 	RenderOperationType mRenderOperationType;
-
-	//! Vertex source data.
-	VertexData* mVertexData;
-
-	//! Index data - only valid if useIndexes is true.
-	IndexData* mIndexData;
 
 	bool mModelNeedsUpdate;
 

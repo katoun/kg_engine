@@ -24,39 +24,18 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <render/VertexIndexData.h>
-#include <render/RenderManager.h>
+#ifndef _INDEX_BUFFER_DEFINES_H_
+#define _INDEX_BUFFER_DEFINES_H_
 
 namespace render
 {
 
-VertexData::VertexData()
+enum IndexType
 {
-	if (RenderManager::getInstance() != nullptr)
-	{
-		vertexBufferBinding = RenderManager::getInstance()->createVertexBufferBinding();
-		vertexDeclaration = RenderManager::getInstance()->createVertexDeclaration();
-	}
-
-	vertexCount = 0;
-	vertexStart = 0;
-}
-
-VertexData::~VertexData()
-{
-	if (RenderManager::getInstance() != nullptr)
-	{
-		RenderManager::getInstance()->removeVertexBufferBinding(vertexBufferBinding);
-		RenderManager::getInstance()->removeVertexDeclaration(vertexDeclaration);
-	}
-}
-
-IndexData::IndexData()
-{
-	indexCount = 0;
-	indexStart = 0;
-}
-
-IndexData::~IndexData() {}
+	IT_16BIT,
+	IT_32BIT
+};
 
 }// end namespace render
+
+#endif// _INDEX_BUFFER_DEFINES_H_

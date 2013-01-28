@@ -32,8 +32,8 @@ THE SOFTWARE.
 namespace render
 {
 
-GLVertexBuffer::GLVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
-: VertexBuffer(vertexSize, numVertices, usage)
+GLVertexBuffer::GLVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
+: VertexBuffer(vertexBufferType, vertexElementType, numVertices, usage)
 {
 	glGenBuffers(1, &mBufferId);
 

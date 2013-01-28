@@ -104,7 +104,7 @@ public:
 	std::vector<ShaderTextureParameter*>& getTextureParameters();
 	std::list<ShaderAutoParameter*>& getAutoParameters();
 
-	void addVertexParameter(const std::string& name, VertexElementSemantic type);
+	void addVertexParameter(const std::string& name, VertexBufferType type);
 	void addTextureParameter(const std::string& name, ShaderParameterType type);
 	void addAutoParameter(const std::string& name, ShaderAutoParameterType type);
 
