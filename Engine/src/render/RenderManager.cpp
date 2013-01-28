@@ -674,6 +674,12 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	mRenderStateData.setCurrentCamera(camera);
 
+	std::map<unsigned int, Light*>::const_iterator i = mLights.begin();
+	if (i != mLights.end())
+	{
+		mRenderStateData.setCurrentLight(i->second);
+	}	
+
 	renderVisibleModels();
 	
 	endFrame();

@@ -268,11 +268,6 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		return;
 	}
 
-	// Don't use wglew as if this is the first window, we won't have initialised yet
-	/*PFNWGLSWAPINTERVALEXTPROC _wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-	if (_wglSwapIntervalEXT)
-		_wglSwapIntervalEXT(vsync? 1 : 0);*/
-
 	mActive = true;
 }
 

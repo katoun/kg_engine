@@ -305,14 +305,16 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 		if (pGLShaderParameter == nullptr)
 			continue;
 
-		VertexBuffer* vertexBuffer = pModel->getVertexBuffer((VertexBufferType)vertexType);
+		VertexBuffer* pVertexBuffer = pModel->getVertexBuffer((VertexBufferType)vertexType);
+		if (pVertexBuffer == nullptr)
+			continue;
 
-		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(vertexBuffer))->getGLBufferId());
+		glBindBuffer(GL_ARRAY_BUFFER, ((const GLVertexBuffer*)(pVertexBuffer))->getGLBufferId());
 
 		GLuint index = pGLShaderVertexParameter->ParameterID;
-		GLenum type = getGLType(vertexBuffer->getVertexElementType());
+		GLenum type = getGLType(pVertexBuffer->getVertexElementType());
 		GLint size = 0;
-		switch (vertexBuffer->getVertexElementType())
+		switch (pVertexBuffer->getVertexElementType())
 		{
 		case VERTEX_ELEMENT_TYPE_COLOR:
 			size = 1;
@@ -343,7 +345,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 			break;
 		}
 
-		GLsizei stride = (GLsizei)(vertexBuffer->getVertexSize());
+		GLsizei stride = (GLsizei)(pVertexBuffer->getVertexSize());
 
 		glVertexAttribPointer(
 							index,			// The attribute we want to configure
@@ -414,11 +416,11 @@ void GLRenderDriver::initializeImpl()
 	}
 
 	// Check for OpenGL 3.1
-	if(!GLEW_VERSION_3_1)
+	/*if(!GLEW_VERSION_3_1)
 	{
 		MessageBox(nullptr, "Can't Initialize OpenGL 3.1.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
-	}
+	}*/
 
 	// Check for OpenGL 4.2
 	/*if(!GLEW_VERSION_4_2)

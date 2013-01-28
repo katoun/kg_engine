@@ -46,6 +46,10 @@ render::VertexBufferType convertVertexParameterType(const std::string& param)
 		return render::VERTEX_BUFFER_TYPE_POSITION;
 	else if (param == "vertex_normal")
 		return render::VERTEX_BUFFER_TYPE_NORMAL;
+	else if (param == "vertex_binormal")
+		return render::VERTEX_BUFFER_TYPE_BINORMAL;
+	else if (param == "vertex_tangent")
+		return render::VERTEX_BUFFER_TYPE_TANGENT;
 	else if (param == "vertex_texture_coordinates")
 		return render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES;
 	else

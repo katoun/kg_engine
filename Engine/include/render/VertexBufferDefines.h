@@ -33,8 +33,10 @@ namespace render
 //! Vertex buffer type, used to identify the meaning of vertex buffer contents.
 enum VertexBufferType
 {
-	VERTEX_BUFFER_TYPE_POSITION,				//! Position, 3 reals per vertex
-	VERTEX_BUFFER_TYPE_NORMAL,					//! Normal, 3 reals per vertex
+	VERTEX_BUFFER_TYPE_POSITION,			//! Position, 3 reals per vertex
+	VERTEX_BUFFER_TYPE_NORMAL,				//! Normal, 3 reals per vertex
+	VERTEX_BUFFER_TYPE_BINORMAL,			//! Binormal (Y axis if normal is Z)
+	VERTEX_BUFFER_TYPE_TANGENT,				//! Tangent (X axis if normal is Z)
 	VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES,	//! Texture coordinates
 	VERTEX_BUFFER_TYPE_COUNT
 };
