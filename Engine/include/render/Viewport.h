@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _VIEWPORT_H_
 #define _VIEWPORT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/Color.h>
 
 namespace render

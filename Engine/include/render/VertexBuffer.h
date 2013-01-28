@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _VERTEX_BUFFER_H_
 #define _VERTEX_BUFFER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/Buffer.h>
 #include <render/VertexBufferDefines.h>
 

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PLATFORM_MANAGER_H_
 #define _PLATFORM_MANAGER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/System.h>
 #include <core/Singleton.h>
 #include <core/Utils.h>
@@ -37,10 +37,11 @@ THE SOFTWARE.
 #include <map>
 #include <list>
 
+struct CPUInfo;
+
 namespace platform
 {
 
-class PlatformDriver;
 enum CpuFeature;
 
 //! Class which manages the platform settings the Game runs on.
@@ -85,20 +86,14 @@ public:
 
 protected:
 
-	void initializeImpl();
-	void uninitializeImpl();
-	void startImpl();
-	void stopImpl();
-	void updateImpl(float elapsedTime);
-	void setSystemDriverImpl(core::SystemDriver* systemDriver);
-	void removeSystemDriverImpl();
-
-	PlatformDriver* mPlatformDriver;
-
 	std::string mCPUVendor;
 	std::string mCPUName;
 	std::string mCPUType;
 	std::string mCPUBrand;
+
+	CPUInfo* mCPUInfos;
+	CPUInfo* mCPUInfo;
+	int mProcessorCount;
 };
 
 } // end namespace platform

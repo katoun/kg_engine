@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _KEY_EVENT_RECEIVER_H_
 #define _KEY_EVENT_RECEIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 namespace input
 {

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LISTENER_H_
 #define _LISTENER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 #include <game/Component.h>
 

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LINE_2D_H_
 #define _LINE_2D_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector2d.h>
 
 namespace core

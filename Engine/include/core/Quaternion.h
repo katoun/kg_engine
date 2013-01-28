@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 
 namespace core

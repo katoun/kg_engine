@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PHYSICSMATERIAL_H_
 #define _PHYSICSMATERIAL_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/Resource.h>
 
 #include <string>

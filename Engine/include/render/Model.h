@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Matrix4.h>
 #include <core/Aabox3d.h>
 #include <core/Sphere3d.h>

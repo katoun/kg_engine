@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SHADER_PARAM_DATA_H_
 #define _SHADER_PARAM_DATA_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/Color.h>
 #include <core/Vector2d.h>
 #include <core/Vector3d.h>

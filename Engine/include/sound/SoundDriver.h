@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SOUND_DRIVER_H_
 #define _SOUND_DRIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/SystemDriver.h>
 
 namespace core

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PLUGIN_H_
 #define _PLUGIN_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 #include <string>
 

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _COLLISION_EVENT_H_
 #define _COLLISION_EVENT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <physics/CollisionPoint.h>
 
 #include <vector>

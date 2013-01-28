@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SOUND_FACTORY_H_
 #define _SOUND_FACTORY_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <game/ComponentFactory.h>
 
 namespace sound

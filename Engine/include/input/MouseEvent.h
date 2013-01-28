@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MOUSE_EVENT_H_
 #define _MOUSE_EVENT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <input/InputEvent.h>
 #include <input/MouseDefines.h>
 

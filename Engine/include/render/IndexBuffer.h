@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _INDEX_BUFFER_H_
 #define _INDEX_BUFFER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/IndexBufferDefines.h>
 #include <resource/Buffer.h>
 

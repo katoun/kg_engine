@@ -31,6 +31,9 @@
     <Filter Include="tinyxml2">
       <UniqueIdentifier>{028a7960-f821-4566-9ceb-9b7f99bc4a07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resource\serializers">
+      <UniqueIdentifier>{5b579fc7-1a92-48b1-bbfe-a28ffaafeaf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine\EngineEvent.h">
@@ -166,9 +169,6 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\platform\PlatformManager.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="include\platform\PlatformDriver.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="include\input\Cursor.h">
@@ -332,9 +332,6 @@
     <ClInclude Include="include\physics\BodyDataFactory.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\Config.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="include\core\System.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -435,6 +432,28 @@
     <ClInclude Include="include\render\IndexBufferDefines.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\BodySerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\FontSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\MaterialSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\MeshSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\SceneSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\TextureSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Config.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -549,9 +568,6 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\PlatformManager.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\platform\PlatformDriver.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="src\input\Cursor.cpp">
@@ -746,6 +762,27 @@
     </ClCompile>
     <ClCompile Include="src\render\ShaderParameter.cpp">
       <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\BodySerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\FontSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\MaterialSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\MeshSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\SceneSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\TextureSerializer.cpp">
+      <Filter>resource\serializers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

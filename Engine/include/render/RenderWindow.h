@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _RENDER_WINDOW_H_
 #define _RENDER_WINDOW_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/RenderTarget.h>
 
 #include <string>

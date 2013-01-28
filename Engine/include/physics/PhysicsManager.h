@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PHYSICS_MANAGER_H_
 #define _PHYSICS_MANAGER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/System.h>
 #include <core/Singleton.h>
 #include <core/Vector3d.h>

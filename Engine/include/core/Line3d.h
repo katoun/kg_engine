@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LINE_3D_H_
 #define _LINE_3D_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 
 namespace core

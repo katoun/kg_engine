@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _BODY_FACTORY_H_
 #define _BODY_FACTORY_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <game/ComponentFactory.h>
 
 namespace physics

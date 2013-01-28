@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LIGHT_H_
 #define _LIGHT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <game/Component.h>
 #include <render/LightDefines.h>
 #include <render/Color.h>

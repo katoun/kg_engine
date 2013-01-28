@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SOUND_DATA_H_
 #define _SOUND_DATA_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/Resource.h>
 
 #include <string>

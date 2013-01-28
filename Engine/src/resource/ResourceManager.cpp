@@ -31,6 +31,12 @@ THE SOFTWARE.
 #include <resource/ResourceFactory.h>
 #include <resource/LoadEvent.h>
 #include <resource/LoadEventReceiver.h>
+#include <resource/FontSerializer.h>
+#include <resource/TextureSerializer.h>
+#include <resource/MaterialSerializer.h>
+#include <resource/MeshSerializer.h>
+#include <resource/BodySerializer.h>
+#include <resource/SceneSerializer.h>
 #include <platform/PlatformManager.h>
 #include <engine/EngineSettings.h>
 
@@ -52,18 +58,31 @@ ResourceManager::ResourceManager(): core::System("ResourceManager")
 		mSerializers[i] = nullptr;
 	}
 
+	mSerializers[RESOURCE_TYPE_FONT]				= new FontSerializer();
+	mSerializers[RESOURCE_TYPE_MESH_DATA]			= new MeshSerializer();
+	mSerializers[RESOURCE_TYPE_RENDER_MATERIAL]		= new MaterialSerializer();
+	mSerializers[RESOURCE_TYPE_TEXTURE]				= new TextureSerializer();
+	mSerializers[RESOURCE_TYPE_BODY_DATA]			= new BodySerializer();
+	mSerializers[RESOURCE_TYPE_PHYSICS_MATERIAL]	= new MaterialSerializer();
+	mSerializers[RESOURCE_TYPE_SCENE]				= new SceneSerializer();
+
+	mLoadEvent = new LoadEvent();
+
 	mDataPath = "";
 	
 	mMemoryUsage = 0;
 
 	mTotalLoadSize = 0;
-	mLoadedSize = 0;
-
-	mLoadEvent = new LoadEvent();
+	mLoadedSize = 0;	
 }
 
 ResourceManager::~ResourceManager()
 {
+	for (unsigned int i = RESOURCE_TYPE_UNDEFINED; i < RESOURCE_TYPE_COUNT; ++i)
+	{
+		SAFE_DELETE(mSerializers[i]);
+	}
+
 	SAFE_DELETE(mLoadEvent);
 
 	// Update memory usage

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _ENGINE_H_
 #define _ENGINE_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <Core.h>
 #include <Platform.h>
 #include <Input.h>

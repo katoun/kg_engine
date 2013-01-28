@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _FRUSTUM_H_
 #define _FRUSTUM_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Plane3d.h>
 #include <core/Vector3d.h>
 

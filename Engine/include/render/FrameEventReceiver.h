@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _FRAME_EVENT_RECEIVER_H_
 #define _FRAME_EVENT_RECEIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 namespace render
 {

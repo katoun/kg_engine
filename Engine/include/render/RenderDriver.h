@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _RENDER_DRIVER_H_
 #define _RENDER_DRIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 #include <core/Quaternion.h>
 #include <core/Matrix4.h>

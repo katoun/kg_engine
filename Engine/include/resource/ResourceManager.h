@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _RESOURCE_MANAGER_H_
 #define _RESOURCE_MANAGER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Utils.h>
 #include <core/System.h>
 #include <core/Singleton.h>
@@ -106,6 +106,8 @@ protected:
 
 	std::list<LoadEventReceiver*> mLoadEventReceivers;
 
+	LoadEvent* mLoadEvent;
+
 	std::string mDataPath;
 
 	//! Central lists of resources for loading created in order of type.
@@ -123,8 +125,6 @@ protected:
 
 	unsigned int mTotalLoadSize;
 	unsigned int mLoadedSize;
-
-	LoadEvent* mLoadEvent;
 
 	void fireLoadStarted();
 

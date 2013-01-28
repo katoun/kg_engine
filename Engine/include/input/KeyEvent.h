@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _KEY_EVENT_H_
 #define _KEY_EVENT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <input/InputEvent.h>
 #include <input/KeyboardDefines.h>
 

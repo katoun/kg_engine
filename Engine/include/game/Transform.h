@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 #include <core/Quaternion.h>
 #include <game/Component.h>

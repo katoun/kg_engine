@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SHADER_PARAMETER_H_
 #define _SHADER_PARAMETER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/VertexBufferDefines.h>
 #include <render/ShaderParameterDefines.h>
 

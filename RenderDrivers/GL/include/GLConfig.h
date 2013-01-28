@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _GL_CONFIG_H_
 #define _GL_CONFIG_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	include <windows.h>			// Header File For Windows

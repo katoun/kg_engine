@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _JOYSTICK_H_
 #define _JOYSTICK_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <input/InputDevice.h>
 
 #include <list>

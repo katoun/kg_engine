@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SHAPE_H_
 #define _SHAPE_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Vector3d.h>
 #include <core/Quaternion.h>
 #include <physics/ShapeDefines.h>

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _RENDERMATERIAL_H_
 #define _RENDERMATERIAL_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/Resource.h>
 #include <resource/ResourceEventReceiver.h>
 #include <render/ShaderParameterDefines.h>

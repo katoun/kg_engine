@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SHADER_H_
 #define _SHADER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/Resource.h>
 #include <render/ShaderDefines.h>
 #include <render/TextureDefines.h>

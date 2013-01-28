@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _BULLET_CONFIG_H_
 #define _BULLET_CONFIG_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>

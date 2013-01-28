@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 #include <string>
 #include <vector>

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <render/TextureDefines.h>
 #include <resource/Resource.h>
 

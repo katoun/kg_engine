@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MATH_H_
 #define _MATH_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 namespace core
 {

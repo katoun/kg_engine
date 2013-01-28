@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MESH_DATA_FACTORY_H_
 #define _MESH_DATA_FACTORY_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <resource/ResourceFactory.h>
 
 namespace resource

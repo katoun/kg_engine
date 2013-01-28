@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MESH_DATA_H_
 #define _MESH_DATA_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Aabox3d.h>
 #include <resource/Resource.h>
 #include <render/Color.h>

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/Matrix4.h>
 #include <core/Vector3d.h>
 #include <game/Component.h>

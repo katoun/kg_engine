@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LOAD_EVENT_H_
 #define _LOAD_EVENT_H_
 
-#include <core/Config.h>
+#include <Config.h>
 
 namespace resource
 {

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _INPUT_DRIVER_H_
 #define _INPUT_DRIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/SystemDriver.h>
 #include <core/Position2d.h>
 

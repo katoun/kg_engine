@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PHYSICS_DRIVER_H_
 #define _PHYSICS_DRIVER_H_
 
-#include <core/Config.h>
+#include <Config.h>
 #include <core/SystemDriver.h>
 
 namespace core
