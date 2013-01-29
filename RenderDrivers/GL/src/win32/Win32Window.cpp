@@ -55,7 +55,7 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 	HINSTANCE hInst = GetModuleHandle(nullptr);
 
 	char name[255];
-	sprintf_s(name, "K_Game OpenGL window%d", mID);
+	sprintf_s(name, "KG game engine OpenGL window%d", mID);
 
 	mHWnd = 0;
 	mIsFullScreen = fullScreen;
@@ -267,11 +267,6 @@ void Win32Window::create(unsigned int width, unsigned int height, unsigned int c
 		MessageBox(nullptr, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
 	}
-
-	// Don't use wglew as if this is the first window, we won't have initialised yet
-	/*PFNWGLSWAPINTERVALEXTPROC _wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-	if (_wglSwapIntervalEXT)
-		_wglSwapIntervalEXT(vsync? 1 : 0);*/
 
 	mActive = true;
 }

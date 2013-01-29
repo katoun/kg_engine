@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _LISTENER_FACTORY_H_
 #define _LISTENER_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <game/ComponentFactory.h>
 
 namespace game

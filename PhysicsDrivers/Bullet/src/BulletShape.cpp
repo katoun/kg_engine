@@ -40,8 +40,7 @@ BulletPlaneShape::BulletPlaneShape(): PlaneShape()
 
 BulletPlaneShape::~BulletPlaneShape()
 {
-	if (mPlaneShape)
-		delete mPlaneShape;
+	SAFE_DELETE(mPlaneShape);
 }
 
 void BulletPlaneShape::setDimension(const core::vector3d& normal, float d)
@@ -69,8 +68,7 @@ BulletSphereShape::BulletSphereShape(): SphereShape()
 
 BulletSphereShape::~BulletSphereShape()
 {
-	if (mSphereShape)
-		delete mSphereShape;
+	SAFE_DELETE(mSphereShape);
 }
 
 void BulletSphereShape::setDimension(float radius)
@@ -98,8 +96,7 @@ BulletBoxShape::BulletBoxShape(): BoxShape()
 
 BulletBoxShape::~BulletBoxShape()
 {
-	if (mBoxShape)
-		delete mBoxShape;
+	SAFE_DELETE(mBoxShape);
 }
 
 void BulletBoxShape::setDimension(const core::vector3d& dimensions)

@@ -92,7 +92,7 @@ InputDevice* Win32InputDriver::createInputDevice(InputType type, bool buffered)
 		}
 		catch(...)
 		{
-			delete device;
+			SAFE_DELETE(device);
 			throw;
 		}
 	}
@@ -103,10 +103,7 @@ InputDevice* Win32InputDriver::createInputDevice(InputType type, bool buffered)
 void Win32InputDriver::removeInputDevice(InputDevice* device)
 {
 	assert(device);
-	if (device == nullptr)
-		return;
-
-	delete device;
+	SAFE_DELETE(device);
 }
 
 bool Win32InputDriver::getGrabMode()
@@ -162,8 +159,7 @@ void Win32InputDriver::initializeImpl()
 
 void Win32InputDriver::uninitializeImpl()
 {
-	if (mCursor != nullptr)
-		delete mCursor;
+	SAFE_DELETE(mCursor);
 
 	int r = oi_close();
 }

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MOUSE_H_
 #define _MOUSE_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <input/InputDevice.h>
 
 #include <list>

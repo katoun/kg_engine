@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _POSITION_2D_H_
 #define _POSITION_2D_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace core
 {

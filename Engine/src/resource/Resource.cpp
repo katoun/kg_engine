@@ -56,7 +56,7 @@ Resource::Resource(const std::string& filename, Serializer* serializer)
 
 Resource::~Resource()
 {
-	delete mResourceEvent;
+	SAFE_DELETE(mResourceEvent);
 }
 
 const unsigned int& Resource::getID() const

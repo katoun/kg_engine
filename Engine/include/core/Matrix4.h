@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MATRIX4_H_
 #define _MATRIX4_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace core
 {

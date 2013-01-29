@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _BODY_H_
 #define _BODY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Vector3d.h>
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>

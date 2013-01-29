@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _CAMERA_FACTORY_H_
 #define _CAMERA_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <game/ComponentFactory.h>
 
 namespace game

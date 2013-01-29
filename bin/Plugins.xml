@@ -1,6 +1,4 @@
 <Plugins>
-	<Plugin>PlatformDriver</Plugin>
-	<Plugin>ResourceLoaders</Plugin>
 	<Plugin>InputDriver_Win32</Plugin>
 	<Plugin>RenderDriver_GL</Plugin>
 	<Plugin>SoundDriver_OpenAL</Plugin>

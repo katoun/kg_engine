@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SCENE_FACTORY_H_
 #define _SCENE_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <resource/ResourceFactory.h>
 
 namespace resource

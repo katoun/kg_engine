@@ -28,10 +28,10 @@ THE SOFTWARE.
 #define _ENGINE_RENDER_H_
 
 #include <render/Color.h>
-#include <render/BlendMode.h>
 #include <render/IndexBuffer.h>
+#include <render/IndexBufferDefines.h>
 #include <render/VertexBuffer.h>
-#include <render/VertexIndexData.h>
+#include <render/VertexBufferDefines.h>
 #include <render/RenderDefines.h>
 #include <render/Camera.h>
 #include <render/CameraDefines.h>
@@ -41,18 +41,17 @@ THE SOFTWARE.
 #include <render/LightDefines.h>
 #include <render/Font.h>
 #include <render/FontFactory.h>
-#include <render/RenderDefines.h>
 #include <render/Model.h>
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
 #include <render/Material.h>
-#include <render/MaterialFactory.h>
-#include <render/TextureUnit.h>
 #include <render/Texture.h>
 #include <render/TextureDefines.h>
 #include <render/Shader.h>
 #include <render/ShaderDefines.h>
-#include <render/ShaderParamData.h>
+#include <render/ShaderParameter.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderStateData.h>
 #include <render/Viewport.h>
 #include <render/RenderTargetEvent.h>
 #include <render/RenderTargetEventReceiver.h>

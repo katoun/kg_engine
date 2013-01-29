@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _GAME_OBJECT_H_
 #define _GAME_OBJECT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #include <string>
 #include <map>

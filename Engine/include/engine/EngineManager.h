@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _ENGINE_MANAGER_H_
 #define _ENGINE_MANAGER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Singleton.h>
 #include <core/System.h>
 

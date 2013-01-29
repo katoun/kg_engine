@@ -37,6 +37,10 @@ THE SOFTWARE.
 #include <core/Math.h>
 #include <core/Utils.h>
 
+#include <glm/glm.hpp>
+
+////////////////////////
+
 #include <core/Aabox3d.h>
 
 #include <core/Matrix4.h>

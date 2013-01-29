@@ -33,7 +33,7 @@ THE SOFTWARE.
 namespace input
 {
 
-class Win32Cursor : public Cursor
+class Win32Cursor: public Cursor
 {
 public:
 

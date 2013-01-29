@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _ENGINE_OPTIONS_H_
 #define _ENGINE_OPTIONS_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Singleton.h>
 
 #include <string>

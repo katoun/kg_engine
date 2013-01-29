@@ -137,7 +137,10 @@ void BodyData::removeAllShapes()
 {
 	std::list<Shape*>::const_iterator i;
 	for (i = mShapes.begin(); i != mShapes.end(); ++i)
-		delete (*i);
+	{
+		Shape* pShape = (*i);
+		SAFE_DELETE(pShape);
+	}
 
 	mShapes.clear();
 }

@@ -53,7 +53,7 @@ RenderTarget::~RenderTarget()
 	// Delete all Viewports
 	removeAllViewports();
 
-	delete mRenderTargetEvent;
+	SAFE_DELETE(mRenderTargetEvent);
 }
 
 const unsigned int& RenderTarget::getID() const
@@ -103,7 +103,7 @@ void RenderTarget::removeViewport(Viewport* viewport)
 		if(viewport == (*i))
 		{
 			mViewports.erase(i);
-			delete viewport;
+			SAFE_DELETE(viewport);
 		}
 	}
 }
@@ -114,10 +114,7 @@ void RenderTarget::removeAllViewports()
 	for (i = mViewports.begin(); i != mViewports.end(); ++i)
 	{
 		Viewport* pViewport = (*i);
-		if (pViewport != nullptr)
-		{
-			delete pViewport;
-		}
+		SAFE_DELETE(pViewport);
 	}
 
 	mViewports.clear();

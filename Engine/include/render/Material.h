@@ -27,13 +27,22 @@ THE SOFTWARE.
 #ifndef _RENDERMATERIAL_H_
 #define _RENDERMATERIAL_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <resource/Resource.h>
+#include <resource/ResourceEventReceiver.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderStateData.h>
+#include <render/TextureDefines.h>
+#include <render/VertexBufferDefines.h>
 #include <render/Color.h>
-#include <render/BlendMode.h>
+#include <core/Vector2d.h>
+#include <core/Vector3d.h>
+#include <core/Vector4d.h>
+#include <core/Matrix4.h>
 
 #include <string>
 #include <list>
+#include <vector>
 
 namespace resource
 {
@@ -43,26 +52,12 @@ class Serializer;
 namespace render
 {
 
-//! Light shading modes.
-enum ShadeOptions
-{
-	SO_FLAT,
-	SO_GOURAUD,
-	SO_PHONG
-};
-
-//! Fog modes.
-enum FogMode
-{
-	FM_NONE,	/// No fog. Duh.
-	FM_EXP,		/// Fog density increases  exponentially from the camera (fog = 1/e^(distance * density))
-	FM_EXP2,	/// Fog density increases at the square of FOG_EXP, i.e. even quicker (fog = 1/e^(distance * density)^2)
-	FM_LINEAR	/// Fog density increases linearly between the start and end distances
-};
-
-
+class Texture;
 class Shader;
-class TextureUnit;
+struct ShaderParameter;
+struct ShaderVertexParameter;
+struct ShaderTextureParameter;
+struct ShaderAutoParameter;
 
 //! Class encapsulates surface properties of a mesh.
 //!
@@ -70,112 +65,19 @@ class TextureUnit;
 //! minimised. One of the most frequent render state changes are
 //! changes to materials, mostly to textures. An mesh can have 
 //! only one material.
-class ENGINE_PUBLIC_EXPORT Material : public resource::Resource
+class ENGINE_PUBLIC_EXPORT Material: public resource::Resource, public resource::ResourceEventReceiver
 {
 public:
 
 	Material(const std::string& name, resource::Serializer* serializer);
-	~Material();
-
-	//! Sets the ambient color reflectance properties of this material.
-	void setAmbient(float red, float green, float blue);
-	void setAmbient(const Color& ambient);
-
-	//! Sets the diffuse color reflectance properties of this material.
-	void setDiffuse(float red, float green, float blue);
-	void setDiffuse(const Color& diffuse);
-
-	//! Sets the specular color reflectance properties of this material.
-	void setSpecular(float red, float green, float blue);
-	void setSpecular(const Color& specular);
-
-	//! Sets the emissive color reflectance properties of this material.
-	void setEmissive(float red, float green, float blue);
-	void setEmissive(const Color& emissive);
-
-	//! Sets the shininess of the material, affecting the size of specular highlights.
-	void setShininess(float shininess);
-
-	//! Gets the ambient color reflectance of the material.
-	const Color& getAmbient() const;
-
-	//! Gets the diffuse color reflectance of the material.
-	const Color& getDiffuse() const;
-
-	//! Gets the specular color reflectance of the material.
-	const Color& getSpecular() const;
-
-	//! Gets the emissive color of the material.
-	const Color& getEmissive() const;
-
-	//! Gets the 'shininess' property of the material (affects specular highlights).
-	float getShininess() const;
-
-	//! Sets whether or not dynamic lighting is enabled.
-	void setLightingEnabled(bool enabled);
-
-	//! Returns whether or not dynamic lighting is enabled.
-	bool getLightingEnabled() const;
-
-	//! Sets the type of light shading required.
-	void setShadingMode(ShadeOptions mode);
-
-	//! Returns the type of light shading to be used.
-	ShadeOptions getShadingMode() const;
-
-	//! Sets the fogging mode applied for this material.
-	void setFog(bool overrideScene = true, FogMode mode = FM_NONE, const Color& color = Color::White, float density = 0.001f, float start = 0.0f, float end = 1.0f);
-	
-	//! Returns true if this pass is to override the scene fog settings.
-	bool getFogOverride() const;
-
-	//! Returns the fog mode for this material.
-	FogMode getFogMode() const;
-
-	//! Returns the fog color for the scene.
-	const Color& getFogColor() const;
-
-	//! Returns the fog density for this pass.
-	float getFogDensity() const;
-
-	//! Returns the fog start distance for this pass.
-	float getFogStart() const;
-
-	//! Returns the fog end distance for this pass.
-	float getFogEnd() const;
-
-	//! Sets the kind of blending this material has with the existing contents of the scene.
-	void setSceneBlending(const SceneBlendType sbt);
-	
-	//! Allows very fine control of blending this material with the existing contents of the scene.
-	void setSceneBlending(const SceneBlendFactor sourceFactor, const SceneBlendFactor destFactor);
-
-	//! Retrieves the source blending factor for the material.
-	SceneBlendFactor getSourceBlendFactor() const;
-
-	//! Retrieves the destination blending factor for the material.
-	SceneBlendFactor getDestBlendFactor() const;
-
-	//! Returns true if this material has some element of transparency.
-	bool isTransparent() const;
-
-	//! Sets whether or not this material renders with depth-buffer checking on or not.
-	void setDepthCheckEnabled(bool enabled);
-
-	//! Returns whether or not this material renders with depth-buffer checking on or not.
-	bool getDepthCheckEnabled() const;
-
-	//! Sets whether or not this material renders with depth-buffer writing on or not.
-	void setDepthWriteEnabled(bool enabled);
-
-	//! Returns whether or not this material renders with depth-buffer writing on or not.
-	bool getDepthWriteEnabled() const;
+	virtual ~Material();
 
 	//! Inserts a new texture unit in the material.
-	void addTextureUnit(TextureUnit* tu);
+	void addTextureUnit(const std::string& filename);
+	void addTextureUnit(Texture* texture);
 
 	//! Retrieves a pointer to a texture unit so it may be modified.
-	TextureUnit* getTextureUnit(unsigned int index) const;
+	Texture* getTextureUnit(unsigned int index) const;
 
 	//! Returns the number of texture unit.
 	unsigned int getNumTextureUnits() const;	
@@ -198,48 +100,62 @@ public:
 	void setGeometryShader(Shader* shader);
 	Shader* getGeometryShader();
 
-	bool isProgrammable();
-	bool hasVertexShader();
-	bool hasFragmentShader();
-	bool hasGeometryShader();
+	std::vector<ShaderVertexParameter*>& getVertexParameters();
+	std::vector<ShaderTextureParameter*>& getTextureParameters();
+	std::list<ShaderAutoParameter*>& getAutoParameters();
+
+	void addVertexParameter(const std::string& name, VertexBufferType type);
+	void addTextureParameter(const std::string& name, ShaderParameterType type);
+	void addAutoParameter(const std::string& name, ShaderAutoParameterType type);
+
+	void addParameter(const std::string& name, ShaderParameterType type);
+
+	void setParameter(const std::string& name, const Color& col);
+	void setParameter(ShaderParameter* parameter, const Color& col);
+	void setParameter(const std::string& name, const core::vector2d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector2d& vec);
+	void setParameter(const std::string& name, const core::vector3d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector3d& vec);
+	void setParameter(const std::string& name, const core::vector4d& vec);
+	void setParameter(ShaderParameter* parameter, const core::vector4d& vec);
+	void setParameter(const std::string& name, const core::matrix4& m);
+	void setParameter(ShaderParameter* parameter, const core::matrix4& m);
 
 protected:
 
 	void unloadImpl();
 
-	// Color properties
-	Color mAmbient;
-	Color mDiffuse;
-	Color mSpecular;
-	Color mEmissive;
-	float mShininess;
-
-	// Blending factors
-	SceneBlendFactor mSourceBlendFactor;
-	SceneBlendFactor mDestBlendFactor;
-
-	// Depth buffer settings
-	bool mDepthCheck;
-	bool mDepthWrite;
-
-	bool mLightingEnabled;
-
-	ShadeOptions mShadeOptions;
-
-	// Fog
-	bool mFogOverride;
-	FogMode mFogMode;
-	Color mFogColor;
-	float mFogDensity;
-	float mFogStart;
-	float mFogEnd;
-
 	// Textures
-	std::list<TextureUnit*> mTextureUnits;
+	std::list<Texture*> mTextureUnits;
 
 	Shader* mVertexShader;
 	Shader* mFragmentShader;
 	Shader* mGeometryShader;
+
+	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type);
+
+	virtual ShaderVertexParameter* createVertexParameterImpl();
+	virtual ShaderParameter* createParameterImpl();
+
+	ShaderParameter* findParameter(const std::string& name);
+	ShaderTextureParameter* findTextureParameter(ShaderParameter* parameter);
+	ShaderAutoParameter* findAutoParameter(ShaderParameter* parameter);
+
+	void removeAllParameters();
+
+	virtual void setParameterImpl(ShaderParameter* parameter, const Color& col);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
+
+	static ShaderParameterType getType(ShaderAutoParameterType type);
+	static ShaderParameterType getType(TextureType type);
+
+	hashmap<std::string, ShaderParameter*> mParameters;
+	std::vector<ShaderVertexParameter*> mVertexParameters;
+	std::vector<ShaderTextureParameter*> mTextureParameters;
+	std::list<ShaderAutoParameter*> mAutoParameters;
 };
 
 } //namespace render

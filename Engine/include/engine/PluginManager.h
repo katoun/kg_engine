@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PLUGIN_MANAGER_H_
 #define _PLUGIN_MANAGER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/System.h>
 #include <core/Singleton.h>
 

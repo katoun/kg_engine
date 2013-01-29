@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <render/TextureDefines.h>
 #include <resource/Resource.h>
 
@@ -46,7 +46,7 @@ namespace render
 //!
 //! The actual concrete subclass which will exist for a texture
 //! is dependent on the rendering system in use (Direct3D, OpenGL etc).
-class ENGINE_PUBLIC_EXPORT Texture : public resource::Resource
+class ENGINE_PUBLIC_EXPORT Texture: public resource::Resource
 {
 public:
 

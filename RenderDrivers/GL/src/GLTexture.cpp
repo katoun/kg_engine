@@ -55,6 +55,7 @@ bool GLTexture::loadImpl()
 		// Create the GL texture
 		glGenTextures(1, &mTextureID);
 
+		glActiveTexture(GL_TEXTURE15);
 		// Set texture type
 		glBindTexture(getGLTextureType(), mTextureID);
 
@@ -84,13 +85,13 @@ bool GLTexture::loadImpl()
 				switch(mTextureType)
 				{
 				case TEX_TYPE_1D:
-					glCompressedTexImage1DARB(GL_TEXTURE_1D, mip, internalFormat, width, 0, size, mBuffer);
+					glCompressedTexImage1D(GL_TEXTURE_1D, mip, internalFormat, width, 0, size, mBuffer);
 					break;
 				case TEX_TYPE_2D:
-					glCompressedTexImage2DARB(GL_TEXTURE_2D, mip, internalFormat, width, height, 0, size, mBuffer);
+					glCompressedTexImage2D(GL_TEXTURE_2D, mip, internalFormat, width, height, 0, size, mBuffer);
 					break;
 				case TEX_TYPE_3D:
-					glCompressedTexImage3DARB(GL_TEXTURE_3D, mip, internalFormat, width, height, depth, 0, size, mBuffer);
+					glCompressedTexImage3D(GL_TEXTURE_3D, mip, internalFormat, width, height, depth, 0, size, mBuffer);
 					break;
 				}
 
@@ -124,6 +125,7 @@ bool GLTexture::loadImpl()
 			}
 		}
 
+		glBindTexture(getGLTextureType(), 0);
 	}
 
 	return true;

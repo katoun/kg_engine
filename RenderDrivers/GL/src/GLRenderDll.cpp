@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <GLRenderDriver.h>
 #include <GLTextureFactory.h>
 #include <GLShaderFactory.h>
+#include <GLMaterialFactory.h>
 
 namespace render
 {
@@ -39,6 +40,7 @@ namespace render
 RenderDriver* glRenderDriver = nullptr;
 resource::ResourceFactory* glTextureFactory = nullptr;
 resource::ResourceFactory* glShaderFactory = nullptr;
+resource::ResourceFactory* glMaterialFactory = nullptr;
 
 extern "C" void GL_PUBLIC_EXPORT loadPlugin() throw()
 {
@@ -48,10 +50,12 @@ extern "C" void GL_PUBLIC_EXPORT loadPlugin() throw()
 
 	glTextureFactory = new GLTextureFactory();
 	glShaderFactory = new GLShaderFactory();
+	glMaterialFactory = new GLMaterialFactory();
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_TEXTURE, glTextureFactory);
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SHADER, glShaderFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, glMaterialFactory);
 	}
 }
 
@@ -64,10 +68,12 @@ extern "C" void GL_PUBLIC_EXPORT unloadPlugin()
 	{
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_TEXTURE);
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SHADER);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
 	}
 
 	SAFE_DELETE(glTextureFactory);
 	SAFE_DELETE(glShaderFactory);
+	SAFE_DELETE(glMaterialFactory);
 	SAFE_DELETE(glRenderDriver);
 }
 

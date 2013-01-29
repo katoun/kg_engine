@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _CURSOR_H_
 #define _CURSOR_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Position2d.h>
 
 namespace input

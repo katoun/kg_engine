@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Express 2012 for Windows Desktop
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "..\Engine\Engine.vcxproj", "{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputDriver_Win32", "..\InputDrivers\Win32\InputDriver_Win32.vcxproj", "{2808D114-179C-45E2-8FE1-2D913F7CAA91}"
@@ -9,16 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputDriver_Win32", "..\Inp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsDriver_Bullet", "..\PhysicsDrivers\Bullet\PhysicsDriver_Bullet.vcxproj", "{C669D783-FBC4-45BB-9935-D458B8D50B05}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlatformDriver", "..\PlatformDriver\PlatformDriver.vcxproj", "{7E92D214-577B-431D-A45C-E65470BCC455}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceLoaders", "..\ResourceLoaders\ResourceLoaders.vcxproj", "{527EC666-BE6B-449D-AE2C-B96A10D2FFFC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
 	EndProjectSection
@@ -61,14 +51,6 @@ Global
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Debug|Win32.Build.0 = Debug|Win32
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Release|Win32.ActiveCfg = Release|Win32
 		{C669D783-FBC4-45BB-9935-D458B8D50B05}.Release|Win32.Build.0 = Release|Win32
-		{7E92D214-577B-431D-A45C-E65470BCC455}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7E92D214-577B-431D-A45C-E65470BCC455}.Debug|Win32.Build.0 = Debug|Win32
-		{7E92D214-577B-431D-A45C-E65470BCC455}.Release|Win32.ActiveCfg = Release|Win32
-		{7E92D214-577B-431D-A45C-E65470BCC455}.Release|Win32.Build.0 = Release|Win32
-		{527EC666-BE6B-449D-AE2C-B96A10D2FFFC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{527EC666-BE6B-449D-AE2C-B96A10D2FFFC}.Debug|Win32.Build.0 = Debug|Win32
-		{527EC666-BE6B-449D-AE2C-B96A10D2FFFC}.Release|Win32.ActiveCfg = Release|Win32
-		{527EC666-BE6B-449D-AE2C-B96A10D2FFFC}.Release|Win32.Build.0 = Release|Win32
 		{CDF42BFF-6A5A-442A-A7E9-F6D92A3059E7}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CDF42BFF-6A5A-442A-A7E9-F6D92A3059E7}.Debug|Win32.Build.0 = Debug|Win32
 		{CDF42BFF-6A5A-442A-A7E9-F6D92A3059E7}.Release|Win32.ActiveCfg = Release|Win32

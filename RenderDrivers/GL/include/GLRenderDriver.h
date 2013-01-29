@@ -28,8 +28,8 @@ THE SOFTWARE.
 #define _GL_RENDER_DRIVER_H_
 
 #include <GLConfig.h>
+#include <render/RenderDefines.h>
 #include <render/RenderDriver.h>
-#include <render/VertexBuffer.h>
 #include <core/Singleton.h>
 
 namespace resource
@@ -41,9 +41,11 @@ class Serializer;
 namespace render
 {
 
-class BufferManager;
-class ShaderParameters;
-enum ShaderType;
+class VertexBuffer;
+class IndexBuffer;
+enum VertexBufferType;
+enum VertexElementType;
+enum IndexType;
 
 class GLRenderDriver: public RenderDriver, public core::Singleton<GLRenderDriver>
 {
@@ -54,7 +56,7 @@ public:
 
 	RenderWindow* createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left = 0, int top = 0, bool												depthBuffer = true, void* windowId = nullptr);
 
-	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
 	
 	void removeVertexBuffer(VertexBuffer* buf);
 
@@ -64,71 +66,17 @@ public:
 
 	void beginFrame(Viewport* vp);
 
-	void renderModel(Model* model);
-
-	void renderGridPlane(unsigned int zfar);
-
-	void renderWorldAxes();
-
-	void renderAxes(const core::vector3d& position, const core::quaternion& orientation);
-
-	void renderBoundingSphere(const core::sphere3d& sphere);
-
-	void renderBoundingBox(const core::aabox3d& box);
-
-	void renderFrustumVolume(const core::vector3d* corners);
+	void render(RenderStateData& renderStateData);
 
 	void endFrame();
 
 	void setViewport(Viewport* viewport);
 
-	void setWorldMatrix(const core::matrix4 &m);
-
-	void setViewMatrix(const core::matrix4 &m);
-
-	void setProjectionMatrix(const core::matrix4 &m);
-
-	void setShadingType(ShadeOptions so);
-
-	void setSceneBlending(SceneBlendFactor sourceFactor, SceneBlendFactor destFactor);
-
-	void setSurfaceParams(const Color& ambient, const Color& diffuse, const Color& specular, const Color& emissive, float shininess);
-
-	void setTexture(bool enabled, unsigned int unit, Texture* tex);
-
-	void setTextureBlendMode(unsigned int unit, const LayerBlendMode& bm);
-
-	void setLightingEnabled(bool enabled);
-
-	void setAmbientLight(float red, float green, float blue, float alpha);
-
-	void setLights(const std::vector<Light*>& lights);
-
-	void setDepthBufferCheckEnabled(bool enabled = true);
-
-	void setDepthBufferWriteEnabled(bool enabled = true);
-
-	void setFog(FogMode mode = FM_NONE, const Color& color = Color::White, float expDensity = 1.0f, float linearStart = 0.0f, float linearEnd = 1.0f);
-
-	unsigned int getNumTextureUnits();
-
-	float getMinimumDepthInputValue();
-
-	float getMaximumDepthInputValue();
-
-	float getHorizontalTexelOffset();
-
-	float getVerticalTexelOffset();
-
-	CGcontext getCGContext();
-
-	//! Utility function to get the correct GL usage based on HBU's.
+	//! Utility function to get the correct GL types.
 	static GLenum getGLUsage(resource::BufferUsage usage);
-
 	static GLenum getGLType(ShaderType type);
-	static CGGLenum getCGGLType(ShaderType type);
-
-	static bool checkForCgError(CGcontext context);
+	static GLenum getGLType(VertexElementType type);
+	static GLenum getGLType(RenderOperationType type);
 
 	static GLRenderDriver* getInstance();
 
@@ -137,16 +85,6 @@ protected:
 	void initializeImpl();
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
-
-	CGcontext mCgContext;
-
-	void makeGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
-	void setGLLight(unsigned int index, Light* light);
-	void setGLLightPositionDirection(unsigned int index, Light* light);
-	static GLint getGLBlendMode(SceneBlendFactor gameBlend);
-
-	//! Utility function to get the correct GL type based on VET's.
-	static GLenum getGLType(VertexElementType type);
 };
 
 } // end namespace render

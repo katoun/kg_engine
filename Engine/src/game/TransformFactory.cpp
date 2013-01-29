@@ -45,8 +45,7 @@ void TransformFactory::destroyComponent(Component* component)
 	Transform* pTransform = static_cast<Transform*>(component);
 
 	assert(pTransform != nullptr);
-	if (pTransform != nullptr)
-		delete pTransform;
+	SAFE_DELETE(pTransform);
 }
 
 } // end namespace game

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _JOYSTICK_EVENT_H_
 #define _JOYSTICK_EVENT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <input/InputEvent.h>
 #include <input/JoystickDefines.h>
 

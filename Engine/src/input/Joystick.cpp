@@ -42,7 +42,7 @@ Joystick::Joystick()
 
 Joystick::~Joystick()
 {
-	delete mEvent;
+	SAFE_DELETE(mEvent);
 }
 
 signed short int Joystick::getNumButtons()

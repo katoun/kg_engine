@@ -49,8 +49,7 @@ void OpenALSoundFactory::destroyComponent(game::Component* component)
 		SoundManager::getInstance()->removeSound(pSound);
 
 	assert(pSound != nullptr);
-	if (pSound != nullptr)
-		delete pSound;
+	SAFE_DELETE(pSound);
 }
 
 } // end namespace sound

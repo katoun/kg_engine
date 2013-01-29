@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _RENDER_TARGET_EVENT_H_
 #define _RENDER_TARGET_EVENT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace render
 {

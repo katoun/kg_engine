@@ -31,6 +31,9 @@
     <Filter Include="tinyxml2">
       <UniqueIdentifier>{028a7960-f821-4566-9ceb-9b7f99bc4a07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resource\serializers">
+      <UniqueIdentifier>{5b579fc7-1a92-48b1-bbfe-a28ffaafeaf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine\EngineEvent.h">
@@ -99,9 +102,6 @@
     <ClInclude Include="include\core\Vector4d.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\BlendMode.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Camera.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -156,31 +156,19 @@
     <ClInclude Include="include\render\ShaderDefines.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\ShaderParamData.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Texture.h">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\TextureDefines.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\TextureUnit.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\VertexBuffer.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\VertexIndexData.h">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\Viewport.h">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\platform\PlatformManager.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="include\platform\PlatformDriver.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="include\input\Cursor.h">
@@ -341,14 +329,8 @@
     <ClInclude Include="include\render\MeshDataFactory.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\MaterialFactory.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\BodyDataFactory.h">
       <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\Config.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="include\core\System.h">
       <Filter>core</Filter>
@@ -435,6 +417,43 @@
     <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h">
       <Filter>tinyxml2</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\RenderStateData.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ShaderParameter.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\VertexBufferDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ShaderParameterDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\IndexBufferDefines.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\BodySerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\FontSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\MaterialSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\MeshSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\SceneSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource\TextureSerializer.h">
+      <Filter>resource\serializers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Config.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -491,9 +510,6 @@
     <ClCompile Include="src\core\Vector4d.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\BlendMode.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\Camera.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -542,28 +558,16 @@
     <ClCompile Include="src\render\Shader.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\ShaderParamData.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\Texture.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\TextureUnit.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\VertexBuffer.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\VertexIndexData.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Viewport.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\PlatformManager.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\platform\PlatformDriver.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="src\input\Cursor.cpp">
@@ -693,9 +697,6 @@
     <ClCompile Include="src\render\FontFactory.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\MaterialFactory.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\MeshDataFactory.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -755,6 +756,33 @@
     </ClCompile>
     <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp">
       <Filter>tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RenderStateData.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderParameter.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\BodySerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\FontSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\MaterialSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\MeshSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\SceneSerializer.cpp">
+      <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\TextureSerializer.cpp">
+      <Filter>resource\serializers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef _LOG_H_
 #define _LOG_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Singleton.h>
 #include <core/LogDefines.h>
 

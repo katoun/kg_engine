@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _OPENAL_CONFIG_H_
 #define _OPENAL_CONFIG_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #include <alure.h>
 #include <efx.h>

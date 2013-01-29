@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _GL_CONFIG_H_
 #define _GL_CONFIG_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 #	include <windows.h>			// Header File For Windows
@@ -45,9 +45,6 @@ THE SOFTWARE.
 #	include <OpenGL/glu.h>
 #	include <OpenGL/glext.h>
 #endif
-
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
 
 // Export Section
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS

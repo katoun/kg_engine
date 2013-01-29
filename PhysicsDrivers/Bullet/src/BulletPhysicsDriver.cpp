@@ -66,7 +66,10 @@ CollisionData::~CollisionData()
 {
 	std::vector<CollisionPoint*>::const_iterator i;
 	for (i = collisionPoints.begin(); i != collisionPoints.end(); i++)
-		delete (*i);
+	{
+		CollisionPoint* pCollisionPoint = (*i);
+		SAFE_DELETE(pCollisionPoint);
+	}
 	
 	collisionPoints.clear();
 }
@@ -177,20 +180,11 @@ void BulletPhysicsDriver::initializeImpl()
 
 void BulletPhysicsDriver::uninitializeImpl()
 {
-	if (mDynamicsWorld != nullptr)
-		delete mDynamicsWorld;
-
-	if (mSolver != nullptr)
-		delete mSolver;
-
-	if (mBroadphase != nullptr)
-		delete mBroadphase;
-
-	if (mDispatcher != nullptr)
-		delete mDispatcher;
-
-	if (mCollisionConfiguration != nullptr)
-		delete mCollisionConfiguration;
+	SAFE_DELETE(mDynamicsWorld);
+	SAFE_DELETE(mSolver);
+	SAFE_DELETE(mBroadphase);
+	SAFE_DELETE(mDispatcher);
+	SAFE_DELETE(mCollisionConfiguration);
 }
 
 void BulletPhysicsDriver::updateImpl(float elapsedTime)
@@ -314,7 +308,10 @@ void BulletPhysicsDriver::removeAllCollisions()
 {
 	std::map<unsigned long long int, CollisionData*>::const_iterator i;
 	for (i = mLastCollisions.begin(); i != mLastCollisions.end(); ++i)
-		delete i->second;
+	{
+		CollisionData* pCollisionData = i->second;
+		SAFE_DELETE(pCollisionData);
+	}
 
 	mLastCollisions.clear();
 }

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PIXEL_FORMAT_H_
 #define _PIXEL_FORMAT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace render
 {

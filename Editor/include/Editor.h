@@ -18,7 +18,7 @@ The above is a precis, please do read the full license agreement.
 #include <EditorConfig.h>
 #include <Engine.h>
 
-class EditorApp : public wxApp
+class EditorApp: public wxApp
 {
 public:
 

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SYSTEM_DRIVER_H_
 #define _SYSTEM_DRIVER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace core
 {

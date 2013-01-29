@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _JOINT_FACTORY_H_
 #define _JOINT_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace physics
 {

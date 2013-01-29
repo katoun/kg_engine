@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _PHYSICSMATERIAL_H_
 #define _PHYSICSMATERIAL_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <resource/Resource.h>
 
 #include <string>
@@ -41,7 +41,7 @@ namespace physics
 {
 
 //! Class encapsulates properties of a body.
-class ENGINE_PUBLIC_EXPORT Material : public resource::Resource
+class ENGINE_PUBLIC_EXPORT Material: public resource::Resource
 {
 public:
 

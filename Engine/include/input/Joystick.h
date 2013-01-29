@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _JOYSTICK_H_
 #define _JOYSTICK_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <input/InputDevice.h>
 
 #include <list>
@@ -41,7 +41,7 @@ enum KeyCode;
 enum KeyModifier;
 
 //! A common base class for joystick device.
-class ENGINE_PUBLIC_EXPORT Joystick : public InputDevice
+class ENGINE_PUBLIC_EXPORT Joystick: public InputDevice
 {
 public:
 

@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -74,6 +74,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -83,12 +84,18 @@
       </SubSystem>
       <ImportLibrary>$(ProjectDir)..\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,7 +106,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -113,7 +120,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -121,15 +128,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(ProjectDir)..\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h" />
     <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h" />
-    <ClInclude Include="include\core\Config.h" />
+    <ClInclude Include="include\Config.h" />
     <ClInclude Include="include\core\Log.h" />
     <ClInclude Include="include\core\LogDefines.h" />
     <ClInclude Include="include\core\System.h" />
@@ -180,7 +191,6 @@
     <ClInclude Include="include\physics\ShapeDefines.h" />
     <ClInclude Include="include\physics\ShapeFactory.h" />
     <ClInclude Include="include\platform\PlatformDefines.h" />
-    <ClInclude Include="include\render\BlendMode.h" />
     <ClInclude Include="include\render\Camera.h" />
     <ClInclude Include="include\render\CameraDefines.h" />
     <ClInclude Include="include\render\CameraFactory.h" />
@@ -191,11 +201,11 @@
     <ClInclude Include="include\render\Frustum.h" />
     <ClInclude Include="include\render\FrustumDefines.h" />
     <ClInclude Include="include\render\IndexBuffer.h" />
+    <ClInclude Include="include\render\IndexBufferDefines.h" />
     <ClInclude Include="include\render\Light.h" />
     <ClInclude Include="include\render\LightDefines.h" />
     <ClInclude Include="include\render\LightFactory.h" />
     <ClInclude Include="include\render\Material.h" />
-    <ClInclude Include="include\render\MaterialFactory.h" />
     <ClInclude Include="include\render\MeshData.h" />
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
@@ -209,18 +219,22 @@
     <ClInclude Include="include\render\RenderWindow.h" />
     <ClInclude Include="include\render\Shader.h" />
     <ClInclude Include="include\render\ShaderDefines.h" />
-    <ClInclude Include="include\render\ShaderParamData.h" />
+    <ClInclude Include="include\render\RenderStateData.h" />
+    <ClInclude Include="include\render\ShaderParameter.h" />
+    <ClInclude Include="include\render\ShaderParameterDefines.h" />
     <ClInclude Include="include\render\Texture.h" />
     <ClInclude Include="include\render\TextureDefines.h" />
-    <ClInclude Include="include\render\TextureUnit.h" />
     <ClInclude Include="include\render\VertexBuffer.h" />
-    <ClInclude Include="include\render\VertexIndexData.h" />
+    <ClInclude Include="include\render\VertexBufferDefines.h" />
     <ClInclude Include="include\render\Viewport.h" />
+    <ClInclude Include="include\resource\BodySerializer.h" />
+    <ClInclude Include="include\resource\FontSerializer.h" />
+    <ClInclude Include="include\resource\MaterialSerializer.h" />
+    <ClInclude Include="include\resource\MeshSerializer.h" />
     <ClInclude Include="include\resource\ResourceEvent.h" />
     <ClInclude Include="include\resource\ResourceEventReceiver.h" />
     <ClInclude Include="include\resource\ResourceFactory.h" />
     <ClInclude Include="include\platform\PlatformManager.h" />
-    <ClInclude Include="include\platform\PlatformDriver.h" />
     <ClInclude Include="include\input\Cursor.h" />
     <ClInclude Include="include\input\InputDevice.h" />
     <ClInclude Include="include\input\InputEvent.h" />
@@ -242,7 +256,9 @@
     <ClInclude Include="include\resource\Resource.h" />
     <ClInclude Include="include\resource\ResourceDefines.h" />
     <ClInclude Include="include\resource\ResourceManager.h" />
+    <ClInclude Include="include\resource\SceneSerializer.h" />
     <ClInclude Include="include\resource\Serializer.h" />
+    <ClInclude Include="include\resource\TextureSerializer.h" />
     <ClInclude Include="include\sound\Listener.h" />
     <ClInclude Include="include\sound\ListenerFactory.h" />
     <ClInclude Include="include\sound\Sound.h" />
@@ -270,6 +286,7 @@
     <ClInclude Include="include\Sound.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp" />
     <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\core\System.cpp" />
@@ -306,7 +323,6 @@
     <ClCompile Include="src\physics\BodyFactory.cpp" />
     <ClCompile Include="src\physics\CollisionEvent.cpp" />
     <ClCompile Include="src\physics\CollisionPoint.cpp" />
-    <ClCompile Include="src\render\BlendMode.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
     <ClCompile Include="src\render\CameraFactory.cpp" />
     <ClCompile Include="src\render\Color.cpp" />
@@ -318,7 +334,6 @@
     <ClCompile Include="src\render\Light.cpp" />
     <ClCompile Include="src\render\LightFactory.cpp" />
     <ClCompile Include="src\render\Material.cpp" />
-    <ClCompile Include="src\render\MaterialFactory.cpp" />
     <ClCompile Include="src\render\MeshData.cpp" />
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />
@@ -330,17 +345,19 @@
     <ClCompile Include="src\render\RenderTargetEventReceiver.cpp" />
     <ClCompile Include="src\render\RenderWindow.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
-    <ClCompile Include="src\render\ShaderParamData.cpp" />
+    <ClCompile Include="src\render\RenderStateData.cpp" />
+    <ClCompile Include="src\render\ShaderParameter.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
-    <ClCompile Include="src\render\TextureUnit.cpp" />
     <ClCompile Include="src\render\VertexBuffer.cpp" />
-    <ClCompile Include="src\render\VertexIndexData.cpp" />
     <ClCompile Include="src\render\Viewport.cpp" />
+    <ClCompile Include="src\resource\BodySerializer.cpp" />
+    <ClCompile Include="src\resource\FontSerializer.cpp" />
     <ClCompile Include="src\resource\LoadEvent.cpp" />
+    <ClCompile Include="src\resource\MaterialSerializer.cpp" />
+    <ClCompile Include="src\resource\MeshSerializer.cpp" />
     <ClCompile Include="src\resource\ResourceEvent.cpp" />
     <ClCompile Include="src\resource\ResourceEventReceiver.cpp" />
     <ClCompile Include="src\platform\PlatformManager.cpp" />
-    <ClCompile Include="src\platform\PlatformDriver.cpp" />
     <ClCompile Include="src\input\Cursor.cpp" />
     <ClCompile Include="src\input\InputDevice.cpp" />
     <ClCompile Include="src\input\InputEvent.cpp" />
@@ -360,7 +377,9 @@
     <ClCompile Include="src\resource\PixelFormat.cpp" />
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\ResourceManager.cpp" />
+    <ClCompile Include="src\resource\SceneSerializer.cpp" />
     <ClCompile Include="src\resource\Serializer.cpp" />
+    <ClCompile Include="src\resource\TextureSerializer.cpp" />
     <ClCompile Include="src\sound\Listener.cpp" />
     <ClCompile Include="src\sound\ListenerFactory.cpp" />
     <ClCompile Include="src\sound\Sound.cpp" />

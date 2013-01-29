@@ -192,7 +192,7 @@ void PluginManager::removePlugin(const std::string& name)
 		mPlugins.erase(i);
 
 		unloadPlugin(plugin);
-		delete plugin;
+		SAFE_DELETE(plugin);
 	}
 }
 
@@ -201,7 +201,7 @@ void PluginManager::removeAllPlugins()
 	std::map<std::string, Plugin*>::iterator i;
 	for (i = mPlugins.begin(); i != mPlugins.end(); ++i)
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 	}
 
 	mPlugins.clear();

@@ -33,11 +33,11 @@ THE SOFTWARE.
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLVertexBuffer : public VertexBuffer
+class GL_PUBLIC_EXPORT GLVertexBuffer: public VertexBuffer
 {
 public:
 
-	GLVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
+	GLVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
 
 	virtual ~GLVertexBuffer();
 

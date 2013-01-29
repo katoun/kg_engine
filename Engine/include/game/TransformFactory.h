@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _TRANSFORM_FACTORY_H_
 #define _TRANSFORM_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <game/ComponentFactory.h>
 
 namespace game

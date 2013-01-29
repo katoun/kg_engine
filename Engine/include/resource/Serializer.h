@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SERIALIZER_H_
 #define _SERIALIZER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #include <string>
 

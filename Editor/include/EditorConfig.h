@@ -15,7 +15,7 @@ The above is a precis, please do read the full license agreement.
 #ifndef _EDITOR_CONFIG_H_
 #define _EDITOR_CONFIG_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #ifdef _UNICODE
 #undef _UNICODE

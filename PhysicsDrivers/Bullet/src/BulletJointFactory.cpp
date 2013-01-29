@@ -103,47 +103,47 @@ void BulletJointFactory::destroyJoint(Joint* joint)
 	{
 	case JOINT_TYPE_UNDEFINED:
 		{
-			if (joint != nullptr) delete joint;
+			SAFE_DELETE(joint);
 		}
 		break;
 	case JOINT_TYPE_SPHERICAL:
 		{
 			BulletSphericalJoint* bulletJoint = static_cast<BulletSphericalJoint*>(joint);
 			assert(bulletJoint != nullptr);
-			if (bulletJoint != nullptr) delete bulletJoint;
+			SAFE_DELETE(bulletJoint);
 		}
 		break;
 	case JOINT_TYPE_HINGE:
 		{
 			BulletHingeJoint* bulletJoint = static_cast<BulletHingeJoint*>(joint);
 			assert(bulletJoint != nullptr);
-			if (bulletJoint != nullptr) delete bulletJoint;
+			SAFE_DELETE(bulletJoint);
 		}
 		break;
 	case JOINT_TYPE_SLIDER:
 		{
 			BulletSliderJoint* bulletJoint = static_cast<BulletSliderJoint*>(joint);
 			assert(bulletJoint != nullptr);
-			if (bulletJoint != nullptr) delete bulletJoint;
+			SAFE_DELETE(bulletJoint);
 		}
 		break;
 	case JOINT_TYPE_GENERIC:
 		{
 			BulletGenericJoint* bulletJoint = static_cast<BulletGenericJoint*>(joint);
 			assert(bulletJoint != nullptr);
-			if (bulletJoint != nullptr) delete bulletJoint;
+			SAFE_DELETE(bulletJoint);
 		}
 		break;
 	case JOINT_TYPE_RIGID:
 		{
 			BulletRigidJoint* bulletJoint = static_cast<BulletRigidJoint*>(joint);
 			assert(bulletJoint != nullptr);
-			if (bulletJoint != nullptr) delete bulletJoint;
+			SAFE_DELETE(bulletJoint);
 		}
 		break;
 	default:
 		{
-			if (joint != nullptr) delete joint;
+			SAFE_DELETE(joint);
 		}
 		break;	
 	}

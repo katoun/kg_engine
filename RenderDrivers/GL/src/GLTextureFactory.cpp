@@ -40,7 +40,7 @@ void GLTextureFactory::destroyResource(resource::Resource* resource)
 	GLTexture* glTexture = static_cast<GLTexture*>(resource);
 
 	assert(glTexture != nullptr);
-	if (glTexture != nullptr) delete glTexture;
+	SAFE_DELETE(glTexture);
 }
 
 

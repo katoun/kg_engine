@@ -24,10 +24,14 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <core/Log.h>
+#include <core/LogDefines.h>
 #include <render/Material.h>
 #include <render/Shader.h>
-#include <render/TextureUnit.h>
+#include <render/ShaderParameter.h>
+#include <render/Texture.h>
 #include <render/RenderManager.h>
+#include <resource/ResourceManager.h>
 
 namespace render
 {
@@ -36,259 +40,45 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 {
 	mResourceType = resource::RESOURCE_TYPE_RENDER_MATERIAL;
 
-	mAmbient = mDiffuse = Color::White;
-	mSpecular = mEmissive = Color::Black;
-	mShininess = 0.0f;
-	mLightingEnabled = false;
-	mShadeOptions = SO_GOURAUD;
-
-	mFogOverride = false;
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.001f;
-	mFogStart = 0.0f;
-	mFogEnd = 1.0f;
-
-	// Default blending
-	mSourceBlendFactor = SBF_ONE;
-	mDestBlendFactor = SBF_ZERO;
-
-	mDepthCheck = true;
-	mDepthWrite = true;
-
 	mTextureUnits.clear();
 
 	mVertexShader = nullptr;
 	mFragmentShader = nullptr;
 	mGeometryShader = nullptr;
+
+	mVertexParameters.reserve(VERTEX_BUFFER_TYPE_COUNT);
+	mVertexParameters.resize(VERTEX_BUFFER_TYPE_COUNT, nullptr);
 }
 
-Material::~Material() {}
-
-void Material::setAmbient(float red, float green, float blue)
+Material::~Material()
 {
-	mAmbient = Color(red, green, blue);
+	removeAllParameters();
 }
 
-void Material::setAmbient(const Color& ambient)
+void Material::addTextureUnit(const std::string& filename)
 {
-	mAmbient = ambient;
+	Texture* pTexture = nullptr;
+	
+	if (resource::ResourceManager::getInstance() != nullptr)
+		pTexture = static_cast<Texture*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_TEXTURE, filename));
+
+	addTextureUnit(pTexture);
 }
 
-void Material::setDiffuse(float red, float green, float blue)
+void Material::addTextureUnit(Texture* texture)
 {
-	mDiffuse = Color(red, green, blue);
-}
-
-void Material::setDiffuse(const Color& diffuse)
-{
-	mDiffuse = diffuse;
-}
-
-void Material::setSpecular(float red, float green, float blue)
-{
-	mSpecular = Color(red, green, blue);
-}
-
-void Material::setSpecular(const Color& specular)
-{
-	mSpecular = specular;
-}
-
-void Material::setEmissive(float red, float green, float blue)
-{
-	mEmissive = Color(red, green, blue);
-}
-
-void Material::setEmissive(const Color& emissive)
-{
-	mEmissive = emissive;
-}
-
-void Material::setShininess(float shininess)
-{
-	mShininess = shininess;
-}
-
-const Color& Material::getAmbient() const
-{
-	return mAmbient;
-}
-
-const Color& Material::getDiffuse() const
-{
-	return mDiffuse;
-}
-
-const Color& Material::getSpecular() const
-{
-	return mSpecular;
-}
-
-const Color& Material::getEmissive() const
-{
-	return mEmissive;
-}
-
-float Material::getShininess() const
-{
-	return mShininess;
-}
-
-void Material::setLightingEnabled(bool enabled)
-{
-	mLightingEnabled = enabled;
-}
-
-bool Material::getLightingEnabled() const
-{
-	return mLightingEnabled;
-}
-
-void Material::setShadingMode(ShadeOptions mode)
-{
-	mShadeOptions = mode;
-}
-
-ShadeOptions Material::getShadingMode() const
-{
-	return mShadeOptions;
-}
-
-void Material::setFog(bool overrideScene, FogMode mode, const Color& color, float density, float start, float end)
-{
-	mFogOverride = overrideScene;
-	if (overrideScene)
-	{
-		mFogMode = mode;
-		mFogColor = color;
-		mFogDensity = density;
-		mFogStart = start;
-		mFogEnd = end;
-	}
-}
-
-bool Material::getFogOverride() const
-{
-	 return mFogOverride;
-}
-
-FogMode Material::getFogMode() const
-{
-	return mFogMode;
-}
-
-const Color& Material::getFogColor() const
-{
-	return mFogColor;
-}
-
-float Material::getFogDensity() const
-{
-	return mFogDensity;
-}
-
-float Material::getFogStart() const
-{
-	return mFogStart;
-}
-
-float Material::getFogEnd() const
-{
-	return mFogEnd;
-}
-
-void Material::setSceneBlending(const SceneBlendType sbt)
-{
-	// Turn predefined type into blending factors
-	switch (sbt)
-	{
-	case SBT_TRANSPARENT_ALPHA:
-		setSceneBlending(SBF_SOURCE_ALPHA, SBF_ONE_MINUS_SOURCE_ALPHA);
-		break;
-	case SBT_TRANSPARENT_COLOR:
-		setSceneBlending(SBF_SOURCE_COLOR, SBF_ONE_MINUS_SOURCE_COLOR);
-		break;
-	case SBT_ADD:
-		setSceneBlending(SBF_ONE, SBF_ONE);
-		break;
-	case SBT_MODULATE:
-		setSceneBlending(SBF_DEST_COLOR, SBF_ZERO);
-		break;
-	case SBT_REPLACE:
-		setSceneBlending(SBF_ONE, SBF_ZERO);
-		break;
-	// TODO: more
-	}
-}
-
-void Material::setSceneBlending(const SceneBlendFactor sourceFactor, const SceneBlendFactor destFactor)
-{
-	mSourceBlendFactor = sourceFactor;
-	mDestBlendFactor = destFactor;
-}
-
-SceneBlendFactor Material::getSourceBlendFactor() const
-{
-	return mSourceBlendFactor;
-}
-
-SceneBlendFactor Material::getDestBlendFactor() const
-{
-	return mDestBlendFactor;
-}
-
-bool Material::isTransparent() const
-{
-	// Transparent if any of the destination color is taken into account
-	if (mDestBlendFactor == SBF_ZERO &&
-		mSourceBlendFactor != SBF_DEST_COLOR &&
-		mSourceBlendFactor != SBF_ONE_MINUS_DEST_COLOR &&
-		mSourceBlendFactor != SBF_DEST_ALPHA &&
-		mSourceBlendFactor != SBF_ONE_MINUS_DEST_ALPHA)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-void Material::setDepthCheckEnabled(bool enabled)
-{
-	mDepthCheck = enabled;
-}
-
-bool Material::getDepthCheckEnabled() const
-{
-	return mDepthCheck;
-}
-
-void Material::setDepthWriteEnabled(bool enabled)
-{
-	mDepthWrite = enabled;
-}
-
-bool Material::getDepthWriteEnabled() const
-{
-	return mDepthWrite;
-}
-
-void Material::addTextureUnit(TextureUnit* tu)
-{
-	if (tu == nullptr)
+	if (texture == nullptr)
 		return;
 
-	mTextureUnits.push_back(tu);
+	mTextureUnits.push_back(texture);
 }
 
-TextureUnit* Material::getTextureUnit(unsigned int index) const
+Texture* Material::getTextureUnit(unsigned int index) const
 {
 	if (index >= mTextureUnits.size())
 		return nullptr;
 
-	std::list<TextureUnit*>::const_iterator i = mTextureUnits.begin();
+	std::list<Texture*>::const_iterator i = mTextureUnits.begin();
 	for (unsigned int j=0; j<index; ++j)
 		++i;
 
@@ -302,21 +92,14 @@ unsigned int Material::getNumTextureUnits() const
 
 void Material::removeTextureUnit(unsigned int index)
 {
-	std::list<TextureUnit*>::iterator i = mTextureUnits.begin();
+	std::list<Texture*>::iterator i = mTextureUnits.begin();
 	for (unsigned int j=0; j<index; ++j)
 		++i;
-
-	delete (*i);
-
 	mTextureUnits.erase(i);
 }
 
 void Material::removeAllTextureUnits()
 {
-	std::list<TextureUnit*>::iterator i;
-	for (i = mTextureUnits.begin(); i != mTextureUnits.end(); ++i)
-		delete (*i);
-
 	mTextureUnits.clear();
 }
 
@@ -330,6 +113,9 @@ void Material::setVertexShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mVertexShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_VERTEX);
+
+		if (mVertexShader != nullptr)
+			mVertexShader->addResourceEventReceiver(this);
 	}
 }
 
@@ -356,6 +142,9 @@ void Material::setFragmentShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mFragmentShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_FRAGMENT);
+
+		if (mFragmentShader != nullptr)
+			mFragmentShader->addResourceEventReceiver(this);
 	}
 }
 
@@ -382,6 +171,9 @@ void Material::setGeometryShader(const std::string& filename)
 	{
 		if (RenderManager::getInstance() != nullptr)
 			mGeometryShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_GEOMETRY);
+
+		if (mGeometryShader != nullptr)
+			mGeometryShader->addResourceEventReceiver(this);
 	}
 }
 
@@ -398,23 +190,195 @@ Shader* Material::getGeometryShader()
 	return mGeometryShader;
 }
 
-bool Material::isProgrammable()
+std::vector<ShaderVertexParameter*>& Material::getVertexParameters()
 {
-	return (mVertexShader != nullptr || mFragmentShader != nullptr || mGeometryShader != nullptr);
-}
-bool Material::hasVertexShader()
-{
-	return mVertexShader != nullptr;
+	return mVertexParameters;
 }
 
-bool Material::hasFragmentShader()
+std::vector<ShaderTextureParameter*>& Material::getTextureParameters()
 {
-	return mFragmentShader != nullptr;
+	return mTextureParameters;
 }
 
-bool Material::hasGeometryShader()
+std::list<ShaderAutoParameter*>& Material::getAutoParameters()
 {
-	return mGeometryShader != nullptr;
+	return mAutoParameters;
+}
+
+void Material::addVertexParameter(const std::string& name, VertexBufferType type)
+{
+	ShaderVertexParameter* pVertexParam = mVertexParameters[(std::size_t)type];
+	if (pVertexParam == nullptr)
+	{
+		pVertexParam = createVertexParameterImpl();
+	}
+
+	if (pVertexParam == nullptr)
+		return;
+
+	pVertexParam->mName = name;
+	pVertexParam->mVertexBufferType = type;
+	mVertexParameters[(std::size_t)type] = pVertexParam;
+}
+
+void Material::addTextureParameter(const std::string& name, ShaderParameterType type)
+{
+	if (type != SHADER_PARAMETER_TYPE_SAMPLER1D && type != SHADER_PARAMETER_TYPE_SAMPLER2D && type != SHADER_PARAMETER_TYPE_SAMPLER3D)
+		return;
+	
+	ShaderParameter* param = findParameter(name);
+
+	if (param != nullptr)
+	{
+		if (param->mParameterType != type)
+		{
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid texture parameter type found.", core::LOG_LEVEL_ERROR);
+
+			return;
+		}
+	}
+	else
+	{
+		param = createParameter(name, type);
+	}
+
+	if (param != nullptr)
+	{
+		ShaderTextureParameter* textureParam = findTextureParameter(param);
+		if (textureParam == nullptr)
+		{
+			textureParam = new ShaderTextureParameter();
+			textureParam->mParameter = param;
+			mTextureParameters.push_back(textureParam);
+		}
+	}
+}
+
+void Material::addAutoParameter(const std::string& name, ShaderAutoParameterType type)
+{
+	ShaderParameter* param = findParameter(name);
+
+	if (param != nullptr)
+	{
+		if (param->mParameterType != getType(type))
+		{
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Shader", "Invalid auto parameter type found.", core::LOG_LEVEL_ERROR);
+
+			return;
+		}
+	}
+	else
+	{
+		param = createParameter(name, getType(type));
+	}
+
+	if (param != nullptr)
+	{
+		ShaderAutoParameter* autoParam = findAutoParameter(param);
+		if (autoParam == nullptr)
+		{
+			autoParam = new ShaderAutoParameter();
+			autoParam->mParameter = param;
+			mAutoParameters.push_back(autoParam);
+		}
+
+		autoParam->mAutoParameterType = type;
+	}
+}
+
+void Material::addParameter(const std::string& name, ShaderParameterType type)
+{
+	ShaderParameter* param = findParameter(name);
+
+	if (param == nullptr)
+	{
+		param = createParameter(name, type);
+	}
+}
+
+void Material::setParameter(const std::string& name, const Color& col)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, col);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const Color& col)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
+		return;
+
+	setParameterImpl(parameter, col);
+}
+
+void Material::setParameter(const std::string& name, const core::vector2d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::vector2d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT2)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::vector3d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::vector3d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT3)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::vector4d& vec)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, vec);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::vector4d& vec)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
+		return;
+
+	setParameterImpl(parameter, vec);
+}
+
+void Material::setParameter(const std::string& name, const core::matrix4& m)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, m);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const core::matrix4& m)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_MATRIX4)
+		return;
+
+	setParameterImpl(parameter, m);
 }
 
 void Material::unloadImpl()
@@ -422,30 +386,161 @@ void Material::unloadImpl()
 	// Remove all TextureUnits
 	removeAllTextureUnits();
 
-	// Default to white ambient & diffuse, no specular / emissive
-	mAmbient = mDiffuse = Color::White;
-	mSpecular = mEmissive = Color::Black;
-	mShininess = 0.0f;
-	mLightingEnabled = false;
-	mShadeOptions = SO_GOURAUD;
-
-	mFogOverride = false;
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.001f;
-	mFogStart = 0.0f;
-	mFogEnd = 1.0f;
-
-	// Default blending
-	mSourceBlendFactor = SBF_ONE;
-	mDestBlendFactor = SBF_ZERO;
-
-	mDepthCheck = true;
-	mDepthWrite = true;
-
 	mVertexShader = nullptr;
 	mFragmentShader = nullptr;
 	mGeometryShader = nullptr;
+}
+
+ShaderParameter* Material::createParameter(const std::string& name, ShaderParameterType type)
+{
+	ShaderParameter* pShaderParameter = createParameterImpl();
+
+	if (pShaderParameter != nullptr)
+	{
+		pShaderParameter->mName = name;
+		pShaderParameter->mParameterType = type;
+		mParameters[name] = pShaderParameter;
+	}
+
+	return pShaderParameter;
+}
+
+ShaderVertexParameter* Material::createVertexParameterImpl()
+{
+	return nullptr;
+}
+
+ShaderParameter* Material::createParameterImpl()
+{
+	return nullptr;
+}
+
+ShaderParameter* Material::findParameter(const std::string& name)
+{
+	hashmap<std::string, ShaderParameter*>::const_iterator i = mParameters.find(name);
+	if (i == mParameters.end()) return nullptr;
+
+	return i->second;
+}
+
+ShaderTextureParameter* Material::findTextureParameter(ShaderParameter* parameter)
+{
+	if (parameter == nullptr)
+		return nullptr;
+
+	for (unsigned int i = 0; i < mTextureParameters.size(); ++i)
+	{
+		if (mTextureParameters[i]->mParameter == parameter)
+			return mTextureParameters[i];
+	}
+
+	return nullptr;
+}
+
+ShaderAutoParameter* Material::findAutoParameter(ShaderParameter* parameter)
+{
+	if (parameter == nullptr)
+		return nullptr;
+
+	std::list<ShaderAutoParameter*>::const_iterator i;
+	for (i = mAutoParameters.begin(); i != mAutoParameters.end(); ++i)
+	{
+		if ((*i)->mParameter == parameter)
+			return (*i);
+	}
+
+	return nullptr;
+}
+
+void Material::removeAllParameters()
+{
+	hashmap<std::string, ShaderParameter*>::iterator i;
+	for (i = mParameters.begin(); i != mParameters.end(); ++i)
+	{
+		SAFE_DELETE(i->second);
+	}
+
+	mParameters.clear();
+	mTextureParameters.clear();
+	mAutoParameters.clear();
+}
+
+void Material::setParameterImpl(ShaderParameter* parameter, const Color& col) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const core::matrix4& m) {}
+
+ShaderParameterType Material::getType(ShaderAutoParameterType type)
+{
+	switch(type)
+	{
+	case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
+		return SHADER_PARAMETER_TYPE_MATRIX4;
+	
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT:
+		return SHADER_PARAMETER_TYPE_INT;
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
+		return SHADER_PARAMETER_TYPE_FLOAT3;
+	
+	case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
+		return SHADER_PARAMETER_TYPE_FLOAT4;
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POWER_SCALE:
+		return SHADER_PARAMETER_TYPE_FLOAT;
+
+	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
+	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
+		return SHADER_PARAMETER_TYPE_FLOAT3;
+	
+	default:
+		return SHADER_PARAMETER_TYPE_UNKNOWN;
+	}
+}
+
+ShaderParameterType Material::getType(TextureType type)
+{
+	switch(type)
+	{
+	case TEX_TYPE_1D:
+		return SHADER_PARAMETER_TYPE_SAMPLER1D;
+	case TEX_TYPE_2D:
+		return SHADER_PARAMETER_TYPE_SAMPLER2D;
+	case TEX_TYPE_3D:
+		return SHADER_PARAMETER_TYPE_SAMPLER3D;
+	default:
+		return SHADER_PARAMETER_TYPE_SAMPLER2D;
+	}
 }
 
 } //namespace render

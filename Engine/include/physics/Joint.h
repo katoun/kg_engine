@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Vector3d.h>
 #include <core/Quaternion.h>
 #include <physics/JointDefines.h>

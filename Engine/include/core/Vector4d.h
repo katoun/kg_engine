@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _VECTOR_4D_H_
 #define _VECTOR_4D_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace core
 {

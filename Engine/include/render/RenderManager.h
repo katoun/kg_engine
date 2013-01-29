@@ -27,12 +27,12 @@ THE SOFTWARE.
 #ifndef _RENDER_MANAGER_H_
 #define _RENDER_MANAGER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/System.h>
 #include <core/Singleton.h>
 #include <render/Color.h>
 #include <render/Material.h>
-#include <render/ShaderParamData.h>
+#include <render/RenderStateData.h>
 
 #include <string>
 #include <list>
@@ -82,8 +82,9 @@ class IndexBuffer;
 class VertexDeclaration;
 class VertexBufferBinding;
 class FontFactory;
-class MaterialFactory;
 class MeshDataFactory;
+enum VertexBufferType;
+enum VertexElementType;
 enum IndexType;
 enum ShaderType;
 
@@ -187,7 +188,7 @@ public:
 	void removeAllShaders();
 
 	//! Create a vertex buffer.
-	VertexBuffer* createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
 	//! Removes a vertex buffer.
 	void removeVertexBuffer(VertexBuffer* buf);
 	//! Removes all vertex buffers.
@@ -199,37 +200,6 @@ public:
 	void removeIndexBuffer(IndexBuffer* buf);
 	//! Removes all index buffers.
 	void removeAllIndexBuffers();
-
-	//! Creates a vertex declaration.
-	VertexDeclaration* createVertexDeclaration();
-	//! Removes a vertex declaration.
-	void removeVertexDeclaration(VertexDeclaration* decl);
-	//! Removes all vertex declarations.
-	void removeAllVertexDeclarations();
-
-	//! Creates a new vertex buffer binding.
-	VertexBufferBinding* createVertexBufferBinding();
-	//! Removes a vertex buffer binding.
-	void removeVertexBufferBinding(VertexBufferBinding* binding);
-	//! Removes all vertex buffer bindings.
-	void removeAllVertexBufferBindings();
-
-	void setAmbientLight(const Color& ambient = Color::White);
-
-	void setFog(FogMode mode = FM_NONE, const Color& color = Color::White, float density = 0.001f, float start = 0.0f, float end = 1.0f);
-
-	//! Converts a uniform projection matrix suitable for the current render system.
-	void convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest);
-
-	//! Gets the minimum (closest) depth value to be used when rendering using identity transforms.
-	float getMinimumDepthInputValue();
-	//! Gets the maximum (farthest) depth value to be used when rendering using identity transforms.
-	float getMaximumDepthInputValue();
-
-	//! Returns the horizontal texel offset value required for mapping texel origins to pixel origins.
-	float getHorizontalTexelOffset();
-	//! Returns the vertical texel offset value required for mapping texel origins to pixel origins.
-	float getVerticalTexelOffset();
 
 	static RenderManager* getInstance();
 
@@ -246,7 +216,6 @@ protected:
 	void removeDefaultFactoriesImpl();
 
 	FontFactory* mDefaultFontFactory;
-	MaterialFactory* mDefaultMaterialFactory;
 	MeshDataFactory* mDefaultMeshDataFactory;
 
 	game::ComponentFactory* mDefaultCameraFactory;
@@ -276,20 +245,18 @@ protected:
 	//! Central list of shaders - for easy memory management and lookup.
 	std::map<unsigned int, Shader*> mShaders;
 
-	std::list<VertexDeclaration*> mVertexDeclarations;
-	std::list<VertexBufferBinding*> mVertexBufferBindings;
 	std::list<VertexBuffer*> mVertexBuffers;
 	std::list<IndexBuffer*> mIndexBuffers;
 
-	struct SolidModel
+	struct ModelMaterialPair
 	{
-		SolidModel()
+		ModelMaterialPair()
 		{
 			model = nullptr;
 			materialID = 0;
 		}
 
-		bool operator < (const SolidModel& other) const
+		bool operator < (const ModelMaterialPair& other) const
 		{
 			return (materialID < other.materialID);
 		}
@@ -297,52 +264,11 @@ protected:
 		Model* model;
 		unsigned int materialID;//Renderable material ID
 	};
-
-	struct TransparentModel
-	{
-		TransparentModel()
-		{
-			model = nullptr;
-			distance = 0;
-		}
-
-		bool operator < (const TransparentModel& other) const
-		{
-			return (distance > other.distance);
-		}
-
-		Model* model;
-		float distance;//Renderable distance to camera
-	};
-
-	struct DistanceLight
-	{
-		DistanceLight()
-		{
-			light = nullptr;
-			distance = 0;
-		}
-
-		bool operator < (const DistanceLight& other) const
-		{
-			return (distance < other.distance);
-		}
-
-		Light* light;
-		float distance;//Light distance to renderable
-	};
 	
-	std::vector<SolidModel> mSolidModels;
-	std::vector<TransparentModel> mTransparentModels;
-	std::vector<DistanceLight> mDistanceLights;
-
-	std::list<Light*> mLightsAffectingFrustum;
-
-	//! Current ambient light.
-	Color mAmbientLight;
+	std::vector<ModelMaterialPair> mModelMaterialPairs;
 
 	//! Shader auto parameter data.
-	ShaderParamData mShaderParamData;
+	RenderStateData mRenderStateData;
 
 	//! The default material.
 	Material* mDefaultMaterial;
@@ -352,13 +278,6 @@ protected:
 	std::list<Viewport*> mUpdatedViewports;
 
 	Frustum* mFrustum;
-
-	// Fog
-	FogMode mFogMode;
-	Color mFogColor;
-	float mFogDensity;
-	float mFogStart;
-	float mFogEnd;
 
 	int mLastViewportWidth;
 	int mLastViewportHeight;
@@ -372,7 +291,7 @@ protected:
 
 	void beginGeometryCount();
 
-	void addGeometruCount(Model* model);
+	void addGeometryCount(Model* model);
 
 	unsigned int getVertexCount();
 
@@ -386,17 +305,11 @@ protected:
 
 	void beginFrame(Viewport* viewport);
 
-	void findLightsAffectingFrustum(Camera* camera);
-
-	void findLightsAffectingModel(Model* model);
-
 	void findVisibleModels(Camera* camera);
 
 	void renderVisibleModels();
 
 	void renderSingleModel(Model* model);
-
-	void setMaterial(Material* material);
 
 	void endFrame();
 };

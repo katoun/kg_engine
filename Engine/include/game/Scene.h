@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SCENE_H_
 #define _SCENE_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <resource/Resource.h>
 
 #include <string>

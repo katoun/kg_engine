@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <engine/ObjectDefines.h>
 #include <core/Singleton.h>
 

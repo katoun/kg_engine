@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _INPUT_DEVICE_H_
 #define _INPUT_DEVICE_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <input/InputDeviceDefines.h>
 
 #include <string>

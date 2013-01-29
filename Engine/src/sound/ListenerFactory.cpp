@@ -54,8 +54,7 @@ void ListenerFactory::destroyComponent(game::Component* component)
 		SoundManager::getInstance()->removeListener(pListener);
 
 	assert(pListener != nullptr);
-	if (pListener != nullptr)
-		delete pListener;
+	SAFE_DELETE(pListener);
 }
 
 } // end namespace game

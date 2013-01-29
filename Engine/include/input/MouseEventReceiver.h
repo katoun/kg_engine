@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _MOUSE_EVENT_RECEIVER_H_
 #define _MOUSE_EVENT_RECEIVER_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace input
 {

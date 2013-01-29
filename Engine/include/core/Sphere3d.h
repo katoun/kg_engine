@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SPHERE_3D_H_
 #define _SPHERE_3D_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/Vector3d.h>
 
 namespace core

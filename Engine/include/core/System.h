@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <core/SystemDefines.h>
 
 namespace core

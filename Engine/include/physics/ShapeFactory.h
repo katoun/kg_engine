@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SHAPE_FACTORY_H_
 #define _SHAPE_FACTORY_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 namespace physics
 {

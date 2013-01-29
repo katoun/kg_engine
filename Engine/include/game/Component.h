@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _COMPONENT_H_
 #define _COMPONENT_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 #include <game/ComponentDefines.h>
 
 #include <string>

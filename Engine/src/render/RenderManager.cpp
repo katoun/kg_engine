@@ -35,13 +35,13 @@ THE SOFTWARE.
 #include <render/Camera.h>
 #include <render/CameraFactory.h>
 #include <render/Material.h>
-#include <render/MaterialFactory.h>
 #include <render/Model.h>
 #include <render/ModelFactory.h>
 #include <render/RenderDefines.h>
 #include <render/VertexBuffer.h>
+#include <render/VertexBufferDefines.h>
 #include <render/IndexBuffer.h>
-#include <render/VertexIndexData.h>
+#include <render/IndexBufferDefines.h>
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
 #include <render/Shader.h>
@@ -71,7 +71,6 @@ std::list<FrameEventReceiver*> RenderManager::mFrameEventReceivers;
 RenderManager::RenderManager(): core::System("RenderManager")
 {
 	mDefaultFontFactory = new FontFactory();
-	mDefaultMaterialFactory = new MaterialFactory();
 	mDefaultMeshDataFactory = new MeshDataFactory();
 	mDefaultCameraFactory = new CameraFactory();
 	mDefaultLightFactory = new LightFactory();
@@ -81,17 +80,9 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mRenderDriver = nullptr;
 	mCurrentViewport = nullptr;
 
-	mAmbientLight = Color::Black;
-
 	mDefaultMaterial = nullptr;
 
 	mFrustum = nullptr;
-
-	mFogMode = FM_NONE;
-	mFogColor = Color::White;
-	mFogDensity = 0.0f;
-	mFogStart = 0.0f;
-	mFogEnd = 0.0f;
 
 	mLastViewportWidth = 0;
 	mLastViewportHeight = 0;
@@ -102,30 +93,11 @@ RenderManager::RenderManager(): core::System("RenderManager")
 
 RenderManager::~RenderManager()
 {
-	if (mDefaultFontFactory != nullptr)
-	{
-		delete mDefaultFontFactory;
-	}
-	if (mDefaultMaterialFactory != nullptr)
-	{
-		delete mDefaultMaterialFactory;
-	}
-	if (mDefaultMeshDataFactory != nullptr)
-	{
-		delete mDefaultMeshDataFactory;
-	}
-	if (mDefaultCameraFactory != nullptr)
-	{
-		delete mDefaultCameraFactory;
-	}
-	if (mDefaultLightFactory != nullptr)
-	{
-		delete mDefaultLightFactory;
-	}
-	if (mDefaultModelFactory != nullptr)
-	{
-		delete mDefaultModelFactory;
-	}
+	SAFE_DELETE(mDefaultFontFactory);
+	SAFE_DELETE(mDefaultMeshDataFactory);
+	SAFE_DELETE(mDefaultCameraFactory);
+	SAFE_DELETE(mDefaultLightFactory);
+	SAFE_DELETE(mDefaultModelFactory);
 }
 
 RenderWindow* RenderManager::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
@@ -170,7 +142,7 @@ void RenderManager::removeRenderWindow(const unsigned int& id)
 	std::map<unsigned int, RenderWindow*>::iterator i = mRenderWindows.find(id);
 	if (i != mRenderWindows.end())
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		mRenderWindows.erase(i);
 	}
 }
@@ -180,7 +152,7 @@ void RenderManager::removeAllRenderWindows()
 	std::map<unsigned int, RenderWindow*>::iterator i; 
 	for (i = mRenderWindows.begin(); i != mRenderWindows.end(); ++i)
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		i->second = nullptr;
 	}
 
@@ -387,7 +359,7 @@ void RenderManager::removeShader(const unsigned int& id)
 	std::map<unsigned int, Shader*>::iterator i = mShaders.find(id);
 	if (i != mShaders.end())
 	{
-		delete i->second;
+		SAFE_DELETE(i->second);
 		mShaders.erase(i);
 	}
 }
@@ -397,13 +369,15 @@ void RenderManager::removeAllShaders()
 	mShaders.clear();
 }
 
-VertexBuffer* RenderManager::createVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
+VertexBuffer* RenderManager::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
 {
 	if (mRenderDriver)
 	{
-		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexSize, numVertices, usage);
-		if (buf)
+		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
+		if (buf != nullptr)
+		{
 			mVertexBuffers.push_back(buf);
+		}
 
 		return buf;
 	}
@@ -419,8 +393,10 @@ void RenderManager::removeVertexBuffer(VertexBuffer* buf)
 		{
 			mVertexBuffers.erase(i);
 
-			if (mRenderDriver)
+			if (mRenderDriver != nullptr)
+			{
 				mRenderDriver->removeVertexBuffer((*i));
+			}
 			return;
 		}
 	}
@@ -431,8 +407,10 @@ void RenderManager::removeAllVertexBuffers()
 	std::list<VertexBuffer*>::iterator i;
 	for (i = mVertexBuffers.begin(); i != mVertexBuffers.end(); ++i)
 	{
-		if (mRenderDriver)
+		if (mRenderDriver != nullptr)
+		{
 			mRenderDriver->removeVertexBuffer((*i));
+		}
 	}
 	mVertexBuffers.clear();
 }
@@ -442,8 +420,10 @@ IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int nu
 	if (mRenderDriver)
 	{
 		IndexBuffer* buf = mRenderDriver->createIndexBuffer(idxType, numIndexes, usage);
-		if (buf)
+		if (buf != nullptr)
+		{
 			mIndexBuffers.push_back(buf);
+		}
 
 		return buf;
 	}
@@ -459,8 +439,10 @@ void RenderManager::removeIndexBuffer(IndexBuffer* buf)
 		{
 			mIndexBuffers.erase(i);
 
-			if (mRenderDriver)
+			if (mRenderDriver != nullptr)
+			{
 				mRenderDriver->removeIndexBuffer((*i));
+			}
 			return;
 		}
 	}
@@ -471,122 +453,12 @@ void RenderManager::removeAllIndexBuffers()
 	std::list<IndexBuffer*>::iterator i;
 	for (i = mIndexBuffers.begin(); i != mIndexBuffers.end(); ++i)
 	{
-		if (mRenderDriver)
+		if (mRenderDriver != nullptr)
+		{
 			mRenderDriver->removeIndexBuffer((*i));
+		}
 	}
 	mIndexBuffers.clear();
-}
-
-VertexDeclaration* RenderManager::createVertexDeclaration()
-{
-	VertexDeclaration* decl = new VertexDeclaration();
-	mVertexDeclarations.push_back(decl);
-	return decl;
-}
-
-void RenderManager::removeVertexDeclaration(VertexDeclaration* decl)
-{
-	std::list<VertexDeclaration*>::iterator i;
-	for (i = mVertexDeclarations.begin(); i != mVertexDeclarations.end(); ++i)
-	{
-		if ((*i) == decl)
-		{
-			delete decl;
-			mVertexDeclarations.erase(i);
-			return;
-		}
-	}
-}
-
-void RenderManager::removeAllVertexDeclarations()
-{
-	std::list<VertexDeclaration*>::iterator i;
-	for (i = mVertexDeclarations.begin(); i != mVertexDeclarations.end(); ++i)
-		delete (*i);
-
-	mVertexDeclarations.clear();
-}
-
-VertexBufferBinding* RenderManager::createVertexBufferBinding()
-{
-	VertexBufferBinding* binding = new VertexBufferBinding();
-	mVertexBufferBindings.push_back(binding);
-	return binding;
-}
-
-void RenderManager::removeVertexBufferBinding(VertexBufferBinding* binding)
-{
-	std::list<VertexBufferBinding*>::iterator i;
-	for (i = mVertexBufferBindings.begin(); i != mVertexBufferBindings.end(); ++i)
-	{
-		if ((*i) == binding)
-		{
-			delete binding;
-			mVertexBufferBindings.erase(i);
-			return;
-		}
-	}
-}
-
-void RenderManager::removeAllVertexBufferBindings()
-{
-	std::list<VertexBufferBinding*>::iterator i;
-	for (i = mVertexBufferBindings.begin(); i != mVertexBufferBindings.end(); ++i)
-		delete (*i);
-
-	mVertexBufferBindings.clear();
-}
-
-void RenderManager::setAmbientLight(const Color& ambient)
-{
-	mAmbientLight = ambient;
-}
-
-void RenderManager::setFog(FogMode mode, const Color& color, float density, float start, float end)
-{
-	mFogMode = mode;
-	mFogColor = color;
-	mFogDensity = density;
-	mFogStart = start;
-	mFogEnd = end;
-}
-
-void RenderManager::convertProjectionMatrix(const core::matrix4& matrix, core::matrix4& dest)
-{
-	if (mRenderDriver)
-		mRenderDriver->convertProjectionMatrix( matrix, dest);
-}
-
-float RenderManager::getMinimumDepthInputValue()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getMinimumDepthInputValue();
-
-	return -1.0f;
-}
-
-float RenderManager::getMaximumDepthInputValue()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getMaximumDepthInputValue();
-
-	return 1.0f;
-}
-
-float RenderManager::getHorizontalTexelOffset()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getHorizontalTexelOffset();
-
-	return 0.0f;
-}
-
-float RenderManager::getVerticalTexelOffset()
-{
-	if (mRenderDriver)
-		return mRenderDriver->getVerticalTexelOffset();
-
-	return 0.0f;
 }
 
 void RenderManager::initializeImpl()
@@ -594,9 +466,7 @@ void RenderManager::initializeImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
-	mSolidModels.reserve(1024);
-	mTransparentModels.reserve(1024);
-	mDistanceLights.reserve(512);
+	mModelMaterialPairs.reserve(1024);
 }
 
 void RenderManager::uninitializeImpl()
@@ -616,26 +486,14 @@ void RenderManager::uninitializeImpl()
 	// Remove all Render Windows
 	removeAllRenderWindows();
 
-	// Remove all Vertex Declarations
-	removeAllVertexDeclarations();
-
-	// Remove all VertexBuffer Bindings
-	removeAllVertexBufferBindings();
-
 	//! Removes all Vertex Buffers.
 	removeAllVertexBuffers();
 
 	//! Removes all Index Buffers.
 	removeAllIndexBuffers();
 
-	// Remove SolidModels
-	mSolidModels.clear();
-	// Remove TransparentModels
-	mTransparentModels.clear();
-	// Remove DistanceLights
-	mDistanceLights.clear();
-
-	mLightsAffectingFrustum.clear();		
+	// Remove ModelMaterialPairs
+	mModelMaterialPairs.clear();
 
 	mMainWindow = nullptr;
 	mFrustum = nullptr;
@@ -696,7 +554,6 @@ void RenderManager::registerDefaultFactoriesImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_FONT, mDefaultFontFactory);
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, mDefaultMaterialFactory);
 		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
 	}
 
@@ -713,7 +570,6 @@ void RenderManager::removeDefaultFactoriesImpl()
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_FONT);
-		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
 	}
 
@@ -751,16 +607,16 @@ void RenderManager::beginGeometryCount()
 	mFaceCount = 0;
 }
 
-void RenderManager::addGeometruCount(Model* model)
+void RenderManager::addGeometryCount(Model* model)
 {
 	if (model == nullptr)
 		return;
 	
 	// Update stats
-	if (model->getVertexData() == nullptr || model->getIndexData() == nullptr)
+	if (model->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION) == nullptr && model->getIndexBuffer() == nullptr)
 		return;
 
-	unsigned int val = model->getIndexData()->indexCount;
+	unsigned int val = model->getIndexBuffer()->getNumIndexes();
 	
 	switch(model->getRenderOperationType())
 	{
@@ -777,7 +633,7 @@ void RenderManager::addGeometruCount(Model* model)
 		break;
 	}
 
-	mVertexCount += model->getVertexData()->vertexCount;
+	mVertexCount += model->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION)->getNumVertices();
 }
 
 unsigned int RenderManager::getVertexCount()
@@ -802,9 +658,7 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	setCurrentViewport(viewport);
 
-	mShaderParamData.setCurrentViewport(viewport);
-
-	mRenderDriver->setAmbientLight(mAmbientLight.R, mAmbientLight.G, mAmbientLight.B, mAmbientLight.A);
+	mRenderStateData.setCurrentViewport(viewport);
 
 	if (mLastViewportWidth != viewport->getActualWidth() || mLastViewportHeight != viewport->getActualHeight())
 	{
@@ -812,108 +666,21 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 		mLastViewportHeight = viewport->getActualHeight();
 	}
 
-	findLightsAffectingFrustum(camera);
-
 	findVisibleModels(camera);
 
 	beginGeometryCount();
 
 	beginFrame(viewport);
 
-	mShaderParamData.setCurrentCamera(camera);
+	mRenderStateData.setCurrentCamera(camera);
 
-	mRenderDriver->setProjectionMatrix(camera->getProjectionMatrixRS());
-	mRenderDriver->setViewMatrix(camera->getViewMatrix());
-
-	mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);//it seems this resets the world matrix before transforming the geometry
-
-	setMaterial(mDefaultMaterial);
-
-	mRenderDriver->setLightingEnabled(false);
-	
-	mRenderDriver->renderGridPlane(100 * ENGINE_UNIT_M);
-	
-	mRenderDriver->disableTextureUnitsFrom(0);
-	mRenderDriver->renderWorldAxes();
-
-	// Go through all the cameras
-	std::map<unsigned int, Camera*>::const_iterator ci;
-	for (ci = mCameras.begin(); ci != mCameras.end(); ++ci)
+	std::map<unsigned int, Light*>::const_iterator i = mLights.begin();
+	if (i != mLights.end())
 	{
-		Camera* pCamera = ci->second;
-		if (pCamera != nullptr && pCamera->getID() != camera->getID())
-		{
-			game::Transform* pTransform = nullptr;
-			if (pCamera->getGameObject() != nullptr)
-			{
-				pTransform = static_cast<game::Transform*>(pCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			}
+		mRenderStateData.setCurrentLight(i->second);
+	}	
 
-			if ((pTransform != nullptr && pTransform->getVisibleAxis()) || pCamera->getVisibleFrustum())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				if (pCamera->getVisibleFrustum())
-				{
-					mFrustum = pCamera->getFrustum();
-					if (mFrustum != nullptr)
-						mRenderDriver->renderFrustumVolume(mFrustum->getCorners());
-				}
-				if (pTransform != nullptr && pTransform->getVisibleAxis())
-				{
-					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-				}
-			}
-		}
-	}
-
-	// Go through all the lights
-	std::map<unsigned int, Light*>::const_iterator li;
-	for (li = mLights.begin(); li != mLights.end(); ++li)
-	{
-		Light* pLight = li->second;
-		if (pLight != nullptr)
-		{
-			game::Transform* pTransform = nullptr;
-			if (pLight->getGameObject() != nullptr)
-			{
-				pTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			}
-
-			if (pTransform != nullptr && pTransform->getVisibleAxis())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-			}
-		}
-	}
-	
 	renderVisibleModels();
-
-	mRenderDriver->setViewMatrix(core::matrix4::IDENTITY);
 	
 	endFrame();
 
@@ -978,101 +745,12 @@ void RenderManager::beginFrame(Viewport* viewport)
 	mRenderDriver->beginFrame(viewport);
 }
 
-void RenderManager::findLightsAffectingFrustum(Camera* camera)
-{
-	if (camera == nullptr)
-		return;
-	
-	mLightsAffectingFrustum.clear();
-
-	mFrustum = camera->getFrustum();
-
-	core::sphere3d sphere;
-	std::map<unsigned int, Light*>::const_iterator li;
-	for (li = mLights.begin(); li != mLights.end(); ++li)
-	{
-		mLightsAffectingFrustum.push_back(li->second);//Katoun TEMP for testings!!!
-
-		//////////////////////////////////////////////////////////////////////////
-
-		//if (li->second->getLightType() == LIGHT_TYPE_DIRECTIONAL)
-		//{
-		//	mLightsAffectingFrustum.push_back(li->second);
-		//}
-		//else
-		//{
-		//	// Just see if the lights attenuation range is within the frustum
-		//	sphere.set(li->second->getAbsolutePosition(), li->second->getAttenuationRange());
-		//	
-		//	if (mFrustum->isVisible(sphere))
-		//	{
-		//		mLightsAffectingFrustum.push_back(li->second);
-		//	}
-		//}
-	}
-}
-
-void RenderManager::findLightsAffectingModel(Model* model)
-{
-	if (model == nullptr)
-		return;
-	
-	mDistanceLights.clear();
-
-	std::list<Light*>::const_iterator i;
-	for (i = mLightsAffectingFrustum.begin(); i!= mLightsAffectingFrustum.end(); ++i)
-	{
-		Light* pLight = (*i);
-		if (pLight != nullptr)
-		{
-			if (pLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
-			{
-				DistanceLight newLight;
-				newLight.light = pLight;
-				newLight.distance = 0;
-				// No distance
-				mDistanceLights.push_back(newLight);
-			}
-			else
-			{
-				// Calculate squared distance
-				float distance = 0.0f;
-				game::Transform* pLightTransform = nullptr;
-				game::Transform* pModelTransform = nullptr;
-				if (pLight->getGameObject() != nullptr && model->getGameObject() != nullptr)
-				{
-					pLightTransform = static_cast<game::Transform*>(pLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					pModelTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-					if (pLightTransform != nullptr && pModelTransform)
-					{
-						distance = (pLightTransform->getAbsolutePosition() - pModelTransform->getAbsolutePosition()).getLengthSQ();
-					}
-				}
-
-				// only add in-range lights
-				float range = pLight->getAttenuationRange();
-				float maxDist = range + model->getBoundingSphere().Radius;
-				//if (distance <= (maxDist * maxDist))//Katoun TEMP REM for testing!!!
-				{
-					DistanceLight newLight;
-					newLight.light = pLight;
-					newLight.distance = distance;
-					mDistanceLights.push_back(newLight);
-				}
-			}
-		}	
-	}
-
-	std::sort(mDistanceLights.begin(), mDistanceLights.end());
-}
-
 void RenderManager::findVisibleModels(Camera* camera)
 {
 	if (camera == nullptr)
 		return;
 
-	mSolidModels.clear();
-	mTransparentModels.clear();
+	mModelMaterialPairs.clear();
 
 	mFrustum = camera->getFrustum();
 	if (mFrustum == nullptr)
@@ -1089,64 +767,23 @@ void RenderManager::findVisibleModels(Camera* camera)
 			{
 				Material* pMaterial = pModel->getMaterial();
 
-				if (pMaterial != nullptr)
-				{
-					if (pMaterial->isTransparent())
-					{
-						TransparentModel newTransparentModel;
-						newTransparentModel.model = pModel;
-						newTransparentModel.distance = 0.0f;
-
-						game::Transform* pCameraTransform = nullptr;
-						game::Transform* pModelTransform = nullptr;
-						if (camera->getGameObject() != nullptr && pModel->getGameObject() != nullptr)
-						{
-							pCameraTransform = static_cast<game::Transform*>(camera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-							pModelTransform = static_cast<game::Transform*>(pModel->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-							if (pCameraTransform != nullptr && pModelTransform != nullptr)
-							{
-								// Calculate squared distance
-								newTransparentModel.distance = (pModelTransform->getAbsolutePosition() - pCameraTransform->getAbsolutePosition()).getLengthSQ();
-							}
-						}
-
-						mTransparentModels.push_back(newTransparentModel);
-					}
-					else
-					{
-						SolidModel newSolidModel;
-						newSolidModel.model = pModel;
-						newSolidModel.materialID = mDefaultMaterial->getID();
-						mSolidModels.push_back(newSolidModel);
-					}
-				}
-				else
-				{
-					SolidModel newSolidModel;
-					newSolidModel.model = pModel;
-					newSolidModel.materialID = mDefaultMaterial->getID();
-					mSolidModels.push_back(newSolidModel);
-				}
+				ModelMaterialPair newPair;
+				newPair.model = pModel;
+				newPair.materialID = pMaterial != nullptr ? pMaterial->getID() : mDefaultMaterial->getID();
+				mModelMaterialPairs.push_back(newPair);
 			}
 		}
 	}
 
-	std::sort(mSolidModels.begin(), mSolidModels.end());
-	std::sort(mTransparentModels.begin(), mTransparentModels.end());
+	std::sort(mModelMaterialPairs.begin(), mModelMaterialPairs.end());
 }
 
 void RenderManager::renderVisibleModels()
 {
-	// Go through all the solid models	
-	for (unsigned int i = 0; i < mSolidModels.size(); ++i)
+	// Go through all the model material pairs	
+	for (unsigned int i = 0; i < mModelMaterialPairs.size(); ++i)
 	{
-		renderSingleModel(mSolidModels[i].model);
-	}
-
-	// Go through all the transparent models
-	for (unsigned int i = 0; i < mTransparentModels.size(); ++i)
-	{
-		renderSingleModel(mTransparentModels[i].model);
+		renderSingleModel(mModelMaterialPairs[i].model);
 	}
 }
 
@@ -1160,162 +797,18 @@ void RenderManager::renderSingleModel(Model* model)
 		game::Transform* pTransform = static_cast<game::Transform*>(model->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			if (pTransform->getVisibleAxis() || model->getVisibleBoundingBox() || model->getVisibleBoundingSphere())
-			{
-				mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-				mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-				mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-
-				mRenderDriver->setDepthBufferCheckEnabled(true);
-				mRenderDriver->setDepthBufferWriteEnabled(true);
-				mRenderDriver->disableTextureUnitsFrom(0);
-				mRenderDriver->setLightingEnabled(false);
-				mRenderDriver->setSceneBlending(SBF_ONE, SBF_ZERO);
-				mRenderDriver->setFog(FM_NONE);
-
-				mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-
-				if (pTransform->getVisibleAxis())
-					mRenderDriver->renderAxes(pTransform->getAbsolutePosition(), pTransform->getAbsoluteOrientation());
-				if (model->getVisibleBoundingBox())
-					mRenderDriver->renderBoundingBox(model->getBoundingBox());
-				if (model->getVisibleBoundingSphere())
-					mRenderDriver->renderBoundingSphere(model->getBoundingSphere());
-			}
-
-			findLightsAffectingModel(model);
-
-			// Create local light list for faster light iteration setup
-			static std::vector<Light*> localLightList;
-
-			for (unsigned int i = 0; i < mDistanceLights.size(); ++i)
-			{
-				localLightList.push_back(mDistanceLights[i].light);
-			}
-
-			mRenderDriver->setWorldMatrix(core::matrix4::IDENTITY);
-			mRenderDriver->setLights(localLightList);
-			
-			mRenderDriver->setWorldMatrix(model->getWorldMatrix());
-
-			mShaderParamData.setCurrentModel(model);
-			if (mDistanceLights.size() != 0)
-			{
-				mShaderParamData.setCurrentLight(mDistanceLights[0].light);
-			}
-
-			localLightList.clear();
-
 			if (model->getMaterial() != nullptr)
-				setMaterial(model->getMaterial());
+				mRenderStateData.setCurrentMaterial(model->getMaterial());
 			else
-				setMaterial(mDefaultMaterial);
+				mRenderStateData.setCurrentMaterial(mDefaultMaterial);
 
-			addGeometruCount(model);
-			mRenderDriver->renderModel(model);
+			mRenderStateData.setCurrentModel(model);
+
+			addGeometryCount(model);
+
+			mRenderDriver->render(mRenderStateData);
 		}
 	}
-}
-
-void RenderManager::setMaterial(Material* material)
-{
-	if (material == nullptr)
-		return;
-
-	bool surfaceAndLightParams = true;
-	bool fogParams = true;
-
-	if (material->hasVertexShader())
-	{
-		material->getVertexShader()->updateAutoParameters(mShaderParamData);
-		mRenderDriver->bindShader(material->getVertexShader());
-
-		surfaceAndLightParams = false;//material->getVertexProgram()->getSurfaceAndLightStates();
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_VERTEX))
-			mRenderDriver->unbindShader(SHADER_TYPE_VERTEX);
-	}
-
-	if (material->hasGeometryShader())
-	{
-		mRenderDriver->bindShader(material->getGeometryShader());
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_GEOMETRY))
-			mRenderDriver->unbindShader(SHADER_TYPE_GEOMETRY);
-	}
-	
-	if (surfaceAndLightParams)
-	{
-		if (material->getLightingEnabled())
-		{
-			mRenderDriver->setSurfaceParams(material->getAmbient(), material->getDiffuse(), material->getSpecular(), material->getEmissive(), material->getShininess());
-		}
-
-		mRenderDriver->setLightingEnabled(material->getLightingEnabled());
-	}
-
-	if (material->hasFragmentShader())
-	{
-		material->getFragmentShader()->updateAutoParameters(mShaderParamData);
-		mRenderDriver->bindShader(material->getFragmentShader());
-
-		fogParams = true;//material->getFragmentShader()->getFogStates();
-	}
-	else
-	{
-		if (mRenderDriver->isShaderBound(SHADER_TYPE_FRAGMENT))
-			mRenderDriver->unbindShader(SHADER_TYPE_FRAGMENT);
-	}
-
-	if (fogParams)
-	{
-		// New fog params can either be from scene or from material
-		FogMode newFogMode;
-		Color newFogColor;
-		float newFogDensity, newFogStart, newFogEnd;
-		if (material->getFogOverride())
-		{
-			// New fog params from material
-			newFogMode = material->getFogMode();
-			newFogColor = material->getFogColor();
-			newFogStart = material->getFogStart();
-			newFogEnd = material->getFogEnd();
-			newFogDensity = material->getFogDensity();
-		}
-		else
-		{
-			// New fog params from scene
-			newFogMode = mFogMode;
-			newFogColor = mFogColor;
-			newFogStart = mFogStart;
-			newFogEnd = mFogEnd;
-			newFogDensity = mFogDensity;
-		}
-
-		mRenderDriver->setFog(newFogMode, newFogColor, newFogDensity, newFogStart, newFogEnd);
-	}
-
-	mRenderDriver->setSceneBlending(material->getSourceBlendFactor(), material->getDestBlendFactor());
-
-	for (unsigned int i=0; i<ENGINE_MAX_TEXTURE_LAYERS; ++i)
-	{
-		TextureUnit* tu = material->getTextureUnit(i);
-
-		mRenderDriver->setTextureUnitSettings(i, tu);
-	}
-
-	// Disable remaining texture units
-	mRenderDriver->disableTextureUnitsFrom(material->getNumTextureUnits());
-
-	mRenderDriver->setDepthBufferCheckEnabled(material->getDepthCheckEnabled());
-	mRenderDriver->setDepthBufferWriteEnabled(material->getDepthWriteEnabled());
-
-	// Shading
-	mRenderDriver->setShadingType(material->getShadingMode());
 }
 
 void RenderManager::endFrame()

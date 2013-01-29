@@ -32,10 +32,10 @@ THE SOFTWARE.
 namespace render
 {
 
-GLVertexBuffer::GLVertexBuffer(unsigned int vertexSize, unsigned int numVertices, resource::BufferUsage usage)
-: VertexBuffer(vertexSize, numVertices, usage)
+GLVertexBuffer::GLVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
+: VertexBuffer(vertexBufferType, vertexElementType, numVertices, usage)
 {
-	glGenBuffersARB(1, &mBufferId);
+	glGenBuffers(1, &mBufferId);
 
 	if (!mBufferId)
 	{
@@ -43,40 +43,40 @@ GLVertexBuffer::GLVertexBuffer(unsigned int vertexSize, unsigned int numVertices
 		return;
 	}
 
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 
 	// Initialize mapped buffer and set usage
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
+	glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(usage));
 }
 
 GLVertexBuffer::~GLVertexBuffer() 
 {
-	glDeleteBuffersARB(1, &mBufferId);
+	glDeleteBuffers(1, &mBufferId);
 }
 
 void GLVertexBuffer::readData(unsigned int offset, unsigned int length, void* pDest)
 {
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
-	glGetBufferSubDataARB(GL_ARRAY_BUFFER_ARB, offset, length, pDest);
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+	glGetBufferSubData(GL_ARRAY_BUFFER, offset, length, pDest);
 }
 
 void GLVertexBuffer::writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer)
 {
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 
 	if (offset == 0 && length == mSizeInBytes)
 	{
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, pSource, GLRenderDriver::getGLUsage(mUsage));
+		glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, pSource, GLRenderDriver::getGLUsage(mUsage));
 	}
 	else
 	{
 		if(discardWholeBuffer)
 		{
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
+			glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 		}
 
 		// Now update the real buffer
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, offset, length, pSource);
+		glBufferSubData(GL_ARRAY_BUFFER, offset, length, pSource);
 	}
 }
 
@@ -95,13 +95,13 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 		return nullptr;
 	}
 
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 
 	if(options == resource::BL_DISCARD)
 	{
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
+		glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, GLRenderDriver::getGLUsage(mUsage));
 
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 
 	}
 	else if(options == resource::BL_READ_ONLY)
@@ -111,11 +111,11 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid attempt to lock a write-only vertex buffer as read-only", core::LOG_LEVEL_ERROR);
 			return nullptr;
 		}
-		access = GL_READ_ONLY_ARB;
+		access = GL_READ_ONLY;
 	}
 	else if(options == resource::BL_NORMAL || options == resource::BL_NO_OVERWRITE)
 	{
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE_ARB : GL_WRITE_ONLY_ARB;
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 	}
 	else
 	{	
@@ -123,7 +123,7 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 		return nullptr;
 	}
 
-	void* pBuffer = glMapBufferARB(GL_ARRAY_BUFFER_ARB, access);
+	void* pBuffer = glMapBuffer(GL_ARRAY_BUFFER, access);
 
 	if(pBuffer == nullptr)
 	{		
@@ -138,9 +138,9 @@ void* GLVertexBuffer::lockImpl(unsigned int offset, unsigned int length, resourc
 
 void GLVertexBuffer::unlockImpl()
 {
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 
-	if(!glUnmapBufferARB(GL_ARRAY_BUFFER_ARB))
+	if(!glUnmapBuffer(GL_ARRAY_BUFFER))
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
 		return;

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _WIN32_CONFIG_H_
 #define _WIN32_CONFIG_H_
 
-#include <core/Config.h>
+#include <EngineConfig.h>
 
 #include <string>
 
