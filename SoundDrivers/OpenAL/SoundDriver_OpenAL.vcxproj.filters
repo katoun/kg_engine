@@ -22,9 +22,6 @@
     <ClInclude Include="include\OpenALSoundData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\dependencies\alure\include\AL\config.h">
-      <Filter>Source Files\alure</Filter>
-    </ClInclude>
     <ClInclude Include="include\OpenALSoundFactory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -32,6 +29,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dependencies\alure\include\AL\alure.h">
+      <Filter>Source Files\alure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dependencies\alure\include\config.h">
       <Filter>Source Files\alure</Filter>
     </ClInclude>
   </ItemGroup>

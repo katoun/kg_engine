@@ -38,11 +38,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\..\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\..\bin\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\..\obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\..\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\..\bin\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\..\obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkIncremental>
@@ -59,8 +59,8 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -73,18 +73,18 @@
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engined.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engined.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib\$(Configuration);$(ProjectDir)..\..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>
       </SubSystem>
-      <ImportLibrary>$(ProjectDir)..\..\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(ProjectDir)..\..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\..\dependencies\openal-soft\Win32\soft_oal.dll" "$(OutDir)\OpenAL32.dll"
+      <Command>copy "$(ProjectDir)..\..\dependencies\openal-soft\build\$(Configuration)\OpenAL32.dll" "$(OutDir)\OpenAL32.dll"
 copy "$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration)\libogg.dll" "$(OutDir)"
 copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbis.dll" "$(OutDir)"
 copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbisfile.dll" "$(OutDir)"</Command>
@@ -105,8 +105,8 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Confi
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\alure\include\AL;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;HAVE_WINDOWS_H;HAVE_SYS_TYPES_H;HAVE_SIGNAL_H;HAS_VORBISFILE;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\..\Engine\include;$(ProjectDir)..\..\dependencies\glm;$(ProjectDir)..\..\dependencies\openal-soft\include\AL;$(ProjectDir)..\..\dependencies\alure\include;$(ProjectDir)..\..\dependencies\libogg\include;$(ProjectDir)..\..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;SOUNDSYSTEM_OPENAL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -118,19 +118,19 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Confi
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Engine.lib;libOpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib;$(ProjectDir)..\..\dependencies\openal-soft\lib\Win32;$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\lib\$(Configuration);$(ProjectDir)..\..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImportLibrary>$(ProjectDir)..\..\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(ProjectDir)..\..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\..\dependencies\openal-soft\Win32\soft_oal.dll" "$(OutDir)\OpenAL32.dll"
+      <Command>copy "$(ProjectDir)..\..\dependencies\openal-soft\build\$(Configuration)\OpenAL32.dll" "$(OutDir)\OpenAL32.dll"
 copy "$(ProjectDir)..\..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration)\libogg.dll" "$(OutDir)"
 copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbis.dll" "$(OutDir)"
 copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbisfile.dll" "$(OutDir)"</Command>
@@ -141,7 +141,7 @@ copy "$(ProjectDir)..\..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Confi
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dependencies\alure\include\AL\alure.h" />
-    <ClInclude Include="..\..\dependencies\alure\include\AL\config.h" />
+    <ClInclude Include="..\..\dependencies\alure\include\config.h" />
     <ClInclude Include="include\OpenALConfig.h" />
     <ClInclude Include="include\OpenALSound.h" />
     <ClInclude Include="include\OpenALSoundData.h" />

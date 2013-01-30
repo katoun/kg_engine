@@ -453,7 +453,7 @@
     <ClInclude Include="include\resource\TextureSerializer.h">
       <Filter>resource\serializers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Config.h" />
+    <ClInclude Include="include\EngineConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">

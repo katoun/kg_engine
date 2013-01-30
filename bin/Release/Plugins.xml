@@ -1,0 +1,6 @@
+<Plugins>
+	<Plugin>InputDriver_Win32</Plugin>
+	<Plugin>RenderDriver_GL</Plugin>
+	<Plugin>SoundDriver_OpenAL</Plugin>
+	<Plugin>PhysicsDriver_Bullet</Plugin>
+</Plugins>

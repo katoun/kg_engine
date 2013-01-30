@@ -71,11 +71,7 @@ EngineManager::EngineManager(): core::System("EngineManager")
 
 	resetTimer();
 
-#ifdef _DEBUG
-	mOptionsFile = "Engine_d.xml";
-#else
 	mOptionsFile = "Engine.xml";
-#endif
 }
 
 EngineManager::~EngineManager()

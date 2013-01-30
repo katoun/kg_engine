@@ -6,29 +6,40 @@ uniform vec4 lightDiffuse;
 uniform vec4 lightSpecular;
 
 varying vec2 texCoords;
-varying vec3 lightDirection;
+
+varying vec3 lightVector;
 varying vec3 halfAngle;
+
+float saturate(float inValue)
+{
+   return clamp(inValue, 0.0, 1.0);
+}
 
 void main()
 {
-	//Diffuse
-	vec4 diffuseColor = texture2D(diffuseMap, texCoords);
-	gl_FragColor = diffuseColor;
+	gl_FragColor = vec4(lightVector, 1.0);
 
-	//Bump
+
+	/*float specularPower = 2.0;
+
+	vec4 diffuseColor = texture2D(diffuseMap, texCoords);
 	vec4 normalColor = texture2D(normalMap, texCoords);
-	// retrieve normalised light vector
-	vec3 lightVec = normalize(lightDirection);
+	vec4 specularColor = texture2D(specularMap, texCoords);
+	
+	vec3 lightVec = normalize(lightVector);
+	vec3 halfVec = normalize(halfAngle);
+	
 	// get bump map vector, again expand from range-compressed
-	vec3 bumpVec = normalColor.xyz * 2.0 - 1.0;
-	gl_FragColor *= lightDiffuse * clamp(dot(bumpVec, lightVec), 0.0, 1.0);
+	vec3 bumpVec = normalize(normalColor.xyz * 2.0 - 1.0);
+
+	float dot_l = dot(bumpVec, lightVec);
+	float dot_h = dot(bumpVec, halfVec);
+	
+	float shininess = pow(max(dot_h, 0.0), specularPower);
+	
+	//Diffuse and bump
+	gl_FragColor = diffuseColor * lightDiffuse * saturate(dot_l);
 	
 	//Specular
-	vec4 specularColor = texture2D(specularMap, texCoords);
-	// retrieve half angle and normalise
-	vec3 halfVec = normalize(halfAngle);
-	// Pre-raise the specular exponent to the eight power
-	//float shininess = pow(clamp(dot(, halfVec), 0.0, 1.0), 4);
-	float shininess = pow(max(dot(bumpVec, halfVec), 0.0), 2.0);
-	gl_FragColor += specularColor * lightSpecular * shininess;
+	gl_FragColor += specularColor * lightSpecular * shininess;*/
 }

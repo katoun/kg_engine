@@ -29,9 +29,7 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 
-#include <alure.h>
-#include <efx.h>
-#include <efx-creative.h>
+#include <AL\alure.h>
 
 // Export Section
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
