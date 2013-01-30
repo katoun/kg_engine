@@ -30,61 +30,61 @@ THE SOFTWARE.
 namespace core
 {
 
-vector3d::vector3d() : X(0), Y(0), Z(0) {}
+vector3d::vector3d() : x(0), y(0), z(0) {}
 
-vector3d::vector3d(float nx, float ny, float nz) : X(nx), Y(ny), Z(nz) {}
+vector3d::vector3d(float nx, float ny, float nz) : x(nx), y(ny), z(nz) {}
 
-vector3d::vector3d(const vector3d& other) : X(other.X), Y(other.Y), Z(other.Z) {}
+vector3d::vector3d(const vector3d& other) : x(other.x), y(other.y), z(other.z) {}
 
 vector3d vector3d::operator-() const
 {
-	return vector3d(-X, -Y, -Z);
+	return vector3d(-x, -y, -z);
 }
 
 vector3d& vector3d::operator=(const vector3d& other)
 {
-	X = other.X;
-	Y = other.Y;
-	Z = other.Z;
+	x = other.x;
+	y = other.y;
+	z = other.z;
 	return *this;
 }
 
 vector3d vector3d::operator+(const vector3d& other) const
 {
-	return vector3d(X + other.X, Y + other.Y, Z + other.Z);
+	return vector3d(x + other.x, y + other.y, z + other.z);
 }
 
 vector3d& vector3d::operator+=(const vector3d& other)
 {
-	X += other.X;
-	Y += other.Y;
-	Z += other.Z;
+	x += other.x;
+	y += other.y;
+	z += other.z;
 	return *this;
 }
 
 vector3d vector3d::operator-(const vector3d& other) const
 {
-	return vector3d(X - other.X, Y - other.Y, Z - other.Z);
+	return vector3d(x - other.x, y - other.y, z - other.z);
 }
 
 vector3d& vector3d::operator-=(const vector3d& other)
 {
-	X -= other.X;
-	Y -= other.Y;
-	Z -= other.Z;
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
 	return *this;
 }
 
 vector3d vector3d::operator*(const float scalar) const
 {
-	return vector3d(X * scalar, Y * scalar, Z * scalar);
+	return vector3d(x * scalar, y * scalar, z * scalar);
 }
 
 vector3d& vector3d::operator*=(const float scalar)
 {
-	X *= scalar;
-	Y *= scalar;
-	Z *= scalar;
+	x *= scalar;
+	y *= scalar;
+	z *= scalar;
 	return *this;
 }
 
@@ -93,7 +93,7 @@ vector3d vector3d::operator/(const float scalar) const
 	assert(scalar != 0.0f);
 
 	float i = 1.0f / scalar;
-	return vector3d(X * i, Y * i, Z * i);
+	return vector3d(x * i, y * i, z * i);
 }
 
 vector3d& vector3d::operator/=(const float scalar)
@@ -101,24 +101,24 @@ vector3d& vector3d::operator/=(const float scalar)
 	assert(scalar != 0.0f);
 
 	float i = 1.0f / scalar;
-	X *= i;
-	Y *= i;
-	Z *= i;
+	x *= i;
+	y *= i;
+	z *= i;
 	return *this;
 }
 
 bool vector3d::operator==(const vector3d& other) const
 {
-	return ((other.X + EPSILON > X) && (other.X - EPSILON < X) &&
-			(other.Y + EPSILON > Y) && (other.Y - EPSILON < Y) &&
-			(other.Z + EPSILON > Z) && (other.Z - EPSILON < Z));
+	return ((other.x + EPSILON > x) && (other.x - EPSILON < x) &&
+			(other.y + EPSILON > y) && (other.y - EPSILON < y) &&
+			(other.z + EPSILON > z) && (other.z - EPSILON < z));
 }
 
 bool vector3d::operator!=(const vector3d& other) const
 {
-	return ((other.X + EPSILON < X) || (other.X - EPSILON > X) ||
-			(other.Y + EPSILON < Y) || (other.Y - EPSILON > Y) ||
-			(other.Z + EPSILON < Z) || (other.Z - EPSILON > Z));
+	return ((other.x + EPSILON < x) || (other.x - EPSILON > x) ||
+			(other.y + EPSILON < y) || (other.y - EPSILON > y) ||
+			(other.z + EPSILON < z) || (other.z - EPSILON > z));
 }
 
 vector3d& vector3d::normalize()
@@ -127,52 +127,52 @@ vector3d& vector3d::normalize()
 	if (ln > EPSILON)
 	{
 		ln = 1.0f / ln;
-		X *= ln;
-		Y *= ln;
-		Z *= ln;
+		x *= ln;
+		y *= ln;
+		z *= ln;
 	}
 	return *this;
 }
 
 void vector3d::invert()
 {
-	X = -X;
-	Y = -Y;
-	Z = -Z;
+	x = -x;
+	y = -y;
+	z = -z;
 }
 
 void vector3d::set(const float nx, const float ny, const float nz)
 {
-	X = nx;
-	Y = ny;
-	Z = nz;
+	x = nx;
+	y = ny;
+	z = nz;
 }
 
 void vector3d::set(const vector3d& other)
 {
-	X = other.X;
-	Y = other.Y;
-	Z = other.Z;
+	x = other.x;
+	y = other.y;
+	z = other.z;
 }
 
 float* vector3d::get()
 {
-	return &X;
+	return &x;
 }
 
 const float* vector3d::get() const
 {
-	return &X;
+	return &x;
 }
 
 float vector3d::getLength() const
 {
-	return sqrt(X*X + Y*Y + Z*Z);
+	return sqrt(x*x + y*y + z*z);
 }
 
 float vector3d::getLengthSQ() const
 {
-	return X*X + Y*Y + Z*Z;
+	return x*x + y*y + z*z;
 }
 
 void vector3d::setLength(float newLength)
@@ -181,35 +181,35 @@ void vector3d::setLength(float newLength)
 	if (ln > EPSILON)
 	{
 		ln = newLength / ln;
-		X *= ln;
-		Y *= ln;
-		Z *= ln;
+		x *= ln;
+		y *= ln;
+		z *= ln;
 	}
 }
 
 float vector3d::dotProduct(const vector3d& other) const
 {
-	return X*other.X + Y*other.Y + Z*other.Z;
+	return x*other.x + y*other.y + z*other.z;
 }
 
 vector3d vector3d::crossProduct(const vector3d& p) const
 {
-	return vector3d(Y * p.Z - Z * p.Y, Z * p.X - X * p.Z, X * p.Y - Y * p.X);
+	return vector3d(y * p.z - z * p.y, z * p.x - x * p.z, x * p.y - y * p.x);
 }
 
 float vector3d::getDistanceFrom(const vector3d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
-	float vz = Z - other.Z;
+	float vx = x - other.x;
+	float vy = y - other.y;
+	float vz = z - other.z;
 	return sqrt(vx*vx + vy*vy + vz*vz);
 }
 
 float vector3d::getDistanceFromSQ(const vector3d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
-	float vz = Z - other.Z;
+	float vx = x - other.x;
+	float vy = y - other.y;
+	float vz = z - other.z;
 	return (vx*vx + vy*vy + vz*vz);
 }
 

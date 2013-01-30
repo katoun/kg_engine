@@ -66,20 +66,20 @@ void OpenALSoundDriver::updateListener(Listener* listener)
 
 			// Initial orientation of the listener = direction + direction up
 			ALfloat lorientation[6];
-			lorientation[0] = -direction.X;
-			lorientation[1] = -direction.Y;
-			lorientation[2] = -direction.Z;
-			lorientation[3] = up.X;
-			lorientation[4] = up.Y;
-			lorientation[5] = up.Z;
+			lorientation[0] = -direction.x;
+			lorientation[1] = -direction.y;
+			lorientation[2] = -direction.z;
+			lorientation[3] = up.x;
+			lorientation[4] = up.y;
+			lorientation[5] = up.z;
 
-			alListener3f(AL_POSITION, position.X, position.Y, position.Z);
+			alListener3f(AL_POSITION, position.x, position.y, position.z);
 			if (checkALError("setListenerPosition::alListenerfv:AL_POSITION"))
 				return;
 			alListenerfv(AL_ORIENTATION, lorientation);
 			if (checkALError("setListenerPosition::alListenerfv:AL_DIRECTION"))
 				return;
-			alListener3f(AL_VELOCITY, velocity.X, velocity.Y, velocity.Z);
+			alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 			if (checkALError("setListenerPosition::alListenerfv:AL_VELOCITY"))
 				return;
 		}

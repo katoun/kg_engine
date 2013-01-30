@@ -65,9 +65,9 @@ LightType Light::getLightType()
 
 void Light::setAmbientColor(float red, float green, float blue)
 {
-	mAmbient.R = red;
-	mAmbient.G = green;
-	mAmbient.B = blue;
+	mAmbient.r = red;
+	mAmbient.g = green;
+	mAmbient.b = blue;
 }
 
 void Light::setAmbientColor(const render::Color& color)
@@ -82,9 +82,9 @@ const render::Color& Light::getAmbientColor() const
 
 void Light::setDiffuseColor(float red, float green, float blue)
 {
-	mDiffuse.R = red;
-	mDiffuse.G = green;
-	mDiffuse.B = blue;
+	mDiffuse.r = red;
+	mDiffuse.g = green;
+	mDiffuse.b = blue;
 }
 
 void Light::setDiffuseColor(const render::Color& color)
@@ -99,9 +99,9 @@ const render::Color& Light::getDiffuseColor() const
 
 void Light::setSpecularColor(float red, float green, float blue)
 {
-	mSpecular.R = red;
-	mSpecular.G = green;
-	mSpecular.B = blue;
+	mSpecular.r = red;
+	mSpecular.g = green;
+	mSpecular.b = blue;
 }
 
 void Light::setSpecularColor(const render::Color& color)

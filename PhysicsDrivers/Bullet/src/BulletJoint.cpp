@@ -78,7 +78,7 @@ void BulletSphericalJoint::initializeImpl()
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
 		BulletBody* bulletBody2 = static_cast<BulletBody*>(mActor2);
 
-		btVector3 pivotInA(mAnchor.X, mAnchor.Y, mAnchor.Z);
+		btVector3 pivotInA(mAnchor.x, mAnchor.y, mAnchor.z);
 		btVector3 pivotInB = bulletBody1->getBulletRigidBody()->getCenterOfMassTransform().inverse()(bulletBody2->getBulletRigidBody()->getCenterOfMassTransform()(pivotInA));
 
 		btTransform frameInA, frameInB;
@@ -151,11 +151,11 @@ void BulletHingeJoint::initializeImpl()
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
 		BulletBody* bulletBody2 = static_cast<BulletBody*>(mActor2);
 
-		btVector3 pivotInA(mAnchor.X, mAnchor.Y, mAnchor.Z);
+		btVector3 pivotInA(mAnchor.x, mAnchor.y, mAnchor.z);
 		btVector3 pivotInB = bulletBody1->getBulletRigidBody()->getCenterOfMassTransform().inverse()(bulletBody2->getBulletRigidBody()->getCenterOfMassTransform()(pivotInA));
 
-		btVector3 axisInA(mAxis.X, mAxis.Y, mAxis.Z);
-		btVector3 axisInB(mAxis.X, mAxis.Y, mAxis.Z);
+		btVector3 axisInA(mAxis.x, mAxis.y, mAxis.z);
+		btVector3 axisInB(mAxis.x, mAxis.y, mAxis.z);
 
 		mHingeConstraint = new btHingeConstraint(*(bulletBody1->getBulletRigidBody()), *(bulletBody2->getBulletRigidBody()), pivotInA, pivotInB, axisInA, axisInB);
 
@@ -279,7 +279,7 @@ void BulletGenericJoint::initializeImpl()
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
 		BulletBody* bulletBody2 = static_cast<BulletBody*>(mActor2);
 
-		btVector3 pivotInA(mAnchor.X, mAnchor.Y, mAnchor.Z);
+		btVector3 pivotInA(mAnchor.x, mAnchor.y, mAnchor.z);
 		btVector3 pivotInB = bulletBody1->getBulletRigidBody()->getCenterOfMassTransform().inverse()(bulletBody2->getBulletRigidBody()->getCenterOfMassTransform()(pivotInA));
 
 		btTransform frameInA, frameInB;
@@ -340,11 +340,11 @@ void BulletRigidJoint::initializeImpl()
 		BulletBody* bulletBody1 = static_cast<BulletBody*>(mActor1);
 		BulletBody* bulletBody2 = static_cast<BulletBody*>(mActor2);
 
-		btVector3 pivotInA(mAnchor.X, mAnchor.Y, mAnchor.Z);
+		btVector3 pivotInA(mAnchor.x, mAnchor.y, mAnchor.z);
 		btVector3 pivotInB = bulletBody1->getBulletRigidBody()->getCenterOfMassTransform().inverse()(bulletBody2->getBulletRigidBody()->getCenterOfMassTransform()(pivotInA));
 
-		btVector3 axisInA(mAxis.X, mAxis.Y, mAxis.Z);
-		btVector3 axisInB(mAxis.X, mAxis.Y, mAxis.Z);
+		btVector3 axisInA(mAxis.x, mAxis.y, mAxis.z);
+		btVector3 axisInB(mAxis.x, mAxis.y, mAxis.z);
 
 		mRigidConstraint = new btHingeConstraint(*(bulletBody1->getBulletRigidBody()), *(bulletBody2->getBulletRigidBody()), pivotInA, pivotInB, axisInA, axisInB);
 

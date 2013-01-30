@@ -56,13 +56,13 @@ OpenALSound::OpenALSound(): Sound()
 	core::vector3d position = core::vector3d::ORIGIN_3D;
 	core::vector3d direction = core::vector3d::NEGATIVE_UNIT_Z;
 
-	alSource3f(mSourceId, AL_POSITION, (ALfloat)position.X, (ALfloat)position.Y, (ALfloat)position.Z);
+	alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
 	//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))
 	//	return;
-	alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.X, (ALfloat)direction.Y, (ALfloat)direction.Z);
+	alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.x, (ALfloat)direction.y, (ALfloat)direction.z);
 	//if (checkALError("OpenALSound::alSourcefv:AL_DIRECTION"))
 	//	return;
-	alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.X, (ALfloat)mVelocity.Y, (ALfloat)mVelocity.Z);
+	alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.x, (ALfloat)mVelocity.y, (ALfloat)mVelocity.z);
 	//if (checkALError("OpenALSound::alSourcefv:AL_VELOCITY"))
 	//	return;
 	
@@ -246,13 +246,13 @@ void OpenALSound::updateImpl(float elapsedTime)
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
 
-				alSource3f(mSourceId, AL_POSITION, (ALfloat)position.X, (ALfloat)position.Y, (ALfloat)position.Z);
+				alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
 				//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))
 				//	return;
-				alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.X, (ALfloat)direction.Y, (ALfloat)direction.Z);
+				alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.x, (ALfloat)direction.y, (ALfloat)direction.z);
 				//if (checkALError("OpenALSound::alSourcefv:AL_DIRECTION"))
 				//	return;
-				alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.X, (ALfloat)mVelocity.Y, (ALfloat)mVelocity.Z);
+				alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.x, (ALfloat)mVelocity.y, (ALfloat)mVelocity.z);
 				//if (checkALError("OpenALSound::alSourcefv:AL_VELOCITY"))
 				//	return;
 			}

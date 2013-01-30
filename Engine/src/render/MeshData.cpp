@@ -45,8 +45,6 @@ MeshData::MeshData(const std::string& name, resource::Serializer* serializer): r
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 
 	mIndexBuffer = nullptr;
-	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
-	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 
 	mAABB = core::aabox3d();
 	mBoundRadius = 0.0f;
@@ -77,26 +75,6 @@ IndexBuffer* MeshData::getIndexBuffer()
 void MeshData::setIndexBuffer(IndexBuffer* buffer)
 {
 	mIndexBuffer = buffer;
-}
-
-void MeshData::setVertexBufferPolicy(resource::BufferUsage usage)
-{
-	mVertexBufferUsage = usage;
-}
-
-resource::BufferUsage& MeshData::getVertexBufferUsage()
-{
-	return mVertexBufferUsage;
-}
-
-void MeshData::setIndexBufferPolicy(resource::BufferUsage usage)
-{
-	mIndexBufferUsage = usage;
-}
-
-resource::BufferUsage& MeshData::getIndexBufferUsage()
-{
-	return mIndexBufferUsage;
 }
 
 void MeshData::setMaterial(const std::string& filename)
@@ -138,8 +116,6 @@ void MeshData::unloadImpl()
 
 	mVertexBuffers.clear();
 	mIndexBuffer = nullptr;
-	mVertexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
-	mIndexBufferUsage = resource::BU_STATIC_WRITE_ONLY;
 
 	mAABB = core::aabox3d();
 	mBoundRadius = 0.0f;

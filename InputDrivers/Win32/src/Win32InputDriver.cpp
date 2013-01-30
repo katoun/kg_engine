@@ -138,15 +138,15 @@ void Win32InputDriver::initializeImpl()
 
 	RECT rect;
 	GetClientRect(mHWnd, &rect);
-	mCursorCenter.X = (int)((rect.right - rect.left) / 2);
-	mCursorCenter.Y = (int)((rect.bottom - rect.top) / 2);
+	mCursorCenter.x = (int)((rect.right - rect.left) / 2);
+	mCursorCenter.y = (int)((rect.bottom - rect.top) / 2);
 
 	if (mCursor != nullptr)
 		mCursor->setPosition(mCursorCenter);
 
 #ifdef _DEBUG
-	//std::cout <<"mCursorCenterX : "<<mCursorCenter.X<< std::endl;
-	//std::cout <<"mCursorCenterY : "<<mCursorCenter.Y<< std::endl;
+	//std::cout <<"mCursorCenterX : "<<mCursorCenter.x<< std::endl;
+	//std::cout <<"mCursorCenterY : "<<mCursorCenter.y<< std::endl;
 #endif
 
 	//TODO init input system here

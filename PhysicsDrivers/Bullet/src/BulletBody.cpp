@@ -110,7 +110,7 @@ void BulletBody::applyForce(const core::vector3d& force)
 
 	if (mRigidBody != nullptr)
 	{
-		btVector3 f(mForce.X, mForce.Y, mForce.Z);
+		btVector3 f(mForce.x, mForce.y, mForce.z);
 		mRigidBody->applyCentralForce(f);
 
 		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -123,7 +123,7 @@ void BulletBody::applyTorque(const core::vector3d& torque)
 	
 	if (mRigidBody == nullptr)
 	{
-		btVector3 t(mTorque.X, mTorque.Y, mTorque.Z);
+		btVector3 t(mTorque.x, mTorque.y, mTorque.z);
 		mRigidBody->applyTorque(t);
 	
 		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -136,7 +136,7 @@ void BulletBody::applyLinearImpulse(const core::vector3d& linearImpulse)
 		
 	if (mRigidBody != nullptr)
 	{
-		btVector3 impulse(mLinearImpulse.X, mLinearImpulse.Y, mLinearImpulse.Z);
+		btVector3 impulse(mLinearImpulse.x, mLinearImpulse.y, mLinearImpulse.z);
 		mRigidBody->applyCentralImpulse(impulse);
 
 		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -149,7 +149,7 @@ void BulletBody::applyAngularImpulse(const core::vector3d& angularImpulse)
 	
 	if (mRigidBody != nullptr)
 	{
-		btVector3 impulse(mAngularImpulse.X, mAngularImpulse.Y, mAngularImpulse.Z);
+		btVector3 impulse(mAngularImpulse.x, mAngularImpulse.y, mAngularImpulse.z);
 		mRigidBody->applyTorqueImpulse(impulse);
 
 		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -208,8 +208,8 @@ void BulletBody::initializeImpl()
 			core::vector3d position = pTransform->getAbsolutePosition();
 			core::quaternion orientation = pTransform->getAbsoluteOrientation();
 
-			trans.setOrigin(btVector3(position.X, position.Y, position.Z));
-			trans.setRotation(btQuaternion(orientation.X, orientation.Y, orientation.Z, orientation.W));
+			trans.setOrigin(btVector3(position.x, position.y, position.z));
+			trans.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		}
 	}
 
@@ -269,13 +269,13 @@ void BulletBody::initializeImpl()
 	if (mBodyType != BT_STATIC)
 	{
 		mRigidBody->setDamping(btScalar(mLinearDamping), btScalar(mAngularDamping));
-		mRigidBody->setLinearVelocity(btVector3(mLinearVelocity.X, mLinearVelocity.Y, mLinearVelocity.X));
-		mRigidBody->setAngularVelocity(btVector3(mAngularVelocity.X, mAngularVelocity.Y, mAngularVelocity.X));
+		mRigidBody->setLinearVelocity(btVector3(mLinearVelocity.x, mLinearVelocity.y, mLinearVelocity.x));
+		mRigidBody->setAngularVelocity(btVector3(mAngularVelocity.x, mAngularVelocity.y, mAngularVelocity.x));
 	}
 
 	if (mForce != core::vector3d::ORIGIN_3D)
 	{
-		btVector3 f(mForce.X, mForce.Y, mForce.Z);
+		btVector3 f(mForce.x, mForce.y, mForce.z);
 		mRigidBody->applyCentralForce(f);
 
 		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -283,7 +283,7 @@ void BulletBody::initializeImpl()
 
 	if (mTorque != core::vector3d::ORIGIN_3D)
 	{
-		btVector3 t(mTorque.X, mTorque.Y, mTorque.Z);
+		btVector3 t(mTorque.x, mTorque.y, mTorque.z);
 		mRigidBody->applyTorque(t);
 	
 		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -291,7 +291,7 @@ void BulletBody::initializeImpl()
 
 	if (mLinearImpulse != core::vector3d::ORIGIN_3D)
 	{
-		btVector3 impulse(mLinearImpulse.X, mLinearImpulse.Y, mLinearImpulse.Z);
+		btVector3 impulse(mLinearImpulse.x, mLinearImpulse.y, mLinearImpulse.z);
 		mRigidBody->applyCentralImpulse(impulse);
 
 		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -299,7 +299,7 @@ void BulletBody::initializeImpl()
 
 	if (mAngularImpulse != core::vector3d::ORIGIN_3D)
 	{
-		btVector3 impulse(mAngularImpulse.X, mAngularImpulse.Y, mAngularImpulse.Z);
+		btVector3 impulse(mAngularImpulse.x, mAngularImpulse.y, mAngularImpulse.z);
 		mRigidBody->applyTorqueImpulse(impulse);
 
 		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
@@ -364,8 +364,8 @@ void BulletBody::updateImpl(float elapsedTime)
 				core::vector3d position = pTransform->getAbsolutePosition();
 				core::quaternion orientation = pTransform->getAbsoluteOrientation();
 
-				trans.setOrigin(btVector3(position.X, position.Y, position.Z));
-				trans.setRotation(btQuaternion(orientation.X, orientation.Y, orientation.Z, orientation.W));
+				trans.setOrigin(btVector3(position.x, position.y, position.z));
+				trans.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 			}
 		}
 	

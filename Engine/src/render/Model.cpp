@@ -273,7 +273,7 @@ void Model::updateImpl(float elapsedTime)
 					mWorldMatrix.transformBox(mBoundingBox);
 
 					// Update bounding sphere
-					float maxscale = core::max(scale.X, scale.Y, scale.Z);
+					float maxscale = core::max(scale.x, scale.y, scale.z);
 					mBoundingSphere.Radius = mMeshData->getBoundingSphereRadius();
 					mBoundingSphere.Radius *= maxscale;
 

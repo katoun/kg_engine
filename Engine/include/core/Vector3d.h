@@ -38,7 +38,7 @@ class ENGINE_PUBLIC_EXPORT vector3d
 public:
 
 	vector3d();
-	vector3d(float nx, float ny, float nz);
+	vector3d(float x, float y, float z);
 	vector3d(const vector3d& other);
 
 	vector3d operator-() const;
@@ -129,7 +129,7 @@ public:
 
 	static const vector3d UNIT_SCALE;
 
-	float X, Y, Z;
+	float x, y, z;
 };
 
 } // end namespace core

@@ -50,18 +50,18 @@ inline bool aabox3d::operator!=(const aabox3d& other) const
 
 void aabox3d::addInternalPoint(float x, float y, float z)
 {
-	if (x > MaxEdge.X) MaxEdge.X = x;
-	if (y > MaxEdge.Y) MaxEdge.Y = y;
-	if (z > MaxEdge.Z) MaxEdge.Z = z;
+	if (x > MaxEdge.x) MaxEdge.x = x;
+	if (y > MaxEdge.y) MaxEdge.y = y;
+	if (z > MaxEdge.z) MaxEdge.z = z;
 
-	if (x < MinEdge.X) MinEdge.X = x;
-	if (y < MinEdge.Y) MinEdge.Y = y;
-	if (z < MinEdge.Z) MinEdge.Z = z;
+	if (x < MinEdge.x) MinEdge.x = x;
+	if (y < MinEdge.y) MinEdge.y = y;
+	if (z < MinEdge.z) MinEdge.z = z;
 }
 
 void aabox3d::addInternalPoint(const vector3d& p)
 {
-	addInternalPoint(p.X, p.Y, p.Z);
+	addInternalPoint(p.x, p.y, p.z);
 }
 
 void aabox3d::addInternalBox(const aabox3d& b)
@@ -112,47 +112,47 @@ void aabox3d::getEdges(vector3d *edges) const
 	//!     |/        | /
 	//!     4---------6/
 
-	edges[0].set(middle.X + diag.X, middle.Y + diag.Y, middle.Z + diag.Z);
-	edges[1].set(middle.X + diag.X, middle.Y - diag.Y, middle.Z + diag.Z);
-	edges[2].set(middle.X + diag.X, middle.Y + diag.Y, middle.Z - diag.Z);
-	edges[3].set(middle.X + diag.X, middle.Y - diag.Y, middle.Z - diag.Z);
-	edges[4].set(middle.X - diag.X, middle.Y + diag.Y, middle.Z + diag.Z);
-	edges[5].set(middle.X - diag.X, middle.Y - diag.Y, middle.Z + diag.Z);
-	edges[6].set(middle.X - diag.X, middle.Y + diag.Y, middle.Z - diag.Z);
-	edges[7].set(middle.X - diag.X, middle.Y - diag.Y, middle.Z - diag.Z);
+	edges[0].set(middle.x + diag.x, middle.y + diag.y, middle.z + diag.z);
+	edges[1].set(middle.x + diag.x, middle.y - diag.y, middle.z + diag.z);
+	edges[2].set(middle.x + diag.x, middle.y + diag.y, middle.z - diag.z);
+	edges[3].set(middle.x + diag.x, middle.y - diag.y, middle.z - diag.z);
+	edges[4].set(middle.x - diag.x, middle.y + diag.y, middle.z + diag.z);
+	edges[5].set(middle.x - diag.x, middle.y - diag.y, middle.z + diag.z);
+	edges[6].set(middle.x - diag.x, middle.y + diag.y, middle.z - diag.z);
+	edges[7].set(middle.x - diag.x, middle.y - diag.y, middle.z - diag.z);
 }
 
 bool aabox3d::isEmpty() const
 {
 	vector3d d = MinEdge - MaxEdge;
-	if (d.X < 0.0f) d.X = -d.X;
-	if (d.Y < 0.0f) d.Y = -d.Y;
-	if (d.Z < 0.0f) d.Z = -d.Z;
+	if (d.x < 0.0f) d.x = -d.x;
+	if (d.y < 0.0f) d.y = -d.y;
+	if (d.z < 0.0f) d.z = -d.z;
 
-	return (d.X < EPSILON && d.Y < EPSILON && d.Z < EPSILON);
+	return (d.x < EPSILON && d.y < EPSILON && d.z < EPSILON);
 }
 
 void aabox3d::repair()
 {
 	float t;
 
-	if (MinEdge.X > MaxEdge.X)
+	if (MinEdge.x > MaxEdge.x)
 	{
-		t = MinEdge.X;
-		MinEdge.X = MaxEdge.X;
-		MaxEdge.X = t;
+		t = MinEdge.x;
+		MinEdge.x = MaxEdge.x;
+		MaxEdge.x = t;
 	}
-	if (MinEdge.Y > MaxEdge.Y)
+	if (MinEdge.y > MaxEdge.y)
 	{
-		t = MinEdge.Y;
-		MinEdge.Y = MaxEdge.Y;
-		MaxEdge.Y = t;
+		t = MinEdge.y;
+		MinEdge.y = MaxEdge.y;
+		MaxEdge.y = t;
 	}
-	if (MinEdge.Z > MaxEdge.Z)
+	if (MinEdge.z > MaxEdge.z)
 	{
-		t = MinEdge.Z;
-		MinEdge.Z = MaxEdge.Z;
-		MaxEdge.Z = t;
+		t = MinEdge.z;
+		MinEdge.z = MaxEdge.z;
+		MaxEdge.z = t;
 	}
 }
 

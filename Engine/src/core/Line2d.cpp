@@ -96,13 +96,13 @@ float line2d::getLength() const
 
 vector2d line2d::getVector() const
 {
-	return vector2d(start.X - end.X, start.Y - end.Y);
+	return vector2d(start.x - end.x, start.y - end.y);
 }
 
 vector2d line2d::getUnitVector()
 {
 	float len = (float)(1.0 / getLength());
-	return vector2d((end.X - start.X) * len, (end.Y - start.Y) * len);
+	return vector2d((end.x - start.x) * len, (end.y - start.y) * len);
 }
 
 float line2d::getAngleWith(const line2d& l)

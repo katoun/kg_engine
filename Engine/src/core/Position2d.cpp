@@ -30,64 +30,64 @@ THE SOFTWARE.
 namespace core
 {
 
-position2d::position2d() : X(0), Y(0) {}
+position2d::position2d() : x(0), y(0) {}
 
-position2d::position2d(int x, int y) : X(x), Y(y) {}
+position2d::position2d(int nx, int ny) : x(nx), y(ny) {}
 
-position2d::position2d(const position2d& other) : X(other.X), Y(other.Y) {}
+position2d::position2d(const position2d& other) : x(other.x), y(other.y) {}
 
 position2d& position2d::operator=(const position2d& other)
 {
-	X = other.X;
-	Y = other.Y;
+	x = other.x;
+	y = other.y;
 	return *this;
 }
 
 position2d position2d::operator+(const position2d& other) const
 {
-	return position2d(X + other.X, Y + other.Y);
+	return position2d(x + other.x, y + other.y);
 }
 
 position2d& position2d::operator+=(const position2d& other)
 {
-	X += other.X;
-	Y += other.Y;
+	x += other.x;
+	y += other.y;
 	return *this;
 }
 
 position2d position2d::operator-(const position2d& other) const
 {
-	return position2d(X -other.X, Y - other.Y);
+	return position2d(x -other.x, y - other.y);
 }
 
 position2d& position2d::operator-=(const position2d& other)
 {
-	X -= other.X;
-	Y -= other.Y;
+	x -= other.x;
+	y -= other.y;
 	return *this;
 }
 
 bool position2d::operator == (const position2d& other) const
 {
-	return (X == other.X && Y == other.Y);
+	return (x == other.x && y == other.y);
 }
 
 bool position2d::operator != (const position2d& other) const
 {
-	return (X != other.X || Y != other.Y);
+	return (x != other.x || y != other.y);
 }
 
 float position2d::getDistanceFrom(const position2d& other) const
 {
-	int vx = X - other.X;
-	int vy = Y - other.Y;
+	int vx = x - other.x;
+	int vy = y - other.y;
 	return sqrt((float)(vx*vx + vy*vy));
 }
 
 float position2d::getDistanceFromSQ(const position2d& other) const
 {
-	int vx = X - other.X;
-	int vy = Y - other.Y;
+	int vx = x - other.x;
+	int vy = y - other.y;
 	return (float)(vx*vx + vy*vy);
 }
 

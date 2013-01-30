@@ -61,7 +61,7 @@ public:
 	//! ORIGIN_2D is a const position2d that defines the 2d origin position for the 2d space
 	static const position2d ORIGIN_2D;
 
-	int X, Y;
+	int x, y;
 };
 
 } // end namespace core

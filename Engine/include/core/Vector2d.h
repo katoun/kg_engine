@@ -38,7 +38,7 @@ class ENGINE_PUBLIC_EXPORT vector2d
 public:
 
 	vector2d();
-	vector2d(float nx, float ny);
+	vector2d(float x, float y);
 	vector2d(const vector2d& other);
 
 	vector2d operator-() const;
@@ -113,7 +113,7 @@ public:
 	//! ORIGIN_2D is a const vector2d that defines the 2d origin vector for the 2d space
 	static const vector2d ORIGIN_2D;
 
-	float X, Y;
+	float x, y;
 };
 
 } // end namespace core

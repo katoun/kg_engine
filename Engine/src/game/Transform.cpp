@@ -66,9 +66,9 @@ const core::vector3d& Transform::getPosition()
 
 void Transform::setPosition(float x, float y, float z)
 {
-	mPosition.X = x;
-	mPosition.Y = y;
-	mPosition.Z = z;
+	mPosition.x = x;
+	mPosition.y = y;
+	mPosition.z = z;
 	mTransformNeedsUpdate = true;
 }
 
@@ -85,10 +85,10 @@ const core::quaternion& Transform::getOrientation()
 
 void Transform::setOrientation(float x, float y, float z, float w)
 {
-	mOrientation.X = x;
-	mOrientation.Y = y;
-	mOrientation.Z = z;
-	mOrientation.W = w;
+	mOrientation.x = x;
+	mOrientation.y = y;
+	mOrientation.z = z;
+	mOrientation.w = w;
 	mTransformNeedsUpdate = true;
 }
 
@@ -105,9 +105,9 @@ const core::vector3d& Transform::getScale()
 
 void Transform::setScale(float x, float y, float z)
 {
-	mScale.X = x;
-	mScale.Y = y;
-	mScale.Z = z;
+	mScale.x = x;
+	mScale.y = y;
+	mScale.z = z;
 	mTransformNeedsUpdate = true;
 }
 

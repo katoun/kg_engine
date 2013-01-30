@@ -43,34 +43,34 @@ inline void Frustum::buildViewFrustum(const core::matrix4& projMat, const core::
 {
 	core::matrix4 mat = projMat * viewMat;
 
-	mPlanes[FRUSTUM_PLANE_LEFT].Normal.X = mat(3,0) - mat(0,0);
-	mPlanes[FRUSTUM_PLANE_LEFT].Normal.Y = mat(3,1) - mat(0,1);
-	mPlanes[FRUSTUM_PLANE_LEFT].Normal.Z = mat(3,2) - mat(0,2);
+	mPlanes[FRUSTUM_PLANE_LEFT].Normal.x = mat(3,0) - mat(0,0);
+	mPlanes[FRUSTUM_PLANE_LEFT].Normal.y = mat(3,1) - mat(0,1);
+	mPlanes[FRUSTUM_PLANE_LEFT].Normal.z = mat(3,2) - mat(0,2);
 	mPlanes[FRUSTUM_PLANE_LEFT].D = mat(3,3) - mat(0,3);
 
-	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.X = mat(3,0) + mat(0,0);
-	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.Y = mat(3,1) + mat(0,1);
-	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.Z = mat(3,2) + mat(0,2);
+	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.x = mat(3,0) + mat(0,0);
+	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.y = mat(3,1) + mat(0,1);
+	mPlanes[FRUSTUM_PLANE_RIGHT].Normal.z = mat(3,2) + mat(0,2);
 	mPlanes[FRUSTUM_PLANE_RIGHT].D = mat(3,3) + mat(0,3);
 
-	mPlanes[FRUSTUM_PLANE_TOP].Normal.X = mat(3,0) + mat(1,0);
-	mPlanes[FRUSTUM_PLANE_TOP].Normal.Y = mat(3,1) + mat(1,1);
-	mPlanes[FRUSTUM_PLANE_TOP].Normal.Z = mat(3,2) + mat(1,2);
+	mPlanes[FRUSTUM_PLANE_TOP].Normal.x = mat(3,0) + mat(1,0);
+	mPlanes[FRUSTUM_PLANE_TOP].Normal.y = mat(3,1) + mat(1,1);
+	mPlanes[FRUSTUM_PLANE_TOP].Normal.z = mat(3,2) + mat(1,2);
 	mPlanes[FRUSTUM_PLANE_TOP].D = mat(3,3) + mat(1,3);
 
-	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.X = mat(3,0) - mat(1,0);
-	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.Y = mat(3,1) - mat(1,1);
-	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.Z = mat(3,2) - mat(1,2);
+	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.x = mat(3,0) - mat(1,0);
+	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.y = mat(3,1) - mat(1,1);
+	mPlanes[FRUSTUM_PLANE_BOTTOM].Normal.z = mat(3,2) - mat(1,2);
 	mPlanes[FRUSTUM_PLANE_BOTTOM].D = mat(3,3) - mat(1,3);
 
-	mPlanes[FRUSTUM_PLANE_NEAR].Normal.X = mat(3,0) + mat(2,0);
-	mPlanes[FRUSTUM_PLANE_NEAR].Normal.Y = mat(3,1) + mat(2,1);
-	mPlanes[FRUSTUM_PLANE_NEAR].Normal.Z = mat(3,2) + mat(2,2);
+	mPlanes[FRUSTUM_PLANE_NEAR].Normal.x = mat(3,0) + mat(2,0);
+	mPlanes[FRUSTUM_PLANE_NEAR].Normal.y = mat(3,1) + mat(2,1);
+	mPlanes[FRUSTUM_PLANE_NEAR].Normal.z = mat(3,2) + mat(2,2);
 	mPlanes[FRUSTUM_PLANE_NEAR].D = mat(3,3) + mat(2,3);
 
-	mPlanes[FRUSTUM_PLANE_FAR].Normal.X = mat(3,0) - mat(2,0);
-	mPlanes[FRUSTUM_PLANE_FAR].Normal.Y =mat(3,1) - mat(2,1);
-	mPlanes[FRUSTUM_PLANE_FAR].Normal.Z = mat(3,2) - mat(2,2);
+	mPlanes[FRUSTUM_PLANE_FAR].Normal.x = mat(3,0) - mat(2,0);
+	mPlanes[FRUSTUM_PLANE_FAR].Normal.y =mat(3,1) - mat(2,1);
+	mPlanes[FRUSTUM_PLANE_FAR].Normal.z = mat(3,2) - mat(2,2);
 	mPlanes[FRUSTUM_PLANE_FAR].D = mat(3,3) - mat(2,3);
 
 	for (unsigned char i = 0; i < 6; ++i)

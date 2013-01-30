@@ -4,6 +4,8 @@
 		<shader value="shaders/BasicShader_vp.glsl"/>
 		<param_vertex name="position" type="vertex_position"/>
 		<param_vertex name="normal" type="vertex_normal"/>
+		<param_vertex name="tangent" type="vertex_tangent"/>
+		<param_vertex name="binormal" type="vertex_binormal"/>
 		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
 		<param_auto name="modelViewProjMatrix" type="worldviewproj_matrix"/>
 	</vertex_shader>

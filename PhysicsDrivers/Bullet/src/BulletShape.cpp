@@ -47,7 +47,7 @@ void BulletPlaneShape::setDimension(const core::vector3d& normal, float d)
 {
 	PlaneShape::setDimension(normal, d);
 
-	btVector3 planeNorm(normal.X, normal.Y, normal.Z);
+	btVector3 planeNorm(normal.x, normal.y, normal.z);
 	btScalar planeConst(d);
 
 	mPlaneShape = new btStaticPlaneShape(planeNorm , planeConst);
@@ -103,7 +103,7 @@ void BulletBoxShape::setDimension(const core::vector3d& dimensions)
 {
 	BoxShape::setDimension(dimensions);
 
-	btVector3 dim(dimensions.X, dimensions.Y, dimensions.Z);
+	btVector3 dim(dimensions.x, dimensions.y, dimensions.z);
 
 	mBoxShape = new btBoxShape(dim);
 }

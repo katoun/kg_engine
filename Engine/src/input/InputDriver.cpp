@@ -33,8 +33,8 @@ InputDriver::InputDriver(const std::string& name): core::SystemDriver(name)
 {
 	mCursor = nullptr;
 
-	mCursorCenter.X = 0;
-	mCursorCenter.Y = 0;
+	mCursorCenter.x = 0;
+	mCursorCenter.y = 0;
 }
 
 InputDriver::~InputDriver() {}

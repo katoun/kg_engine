@@ -509,9 +509,9 @@ inline matrix4 matrix4::getTransposed() const
 
 inline void matrix4::setTranslation(const vector3d& translation)
 {
-	M[ 3] = translation.X;
-	M[ 7] = translation.Y;
-	M[11] = translation.Z;
+	M[ 3] = translation.x;
+	M[ 7] = translation.y;
+	M[11] = translation.z;
 }
 
 inline vector3d matrix4::getTranslation() const
@@ -521,9 +521,9 @@ inline vector3d matrix4::getTranslation() const
 
 inline void matrix4::setInverseTranslation(const vector3d& translation)
 {
-	M[ 3] = -translation.X;
-	M[ 7] = -translation.Y;
-	M[11] = -translation.Z;
+	M[ 3] = -translation.x;
+	M[ 7] = -translation.y;
+	M[11] = -translation.z;
 }
 
 inline void matrix4::setRotationRadians(const vector3d& rotation)
@@ -531,12 +531,12 @@ inline void matrix4::setRotationRadians(const vector3d& rotation)
 	// preserve scale
 	vector3d scale = getScale();
 	
-	float cr = cos(rotation.X);
-	float sr = sin(rotation.X);
-	float cp = cos(rotation.Y);
-	float sp = sin(rotation.Y);
-	float cy = cos(rotation.Z);
-	float sy = sin(rotation.Z);
+	float cr = cos(rotation.x);
+	float sr = sin(rotation.x);
+	float cp = cos(rotation.y);
+	float sp = sin(rotation.y);
+	float cy = cos(rotation.z);
+	float sy = sin(rotation.z);
 	
 	M[ 0] = cp * cy;
 	M[ 4] = cp * sy;
@@ -605,12 +605,12 @@ inline void matrix4::setInverseRotationRadians(const vector3d& rotation)
 	// preserve scale
 	vector3d scale = getScale();
 		
-	float cr = cos(rotation.X);
-	float sr = sin(rotation.X);
-	float cp = cos(rotation.Y);
-	float sp = sin(rotation.Y);
-	float cy = cos(rotation.Z);
-	float sy = sin(rotation.Z);
+	float cr = cos(rotation.x);
+	float sr = sin(rotation.x);
+	float cp = cos(rotation.y);
+	float sp = sin(rotation.y);
+	float cy = cos(rotation.z);
+	float sy = sin(rotation.z);
 
 	M[ 0] = cp * cy;
 	M[ 1] = cp * sy;
@@ -638,118 +638,118 @@ inline void matrix4::setInverseRotationDegrees(const vector3d& rotation)
 
 inline void matrix4::setScale(const vector3d& scale)
 {
-	M[ 0] *= scale.X;
-	M[ 4] *= scale.X;
-	M[ 8] *= scale.X;
+	M[ 0] *= scale.x;
+	M[ 4] *= scale.x;
+	M[ 8] *= scale.x;
 
-	M[ 1] *= scale.Y;
-	M[ 5] *= scale.Y;
-	M[ 9] *= scale.Y;
+	M[ 1] *= scale.y;
+	M[ 5] *= scale.y;
+	M[ 9] *= scale.y;
 
-	M[ 2] *= scale.Z;
-	M[ 6] *= scale.Z;
-	M[10] *= scale.Z;
+	M[ 2] *= scale.z;
+	M[ 6] *= scale.z;
+	M[10] *= scale.z;
 }
 
 inline vector3d matrix4::getScale() const
 {
 	vector3d scale;
 
-	scale.X = vector3d(M[ 0],M[ 4],M[ 8]).getLength();
-	scale.Y = vector3d(M[ 1],M[ 5],M[ 9]).getLength();
-	scale.Z = vector3d(M[ 2],M[ 6],M[10]).getLength();
+	scale.x = vector3d(M[ 0],M[ 4],M[ 8]).getLength();
+	scale.y = vector3d(M[ 1],M[ 5],M[ 9]).getLength();
+	scale.z = vector3d(M[ 2],M[ 6],M[10]).getLength();
 
 	return scale;
 }
 
 inline void matrix4::setInverseScale(const vector3d& scale)
 {
-	M[ 0] /= scale.X;
-	M[ 4] /= scale.X;
-	M[ 8] /= scale.X;
+	M[ 0] /= scale.x;
+	M[ 4] /= scale.x;
+	M[ 8] /= scale.x;
 
-	M[ 1] /= scale.Y;
-	M[ 5] /= scale.Y;
-	M[ 9] /= scale.Y;
+	M[ 1] /= scale.y;
+	M[ 5] /= scale.y;
+	M[ 9] /= scale.y;
 
-	M[ 2] /= scale.Z;
-	M[ 6] /= scale.Z;
-	M[10] /= scale.Z;
+	M[ 2] /= scale.z;
+	M[ 6] /= scale.z;
+	M[10] /= scale.z;
 }
 
 inline void matrix4::translateVector(vector3d& vect) const
 {
-	vect.X = vect.X + M[ 3];
-	vect.Y = vect.Y + M[ 7];
-	vect.Z = vect.Z + M[11];
+	vect.x = vect.x + M[ 3];
+	vect.y = vect.y + M[ 7];
+	vect.z = vect.z + M[11];
 }
 
 inline void matrix4::inverseTranslateVector(vector3d& vect) const
 {
-	vect.X = vect.X - M[ 3];
-	vect.Y = vect.Y - M[ 7];
-	vect.Z = vect.Z - M[11];
+	vect.x = vect.x - M[ 3];
+	vect.y = vect.y - M[ 7];
+	vect.z = vect.z - M[11];
 }
 
 inline void matrix4::rotateVector(vector3d& vect) const
 {
 	vector3d tmp = vect;
 
-	vect.X = M[ 0] * tmp.X + M[ 1] * tmp.Y + M[ 2] * tmp.Z + M[ 3];
-	vect.Y = M[ 4] * tmp.X + M[ 5] * tmp.Y + M[ 6] * tmp.Z + M[ 7];
-	vect.Z = M[ 8] * tmp.X + M[ 9] * tmp.Y + M[10] * tmp.Z + M[11];
+	vect.x = M[ 0] * tmp.x + M[ 1] * tmp.y + M[ 2] * tmp.z + M[ 3];
+	vect.y = M[ 4] * tmp.x + M[ 5] * tmp.y + M[ 6] * tmp.z + M[ 7];
+	vect.z = M[ 8] * tmp.x + M[ 9] * tmp.y + M[10] * tmp.z + M[11];
 }
 
 inline void matrix4::inverseRotateVect(vector3d& vect) const
 {
 	vector3d tmp = vect;
 
-	vect.X = M[ 0] * tmp.X + M[ 4] * tmp.Y + M[ 8] * tmp.Z + M[12];
-	vect.Y = M[ 1] * tmp.X + M[ 5] * tmp.Y + M[ 9] * tmp.Z + M[13];
-	vect.Z = M[ 2] * tmp.X + M[ 6] * tmp.Y + M[10] * tmp.Z + M[11];
+	vect.x = M[ 0] * tmp.x + M[ 4] * tmp.y + M[ 8] * tmp.z + M[12];
+	vect.y = M[ 1] * tmp.x + M[ 5] * tmp.y + M[ 9] * tmp.z + M[13];
+	vect.z = M[ 2] * tmp.x + M[ 6] * tmp.y + M[10] * tmp.z + M[11];
 }
 
 inline void matrix4::transformVector(vector3d& vect) const
 {
 	float vector[3];
 
-	vector[0] = M[ 0] * vect.X + M[ 1] * vect.Y + M[ 2] * vect.Z + M[ 3];
-	vector[1] = M[ 4] * vect.X + M[ 5] * vect.Y + M[ 6] * vect.Z + M[ 7];
-	vector[2] = M[ 8] * vect.X + M[ 9] * vect.Y + M[10] * vect.Z + M[11];
+	vector[0] = M[ 0] * vect.x + M[ 1] * vect.y + M[ 2] * vect.z + M[ 3];
+	vector[1] = M[ 4] * vect.x + M[ 5] * vect.y + M[ 6] * vect.z + M[ 7];
+	vector[2] = M[ 8] * vect.x + M[ 9] * vect.y + M[10] * vect.z + M[11];
 
-	vect.X = vector[0];
-	vect.Y = vector[1];
-	vect.Z = vector[2];
+	vect.x = vector[0];
+	vect.y = vector[1];
+	vect.z = vector[2];
 }
 
 inline void matrix4::transformVector(const vector3d& in, vector3d& out) const
 {	
-	out.X = M[ 0] * in.X + M[ 1] * in.Y + M[ 2] * in.Z + M[ 3];
-	out.Y = M[ 4] * in.X + M[ 5] * in.Y + M[ 6] * in.Z + M[ 7];
-	out.Z = M[ 8] * in.X + M[ 9] * in.Y + M[10] * in.Z + M[11];
+	out.x = M[ 0] * in.x + M[ 1] * in.y + M[ 2] * in.z + M[ 3];
+	out.y = M[ 4] * in.x + M[ 5] * in.y + M[ 6] * in.z + M[ 7];
+	out.z = M[ 8] * in.x + M[ 9] * in.y + M[10] * in.z + M[11];
 }
 
 inline void matrix4::transformVector(vector4d& vect) const
 {
 	float vector[4];
 
-	vector[0] = M[ 0] * vect.X + M[ 1] * vect.Y + M[ 2] * vect.Z + M[ 3] * vect.W;
-	vector[1] = M[ 4] * vect.X + M[ 5] * vect.Y + M[ 6] * vect.Z + M[ 7] * vect.W;
-	vector[2] = M[ 8] * vect.X + M[ 9] * vect.Y + M[10] * vect.Z + M[11] * vect.W;
-	vector[3] = M[12] * vect.X + M[13] * vect.Y + M[14] * vect.Z + M[15] * vect.W;
+	vector[0] = M[ 0] * vect.x + M[ 1] * vect.y + M[ 2] * vect.z + M[ 3] * vect.w;
+	vector[1] = M[ 4] * vect.x + M[ 5] * vect.y + M[ 6] * vect.z + M[ 7] * vect.w;
+	vector[2] = M[ 8] * vect.x + M[ 9] * vect.y + M[10] * vect.z + M[11] * vect.w;
+	vector[3] = M[12] * vect.x + M[13] * vect.y + M[14] * vect.z + M[15] * vect.w;
 
-	vect.X = vector[0];
-	vect.Y = vector[1];
-	vect.Z = vector[2];
-	vect.W = vector[3];
+	vect.x = vector[0];
+	vect.y = vector[1];
+	vect.z = vector[2];
+	vect.w = vector[3];
 }
 
 inline void matrix4::transformVector(const vector4d& in, vector4d& out) const
 {	
-	out.X = M[ 0] * in.X + M[ 1] * in.Y + M[ 2] * in.Z + M[ 3] * in.W;
-	out.Y = M[ 4] * in.X + M[ 5] * in.Y + M[ 6] * in.Z + M[ 7] * in.W;
-	out.Z = M[ 8] * in.X + M[ 9] * in.Y + M[10] * in.Z + M[11] * in.W;
-	out.W = M[12] * in.X + M[13] * in.Y + M[14] * in.Z + M[15] * in.W;
+	out.x = M[ 0] * in.x + M[ 1] * in.y + M[ 2] * in.z + M[ 3] * in.w;
+	out.y = M[ 4] * in.x + M[ 5] * in.y + M[ 6] * in.z + M[ 7] * in.w;
+	out.z = M[ 8] * in.x + M[ 9] * in.y + M[10] * in.z + M[11] * in.w;
+	out.w = M[12] * in.x + M[13] * in.y + M[14] * in.z + M[15] * in.w;
 }
 
 inline void matrix4::transformPlane(plane3d &plane) const
@@ -919,24 +919,24 @@ inline void matrix4::buildViewMatrix(const vector3d& position, const vector3d& t
 
 	vector3d trans;
 
-	trans.X = -xaxis.dotProduct(position);
-	trans.Y = -yaxis.dotProduct(position);
-	trans.Z = -zaxis.dotProduct(position);
+	trans.x = -xaxis.dotProduct(position);
+	trans.y = -yaxis.dotProduct(position);
+	trans.z = -zaxis.dotProduct(position);
 
-	M[ 0] = xaxis.X;
-	M[ 1] = xaxis.Y;
-	M[ 2] = xaxis.Z;
-	M[ 3] = trans.X;
+	M[ 0] = xaxis.x;
+	M[ 1] = xaxis.y;
+	M[ 2] = xaxis.z;
+	M[ 3] = trans.x;
 
-	M[ 4] = yaxis.X;
-	M[ 5] = yaxis.Y;
-	M[ 6] = yaxis.Z;
-	M[ 7] = trans.Y;
+	M[ 4] = yaxis.x;
+	M[ 5] = yaxis.y;
+	M[ 6] = yaxis.z;
+	M[ 7] = trans.y;
 
-	M[ 8] = zaxis.X;
-	M[ 9] = zaxis.Y;
-	M[10] = zaxis.Z;
-	M[11] = trans.Z;
+	M[ 8] = zaxis.x;
+	M[ 9] = zaxis.y;
+	M[10] = zaxis.z;
+	M[11] = trans.z;
 
 	M[12] = 0.0f;
 	M[13] = 0.0f;
@@ -953,20 +953,20 @@ void matrix4::buildWorldMatrix(const vector3d& position, const vector3d& scale, 
 
 	core::matrix4 rot = orientation.toRotationMatrix();
 
-	(*this)(0,0) = scale.X * rot(0,0);
-	(*this)(0,1) = scale.Y * rot(0,1);
-	(*this)(0,2) = scale.Z * rot(0,2);
-	(*this)(0,3) = position.X;
+	(*this)(0,0) = scale.x * rot(0,0);
+	(*this)(0,1) = scale.y * rot(0,1);
+	(*this)(0,2) = scale.z * rot(0,2);
+	(*this)(0,3) = position.x;
 
-	(*this)(1,0) = scale.X * rot(1,0);
-	(*this)(1,1) = scale.Y * rot(1,1);
-	(*this)(1,2) = scale.Z * rot(1,2);
-	(*this)(1,3) = position.Y;
+	(*this)(1,0) = scale.x * rot(1,0);
+	(*this)(1,1) = scale.y * rot(1,1);
+	(*this)(1,2) = scale.z * rot(1,2);
+	(*this)(1,3) = position.y;
 
-	(*this)(2,0) = scale.X * rot(2,0);
-	(*this)(2,1) = scale.Y * rot(2,1);
-	(*this)(2,2) = scale.Z * rot(2,2);
-	(*this)(2,3) = position.Z;
+	(*this)(2,0) = scale.x * rot(2,0);
+	(*this)(2,1) = scale.y * rot(2,1);
+	(*this)(2,2) = scale.z * rot(2,2);
+	(*this)(2,3) = position.z;
 
 	(*this)(3,0) = 0;
 	(*this)(3,1) = 0;
@@ -979,24 +979,24 @@ inline void matrix4::buildShadowMatrix(vector3d light, plane3d plane, float poin
 	plane.Normal.normalize();
 	float d = plane.Normal.dotProduct(light);
 
-	(*this)(0,0) = plane.Normal.X * light.X + d;
-	(*this)(1,0) = plane.Normal.X * light.Y;
-	(*this)(2,0) = plane.Normal.X * light.Z;
-	(*this)(3,0) = plane.Normal.X * point;
+	(*this)(0,0) = plane.Normal.x * light.x + d;
+	(*this)(1,0) = plane.Normal.x * light.y;
+	(*this)(2,0) = plane.Normal.x * light.z;
+	(*this)(3,0) = plane.Normal.x * point;
 
-	(*this)(0,1) = plane.Normal.Y * light.X;
-	(*this)(1,1) = plane.Normal.Y * light.Y + d;
-	(*this)(2,1) = plane.Normal.Y * light.Z;
-	(*this)(3,1) = plane.Normal.Y * point;
+	(*this)(0,1) = plane.Normal.y * light.x;
+	(*this)(1,1) = plane.Normal.y * light.y + d;
+	(*this)(2,1) = plane.Normal.y * light.z;
+	(*this)(3,1) = plane.Normal.y * point;
 
-	(*this)(0,2) = plane.Normal.Z * light.X;
-	(*this)(1,2) = plane.Normal.Z * light.Y;
-	(*this)(2,2) = plane.Normal.Z * light.Z + d;
-	(*this)(3,2) = plane.Normal.Z * point;
+	(*this)(0,2) = plane.Normal.z * light.x;
+	(*this)(1,2) = plane.Normal.z * light.y;
+	(*this)(2,2) = plane.Normal.z * light.z + d;
+	(*this)(3,2) = plane.Normal.z * point;
 
-	(*this)(0,3) = plane.D * light.X;
-	(*this)(1,3) = plane.D * light.Y;
-	(*this)(2,3) = plane.D * light.Z;
+	(*this)(0,3) = plane.D * light.x;
+	(*this)(1,3) = plane.D * light.y;
+	(*this)(2,3) = plane.D * light.z;
 	(*this)(3,3) = plane.D * point + d;
 }
 

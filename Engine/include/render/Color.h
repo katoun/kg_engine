@@ -45,7 +45,9 @@ namespace render
 class ENGINE_PUBLIC_EXPORT Color
 {
 public:
-	Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f);
+	Color();
+	Color(float red, float green, float blue);
+	Color(float red, float green, float blue, float alpha);
 	Color(const Color& other);
 
 	inline Color& operator=(const Color& other);
@@ -101,7 +103,7 @@ public:
 	//! Retrieves colors as ABGR.
 	unsigned int getAsABGR() const;
 
-	float R, G, B, A;
+	float r, g, b, a;
 
 	static const Color ZERO;
 	static const Color Black;

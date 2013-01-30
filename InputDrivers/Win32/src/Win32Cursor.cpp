@@ -51,7 +51,7 @@ void Win32Cursor::setAutoCenter(bool set)
 
 void Win32Cursor::setPosition(const core::position2d& pos)
 {
-	setPosition(pos.X, pos.Y);
+	setPosition(pos.x, pos.y);
 }
 
 void Win32Cursor::setPosition(int x, int y)
@@ -61,9 +61,9 @@ void Win32Cursor::setPosition(int x, int y)
 
 void Win32Cursor::updateImpl(float elapsedTime)
 {
-	oi_mouse_relative(0, &mPosition.X, &mPosition.Y);
+	oi_mouse_relative(0, &mPosition.x, &mPosition.y);
 
-	oi_mouse_absolute(0, &mAbsolutePosition.X, &mAbsolutePosition.Y);
+	oi_mouse_absolute(0, &mAbsolutePosition.x, &mAbsolutePosition.y);
 }
 
 } // end namespace input

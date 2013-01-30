@@ -74,22 +74,6 @@ public:
 	//! Sets new index buffer for this Mesh.
 	void setIndexBuffer(IndexBuffer* buffer);
 
-	//! Sets the policy for the vertex buffers to be used when loading this Mesh.
-	//! You can define the approach to a Mesh by changing the default parameters to 
-	//! MeshManager::load if you wish; this means the Mesh is loaded with those options
-	//! the first time.
-	//! \param usage: The usage flags, which by default are resource::BU_STATIC_WRITE_ONLY.
-	void setVertexBufferPolicy(resource::BufferUsage usage);
-
-	//! Gets the vertex buffer usage for this Mesh.
-	resource::BufferUsage& getVertexBufferUsage();
-
-	//! Sets the policy for the index buffers to be used when loading this Mesh.
-	void setIndexBufferPolicy(resource::BufferUsage usage);
-
-	//! Gets the index buffer usage for this Mesh.
-	resource::BufferUsage& getIndexBufferUsage();
-
 	//! Sets the name of the material which this mesh will use.
 	void setMaterial(const std::string& filename);
 
@@ -117,9 +101,6 @@ private:
 
 	//! The render operation type used to render this mesh.
 	RenderOperationType mRenderOperationType;
-
-	resource::BufferUsage mVertexBufferUsage;
-	resource::BufferUsage mIndexBufferUsage;
 
 	//! Dedicated vertex data.
 	std::map<VertexBufferType, VertexBuffer*> mVertexBuffers;

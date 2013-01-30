@@ -118,7 +118,7 @@ void BulletPhysicsDriver::setGravity(const core::vector3d& gravity)
 {
 	if (mDynamicsWorld != nullptr)
 	{
-		mDynamicsWorld->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
+		mDynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 	}
 }
 
@@ -243,13 +243,13 @@ void BulletPhysicsDriver::updateImpl(float elapsedTime)
 			btVector3 pos = pt.getPositionWorldOnB();
 			btVector3 norm = pt.m_normalWorldOnB;
 
-			position.X = pos.getX();
-			position.Y = pos.getY();
-			position.Z = pos.getZ();
+			position.x = pos.getX();
+			position.y = pos.getY();
+			position.z = pos.getZ();
 
-			normal.X = norm.getX();
-			normal.Y = norm.getY();
-			normal.Z = norm.getZ();
+			normal.x = norm.getX();
+			normal.y = norm.getY();
+			normal.z = norm.getZ();
 
 			distance = pt.getDistance();
 

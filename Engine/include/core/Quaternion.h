@@ -45,7 +45,7 @@ public:
 	quaternion();
 	quaternion(const matrix4& mat);
 	quaternion(float x, float y, float z);
-	quaternion(float X, float Y, float Z, float W);
+	quaternion(float x, float y, float z, float w);
 	quaternion(const quaternion& other);
 	quaternion(const vector3d& axis, const float& angle);
 	
@@ -145,7 +145,7 @@ public:
 	static const quaternion ZERO;
 	static const quaternion IDENTITY;
 
-	float X, Y, Z, W;
+	float x, y, z, w;
 };
 
 } // end namespace core

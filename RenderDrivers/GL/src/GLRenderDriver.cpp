@@ -118,7 +118,7 @@ void GLRenderDriver::beginFrame(Viewport* vp)
 
 		Color col = vp->getBackgroundColor();
 
-		glClearColor(col.R, col.G, col.B, col.A);
+		glClearColor(col.r, col.g, col.b, col.a);
 
 		glClearDepth(1.0f);									// Depth Buffer Setup
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
@@ -300,6 +300,9 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	std::vector<ShaderVertexParameter*> vertexParameters = pGLMaterial->getVertexParameters();
 	for (std::size_t vertexType = VERTEX_BUFFER_TYPE_POSITION; vertexType != VERTEX_BUFFER_TYPE_COUNT; ++vertexType)
 	{
+		if (vertexParameters[vertexType] == nullptr)
+			continue;
+		
 		pGLShaderVertexParameter = static_cast<GLShaderVertexParameter*>(vertexParameters[vertexType]);
 
 		if (pGLShaderParameter == nullptr)

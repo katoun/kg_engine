@@ -39,8 +39,8 @@ InputManager::InputManager(): core::System("InputManager")
 {
 	mCursor = nullptr;
 
-	mCursorCenter.X = 0;
-	mCursorCenter.Y = 0;
+	mCursorCenter.x = 0;
+	mCursorCenter.y = 0;
 
 	mInputDriver = nullptr;
 }

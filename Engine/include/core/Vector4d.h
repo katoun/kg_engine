@@ -41,7 +41,7 @@ class ENGINE_PUBLIC_EXPORT vector4d
 public:
 
 	vector4d();
-	vector4d(float nx, float ny, float nz, float nw);
+	vector4d(float x, float y, float z, float w);
 	vector4d(const vector4d& other);
 	vector4d(const vector3d& other);
 
@@ -98,7 +98,7 @@ public:
 	//! Here, the vector is interpreted as point in 3 dimensional space.
 	float getDistanceFromSQ(const vector4d& other) const;
 
-	float X, Y, Z, W;
+	float x, y, z, w;
 };
 
 } // end namespace core

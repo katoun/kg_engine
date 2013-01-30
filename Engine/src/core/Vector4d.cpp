@@ -31,133 +31,133 @@ THE SOFTWARE.
 namespace core
 {
 
-vector4d::vector4d(): X(0), Y(0), Z(0), W(0) {}
+vector4d::vector4d(): x(0), y(0), z(0), w(0) {}
 
-vector4d::vector4d(float nx, float ny, float nz, float nw) : X(nx), Y(ny), Z(nz), W(nw) {}
+vector4d::vector4d(float nx, float ny, float nz, float nw) : x(nx), y(ny), z(nz), w(nw) {}
 
-vector4d::vector4d(const vector4d& other) : X(other.X), Y(other.Y), Z(other.Z), W(other.W) {}
+vector4d::vector4d(const vector4d& other) : x(other.x), y(other.y), z(other.z), w(other.w) {}
 
-vector4d::vector4d(const vector3d& other) : X(other.X), Y(other.Y), Z(other.Z), W(0) {}
+vector4d::vector4d(const vector3d& other) : x(other.x), y(other.y), z(other.z), w(0) {}
 
 vector4d vector4d::operator-() const
 {
-	return vector4d(-X, -Y, -Z, -W);
+	return vector4d(-x, -y, -z, -w);
 }
 
 vector4d& vector4d::operator=(const vector4d& other)
 {
-	X = other.X;
-	Y = other.Y;
-	Z = other.Z;
-	W = other.W;
+	x = other.x;
+	y = other.y;
+	z = other.z;
+	w = other.w;
 	return *this;
 }
 
 vector4d vector4d::operator+(const vector4d& other) const
 {
-	return vector4d(X + other.X, Y + other.Y, Z + other.Z, W + other.W);
+	return vector4d(x + other.x, y + other.y, z + other.z, w + other.w);
 }
 
 vector4d& vector4d::operator+=(const vector4d& other)
 {
-	X += other.X;
-	Y += other.Y;
-	Z += other.Z;
-	W += other.W;
+	x += other.x;
+	y += other.y;
+	z += other.z;
+	w += other.w;
 	return *this;
 }
 
 vector4d vector4d::operator-(const vector4d& other) const
 {
-	return vector4d(X - other.X, Y - other.Y, Z - other.Z, W - other.W);
+	return vector4d(x - other.x, y - other.y, z - other.z, w - other.w);
 }
 vector4d& vector4d::operator-=(const vector4d& other)
 {
-	X -= other.X;
-	Y -= other.Y;
-	Z -= other.Z;
-	W -= other.W;
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
+	w -= other.w;
 	return *this;
 }
 
 vector4d vector4d::operator*(const float scalar) const
 {
-	return vector4d(X * scalar, Y * scalar, Z * scalar, W * scalar);
+	return vector4d(x * scalar, y * scalar, z * scalar, w * scalar);
 }
 
 vector4d& vector4d::operator*=(const float scalar)
 {
-	X *= scalar;
-	Y *= scalar;
-	Z *= scalar;
-	W *= scalar;
+	x *= scalar;
+	y *= scalar;
+	z *= scalar;
+	w *= scalar;
 	return *this;
 }
 
 vector4d vector4d::operator/(const float scalar) const
 {
 	float i = 1.0f / scalar;
-	return vector4d(X * i, Y * i, Z * i, W * i);
+	return vector4d(x * i, y * i, z * i, w * i);
 }
 
 vector4d& vector4d::operator/=(const float scalar)
 {
 	float i = 1.0f / scalar;
-	X *= i;
-	Y *= i;
-	Z *= i;
-	W *= i;
+	x *= i;
+	y *= i;
+	z *= i;
+	w *= i;
 	return *this;
 }
 
 bool vector4d::operator==(const vector4d& other) const
 {
-	return ((other.X + EPSILON > X) && (other.X - EPSILON < X) &&
-			(other.Y + EPSILON > Y) && (other.Y - EPSILON < Y) &&
-			(other.Z + EPSILON > Z) && (other.Z - EPSILON < Z) &&
-			(other.W + EPSILON > W) && (other.W - EPSILON < W));
+	return ((other.x + EPSILON > x) && (other.x - EPSILON < x) &&
+			(other.y + EPSILON > y) && (other.y - EPSILON < y) &&
+			(other.z + EPSILON > z) && (other.z - EPSILON < z) &&
+			(other.w + EPSILON > w) && (other.w - EPSILON < w));
 }
 
 bool vector4d::operator!=(const vector4d& other) const
 {
-	return ((other.X + EPSILON < X) || (other.X - EPSILON > X) ||
-			(other.Y + EPSILON < Y) || (other.Y - EPSILON > Y) ||
-			(other.Z + EPSILON < Z) || (other.Z - EPSILON > Z) ||
-			(other.W + EPSILON < W) || (other.W - EPSILON > W));
+	return ((other.x + EPSILON < x) || (other.x - EPSILON > x) ||
+			(other.y + EPSILON < y) || (other.y - EPSILON > y) ||
+			(other.z + EPSILON < z) || (other.z - EPSILON > z) ||
+			(other.w + EPSILON < w) || (other.w - EPSILON > w));
 }
 
 void vector4d::set(const float nx, const float ny, const float nz, const float nw)
 {
-	X = nx;
-	Y = ny;
-	Z = nz;
-	W = nw;
+	x = nx;
+	y = ny;
+	z = nz;
+	w = nw;
 }
 
 void vector4d::set(const vector4d& other)
 {
-	X = other.X;
-	Y = other.Y;
-	Z = other.Z;
-	W = other.W;
+	x = other.x;
+	y = other.y;
+	z = other.z;
+	w = other.w;
 }
 
 float* vector4d::get()
 {
-	return &X;
+	return &x;
 }
 
 const float* vector4d::get() const
 {
-	return &X;
+	return &x;
 }
 
 void vector4d::invert()
 {
-	X = -X;
-	Y = -Y;
-	Z = -Z;
-	W = -W;
+	x = -x;
+	y = -y;
+	z = -z;
+	w = -w;
 }
 
 vector4d& vector4d::normalize()
@@ -169,21 +169,21 @@ vector4d& vector4d::normalize()
 	}
 
 	l = 1.0f / l;
-	X *= l;
-	Y *= l;
-	Z *= l;
-	W *= l;
+	x *= l;
+	y *= l;
+	z *= l;
+	w *= l;
 	return *this;
 }
 
 float vector4d::getLength() const
 {
-	return sqrt(X*X + Y*Y + Z*Z + W*W);
+	return sqrt(x*x + y*y + z*z + w*w);
 }
 
 float vector4d::getLengthSQ() const
 {
-	return X*X + Y*Y + Z*Z + W*W;
+	return x*x + y*y + z*z + w*w;
 }
 
 void vector4d::setLength(float newLength)
@@ -195,32 +195,32 @@ void vector4d::setLength(float newLength)
 	}
 
 	l = newLength / l;
-	X *= l;
-	Y *= l;
-	Z *= l;
-	W *= l;
+	x *= l;
+	y *= l;
+	z *= l;
+	w *= l;
 }
 
 float vector4d::dotProduct(const vector4d& other) const
 {
-	return X*other.X + Y*other.Y + Z*other.Z + W*other.W;
+	return x*other.x + y*other.y + z*other.z + w*other.w;
 }
 
 float vector4d::getDistanceFrom(const vector4d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
-	float vz = Z - other.Z;
-	float vw = W - other.W;
+	float vx = x - other.x;
+	float vy = y - other.y;
+	float vz = z - other.z;
+	float vw = w - other.w;
 	return sqrt(vx*vx + vy*vy + vz*vz + vw*vw);
 }
 
 float vector4d::getDistanceFromSQ(const vector4d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
-	float vz = Z - other.Z;
-	float vw = W - other.W;
+	float vx = x - other.x;
+	float vy = y - other.y;
+	float vz = z - other.z;
+	float vw = w - other.w;
 	return (vx*vx + vy*vy + vz*vz + vw * vw);
 }
 

@@ -46,9 +46,9 @@ const ShapeType& Shape::getShapeType() const
 
 void Shape::setPosition(float x, float y, float z)
 {
-	mPosition.X = x;
-	mPosition.Y = y;
-	mPosition.Z = z;
+	mPosition.x = x;
+	mPosition.y = y;
+	mPosition.z = z;
 }
 
 void Shape::setPosition(const core::vector3d& pos)

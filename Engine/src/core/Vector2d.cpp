@@ -30,88 +30,88 @@ THE SOFTWARE.
 namespace core
 {
 
-vector2d::vector2d() : X(0), Y(0) {}
+vector2d::vector2d() : x(0), y(0) {}
 
-vector2d::vector2d(float nx, float ny) : X(nx), Y(ny) {}
+vector2d::vector2d(float nx, float ny) : x(nx), y(ny) {}
 
-vector2d::vector2d(const vector2d& other) : X(other.X), Y(other.Y) {}
+vector2d::vector2d(const vector2d& other) : x(other.x), y(other.y) {}
 
 vector2d vector2d::operator-() const
 {
-	return vector2d(-X, -Y);
+	return vector2d(-x, -y);
 }
 
 vector2d& vector2d::operator=(const vector2d& other)
 {
-	X = other.X;
-	Y = other.Y;
+	x = other.x;
+	y = other.y;
 	return *this;
 }
 
 vector2d vector2d::operator+(const vector2d& other) const
 {
-	return vector2d(X + other.X, Y + other.Y);
+	return vector2d(x + other.x, y + other.y);
 }
 
 vector2d& vector2d::operator+=(const vector2d& other)
 {
-	X += other.X;
-	Y += other.Y;
+	x += other.x;
+	y += other.y;
 	return *this;
 }
 
 vector2d vector2d::operator-(const vector2d& other) const
 {
-	return vector2d(X - other.X, Y - other.Y);
+	return vector2d(x - other.x, y - other.y);
 }
 
 vector2d& vector2d::operator-=(const vector2d& other)
 {
-	X -= other.X;
-	Y -= other.Y;
+	x -= other.x;
+	y -= other.y;
 	return *this;
 }
 
 vector2d vector2d::operator*(const float scalar) const
 {
-	return vector2d(X * scalar, Y * scalar);
+	return vector2d(x * scalar, y * scalar);
 }
 
 vector2d& vector2d::operator*=(const float v)
 {
-	X *= v;
-	Y *= v;
+	x *= v;
+	y *= v;
 	return *this;
 }
 
 vector2d vector2d::operator/(const float scalar) const
 {
-	return vector2d(X / scalar, Y / scalar);
+	return vector2d(x / scalar, y / scalar);
 }
 
 vector2d& vector2d::operator/=(const float scalar)
 {
-	X /= scalar;
-	Y /= scalar;
+	x /= scalar;
+	y /= scalar;
 	return *this;
 }
 
 bool vector2d::operator==(const vector2d& other) const
 {
-	return ((other.X + EPSILON > X) && (other.X - EPSILON < X) &&
-			(other.Y + EPSILON > Y) && (other.Y - EPSILON < Y));
+	return ((other.x + EPSILON > x) && (other.x - EPSILON < x) &&
+			(other.y + EPSILON > y) && (other.y - EPSILON < y));
 }
 
 bool vector2d::operator!=(const vector2d& other) const
 {
-	return ((other.X + EPSILON < X) || (other.X - EPSILON > X) ||
-			(other.Y + EPSILON < Y) || (other.Y - EPSILON > Y));
+	return ((other.x + EPSILON < x) || (other.x - EPSILON > x) ||
+			(other.y + EPSILON < y) || (other.y - EPSILON > y));
 }
 
 void vector2d::invert()
 {
-	X = -X;
-	Y = -Y;
+	x = -x;
+	y = -y;
 }
 
 vector2d& vector2d::normalize()
@@ -120,42 +120,42 @@ vector2d& vector2d::normalize()
 	if (ln > EPSILON)
 	{
 		ln = (float)1.0 / ln;
-		X *= ln;
-		Y *= ln;
+		x *= ln;
+		y *= ln;
 	}
 	return *this;
 }
 
 void vector2d::set(const float& nx, const float& ny)
 {
-	X = nx;
-	Y = ny;
+	x = nx;
+	y = ny;
 }
 
 void vector2d::set(const vector2d& other)
 {
-	X = other.X;
-	Y = other.Y;
+	x = other.x;
+	y = other.y;
 }
 
 float* vector2d::get()
 {
-	return &X;
+	return &x;
 }
 
 const float* vector2d::get() const
 {
-	return &X;
+	return &x;
 }
 
 float vector2d::getLength() const
 {
-	return sqrt(X*X + Y*Y);
+	return sqrt(x*x + y*y);
 }
 
 float vector2d::getLengthSQ() const
 {
-	return X*X + Y*Y;
+	return x*x + y*y;
 }
 
 void vector2d::setLength(float newLength)
@@ -168,27 +168,27 @@ void vector2d::setLength(float newLength)
 	if (ln > EPSILON)
 	{
 		ln = newLength / ln;
-		X *= ln;
-		Y *= ln;
+		x *= ln;
+		y *= ln;
 	}
 }
 
 float vector2d::dotProduct(const vector2d& other) const
 {
-	return X*other.X + Y*other.Y;
+	return x*other.x + y*other.y;
 }
 
 float vector2d::getDistanceFrom(const vector2d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
+	float vx = x - other.x;
+	float vy = y - other.y;
 	return sqrt(vx*vx + vy*vy);
 }
 
 float vector2d::getDistanceFromSQ(const vector2d& other) const
 {
-	float vx = X - other.X;
-	float vy = Y - other.Y;
+	float vx = x - other.x;
+	float vy = y - other.y;
 	return (vx*vx + vy*vy);
 }
 
@@ -198,52 +198,52 @@ void vector2d::rotateBy(float degrees, const vector2d& center)
 	float cs = cos(degrees);
 	float sn = sin(degrees);
 
-	X -= center.X;
-	Y -= center.Y;
+	x -= center.x;
+	y -= center.y;
 
-	set(X*cs - Y*sn, X*sn + Y*cs);
+	set(x*cs - y*sn, x*sn + y*cs);
 
-	X += center.X;
-	Y += center.Y;
+	x += center.x;
+	y += center.y;
 }
 
 float vector2d::getAngleTrig() const
 {
-	if (X == 0.0f)
-		return Y < 0.0f ? 270.0f : 90.0f;
+	if (x == 0.0f)
+		return y < 0.0f ? 270.0f : 90.0f;
 	else
-		if (Y == 0.0f)
-			return X < 0.0f ? 180.0f : 0.0f;
+		if (y == 0.0f)
+			return x < 0.0f ? 180.0f : 0.0f;
 
-	if (Y > 0.0f)
-		if (X > 0.0f)
-			return atan(Y / X) * RADTODEG;
+	if (y > 0.0f)
+		if (x > 0.0f)
+			return atan(y / x) * RADTODEG;
 		else
-			return 180.0f -atan(Y / -X) * RADTODEG;
+			return 180.0f -atan(y / -x) * RADTODEG;
 	else
-		if (X > 0.0f)
-			return 360.0f -atan(-Y / X) * RADTODEG;
+		if (x > 0.0f)
+			return 360.0f -atan(-y / x) * RADTODEG;
 		else
-			return 180.0f + atan(-Y / -X) * RADTODEG;
+			return 180.0f + atan(-y / -x) * RADTODEG;
 }
 
 float vector2d::getAngle() const
 {
-	if (Y == 0.0f)  // corrected thanks to a suggestion by Jox
-		return X < 0.0f ? 180.0f : 0.0f;
-	else if (X == 0.0f)
-		return Y < 0.0f ? 90.0f : 270.0f;
+	if (y == 0.0f)  // corrected thanks to a suggestion by Jox
+		return x < 0.0f ? 180.0f : 0.0f;
+	else if (x == 0.0f)
+		return y < 0.0f ? 90.0f : 270.0f;
 
-	float tmp = Y / getLength();
+	float tmp = y / getLength();
 	tmp = atan(sqrt(1 - tmp * tmp) / tmp) * RADTODEG;
 
-	if (X > 0.0f && Y > 0.0f)
+	if (x > 0.0f && y > 0.0f)
 		return tmp + 270.0f;
-	else if (X > 0.0f && Y < 0.0f)
+	else if (x > 0.0f && y < 0.0f)
 		return tmp + 90.0f;
-	else if (X < 0.0f && Y < 0.0f)
+	else if (x < 0.0f && y < 0.0f)
 		return 90.0f - tmp;
-	else if (X < 0.0f && Y > 0.0f)
+	else if (x < 0.0f && y > 0.0f)
 		return 270.0f - tmp;
 
 	return tmp;
@@ -251,12 +251,12 @@ float vector2d::getAngle() const
 
 float vector2d::getAngleWith(const vector2d& b) const
 {
-	float tmp = X * b.X + Y * b.Y;
+	float tmp = x * b.x + y * b.y;
 
 	if (tmp == 0.0f)
 		return 90.0f;
 
-	tmp = tmp / sqrt((X * X + Y * Y) * (b.X * b.X + b.Y * b.Y));
+	tmp = tmp / sqrt((x * x + y * y) * (b.x * b.x + b.y * b.y));
 	if (tmp < 0.0f)
 		tmp = -tmp;
 

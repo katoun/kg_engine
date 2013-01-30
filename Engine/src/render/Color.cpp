@@ -29,71 +29,75 @@ THE SOFTWARE.
 namespace render
 {
 
-Color::Color(float red, float green, float blue, float alpha): R(red), G(green), B(blue), A(alpha) {}
+Color::Color(): r(1), g(1), b(1), a(1) {}
 
-Color::Color(const Color& other): R(other.R), G(other.G), B(other.B), A(other.A) {}
+Color::Color(float red, float green, float blue): r(red), g(green), b(blue), a(1) {}
+
+Color::Color(float red, float green, float blue, float alpha): r(red), g(green), b(blue), a(alpha) {}
+
+Color::Color(const Color& other): r(other.r), g(other.g), b(other.b), a(other.a) {}
 
 inline Color& Color::operator=(const Color& other)
 {
-	R = other.R;
-	G = other.G;
-	B = other.B;
-	A = other.A;
+	r = other.r;
+	g = other.g;
+	b = other.b;
+	a = other.a;
 	return *this;
 }
 
 inline Color Color::operator+(const Color& other) const
 {
-	return Color(R + other.R, G + other.G, B + other.B, A + other.A);
+	return Color(r + other.r, g + other.g, b + other.b, a + other.a);
 }
 
 inline Color& Color::operator+=(const Color& other)
 {
-	R += other.R;
-	G += other.G;
-	B += other.B;
-	A += other.A;
+	r += other.r;
+	g += other.g;
+	b += other.b;
+	a += other.a;
 
 	return *this;
 }
 
 inline Color Color::operator-(const Color& other) const
 {	
-	return Color(R - other.R, G - other.G, B - other.B, A - other.A);
+	return Color(r - other.r, g - other.g, b - other.b, a - other.a);
 }
 
 inline Color& Color::operator-=(const Color& other)
 {
-	R -= other.R;
-	G -= other.G;
-	B -= other.B;
-	A -= other.A;
+	r -= other.r;
+	g -= other.g;
+	b -= other.b;
+	a -= other.a;
 
 	return *this;
 }
 
 inline Color Color::operator*(const Color& other) const
 {
-	return Color(other.R * R, other.G * G, other.B * B, other.A * A);
+	return Color(other.r * r, other.g * g, other.b * b, other.a * a);
 }
 
 inline Color Color::operator*(const float v) const
 {
-	return Color(v * R, v * G, v * B, v * A);
+	return Color(v * r, v * g, v * b, v * a);
 }
 
 inline Color& Color::operator*=(const float v )
 {
-	R *= v;
-	G *= v;
-	B *= v;
-	A *= v;
+	r *= v;
+	g *= v;
+	b *= v;
+	a *= v;
 	return *this;
 }
 
 inline Color Color::operator/(const Color& other) const
 {	
-	return Color(other.R / R, other.G / G, other.B / B, other.A / A);
+	return Color(other.r / r, other.g / g, other.b / b, other.a / a);
 }
 
 inline Color Color::operator/(const float v) const
@@ -101,7 +105,7 @@ inline Color Color::operator/(const float v) const
 	assert(v != 0.0f);
 
 	float i = 1.0f / v;
-	return Color(R * i, G * i, B * i, A * i);
+	return Color(r * i, g * i, b * i, a * i);
 }
 
 inline Color& Color::operator/=(const float v)
@@ -109,16 +113,16 @@ inline Color& Color::operator/=(const float v)
 	assert(v != 0.0f);
 
 	float i = 1.0f / v;
-	R *= i;
-	G *= i;
-	B *= i;
-	A *= i;
+	r *= i;
+	g *= i;
+	b *= i;
+	a *= i;
 	return *this;
 }
 
 inline bool Color::operator==(const Color& other) const
 {
-	return (R == other.R && G == other.G && B == other.B && A == other.A);
+	return (r == other.r && g == other.g && b == other.b && a == other.a);
 }
 
 inline bool Color::operator!=(const Color& other) const
@@ -128,12 +132,12 @@ inline bool Color::operator!=(const Color& other) const
 
 float* Color::get()
 {
-	return &R;
+	return &r;
 }
 
 const float* Color::get() const
 {
-	return &R;
+	return &r;
 }
 
 #if GAME_ENDIAN == ENDIAN_BIG
@@ -145,19 +149,19 @@ void Color::setAsRGBA(const unsigned int val)
 	unsigned int val32 = val;
 
 	// Convert from 32bit pattern
-	// (RGBA = 8888)
+	// (rgBA = 8888)
 
-	// Red
-	R = ((val32 >> 24) & 0xFF) / 255.0f;
+	// red
+	r = ((val32 >> 24) & 0xFF) / 255.0f;
 
-	// Green
-	G = ((val32 >> 16) & 0xFF) / 255.0f;
+	// green
+	g = ((val32 >> 16) & 0xFF) / 255.0f;
 
 	// Blue
-	B = ((val32 >> 8) & 0xFF) / 255.0f;
+	b = ((val32 >> 8) & 0xFF) / 255.0f;
 
 	// Alpha
-	A = (val32 & 0xFF) / 255.0f;
+	a = (val32 & 0xFF) / 255.0f;
 }
 
 #if GAME_ENDIAN == ENDIAN_BIG
@@ -169,19 +173,19 @@ void Color::setAsARGB(const unsigned int val)
 	unsigned int val32 = val;
 
 	// Convert from 32bit pattern
-	// (ARGB = 8888)
+	// (ArgB = 8888)
 
 	// Alpha
-	A = ((val32 >> 24) & 0xFF) / 255.0f;
+	a = ((val32 >> 24) & 0xFF) / 255.0f;
 
-	// Red
-	R = ((val32 >> 16) & 0xFF) / 255.0f;
+	// red
+	r = ((val32 >> 16) & 0xFF) / 255.0f;
 
-	// Green
-	G = ((val32 >> 8) & 0xFF) / 255.0f;
+	// green
+	g = ((val32 >> 8) & 0xFF) / 255.0f;
 
 	// Blue
-	B = (val32 & 0xFF) / 255.0f;
+	b = (val32 & 0xFF) / 255.0f;
 }
 
 #if GAME_ENDIAN == ENDIAN_BIG
@@ -196,16 +200,16 @@ void Color::setAsBGRA(const unsigned int val)
 	// (ARGB = 8888)
 
 	// Blue
-	B = ((val32 >> 24) & 0xFF) / 255.0f;
+	b = ((val32 >> 24) & 0xFF) / 255.0f;
 
-	// Green
-	G = ((val32 >> 16) & 0xFF) / 255.0f;
+	// green
+	g = ((val32 >> 16) & 0xFF) / 255.0f;
 
-	// Red
-	R = ((val32 >> 8) & 0xFF) / 255.0f;
+	// red
+	r = ((val32 >> 8) & 0xFF) / 255.0f;
 
 	// Alpha
-	A = (val32 & 0xFF) / 255.0f;
+	a = (val32 & 0xFF) / 255.0f;
 }
 
 #if GAME_ENDIAN == ENDIAN_BIG
@@ -220,16 +224,16 @@ void Color::setAsABGR(const unsigned int val)
 	// (ABGR = 8888)
 
 	// Alpha
-	A = ((val32 >> 24) & 0xFF) / 255.0f;
+	a = ((val32 >> 24) & 0xFF) / 255.0f;
 
 	// Blue
-	B = ((val32 >> 16) & 0xFF) / 255.0f;
+	b = ((val32 >> 16) & 0xFF) / 255.0f;
 
-	// Green
-	G = ((val32 >> 8) & 0xFF) / 255.0f;
+	// green
+	g = ((val32 >> 8) & 0xFF) / 255.0f;
 
-	// Red
-	R = (val32 & 0xFF) / 255.0f;
+	// red
+	r = (val32 & 0xFF) / 255.0f;
 }
 
 void Color::setHSB(float hue, float saturation, float brightness)
@@ -249,20 +253,20 @@ unsigned int Color::getAsRGBA() const
 	// Convert to 32bit pattern
 	// (RGBA = 8888)
 
-	// Red
-	val8 = (unsigned char)(R * 255);
+	// red
+	val8 = (unsigned char)(r * 255);
 	val32 = val8 << 24;
 
-	// Green
-	val8 = (unsigned char)(G * 255);
+	// green
+	val8 = (unsigned char)(g * 255);
 	val32 += val8 << 16;
 
 	// Blue
-	val8 = (unsigned char)(B * 255);
+	val8 = (unsigned char)(b * 255);
 	val32 += val8 << 8;
 
 	// Alpha
-	val8 = (unsigned char)(A * 255);
+	val8 = (unsigned char)(a * 255);
 	val32 += val8;
 
 	return val32;
@@ -281,19 +285,19 @@ unsigned int Color::getAsARGB() const
 	// (ARGB = 8888)
 
 	// Alpha
-	val8 = (unsigned char)(A * 255);
+	val8 = (unsigned char)(a * 255);
 	val32 = val8 << 24;
 
-	// Red
-	val8 = (unsigned char)(R * 255);
+	// red
+	val8 = (unsigned char)(r * 255);
 	val32 += val8 << 16;
 
-	// Green
-	val8 = (unsigned char)(G * 255);
+	// green
+	val8 = (unsigned char)(g * 255);
 	val32 += val8 << 8;
 
 	// Blue
-	val8 = (unsigned char)(B * 255);
+	val8 = (unsigned char)(b * 255);
 	val32 += val8;
 
 
@@ -313,19 +317,19 @@ unsigned int Color::getAsBGRA() const
 	// (ARGB = 8888)
 
 	// Blue
-	val8 = (unsigned char)(B * 255);
+	val8 = (unsigned char)(b * 255);
 	val32 = val8 << 24;
 
 	// Green
-	val8 = (unsigned char)(G * 255);
+	val8 = (unsigned char)(g * 255);
 	val32 += val8 << 16;
 
-	// Red
-	val8 = (unsigned char)(R * 255);
+	// red
+	val8 = (unsigned char)(r * 255);
 	val32 += val8 << 8;
 
 	// Alpha
-	val8 = (unsigned char)(A * 255);
+	val8 = (unsigned char)(a * 255);
 	val32 += val8;
 
 
@@ -345,29 +349,29 @@ unsigned int Color::getAsABGR() const
 	// (ABRG = 8888)
 
 	// Alpha
-	val8 = (unsigned char)(A * 255);
+	val8 = (unsigned char)(a * 255);
 	val32 = val8 << 24;
 
 	// Blue
-	val8 = (unsigned char)(B * 255);
+	val8 = (unsigned char)(b * 255);
 	val32 += val8 << 16;
 
 	// Green
-	val8 = (unsigned char)(G * 255);
+	val8 = (unsigned char)(g * 255);
 	val32 += val8 << 8;
 
-	// Red
-	val8 = (unsigned char)(R * 255);
+	// red
+	val8 = (unsigned char)(r * 255);
 	val32 += val8;
 
 	return val32;
 }
 
-const Color Color::ZERO = Color(0.0f, 0.0f, 0.0f, 0.0f);
-const Color Color::Black = Color(0.0f, 0.0f, 0.0f);
-const Color Color::White = Color(1.0f, 1.0f, 1.0f);
-const Color Color::Red = Color(1.0f, 0.0f, 0.0f);
-const Color Color::Green = Color(0.0f, 1.0f, 0.0f);
-const Color Color::Blue = Color(0.0f, 0.0f, 1.0f);
+const Color Color::ZERO		= Color(0, 0, 0, 0);
+const Color Color::Black	= Color(0, 0, 0);
+const Color Color::White	= Color(1, 1, 1);
+const Color Color::Red		= Color(1, 0, 0);
+const Color Color::Green	= Color(0, 1, 0);
+const Color Color::Blue		= Color(0, 0, 1);
 
 } // end namespace render

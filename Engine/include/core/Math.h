@@ -35,15 +35,15 @@ namespace core
 #undef min
 #undef max
 
-const float EPSILON			= 1.192092896e-07f;										//! Constant often used when comparing float values.
+const float EPSILON					= 1.192092896e-07f;										//! Constant often used when comparing float values.
 const unsigned int UNSIGNEDINT_MAX	= 0xffffffff;											//! Constant for max unsigned int.
-const float FLOAT_MIN			= 1.175494351e-38f;										//! Constant for min float.
-const float FLOAT_MAX			= 3.402823466e+38f;										//! Constant for max float.
-const float PI				= 3.1415926535897932384626433832795f;					//! Constant for PI.
-const float HALF_PI			= 1.5707963267948966192313216916398f;//0.5f * PI;		//! Constant for PI/2.
-const float DEGTORAD			= 0.0174532925199432957692369076848f;//PI / 180.0f;		//! 32bit Constant for converting from degrees to radians
-const float RADTODEG			= 57.295779513082320876798154814105f;//180.0f / PI;		//! 32bit constant for converting from radians to degrees
-const float ONE_THIRD			= 0.3333333333333333333333333333333f;					//! Constant for 1/3.
+const float FLOAT_MIN				= 1.175494351e-38f;										//! Constant for min float.
+const float FLOAT_MAX				= 3.402823466e+38f;										//! Constant for max float.
+const float PI						= 3.1415926535897932384626433832795f;					//! Constant for PI.
+const float HALF_PI					= 1.5707963267948966192313216916398f;//0.5f * PI;		//! Constant for PI/2.
+const float DEGTORAD				= 0.0174532925199432957692369076848f;//PI / 180.0f;		//! 32bit Constant for converting from degrees to radians
+const float RADTODEG				= 57.295779513082320876798154814105f;//180.0f / PI;		//! 32bit constant for converting from radians to degrees
+const float ONE_THIRD				= 0.3333333333333333333333333333333f;					//! Constant for 1/3.
 
 //! returns minimum of two values. Own implementation to get rid of the STL (VS6 problems)
 inline float ENGINE_PUBLIC_EXPORT min(const float a, const float b);
