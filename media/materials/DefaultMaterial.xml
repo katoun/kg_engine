@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <material>
 	<vertex_shader>
-		<shader value="shaders/BasicShader_vp.glsl"/>
+		<shader value="shaders/Shader_vp.glsl"/>
 		<param_vertex name="position" type="vertex_position"/>
 		<param_vertex name="normal" type="vertex_normal"/>
 		<param_vertex name="tangent" type="vertex_tangent"/>
-		<param_vertex name="binormal" type="vertex_binormal"/>
 		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
 		<param_auto name="modelViewProjMatrix" type="worldviewproj_matrix"/>
+		<param_auto name="modelViewMatrix" type="worldview_matrix"/>
+		<param_auto name="inverseViewMatrix" type="inverse_view_matrix"/>
+		<param_auto name="lightPosition" type="light_position"/>
+		<param_auto name="cameraPosition" type="camera_position"/>
 	</vertex_shader>
 	<fragment_shader>
-		<shader value="shaders/BasicShader_fp.glsl"/>
+		<shader value="shaders/Shader_fp.glsl"/>
+		<param_auto name="lightDiffuse" type="light_diffuse_colour"/>
+		<param_auto name="lightSpecular" type="light_specular_colour"/>
 	</fragment_shader>
 	<texture_unit>
-		<texture value="textures/Grid1x1m.tga"/>
+		<texture value="textures/brick_d.tga"/>
+	</texture_unit>
+	<texture_unit>
+		<texture value="textures/brick_n.tga"/>
+	</texture_unit>
+	<texture_unit>
+		<texture value="textures/brick_s.tga"/>
 	</texture_unit>
 </material>

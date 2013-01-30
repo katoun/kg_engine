@@ -10,6 +10,8 @@ varying vec2 texCoords;
 varying vec3 lightVector;
 varying vec3 halfAngle;
 
+varying vec3 testVector;
+
 float saturate(float inValue)
 {
    return clamp(inValue, 0.0, 1.0);
@@ -17,7 +19,13 @@ float saturate(float inValue)
 
 void main()
 {
-	gl_FragColor = vec4(lightVector, 1.0);
+	/*if (testVector.x < 0.0)
+		  testVector.x = -testVector.x;
+	   if (testVector.y < 0.0)
+		  testVector.y = -testVector.y;
+	   if (testVector.z < 0.0)
+		  testVector.z = -testVector.z;*/
+	gl_FragColor = vec4(testVector, 1.0);
 
 
 	/*float specularPower = 2.0;

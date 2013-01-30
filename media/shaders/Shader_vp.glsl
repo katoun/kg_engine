@@ -16,6 +16,8 @@ varying vec2 texCoords;
 varying vec3 lightVector;
 varying vec3 halfAngle;
 
+varying vec3 testVector;
+
 void main()
 {
 	texCoords = texCoords0;
@@ -23,11 +25,16 @@ void main()
 	
 	vec4 eyePosition = modelViewMatrix * vec4(position, 1.0);
 	
+	vec3 temp_light_position = vec3(vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1.0) * inverseViewMatrix);
+	vec3 temp_light_vector   = temp_light_position.xyz - position.xyz;
+	
+	testVector = normalize(temp_light_position.xyz);
+	
 	//**--------------------------------------------
 	//** Calculate the light vector in object space,
 	//** and then transform it into texture space.
 	//**--------------------------------------------
-	vec3 temp_light_position = vec3(vec4(lightPosition.x, lightPosition.y, -lightPosition.z, 1.0) * inverseViewMatrix);
+	/*vec3 temp_light_position = vec3(vec4(lightPosition.x, lightPosition.y, -lightPosition.z, 1.0) * inverseViewMatrix);
 	vec3 temp_light_vector   = temp_light_position.xyz - position.xyz;
 	lightVector.x = dot(temp_light_vector, tangent);
 	lightVector.y = dot(temp_light_vector, binormal);
@@ -49,7 +56,7 @@ void main()
 	//**-------------------------
 	//** Calculate the half angle
 	//**-------------------------
-	halfAngle = lightVector + temp_view_vector2;
+	halfAngle = lightVector + temp_view_vector2;*/
 
 	/////////////////////////////////
 	
