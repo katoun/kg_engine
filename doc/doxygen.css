@@ -1,7 +1,7 @@
 table.kgengine
 {
 	width: 100%;
-	background-color: #9395C1;
+	background-color: #ACCFE2;
 	text-align: center;
 	margin: 0px;
 	padding: 0px;
@@ -9,6 +9,54 @@ table.kgengine
 	border-color: #b0b0b0;
 	border-width: 1px;
 	border-style: solid;
+}
+
+a.qindex
+{
+       text-decoration: none;
+       font-weight: bold;
+       color: #1a419d;
+}
+
+a.qindex:visited
+{
+       text-decoration: none;
+       font-weight: bold;
+       color: #1a419d
+}
+
+a.qindex:hover
+{
+	text-decoration: none;
+	background-color: #CEE3FF;
+}
+
+a.qindexhl
+{
+	text-decoration: none;
+	font-weight: bold;
+	background-color: #6666cc;
+	color: #ffffff;
+	border: 1px double #9295c2;
+}
+
+a.qindexhl:hover
+{
+	text-decoration: none;
+	background-color: #6666cc;
+	color: #ffffff;
+}
+
+a.qindexhl:visited
+{
+	text-decoration: none;
+	background-color: #6666cc;
+	color: #ffffff;
+}
+
+table.mlabels
+{
+	border-spacing: 5px;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,center,td,th,ul,dl,div
@@ -42,17 +90,6 @@ caption
 	font-weight: bold
 }
 
-div.qindex
-{
-	width: 100%;
-	background-color: #edeef2;
-	border: 1px solid #84b0c7;
-	text-align: center;
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
-}
-
 div.nav
 {
 	width: 100%;
@@ -78,44 +115,6 @@ td.navtab
 {
        font-size: 70%;
 }
-
-a.qindex
-{
-       text-decoration: none;
-       font-weight: bold;
-       color: #1a419d;
-}
-
-a.qindex:visited
-{
-       text-decoration: none;
-       font-weight: bold;
-       color: #1a419d
-}
-
-a.qindex:hover
-{
-	text-decoration: none;
-	background-color: #ddddff;
-}
-
-a.qindexhl
-{
-	text-decoration: none;
-	font-weight: bold;
-	background-color: #6666cc;
-	color: #ffffff;
-	border: 1px double #9295c2;
-}
-
-a.qindexhl:hover
-{
-	text-decoration: none;
-	background-color: #6666cc;
-	color: #ffffff;
-}
-
-a.qindexhl:visited { text-decoration: none; background-color: #6666cc; color: #ffffff }
 
 a.el { text-decoration: none; font-weight: bold }
 
@@ -430,34 +429,76 @@ hr
 
 .memitem
 {
-  padding: 4px;
-  background-color: #eef3f5;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #dedeee;
-  -moz-border-radius: 8px 8px 8px 8px;
+	padding: 0;
+	margin-bottom: 10px;
+	margin-right: 5px;
+	-webkit-transition: box-shadow 0.5s linear;
+	-moz-transition: box-shadow 0.5s linear;
+	-ms-transition: box-shadow 0.5s linear;
+	-o-transition: box-shadow 0.5s linear;
+	transition: box-shadow 0.5s linear;
+	display: table !important;
+	width: 100%;
 }
 
 .memname
 {
-  white-space: nowrap;
-  font-weight: bold;
+        font-weight: bold;
+        margin-left: 6px;
+}
+
+.memname td
+{
+	vertical-align: bottom;
 }
 
 .memdoc
 {
-  padding-left: 10px;
+	border-bottom: 1px solid #A8ABD9;      
+	border-left: 1px solid #A8ABD9;      
+	border-right: 1px solid #A8ABD9; 
+	padding: 6px 10px 2px 10px;
+	background-color: #FBFBFD;
+	border-top-width: 0;
+	background-image:url('nav_g.png');
+	background-repeat:repeat-x;
+	background-color: #FFFFFF;
+	/* opera specific markup */
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+	/* firefox specific markup */
+	-moz-border-radius-bottomleft: 4px;
+	-moz-border-radius-bottomright: 4px;
+	-moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
+	/* webkit specific markup */
+	-webkit-border-bottom-left-radius: 4px;
+	-webkit-border-bottom-right-radius: 4px;
+	-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
 }
 
 .memproto
 {
-  background-color: #d5e1e8;
-  width: 100%;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #84b0c7;
-  font-weight: bold;
-  -moz-border-radius: 8px 8px 8px 8px;
+	border-top: 1px solid #A8ABD9;
+	border-left: 1px solid #A8ABD9;
+	border-right: 1px solid #A8ABD9;
+	padding: 6px 0px 6px 0px;
+	font-weight: bold;
+	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
+	background-repeat:repeat-x;
+	background-color: #d5e1e8;
+	/* opera specific markup */
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	/* firefox specific markup */
+	-moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-topleft: 4px;
+	/* webkit specific markup */
+	-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+	-webkit-border-top-right-radius: 4px;
+	-webkit-border-top-left-radius: 4px;
 }
 
 .paramkey
