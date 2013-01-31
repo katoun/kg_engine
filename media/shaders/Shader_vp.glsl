@@ -28,7 +28,7 @@ void main()
 	vec3 temp_light_position = vec3(vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1.0) * inverseViewMatrix);
 	vec3 temp_light_vector   = temp_light_position.xyz - position.xyz;
 	
-	testVector = normalize(temp_light_position.xyz);
+	testVector = normalize(normal.xyz);
 	
 	//**--------------------------------------------
 	//** Calculate the light vector in object space,
