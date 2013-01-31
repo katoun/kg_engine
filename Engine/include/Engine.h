@@ -46,7 +46,7 @@ THE SOFTWARE.
 #include <engine/EngineEvent.h>
 #include <engine/EngineEventReceiver.h>
 
-//! \mainpage KG Game Engine
+//! \mainpage KG Game Engine 0.8.0 API documentation
 //!
 //! <div align="center"><img src="kgenginelogo.png" ></div>
 //!
@@ -54,13 +54,6 @@ THE SOFTWARE.
 //! Welcome to the KG Game Engine API documentation.
 //! Here you'll find any information you'll need to develop applications with
 //! this Game Engine.
-//!
-//! \section links Links
-//!
-//! <A HREF="namespaces.html">Namespaces</A>: A very good place to start reading the documentation.<BR>
-//! <A HREF="annotated.html">Compound list</A>: List of all classes with descriptions.<BR>
-//! <A HREF="hierarchy.html">Class hierarchy</A>: Class hierarchy list.<BR>
-//! <A HREF="classes.html">Alphabetical class list</A>: Good place to find forgotten class names.<BR>
 //! <BR>
 
 // THE FOLLOWING IS AN EMPTY LIST OF ALL SUB NAMESPACES
