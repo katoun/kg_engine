@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta itemprop="image" content="/images/kglogo_128.png">
+    <title>KG 3d game engine</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+	<link rel="icon" type="image/ico" href="favicon.ico"></link> 
+	<link rel="shortcut icon" href="favicon.ico"></link>
+	<link href="css/styleMain.css" rel="stylesheet" type="text/css" />
+</head>
+<body>		
+
+<div id="container">
+<div id="containerMain">
+<!-- #header -->
+<div id="header">
+	<div class="headLeft"></div>
+	<div class="headRight"></div>
+	
+	<div id="logo">		
+		<div class="imagelogo"></div>
+	</div>
+</div> 
+<!-- end #header -->
+
+<div id="divider"></div>
+
+<!-- #sidebar -->
+<div id="sidebar">
+
+    <div class="top">Engine</div>
+	<div class="middle">	
+	    <div class="link"><a href="index.html">Home</a></div>
+		<div class="link"><a href="features.html">Features</a></div>
+	    <div class="link"><a href="download.html">Download</a></div>
+	</div>	
+	<div class="bottom"></div>
+	
+	<div class="top">Documentation</div>
+	<div class="middle">	
+	    <div class="link"><a href="docu/index.html">Api</a></div>
+	    <div class="link"><a href="tutorials.html">Tutorials</a></div>
+		<div class="link"><a href="license.html">License</a></div>
+	</div>	
+	<div class="bottom"></div>
+	
+	<div class="top">GitHub</div>
+	<div class="middle">	
+	    <div class="link"><a href="https://github.com/katoun/kg_engine">Project Page</a></div>
+	</div>	
+	<div class="bottom"></div>	
+</div>
+<!-- end #sidebar -->
+
+<!-- #content -->
+<div id="content">
+    <div class="top">
+		<div class="topLeft"></div>
+		<div class="topMiddle">
+		    <h1>&raquo; Features page</h1></div>
+        <div class="topRight"></div>
+	</div>
+	<div class="middle">
+		    
+	    <div class="titleBox">General overview of features</div>	    
+	    <p>- platform: PC/Windows<br />
+	       - abstraction components with pluggable backends for graphics, input, sound, physics<br />
+	       - flexible design, application-independent, genre-independent<br />
+	       - object orientated<br />
+	       - common resource infrastructure for resource management<br />
+	       - rendering plugin: OpenGL<br />
+		   - input plugin: OpenInput<br />
+	       - audio plugin: OpenAL soft<br />
+	       - physics plugins: Bullet<br />
+	    </p>	    
+	    <div class="commentBox">Updated on <i>31 January, 2013</i> by katoun.</div>
+	    <div class="divider"></div>
+	    
+	    
+	    <div class="titleBox">Overview of features by components</div>
+	    <h2>core</h2>	    
+	    <p>- cross-platform<br />
+	       - math<br />
+	       - vector2d, vector3d, quaternion, matrix4, line2d, line3d, tringle3d, plane3d, sphere3d, aabox3d<br />
+		   - Singleton<br />
+		   - Config file<br />
+	       - Utils<br />
+	    </p>
+		<h2>engine</h2>	    
+	    <p>- cross-platform<br />
+	       - dynamic library with common functionality<br />
+	       - Engine Manager<br />
+		   - Engine events<br />
+	       - Log<br />
+	       - PluginManager<br />
+	    </p>
+	    <h2>input</h2>
+	    <p>- cross-platform<br />
+	       - API independent<br />
+		   - cursor<br />
+		   - keyboard device<br />
+		   - mouse device<br />
+		   - jostick device<br />
+	       - plugin: OpenInput input plugin<br />
+	    </p>
+	    <h2>platform</h2>	    
+	    <p>- cross-platform<br />
+	       - API independent<br />
+	       - hardware info: CPU vendor, CPU frequency<br />
+	    </p>
+	    <h2>resource</h2>	    
+	    <p>- cross-platform<br />
+	       - API independent<br />
+	       - texture: loads image files with FreeImage library<br />
+	       - serializer interface<br />
+		   - centralized loading<br />
+	    </p>
+	    <h2>render</h2>	    
+	    <p>- cross-platform<br />
+	       - API independent<br />
+	       - provides objects like Colour, Light, Camera, Model, MeshData, Texture, Material, Shader, Viewport, RenderWindow, RenderManager etc<br />
+		   - provides shaders through GLSL<br />
+	       - plugin: OpenGL render plugin<br />
+	    </p>
+		<h2>sound</h2>	    
+	    <p>- cross-platform<br />
+	       - API independent<br />
+		   - provides objects like Sound, SoundData, Listener, SoundManager<br />
+	       - plugin: OpenAL soft sound plugin<br />
+		</p>  
+		<h2>physics</h2>	    
+	    <p>- cross-platform<br />
+	       - API independent<br />
+		   - provides objects like Body, BodyData, Shape, Material, CollisionEvent, PhysicsManager etc<br />
+	       - plugin: Bullet physics plugin<br />
+	    </p>
+
+	    </p> 
+	    <div class="commentBox">Updated on <i>21 January, 2013</i> by Kat'Oun.</div>
+	    <div class="divider"></div>
+
+	</div>	
+	<div class="bottom">
+	    <div class="bottomLeft"></div>
+	    <div class="bottomRight"></div>
+	</div>
+</div>
+<div id="contentEnd"></div>
+<!-- end #content -->
+
+<!-- #footer -->
+<div id="footer">
+KG engine is maintained by <a href="https://github.com/katoun">katoun</a><br>
+</div>
+<!-- end #footer --> 
+</div>  
+</div>
+<div id="containerBottom">
+    <div class="left"></div>
+    <div class="right"></div>
+</div>
+
+</body>
+</html>

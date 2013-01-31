@@ -1,0 +1,406 @@
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+body 
+{
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: #c0c0c0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 18px;
+	color: #333333;
+}
+
+img 
+{ 
+	border: 0; 
+	margin: 1px; 
+}
+
+#loading 
+{
+ 	width: 200px;
+ 	height: 100px;
+ 	background-color: #c0c0c0;
+ 	position: absolute;
+ 	left: 50%;
+ 	top: 50%;
+ 	margin-top: -50px;
+ 	margin-left: -100px;
+ 	text-align: center;
+ 	font-size: 16px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #ededed; 	
+ 	border: 1px solid #767676;
+}
+
+/*=========================================*/
+/*Main Container						   */
+/*=========================================*/
+
+#container 
+{
+	margin: 0 auto;
+	width: 95%;
+	height: 45%;
+	background-color: #333333;
+}
+
+#containerMain
+{
+	margin-left: 1px;
+	margin-right: 1px;
+	background-color: #646464;
+	padding-left: 16px;
+	padding-right: 16px;
+	border-left: 1px solid #767676;
+	border-right: 1px solid #767676;
+}
+
+#containerBottom
+{
+	margin: 0 auto;	
+	width: 95%;
+	height: 16px;
+	background-image: url("../images/container_middle.gif");
+	margin-bottom: 16px;
+}
+
+#containerBottom .left 
+{
+	float: left;
+	width: 16px;
+	height: 16px;
+	background-image: url("../images/container_left.gif");
+}
+
+#containerBottom .right 
+{
+	float: right;
+	width: 16px;
+	height: 16px;
+	background-image: url("../images/container_right.gif");
+}
+
+/*=========================================*/
+/*Header								   */
+/*=========================================*/
+
+#header 
+{
+	height: 136px;
+	display: block;
+	background-image: url("../images/header_middle.gif");
+	background-repeat: repeat-x;
+}
+
+#header .headLeft 
+{
+	width: 8px;
+	height: 136px;
+	float: left;
+	background-image: url("../images/header_left.gif");
+}
+
+#header .headRight 
+{
+	width: 8px;
+	height: 136px;
+	float: right;
+	background-image: url("../images/header_right.gif");
+}
+
+/*=========================================*/
+/*Logo      							   */
+/*=========================================*/
+#logo
+{
+	height: 134px;
+	float:left;
+	margin-left: 15px;
+}
+
+#logo .imagelogo
+{
+	width: 354px; 
+	height: 134px;
+	background-image: url("../images/kglogo_shadow.gif");
+	margin-top: 1px;
+}
+
+/*=========================================*/
+/*Divider								   */
+/*=========================================*/
+
+#divider
+{	
+	height: 20px;	
+}
+
+/*=========================================*/
+/*Sidebar								   */
+/*=========================================*/
+
+#sidebar 
+{
+	float: left;
+	width: 144px;
+}
+
+#sidebar .top 
+{
+	width: 144px;
+	height: 20px;
+	background-image: url("../images/sidebar_top.gif");
+	text-align: center;
+	font-size: 12px;
+	color: #575757;
+	font-weight: bold;
+	padding-top: 4px;	
+}
+
+#sidebar .middle 
+{
+	background-color: #ededed;
+	width: 144px;
+	font-size: 11px;
+}
+
+#sidebar .bottom 
+{
+	width: 144px;
+	height: 8px;
+	background-image: url("../images/sidebar_bottom.gif");
+	margin-bottom: 16px;
+	background-repeat: no-repeat;
+}
+
+#sidebar .link
+{
+	width: 144px;
+	height: 32px;
+}
+
+#sidebar .link a
+{
+	display: block;
+	height: 24px;
+	padding-left: 16px;
+	padding-top: 8px;
+	background-color: #ededed;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #646464;
+}
+
+#sidebar .link a:hover 
+{  
+	background-color: #b8b8b8;
+	color: #ededed; 
+}
+
+#sidebar .divider 
+{
+	margin-top: 4px;
+	margin-bottom: 0;
+	height: 2px;
+	background-image: url("../images/sidebar_divider.gif");
+	background-repeat: repeat-x;
+}
+
+#sidebar img 
+{
+	padding: 1px;
+	background-color: #ffffff;
+	border: 1px solid #a5a5a5;
+	margin-top: 8px;  
+}
+
+#sidebar .subtitle 
+{ 
+	font-size: 10px; 
+}
+
+/*=========================================*/
+/*Content								   */
+/*=========================================*/
+
+#content 
+{ 	
+	margin-left: 160px; 
+}
+#contentEnd 
+{ 
+	clear: both; 
+} /* needed so the container doesn't cut off unexpectedly*/
+
+#content .divider 
+{
+	margin: 8px 0;
+	height: 6px;
+}
+
+#content .titleBox
+{
+	margin: 10px 0;
+	padding: 6px;
+	background-color: #b8b8b8;	
+	text-align: left;
+	font-size: 16px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #ededed;	
+}
+
+#content h1 
+{
+	margin: 0;
+	font-size: 16px;
+}
+
+#content h2 
+{
+	margin: 0;
+	font-size: 16px;
+}
+
+#content h3 
+{
+	margin: 0;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#content p
+{
+	padding-left: 10px;
+	text-align: left;
+}
+
+#content li 
+{ 
+	margin-bottom: 10px; 
+}
+
+#content a 
+{ 
+	color: #516e91; 
+	text-decoration: none; 
+}
+
+#content a:hover 
+{ 
+	color: #6e98c9; 
+}
+
+#content .commentBox 
+{
+	margin: 10px 0;
+	padding: 3px;
+	background-color: #e3e3e3;
+	border: 1px solid #b8b8b8;
+	text-align: left;
+	font-size: 10px;
+	line-height: normal;
+	color: #646464;
+}
+
+#content .top
+{
+	height: 24px;
+	background-image: url("../images/content_topMiddle.gif");
+	background-repeat: repeat-x;
+}
+
+#content .topLeft 
+{
+	float: left;
+	height: 20px;
+	width: 8px;
+	background-image: url("../images/content_topLeft.gif");
+	background-repeat: no-repeat;
+}
+
+#content .topMiddle 
+{
+	float: left;
+	padding-top: 4px;
+}
+
+#content .topMiddle h1 
+{
+	margin: 0;
+	font-size: 12px;
+	color: #575757;
+	font-weight: bold;
+}
+
+#content .topRight 
+{
+	float: right;
+	height: 20px;
+	width: 8px;
+	background-image: url("../images/content_topRight.gif");
+	background-repeat: no-repeat;
+}
+
+#content .middle 
+{
+	background-color: #ededed;
+	padding: 8px 16px;
+}
+
+* html #content .middle /*Fixes a minor display glitch in IE6*/
+{ 
+	margin-right: 3px; 
+}
+
+#content .bottom 
+{
+	height: 8px;
+	background-color: #ededed;	
+	margin-bottom: 16px;
+}
+
+* html #content .bottom /*fixes a minor display glitch in IE6*/
+{ 
+	margin-right: 3px; 
+} 
+
+#content .bottomLeft 
+{
+	height: 8px;
+	width: 8px;
+	float: left;
+	background-image: url("../images/content_bottomLeft.gif");
+	background-repeat: no-repeat;
+	background-position: bottom left;
+}
+
+#content .bottomRight 
+{
+	height: 8px;
+	width: 8px;
+	float: right;
+	background-image: url("../images/content_bottomRight.gif");
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+
+/*=========================================*/
+/*Footer								   */
+/*=========================================*/
+
+#footer
+{
+	font-size: 10px;
+	text-align: center;
+	line-height: normal;
+}
