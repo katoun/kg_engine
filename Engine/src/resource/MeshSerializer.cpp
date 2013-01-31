@@ -392,25 +392,27 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 
 		for (unsigned int i = 0; i < numIndexes; i+=3)
 		{
-			unsigned int index = indexArray[i];
-			core::vector3d pos1 = vertexArray[index + 0].position;
-			core::vector3d pos2 = vertexArray[index + 1].position;
-			core::vector3d pos3 = vertexArray[index + 2].position;
+			unsigned int index1 = indexArray[i + 0];
+			unsigned int index2 = indexArray[i + 1];
+			unsigned int index3 = indexArray[i + 2];
+			core::vector3d pos1 = vertexArray[index1].position;
+			core::vector3d pos2 = vertexArray[index2].position;
+			core::vector3d pos3 = vertexArray[index3].position;
 
-			core::vector2d uv1 = vertexArray[index + 0].uv;
-			core::vector2d uv2 = vertexArray[index + 1].uv;
-			core::vector2d uv3 = vertexArray[index + 2].uv;
+			core::vector2d uv1 = vertexArray[index1].uv;
+			core::vector2d uv2 = vertexArray[index2].uv;
+			core::vector2d uv3 = vertexArray[index3].uv;
 
 			TangentAndBinormal tangentAndBinormal = calculateTangentAndBinormal(pos1, pos2, pos3, uv1, uv2, uv3);
 
-			tangentArray[index + 0].tangent += tangentAndBinormal.tangent;
-			tangentArray[index + 0].binormal += tangentAndBinormal.binormal;
+			tangentArray[index1].tangent += tangentAndBinormal.tangent;
+			tangentArray[index1].binormal += tangentAndBinormal.binormal;
 
-			tangentArray[index + 1].tangent += tangentAndBinormal.tangent;
-			tangentArray[index + 1].binormal += tangentAndBinormal.binormal;
+			tangentArray[index2].tangent += tangentAndBinormal.tangent;
+			tangentArray[index2].binormal += tangentAndBinormal.binormal;
 
-			tangentArray[index + 2].tangent += tangentAndBinormal.tangent;
-			tangentArray[index + 2].binormal += tangentAndBinormal.binormal;
+			tangentArray[index3].tangent += tangentAndBinormal.tangent;
+			tangentArray[index3].binormal += tangentAndBinormal.binormal;
 		}
 
 		render::VertexBuffer* pTangentVertexBuffer = nullptr;

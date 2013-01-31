@@ -19,16 +19,9 @@ float saturate(float inValue)
 
 void main()
 {
-	/*if (testVector.x < 0.0)
-		  testVector.x = -testVector.x;
-	   if (testVector.y < 0.0)
-		  testVector.y = -testVector.y;
-	   if (testVector.z < 0.0)
-		  testVector.z = -testVector.z;*/
-	gl_FragColor = vec4(testVector, 1.0);
+	//gl_FragColor = vec4(testVector, 1.0);
 
-
-	/*float specularPower = 2.0;
+	float specularPower = 2.0;
 
 	vec4 diffuseColor = texture2D(diffuseMap, texCoords);
 	vec4 normalColor = texture2D(normalMap, texCoords);
@@ -49,5 +42,5 @@ void main()
 	gl_FragColor = diffuseColor * lightDiffuse * saturate(dot_l);
 	
 	//Specular
-	gl_FragColor += specularColor * lightSpecular * shininess;*/
+	gl_FragColor += specularColor * lightSpecular * shininess;
 }

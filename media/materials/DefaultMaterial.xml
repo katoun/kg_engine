@@ -9,9 +9,10 @@
 		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
 		<param_auto name="modelViewProjMatrix" type="worldviewproj_matrix"/>
 		<param_auto name="modelViewMatrix" type="worldview_matrix"/>
-		<param_auto name="inverseViewMatrix" type="inverse_view_matrix"/>
 		<param_auto name="lightPosition" type="light_position"/>
 		<param_auto name="cameraPosition" type="camera_position"/>
+		<param_auto name="lightPositionOS" type="light_position_object_space"/>
+		<param_auto name="cameraPositionOS" type="camera_position_object_space"/>
 	</vertex_shader>
 	<fragment_shader>
 		<shader value="shaders/Shader_fp.glsl"/>
