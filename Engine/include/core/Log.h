@@ -49,7 +49,7 @@ public:
 	//! Log a message a text into the log
 	//! \param source: The source form were this log is sent.
 	//! \param text: Text to print out.
-	//! \param level: Log level of the text.
+	//! \param logLevel: Log level of the text.
 	void logMessage(const std::string& source, const std::string& text, LogLevel logLevel = LOG_LEVEL_INFORMATION);
 
 	static Log* getInstance();

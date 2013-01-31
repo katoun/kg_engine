@@ -58,10 +58,6 @@ public:
 	bool importResource(Resource* dest, const std::string& filename);
 
 	//! Exports a Scene to the file specified. 
-	//!
-	//! This method takes an externally created Scene, and exports it to a .xml file.
-	//! \param meshData: Pointer to the MeshData to export
-	//! \param filename: The destination filename.
 	bool exportResource(Resource* source, const std::string& filename);
 
 private:

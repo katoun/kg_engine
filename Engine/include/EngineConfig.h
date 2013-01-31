@@ -308,7 +308,7 @@ THE SOFTWARE.
 // Config Section
 
 //! KG Version
-#define KG_VERSION "0.4.0"
+#define KG_VERSION "0.8.0"
 
 #define ENGINE_UNIT_M 1
 
