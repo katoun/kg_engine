@@ -304,9 +304,8 @@ core::vector4d RenderStateData::getCurrentLightAttenuation() const
 {
 	core::vector4d lightAttenuation(1000.0f, 1.0f, 0.0f, 0.0f);
 
-	if (mCurrentLight)
+	if (mCurrentLight != nullptr)
 	{
-		core::vector4d lightAttenuation;
 		lightAttenuation.x = mCurrentLight->getAttenuationRange();
 		lightAttenuation.y = mCurrentLight->getAttenuationConstant();
 		lightAttenuation.z = mCurrentLight->getAttenuationLinear();

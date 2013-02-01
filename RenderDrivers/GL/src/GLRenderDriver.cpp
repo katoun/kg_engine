@@ -148,7 +148,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	GLShaderVertexParameter* pGLShaderVertexParameter = nullptr;
 
 	/////////////Textures/////////////
-	std::vector<ShaderTextureParameter*> shaderTextureParameters = pGLMaterial->getTextureParameters();
+	std::vector<ShaderTextureParameter*>& shaderTextureParameters = pGLMaterial->getTextureParameters();
 	std::list<ShaderTextureParameter*>::const_iterator ti;
 	for (unsigned int i = 0; i < shaderTextureParameters.size(); ++i)
 	{
@@ -168,7 +168,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	//////////////////////////////////
 
 	//////////AutoParameters//////////
-	std::list<ShaderAutoParameter*> shaderAutoParameters = pGLMaterial->getAutoParameters();
+	std::list<ShaderAutoParameter*>& shaderAutoParameters = pGLMaterial->getAutoParameters();
 	std::list<ShaderAutoParameter*>::const_iterator ai;
 	for (ai = shaderAutoParameters.begin(); ai != shaderAutoParameters.end(); ++ai)
 	{
@@ -297,7 +297,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	//////////////////////////////////
 
 	/////////////Buffers//////////////
-	std::vector<ShaderVertexParameter*> vertexParameters = pGLMaterial->getVertexParameters();
+	std::vector<ShaderVertexParameter*>& vertexParameters = pGLMaterial->getVertexParameters();
 	for (std::size_t vertexType = VERTEX_BUFFER_TYPE_POSITION; vertexType != VERTEX_BUFFER_TYPE_COUNT; ++vertexType)
 	{
 		if (vertexParameters[vertexType] == nullptr)

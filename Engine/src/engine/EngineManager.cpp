@@ -267,7 +267,7 @@ void EngineManager::resetTimer()
 
 	// Query the timer
 	QueryPerformanceCounter(&mStartTime);
-	mStartTick = GetTickCount();
+	mStartTick = GetTickCount64();
 
 	// Reset affinity
 	SetThreadAffinityMask(thread, oldMask);
@@ -276,7 +276,7 @@ void EngineManager::resetTimer()
 #endif
 }
 
-unsigned long EngineManager::getMilliseconds()
+unsigned long long EngineManager::getMilliseconds()
 {
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
 	LARGE_INTEGER curTime;
@@ -295,21 +295,21 @@ unsigned long EngineManager::getMilliseconds()
     LONGLONG newTime = curTime.QuadPart - mStartTime.QuadPart;
     
     // scale by 1000 for milliseconds
-    unsigned long newTicks = (unsigned long) (1000 * newTime / mFrequency.QuadPart);
+    ULONGLONG newTicks = (ULONGLONG) (1000 * newTime / mFrequency.QuadPart);
 
     // detect and compensate for performance counter leaps
     // (surprisingly common, see Microsoft KB: Q274323)
-    unsigned long check = GetTickCount() - mStartTick;
-    signed long msecOff = (signed long)(newTicks - check);
+    ULONGLONG check = GetTickCount64() - mStartTick;
+    LONGLONG msecOff = (LONGLONG)(newTicks - check);
     if (msecOff < -100 || msecOff > 100)
     {
         // We must keep the timer running forward :)
-        LONGLONG adjust = (std::min)(msecOff * mFrequency.QuadPart / 1000, newTime - mLastTime);
+        LONGLONG adjust = (msecOff * mFrequency.QuadPart / 1000 < newTime - mLastTime) ? (msecOff * mFrequency.QuadPart / 1000) : (newTime - mLastTime);
         mStartTime.QuadPart += adjust;
         newTime -= adjust;
 
         // Re-calculate milliseconds
-        newTicks = (unsigned long) (1000 * newTime / mFrequency.QuadPart);
+        newTicks = (ULONGLONG) (1000 * newTime / mFrequency.QuadPart);
     }
 
     // Record last time for adjust
@@ -362,12 +362,12 @@ void EngineManager::fireEngineStopped()
 void EngineManager::fireEngineUpdateStarted()
 {
 	// Do frame start event
-	unsigned long now = getMilliseconds();
+	unsigned long long now = getMilliseconds();
 
 	mEngineEvent->timeSinceLastUpdate = 0.0f;
 	if (now != 0 && mLastUpdateStartTime != 0)
 	{
-		unsigned long diff = now - mLastUpdateStartTime;
+		unsigned long long diff = now - mLastUpdateStartTime;
 		mEngineEvent->timeSinceLastUpdate = (float)(diff) / 1000.0f;
 	}
 	mLastUpdateStartTime = now;
@@ -383,12 +383,12 @@ void EngineManager::fireEngineUpdateStarted()
 void EngineManager::fireEngineUpdateEnded()
 {
 	// Do frame start event
-	unsigned long now = getMilliseconds();
+	unsigned long long now = getMilliseconds();
 
 	mEngineEvent->timeSinceLastUpdate = 0.0f;
 	if (now != 0 && mLastUpdateEndTime != 0)
 	{
-		unsigned long diff = now - mLastUpdateEndTime;
+		unsigned long long diff = now - mLastUpdateEndTime;
 		mEngineEvent->timeSinceLastUpdate = (float)(diff) / 1000.0f;
 	}
 	mLastUpdateEndTime = now;

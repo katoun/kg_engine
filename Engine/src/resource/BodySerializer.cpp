@@ -232,154 +232,157 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 				if (physics::PhysicsManager::getInstance() != nullptr)
 					pShape = physics::PhysicsManager::getInstance()->createShape(shapeType);
 
-				pBodyData->addShape(pShape);
-
-				pSubElement = pElement->FirstChildElement("position");
-				if (pSubElement != nullptr)
+				if (pShape != nullptr)
 				{
-					float x = 0.0f;
-					float y = 0.0f;
-					float z = 0.0f;
+					pBodyData->addShape(pShape);
 
-					if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+					pSubElement = pElement->FirstChildElement("position");
+					if (pSubElement != nullptr)
 					{
-						x = (float)dvalue;
-					}
+						float x = 0.0f;
+						float y = 0.0f;
+						float z = 0.0f;
 
-					if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-					{
-						y = (float)dvalue;
-					}
-
-					if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-					{
-						z = (float)dvalue;
-					}
-
-					pShape->setPosition(core::vector3d(x, y, z));
-				}
-
-				pSubElement = pElement->FirstChildElement("orientation");
-				if (pSubElement != nullptr)
-				{
-					float x = 0.0f;
-					float y = 0.0f;
-					float z = 0.0f;
-
-					if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
-					{
-						x = (float)dvalue;
-					}
-
-					if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-					{
-						y = (float)dvalue;
-					}
-
-					if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-					{
-						z = (float)dvalue;
-					}
-
-					pShape->setOrientation(core::quaternion(x, y, z));
-				}
-
-				pSubElement = pElement->FirstChildElement("dimension");
-				if (pSubElement != nullptr)
-				{
-					switch(shapeType)
-					{
-					case physics::SHAPE_TYPE_PLANE:
+						if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
 						{
-							physics::PlaneShape* planeShape = static_cast<physics::PlaneShape*>(pShape);
-							if (planeShape != nullptr)
-							{
-								float x = 0.0f;
-								float y = 0.0f;
-								float z = 0.0f;
-								float d = 0.0f;
-
-								if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									x = (float)dvalue;
-								}
-
-								if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									y = (float)dvalue;
-								}
-
-								if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									z = (float)dvalue;
-								}
-
-								if (pSubElement->QueryDoubleAttribute("d", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									d = (float)dvalue;
-								}
-
-								planeShape->setDimension(core::vector3d(x, y, z), d);
-							}
+							x = (float)dvalue;
 						}
-						break;
-					case physics::SHAPE_TYPE_SPHERE:
+
+						if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
 						{
-							physics::SphereShape* sphereShape = static_cast<physics::SphereShape*>(pShape);
-							if (sphereShape != nullptr)
+							y = (float)dvalue;
+						}
+
+						if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							z = (float)dvalue;
+						}
+
+						pShape->setPosition(core::vector3d(x, y, z));
+					}
+
+					pSubElement = pElement->FirstChildElement("orientation");
+					if (pSubElement != nullptr)
+					{
+						float x = 0.0f;
+						float y = 0.0f;
+						float z = 0.0f;
+
+						if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							x = (float)dvalue;
+						}
+
+						if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							y = (float)dvalue;
+						}
+
+						if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+						{
+							z = (float)dvalue;
+						}
+
+						pShape->setOrientation(core::quaternion(x, y, z));
+					}
+
+					pSubElement = pElement->FirstChildElement("dimension");
+					if (pSubElement != nullptr)
+					{
+						switch(shapeType)
+						{
+						case physics::SHAPE_TYPE_PLANE:
 							{
-								if (pSubElement->QueryDoubleAttribute("radius", &dvalue) == tinyxml2::XML_SUCCESS)
+								physics::PlaneShape* planeShape = static_cast<physics::PlaneShape*>(pShape);
+								if (planeShape != nullptr)
 								{
-									sphereShape->setDimension((float)dvalue);
+									float x = 0.0f;
+									float y = 0.0f;
+									float z = 0.0f;
+									float d = 0.0f;
+
+									if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										x = (float)dvalue;
+									}
+
+									if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										y = (float)dvalue;
+									}
+
+									if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										z = (float)dvalue;
+									}
+
+									if (pSubElement->QueryDoubleAttribute("d", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										d = (float)dvalue;
+									}
+
+									planeShape->setDimension(core::vector3d(x, y, z), d);
 								}
 							}
-						}
-						break;
-					case physics::SHAPE_TYPE_BOX:
-						{
-							physics::BoxShape* boxShape = static_cast<physics::BoxShape*>(pShape);
-							if (boxShape != nullptr)
+							break;
+						case physics::SHAPE_TYPE_SPHERE:
 							{
-								float x = 0.0f;
-								float y = 0.0f;
-								float z = 0.0f;
-
-								if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+								physics::SphereShape* sphereShape = static_cast<physics::SphereShape*>(pShape);
+								if (sphereShape != nullptr)
 								{
-									x = (float)dvalue;
+									if (pSubElement->QueryDoubleAttribute("radius", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										sphereShape->setDimension((float)dvalue);
+									}
 								}
-
-								if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									y = (float)dvalue;
-								}
-
-								if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
-								{
-									z = (float)dvalue;
-								}
-
-								boxShape->setDimension(core::vector3d(x, y, z));
 							}
+							break;
+						case physics::SHAPE_TYPE_BOX:
+							{
+								physics::BoxShape* boxShape = static_cast<physics::BoxShape*>(pShape);
+								if (boxShape != nullptr)
+								{
+									float x = 0.0f;
+									float y = 0.0f;
+									float z = 0.0f;
+
+									if (pSubElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										x = (float)dvalue;
+									}
+
+									if (pSubElement->QueryDoubleAttribute("y", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										y = (float)dvalue;
+									}
+
+									if (pSubElement->QueryDoubleAttribute("z", &dvalue) == tinyxml2::XML_SUCCESS)
+									{
+										z = (float)dvalue;
+									}
+
+									boxShape->setDimension(core::vector3d(x, y, z));
+								}
+							}
+							break;
+						case physics::SHAPE_TYPE_CAPSULE:
+							{
+								//katoun TODO
+							}
+							break;
+						case physics::SHAPE_TYPE_CONVEX:
+							{
+								//katoun TODO
+							}
+							break;
+						case physics::SHAPE_TYPE_MESH:
+							{
+								//katoun TODO
+							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case physics::SHAPE_TYPE_CAPSULE:
-						{
-							//katoun TODO
-						}
-						break;
-					case physics::SHAPE_TYPE_CONVEX:
-						{
-							//katoun TODO
-						}
-						break;
-					case physics::SHAPE_TYPE_MESH:
-						{
-							//katoun TODO
-						}
-						break;
-					default:
-						break;
 					}
 				}
 			}

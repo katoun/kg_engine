@@ -88,7 +88,7 @@ void SoundManager::removeAllSounds()
 
 void SoundManager::setActiveListener(Listener* listener)
 {
-	if (listener = nullptr)
+	if (listener == nullptr)
 		return;
 
 	mActiveListener = listener;

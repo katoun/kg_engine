@@ -224,23 +224,21 @@ void RenderTarget::updateImpl(float elapsedTime)
 	// Update statistics
 	++mFrameCount;
 	mLastElapsedTime += elapsedTime;
-	if (mLastElapsedTime != 0.0f)
+	if (mLastElapsedTime > 1.0f)//updated once per second
 	{
-		if (mLastElapsedTime > 1000.0f)
-		{
-			mStats.lastFPS = (float)(mFrameCount * 1000.0f) / (float)(mLastElapsedTime);
+		
+		mStats.lastFPS = (float)(mFrameCount) / mLastElapsedTime;
 
-			if (mStats.avgFPS == 0)
-				mStats.avgFPS = mStats.lastFPS;
-			else
-				mStats.avgFPS = (mStats.avgFPS + mStats.lastFPS) / 2; // not strictly correct, but good enough
+		if (mStats.avgFPS == 0)
+			mStats.avgFPS = mStats.lastFPS;
+		else
+			mStats.avgFPS = (mStats.avgFPS + mStats.lastFPS) / 2; // not strictly correct, but good enough
 
-			mStats.bestFPS = core::max(mStats.bestFPS, mStats.lastFPS);
-			mStats.worstFPS = core::min(mStats.worstFPS, mStats.lastFPS);
+		mStats.bestFPS = core::max(mStats.bestFPS, mStats.lastFPS);
+		mStats.worstFPS = core::min(mStats.worstFPS, mStats.lastFPS);
 
-			mFrameCount = 0;
-			mLastElapsedTime = 0;
-		}
+		mFrameCount = 0;
+		mLastElapsedTime = 0;
 	}
 }
 

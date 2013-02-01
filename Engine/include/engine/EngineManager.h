@@ -122,8 +122,8 @@ protected:
 	static EngineEvent* mEngineEvent;
 	static std::list<EngineEventReceiver*> mEngineEventReceivers;
 
-	unsigned long mLastUpdateStartTime;
-	unsigned long mLastUpdateEndTime;
+	unsigned long long mLastUpdateStartTime;
+	unsigned long long mLastUpdateEndTime;
 
 	core::Log*					mLog;
 	EngineSettings*				mSettings;
@@ -139,7 +139,7 @@ protected:
 
 	void resetTimer();
 
-	unsigned long getMilliseconds();
+	unsigned long long getMilliseconds();
 
 	void fireEngineInitialized();
 
@@ -160,8 +160,8 @@ protected:
 	void saveOptions();
 
 #if ENGINE_PLATFORM == PLATFORM_WINDOWS
-	DWORD			mStartTick;
-	LONGLONG		mLastTime;
+	ULONGLONG		mStartTick;
+	ULONGLONG		mLastTime;
 	LARGE_INTEGER	mStartTime;
 	LARGE_INTEGER	mFrequency;
 

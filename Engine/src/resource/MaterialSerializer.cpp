@@ -169,26 +169,6 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 		return false;
 	}
 
-	render::Material* renderMaterial = nullptr;
-	physics::Material* physicsMaterial = nullptr;
-	if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
-	{
-		renderMaterial = static_cast<render::Material*>(dest);
-
-		assert(renderMaterial != nullptr);
-		if (renderMaterial == nullptr)
-			return false;
-	}
-
-	if (dest->getResourceType() == RESOURCE_TYPE_PHYSICS_MATERIAL)
-	{
-		physicsMaterial = static_cast<physics::Material*>(dest);
-
-		assert(physicsMaterial != nullptr);
-		if (physicsMaterial == nullptr)
-			return false;
-	}
-
 	if (resource::ResourceManager::getInstance() == nullptr)
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Unable to load material - resources data path not set.", core::LOG_LEVEL_ERROR);
@@ -204,6 +184,12 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("material");
 	if (pRoot != nullptr)
 	{
+		render::Material* renderMaterial = static_cast<render::Material*>(dest);
+
+		assert(renderMaterial != nullptr);
+		if (renderMaterial == nullptr)
+			return false;
+
 		int ivalue = 0;
 		double dvalue = 0.0;
 		const char* svalue;
@@ -343,6 +329,12 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 
 		if (dest->getResourceType() == RESOURCE_TYPE_PHYSICS_MATERIAL)
 		{
+			physics::Material* physicsMaterial = static_cast<physics::Material*>(dest);
+
+			assert(physicsMaterial != nullptr);
+			if (physicsMaterial == nullptr)
+				return false;
+			
 			pElement = pRoot->FirstChildElement("restitution");
 			if (pElement != nullptr)
 			{
