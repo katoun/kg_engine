@@ -79,10 +79,6 @@ namespace input
 namespace resource
 {
 }
-//! In this namespace can be found scene management classes like SceneManager, SceneNode, Camera, and so on.
-namespace scene
-{
-}
 //! In this namespace can be found render management classes like RenderManager, RenderWindow, RenderSystem, and so on.
 namespace render
 {
