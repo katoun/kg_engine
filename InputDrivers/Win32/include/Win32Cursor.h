@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include <Win32Config.h>
 #include <input/Cursor.h>
 
+#include <glm/glm.hpp>
+
 namespace input
 {
 
@@ -45,13 +47,13 @@ public:
 
 	void setAutoCenter(bool reset);
 
-	void setPosition(const core::position2d& pos);
+	void setPosition(const glm::vec2& pos);
 
 	void setPosition(int x, int y);
 
-	const core::position2d& getPosition() const;
+	const glm::vec2& getPosition() const;
 
-	const core::position2d& getAbsolutePosition() const;
+	const glm::vec2& getAbsolutePosition() const;
 	
 private:
 

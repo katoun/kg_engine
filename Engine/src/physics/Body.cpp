@@ -57,18 +57,18 @@ Body::Body(): game::Component()
 
 	mAngularDamping = 0.0f;
 
-	mLinearVelocity = core::vector3d::ORIGIN_3D;
+	mLinearVelocity = glm::vec3(0, 0, 0);
 
-	mAngularVelocity = core::vector3d::ORIGIN_3D;
+	mAngularVelocity = glm::vec3(0, 0, 0);
 
 	mMaterial = nullptr;
 
 	mEnabled = false;
 
-	mForce = core::vector3d::ORIGIN_3D;
-	mTorque = core::vector3d::ORIGIN_3D;
-	mLinearImpulse = core::vector3d::ORIGIN_3D;
-	mAngularImpulse = core::vector3d::ORIGIN_3D;
+	mForce = glm::vec3(0, 0, 0);
+	mTorque = glm::vec3(0, 0, 0);
+	mLinearImpulse = glm::vec3(0, 0, 0);
+	mAngularImpulse = glm::vec3(0, 0, 0);
 
 	mJoint = nullptr;
 }
@@ -246,27 +246,27 @@ float Body::getAngularDamping() const
 	return mAngularDamping;
 }
 
-void Body::setLinearVelocity(const core::vector3d& velocity)
+void Body::setLinearVelocity(const glm::vec3& velocity)
 {
 	mLinearVelocity = velocity;
 }
 
-const core::vector3d Body::getLinearVelocity()
+const glm::vec3 Body::getLinearVelocity()
 {
 	return mLinearVelocity;
 }
 
-void Body::setAngularVelocity(const core::vector3d& velocity)
+void Body::setAngularVelocity(const glm::vec3& velocity)
 {
 	mAngularVelocity = velocity;
 }
 
-const core::vector3d Body::getAngularVelocity()
+const glm::vec3 Body::getAngularVelocity()
 {
 	return mAngularVelocity;
 }
 
-void Body::applyForce(const core::vector3d& force)
+void Body::applyForce(const glm::vec3& force)
 {
 	if (mGameObject != nullptr)
 	{
@@ -278,12 +278,12 @@ void Body::applyForce(const core::vector3d& force)
 	}
 }
 
-void Body::applyTorque(const core::vector3d& torque)
+void Body::applyTorque(const glm::vec3& torque)
 {
-	
+	//TODO!!!
 }
 
-void Body::applyLinearImpulse(const core::vector3d& linearImpulse)
+void Body::applyLinearImpulse(const glm::vec3& linearImpulse)
 {
 	if (mGameObject != nullptr)
 	{
@@ -295,7 +295,7 @@ void Body::applyLinearImpulse(const core::vector3d& linearImpulse)
 	}
 }
 
-void Body::applyAngularImpulse(const core::vector3d& angularImpulse)
+void Body::applyAngularImpulse(const glm::vec3& angularImpulse)
 {
 	if (mGameObject != nullptr)
 	{
@@ -373,18 +373,18 @@ void Body::resourceUnloaded(const resource::ResourceEvent& evt)
 
 		mAngularDamping = 0.0f;
 
-		mLinearVelocity = core::vector3d::ORIGIN_3D;
+		mLinearVelocity = glm::vec3(0, 0, 0);
 
-		mAngularVelocity = core::vector3d::ORIGIN_3D;
+		mAngularVelocity = glm::vec3(0, 0, 0);
 
 		mMaterial = nullptr;
 
 		mEnabled = false;
 
-		mForce = core::vector3d::ORIGIN_3D;
-		mTorque = core::vector3d::ORIGIN_3D;
-		mLinearImpulse = core::vector3d::ORIGIN_3D;
-		mAngularImpulse = core::vector3d::ORIGIN_3D;
+		mForce = glm::vec3(0, 0, 0);
+		mTorque = glm::vec3(0, 0, 0);
+		mLinearImpulse = glm::vec3(0, 0, 0);
+		mAngularImpulse = glm::vec3(0, 0, 0);
 
 		uninitialize();
 	}

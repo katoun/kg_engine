@@ -29,7 +29,8 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <core/SystemDriver.h>
-#include <core/Position2d.h>
+
+#include <glm/glm.hpp>
 
 namespace input
 {
@@ -67,11 +68,11 @@ public:
 
 	Cursor* getCursor();
 
-	const core::position2d& getCursorCenter() const;
+	const glm::vec2& getCursorCenter() const;
 
 protected:
 
-	core::position2d mCursorCenter;
+	glm::vec2 mCursorCenter;
 
 	Cursor* mCursor;
 };

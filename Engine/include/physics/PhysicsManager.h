@@ -30,11 +30,11 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <core/System.h>
 #include <core/Singleton.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 #include <physics/CollisionEventReceiver.h>
+
+#include <glm/glm.hpp>
 
 #include <string>
 #include <map>
@@ -84,7 +84,7 @@ public:
 	void setCollisionAccuracy(float accuracy);
 	void setSolverAccuracy(float accuracy);
 
-	void setGravity(const core::vector3d& gravity);
+	void setGravity(const glm::vec3& gravity);
 
 	//!  Adds a boy to be managed by this physics manager.
 	void addBody(Body* body);
@@ -178,7 +178,7 @@ protected:
 	float mCollisionAccuracy;
 	float mSolverAccuracy;
 
-	core::vector3d mGravity;
+	glm::vec3 mGravity;
 };
 
 } // end namespace physics

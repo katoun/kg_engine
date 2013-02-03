@@ -33,8 +33,7 @@ InputDriver::InputDriver(const std::string& name): core::SystemDriver(name)
 {
 	mCursor = nullptr;
 
-	mCursorCenter.x = 0;
-	mCursorCenter.y = 0;
+	mCursorCenter = glm::vec2(0, 0);
 }
 
 InputDriver::~InputDriver() {}
@@ -44,7 +43,7 @@ Cursor* InputDriver::getCursor()
 	return mCursor;
 }
 
-const core::position2d& InputDriver::getCursorCenter() const
+const glm::vec2& InputDriver::getCursorCenter() const
 {
 	return mCursorCenter;
 }

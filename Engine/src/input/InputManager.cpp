@@ -39,8 +39,7 @@ InputManager::InputManager(): core::System("InputManager")
 {
 	mCursor = nullptr;
 
-	mCursorCenter.x = 0;
-	mCursorCenter.y = 0;
+	mCursorCenter = glm::vec2(0, 0);
 
 	mInputDriver = nullptr;
 }

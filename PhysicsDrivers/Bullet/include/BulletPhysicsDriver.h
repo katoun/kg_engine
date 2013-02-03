@@ -73,7 +73,7 @@ public:
 	void setCollisionAccuracy(float accuracy);
 	void setSolverAccuracy(float accuracy);
 
-	void setGravity(const core::vector3d& gravity);
+	void setGravity(const glm::vec3& gravity);
 
 	btDynamicsWorld* getDynamicsWorld();
 

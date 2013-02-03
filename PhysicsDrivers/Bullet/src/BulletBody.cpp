@@ -104,7 +104,7 @@ void BulletBody::setMaterial(Material* material)
 	}
 }
 
-void BulletBody::applyForce(const core::vector3d& force)
+void BulletBody::applyForce(const glm::vec3& force)
 {
 	Body::applyForce(force);
 
@@ -113,11 +113,11 @@ void BulletBody::applyForce(const core::vector3d& force)
 		btVector3 f(mForce.x, mForce.y, mForce.z);
 		mRigidBody->applyCentralForce(f);
 
-		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mForce = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 }
 
-void BulletBody::applyTorque(const core::vector3d& torque)
+void BulletBody::applyTorque(const glm::vec3& torque)
 {
 	Body::applyTorque(torque);
 	
@@ -126,11 +126,11 @@ void BulletBody::applyTorque(const core::vector3d& torque)
 		btVector3 t(mTorque.x, mTorque.y, mTorque.z);
 		mRigidBody->applyTorque(t);
 	
-		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mTorque = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 }
 
-void BulletBody::applyLinearImpulse(const core::vector3d& linearImpulse)
+void BulletBody::applyLinearImpulse(const glm::vec3& linearImpulse)
 {
 	Body::applyLinearImpulse(linearImpulse);
 		
@@ -139,11 +139,11 @@ void BulletBody::applyLinearImpulse(const core::vector3d& linearImpulse)
 		btVector3 impulse(mLinearImpulse.x, mLinearImpulse.y, mLinearImpulse.z);
 		mRigidBody->applyCentralImpulse(impulse);
 
-		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mLinearImpulse = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 }
 
-void BulletBody::applyAngularImpulse(const core::vector3d& angularImpulse)
+void BulletBody::applyAngularImpulse(const glm::vec3& angularImpulse)
 {
 	Body::applyAngularImpulse(angularImpulse);
 	
@@ -152,7 +152,7 @@ void BulletBody::applyAngularImpulse(const core::vector3d& angularImpulse)
 		btVector3 impulse(mAngularImpulse.x, mAngularImpulse.y, mAngularImpulse.z);
 		mRigidBody->applyTorqueImpulse(impulse);
 
-		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mAngularImpulse = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 }
 
@@ -205,8 +205,8 @@ void BulletBody::initializeImpl()
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			core::vector3d position = pTransform->getAbsolutePosition();
-			core::quaternion orientation = pTransform->getAbsoluteOrientation();
+			glm::vec3 position = pTransform->getAbsolutePosition();
+			glm::quat orientation = pTransform->getAbsoluteOrientation();
 
 			trans.setOrigin(btVector3(position.x, position.y, position.z));
 			trans.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));
@@ -273,36 +273,36 @@ void BulletBody::initializeImpl()
 		mRigidBody->setAngularVelocity(btVector3(mAngularVelocity.x, mAngularVelocity.y, mAngularVelocity.x));
 	}
 
-	if (mForce != core::vector3d::ORIGIN_3D)
+	if (mForce != glm::vec3(0, 0, 0))
 	{
 		btVector3 f(mForce.x, mForce.y, mForce.z);
 		mRigidBody->applyCentralForce(f);
 
-		mForce = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mForce = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 
-	if (mTorque != core::vector3d::ORIGIN_3D)
+	if (mTorque != glm::vec3(0, 0, 0))
 	{
 		btVector3 t(mTorque.x, mTorque.y, mTorque.z);
 		mRigidBody->applyTorque(t);
 	
-		mTorque = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mTorque = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 
-	if (mLinearImpulse != core::vector3d::ORIGIN_3D)
+	if (mLinearImpulse != glm::vec3(0, 0, 0))
 	{
 		btVector3 impulse(mLinearImpulse.x, mLinearImpulse.y, mLinearImpulse.z);
 		mRigidBody->applyCentralImpulse(impulse);
 
-		mLinearImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mLinearImpulse = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 
-	if (mAngularImpulse != core::vector3d::ORIGIN_3D)
+	if (mAngularImpulse != glm::vec3(0, 0, 0))
 	{
 		btVector3 impulse(mAngularImpulse.x, mAngularImpulse.y, mAngularImpulse.z);
 		mRigidBody->applyTorqueImpulse(impulse);
 
-		mAngularImpulse = core::vector3d::ORIGIN_3D;//Reset value after it is set
+		mAngularImpulse = glm::vec3(0, 0, 0);//Reset value after it is set
 	}
 }
 
@@ -361,8 +361,8 @@ void BulletBody::updateImpl(float elapsedTime)
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != nullptr)
 			{
-				core::vector3d position = pTransform->getAbsolutePosition();
-				core::quaternion orientation = pTransform->getAbsoluteOrientation();
+				glm::vec3 position = pTransform->getAbsolutePosition();
+				glm::quat orientation = pTransform->getAbsoluteOrientation();
 
 				trans.setOrigin(btVector3(position.x, position.y, position.z));
 				trans.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));

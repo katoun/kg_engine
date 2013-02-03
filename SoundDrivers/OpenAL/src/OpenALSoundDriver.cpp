@@ -59,10 +59,10 @@ void OpenALSoundDriver::updateListener(Listener* listener)
 		game::Transform* pTransform = static_cast<game::Transform*>(listener->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			core::vector3d position = pTransform->getAbsolutePosition();
-			core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
-			core::vector3d up = pTransform->getAbsoluteOrientation() * core::vector3d::UNIT_Y;
-			core::vector3d velocity = listener->getVelocity();
+			glm::vec3 position = pTransform->getAbsolutePosition();
+			glm::vec3 direction = pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1);
+			glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);
+			glm::vec3 velocity = listener->getVelocity();
 
 			// Initial orientation of the listener = direction + direction up
 			ALfloat lorientation[6];

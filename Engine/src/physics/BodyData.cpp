@@ -19,8 +19,8 @@ BodyData::BodyData(const std::string& name, resource::Serializer* serializer): r
 	mSleepiness = 0.0f;
 	mLinearDamping = 0.0f;
 	mAngularDamping = 0.0f;
-	mLinearVelocity = core::vector3d::ORIGIN_3D;
-	mAngularVelocity = core::vector3d::ORIGIN_3D;
+	mLinearVelocity = glm::vec3(0, 0, 0);
+	mAngularVelocity = glm::vec3(0, 0, 0);
 }
 
 BodyData::~BodyData() {}
@@ -89,22 +89,22 @@ float BodyData::getAngularDamping()
 	return mAngularDamping;
 }
 
-void BodyData::setLinearVelocity(const core::vector3d& velocity)
+void BodyData::setLinearVelocity(const glm::vec3& velocity)
 {
 	mLinearVelocity = velocity;
 }
 
-const core::vector3d& BodyData::getLinearVelocity() const
+const glm::vec3& BodyData::getLinearVelocity() const
 {
 	return mLinearVelocity;
 }
 
-void BodyData::setAngularVelocity(const core::vector3d& velocity)
+void BodyData::setAngularVelocity(const glm::vec3& velocity)
 {
 	mAngularVelocity = velocity;
 }
 
-const core::vector3d& BodyData::getAngularVelocity() const
+const glm::vec3& BodyData::getAngularVelocity() const
 {
 	return mAngularVelocity;
 }
@@ -150,15 +150,16 @@ void BodyData::unloadImpl()
 	// Remove all Shapes
 	removeAllShapes();
 
+	mMaterial = nullptr;
+
 	mMass = 1.0f;
 	mBodyType = BT_STATIC;
 	mSleeping = false;
 	mSleepiness = 0.0f;
 	mLinearDamping = 0.0f;
 	mAngularDamping = 0.0f;
-	mLinearVelocity = core::vector3d::ORIGIN_3D;
-	mAngularVelocity = core::vector3d::ORIGIN_3D;
-	mMaterial = nullptr;
+	mLinearVelocity = glm::vec3(0, 0, 0);
+	mAngularVelocity = glm::vec3(0, 0, 0);
 }
 
 } // end namespace physics

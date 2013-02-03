@@ -26,8 +26,6 @@ THE SOFTWARE.
 
 #include <core/Utils.h>
 #include <resource/Serializer.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 #include <render/Color.h>
 #include <resource/Resource.h>
 
@@ -44,7 +42,7 @@ Serializer::Serializer()
 
 Serializer::~Serializer() {}
 
-core::vector3d parseVector3d(std::string& params)
+glm::vec3 parseVector3d(std::string& params)
 {
 #ifdef _DEBUG
 	std::cout<<"Parse Vector3d"<<std::endl;
@@ -63,10 +61,10 @@ core::vector3d parseVector3d(std::string& params)
 	if (vecparams.size() > 2)
 		z = core::stringToFloat(vecparams[2]);
 
-	return core::vector3d(x, y, z);
+	return glm::vec3(x, y, z);
 }
 
-core::quaternion parseQuaternion(std::string& params)
+glm::quat parseQuaternion(std::string& params)
 {
 #ifdef _DEBUG
 	std::cout<<"Parse Quaternion"<<std::endl;
@@ -88,7 +86,7 @@ core::quaternion parseQuaternion(std::string& params)
 	if (vecparams.size() > 3)
 		w = core::stringToFloat(vecparams[3]);
 
-	return core::quaternion(x, y, z, w);
+	return glm::quat(x, y, z, w);
 }
 
 render::Color parseColor(std::string& params)

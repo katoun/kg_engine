@@ -28,8 +28,9 @@ THE SOFTWARE.
 #define _LISTENER_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
 #include <game/Component.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
@@ -50,14 +51,14 @@ public:
 
 	virtual ~Listener();
 
-	const core::vector3d& getVelocity() const;
+	const glm::vec3& getVelocity() const;
 
 protected:
 
 	void updateImpl(float elapsedTime);
 
-	core::vector3d mLastPosition;
-	core::vector3d mVelocity;
+	glm::vec3 mLastPosition;
+	glm::vec3 mVelocity;
 };
 
 } // end namespace sound

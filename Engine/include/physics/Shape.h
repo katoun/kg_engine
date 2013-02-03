@@ -28,9 +28,10 @@ THE SOFTWARE.
 #define _SHAPE_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 #include <physics/ShapeDefines.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace physics
 {
@@ -50,26 +51,26 @@ public:
 
 	//! Sets the position of the shape relative to it's body.
 	virtual void setPosition(float x, float y, float z);
-	virtual void setPosition(const core::vector3d& pos);
+	virtual void setPosition(const glm::vec3& pos);
 
 	//! Gets the position of the joint relative to it's body.
-	const core::vector3d& getPosition() const;
+	const glm::vec3& getPosition() const;
 
 	//!Sets the orientation applied to this shape.
-	virtual void setOrientation(const core::quaternion& q);
+	virtual void setOrientation(const glm::quat& q);
 
 	//!Gets the orientation of this shape.
-	const core::quaternion& getOrientation() const;
+	const glm::quat& getOrientation() const;
 
 protected:
 
 	ShapeType mShapeType;
 
 	//! Stores the position/translation of the shape relative to its body.
-	core::vector3d mPosition;
+	glm::vec3 mPosition;
 
 	//! Stores the orientation of the shape relative to it's body.
-	core::quaternion mOrientation;
+	glm::quat mOrientation;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,14 +83,14 @@ public:
 	PlaneShape();
 	virtual ~PlaneShape();
 
-	virtual void setDimension(const core::vector3d& normal, float d);
+	virtual void setDimension(const glm::vec3& normal, float d);
 
-	const core::vector3d& getNormal();
+	const glm::vec3& getNormal();
 	float getD();
 
 protected:
 
-	core::vector3d mNormal;
+	glm::vec3 mNormal;
 	float mD;
 };
 
@@ -122,13 +123,13 @@ public:
 	BoxShape();
 	virtual ~BoxShape();
 
-	virtual void setDimension(const core::vector3d& dimensions);
+	virtual void setDimension(const glm::vec3& dimensions);
 
-	const core::vector3d& getDimensions();
+	const glm::vec3& getDimensions();
 
 protected:
 
-	core::vector3d mDimensions;
+	glm::vec3 mDimensions;
 };
 
 } // end namespace physics

@@ -48,13 +48,13 @@ public:
 
 	void setMaterial(Material* material);
 
-	void applyForce(const core::vector3d& force);
+	void applyForce(const glm::vec3& force);
 
-	void applyTorque(const core::vector3d& torque);
+	void applyTorque(const glm::vec3& torque);
 
-	void applyLinearImpulse(const core::vector3d& linearImpulse);
+	void applyLinearImpulse(const glm::vec3& linearImpulse);
 
-	void applyAngularImpulse(const core::vector3d& angularImpulse);
+	void applyAngularImpulse(const glm::vec3& angularImpulse);
 
 	void createBtRigitBody(btDynamicsWorld* world);
 

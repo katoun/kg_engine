@@ -30,11 +30,11 @@ THE SOFTWARE.
 namespace core
 {
 
-aabox3d::aabox3d(): MinEdge(-1.0f, -1.0f, -1.0f), MaxEdge(1.0f, 1.0f, 1.0f) {}
+aabox3d::aabox3d(): MinEdge(-1, -1, -1), MaxEdge(1, 1, 1) {}
 
-aabox3d::aabox3d(const vector3d& min, const vector3d& max): MinEdge(min), MaxEdge(max) {}
+aabox3d::aabox3d(const glm::vec3& min, const glm::vec3& max): MinEdge(min), MaxEdge(max) {}
 
-aabox3d::aabox3d(const vector3d& init): MinEdge(init), MaxEdge(init) {}
+aabox3d::aabox3d(const glm::vec3& init): MinEdge(init), MaxEdge(init) {}
 
 aabox3d::aabox3d(float minx, float miny, float minz, float maxx, float maxy, float maxz): MinEdge(minx, miny, minz), MaxEdge(maxx, maxy, maxz) {}
 
@@ -59,7 +59,7 @@ void aabox3d::addInternalPoint(float x, float y, float z)
 	if (z < MinEdge.z) MinEdge.z = z;
 }
 
-void aabox3d::addInternalPoint(const vector3d& p)
+void aabox3d::addInternalPoint(const glm::vec3& p)
 {
 	addInternalPoint(p.x, p.y, p.z);
 }
@@ -72,7 +72,7 @@ void aabox3d::addInternalBox(const aabox3d& b)
 
 void aabox3d::reset(float x, float y, float z)
 {
-	MaxEdge.set(x, y, z);
+	MaxEdge = glm::vec3(x, y, z);
 	MinEdge = MaxEdge;
 }
 
@@ -81,26 +81,26 @@ void aabox3d::reset(const aabox3d& initValue)
 	*this = initValue;
 }
 
-void aabox3d::reset(const vector3d& initValue)
+void aabox3d::reset(const glm::vec3& initValue)
 {
 	MaxEdge = initValue;
 	MinEdge = initValue;
 }
 
-vector3d aabox3d::getCenter() const
+glm::vec3 aabox3d::getCenter() const
 {
-	return (MinEdge + MaxEdge) / 2;
+	return (MinEdge + MaxEdge) / glm::vec3(2);
 }
 
-vector3d aabox3d::getExtent() const
+glm::vec3 aabox3d::getExtent() const
 {
 	return MaxEdge - MinEdge;
 }
 
-void aabox3d::getEdges(vector3d *edges) const
+void aabox3d::getEdges(glm::vec3 *edges) const
 {
-	vector3d middle = (MinEdge + MaxEdge) / 2;
-	vector3d diag = middle - MaxEdge;
+	glm::vec3 middle = (MinEdge + MaxEdge) / glm::vec3(2);
+	glm::vec3 diag = middle - MaxEdge;
 
 	//! Edges are stored in this way:
 	//!       /1--------/3
@@ -112,19 +112,19 @@ void aabox3d::getEdges(vector3d *edges) const
 	//!     |/        | /
 	//!     4---------6/
 
-	edges[0].set(middle.x + diag.x, middle.y + diag.y, middle.z + diag.z);
-	edges[1].set(middle.x + diag.x, middle.y - diag.y, middle.z + diag.z);
-	edges[2].set(middle.x + diag.x, middle.y + diag.y, middle.z - diag.z);
-	edges[3].set(middle.x + diag.x, middle.y - diag.y, middle.z - diag.z);
-	edges[4].set(middle.x - diag.x, middle.y + diag.y, middle.z + diag.z);
-	edges[5].set(middle.x - diag.x, middle.y - diag.y, middle.z + diag.z);
-	edges[6].set(middle.x - diag.x, middle.y + diag.y, middle.z - diag.z);
-	edges[7].set(middle.x - diag.x, middle.y - diag.y, middle.z - diag.z);
+	edges[0] = glm::vec3(middle.x + diag.x, middle.y + diag.y, middle.z + diag.z);
+	edges[1] = glm::vec3(middle.x + diag.x, middle.y - diag.y, middle.z + diag.z);
+	edges[2] = glm::vec3(middle.x + diag.x, middle.y + diag.y, middle.z - diag.z);
+	edges[3] = glm::vec3(middle.x + diag.x, middle.y - diag.y, middle.z - diag.z);
+	edges[4] = glm::vec3(middle.x - diag.x, middle.y + diag.y, middle.z + diag.z);
+	edges[5] = glm::vec3(middle.x - diag.x, middle.y - diag.y, middle.z + diag.z);
+	edges[6] = glm::vec3(middle.x - diag.x, middle.y + diag.y, middle.z - diag.z);
+	edges[7] = glm::vec3(middle.x - diag.x, middle.y - diag.y, middle.z - diag.z);
 }
 
 bool aabox3d::isEmpty() const
 {
-	vector3d d = MinEdge - MaxEdge;
+	glm::vec3 d = MinEdge - MaxEdge;
 	if (d.x < 0.0f) d.x = -d.x;
 	if (d.y < 0.0f) d.y = -d.y;
 	if (d.z < 0.0f) d.z = -d.z;

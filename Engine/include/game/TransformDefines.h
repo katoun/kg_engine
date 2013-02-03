@@ -32,9 +32,9 @@ namespace game
 
 enum TransformSpace
 {
-	TRANSFORM_SPACE_LOCAL,	//! Transform is relative to the local space	
-	TRANSFORM_SPACE_PARENT,	//! Transform is relative to the space of the parent node	
-	TRANSFORM_SPACE_WORLD,	//! Transform is relative to world space
+	TRANSFORM_LOCAL_SPACE,	//! Transform is relative to the local space	
+	TRANSFORM_PARENT_SPACE,	//! Transform is relative to the space of the parent node	
+	TRANSFORM_WORLD_SPACE,	//! Transform is relative to world space
 	TRANSFORM_SPACE_COUNT
 };
 

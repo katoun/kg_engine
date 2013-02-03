@@ -20,6 +20,7 @@ float saturate(float inValue)
 void main()
 {
 	//gl_FragColor = vec4(testVector, 1.0);
+	gl_FragColor = texture2D(diffuseMap, texCoords);
 
 	float specularPower = 2.0;
 
@@ -39,8 +40,8 @@ void main()
 	float shininess = pow(max(dot_h, 0.0), specularPower);
 	
 	//Diffuse and bump
-	gl_FragColor = diffuseColor * lightDiffuse * saturate(dot_l);
+	//gl_FragColor = diffuseColor * lightDiffuse * saturate(dot_l);
 	
 	//Specular
-	gl_FragColor += specularColor * lightSpecular * shininess;
+	//gl_FragColor += specularColor * lightSpecular * shininess;
 }

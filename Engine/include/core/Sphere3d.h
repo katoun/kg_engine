@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _SPHERE_3D_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
@@ -41,7 +42,7 @@ public:
 	// Constructors
 
 	sphere3d();
-	sphere3d(const vector3d& center, const float radius);
+	sphere3d(const glm::vec3& center, const float radius);
 	sphere3d(const sphere3d& other);
 
 	// operators
@@ -53,10 +54,10 @@ public:
 
 	// functions
 
-	inline void set(const vector3d center, const float radius);
+	inline void set(const glm::vec3 center, const float radius);
 	inline void set(const sphere3d& s);
 
-	vector3d Center;
+	glm::vec3 Center;
 	float Radius;
 };
 

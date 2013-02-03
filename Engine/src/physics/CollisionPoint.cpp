@@ -31,12 +31,12 @@ namespace physics
 
 CollisionPoint::CollisionPoint()
 {
-	mCollisionPosition = core::vector3d::ORIGIN_3D;
-	mCollisionNormal = core::vector3d::UNIT_Y;
+	mCollisionPosition = glm::vec3(0, 0, 0);
+	mCollisionNormal = glm::vec3(0, 1, 0);
 	mDistance = 0.0f;
 	mImpulse = 0.0f;
-	mImpulseLateral1 = core::vector3d::ORIGIN_3D;
-	mImpulseLateral2 = core::vector3d::ORIGIN_3D;
+	mImpulseLateral1 = glm::vec3(0, 0, 0);
+	mImpulseLateral2 = glm::vec3(0, 0, 0);
 }
 
 } // end namespace physics

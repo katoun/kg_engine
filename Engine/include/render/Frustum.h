@@ -29,11 +29,11 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <core/Plane3d.h>
-#include <core/Vector3d.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
-class matrix4;
 class sphere3d;
 class aabox3d;
 }
@@ -55,16 +55,16 @@ public:
 	~Frustum();
 
 	//! build the view frustum
-	void buildViewFrustum(const core::matrix4& projMat, const core::matrix4& viewMat, ProjectionType projType, float fov, float aspect, float near, float far);
+	void buildViewFrustum(const glm::mat4x4& projMat, const glm::mat4x4& viewMat, ProjectionType projType, float fov, float aspect, float near, float far);
 
 	//! transforms the frustum by the matrix
 	//! \param mat: Matrix by which the view frustum is transformed.
-	void transform(const core::matrix4& mat);
+	void transform(const glm::mat4x4& mat);
 
-	const core::vector3d* getCorners();
+	const glm::vec3* getCorners();
 
 	//! Tests whether the given point is visible in the Frustum.
-	bool isVisible(const core::vector3d& point);
+	bool isVisible(const glm::vec3& point);
 
 	//! Tests whether the given sphere is visible in the Frustum.
 	bool isVisible(const core::sphere3d& sphere);
@@ -75,7 +75,7 @@ public:
 protected:
 
 	core::plane3d mPlanes[6];
-	core::vector3d mCorners[8];
+	glm::vec3 mCorners[8];
 };
 
 } //namespace render

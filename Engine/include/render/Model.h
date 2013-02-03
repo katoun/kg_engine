@@ -28,12 +28,13 @@ THE SOFTWARE.
 #define _MODEL_H_
 
 #include <EngineConfig.h>
-#include <core/Matrix4.h>
 #include <core/Aabox3d.h>
 #include <core/Sphere3d.h>
 #include <render/Color.h>
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
+
+#include <glm/glm.hpp>
 
 #include <string>
 
@@ -80,7 +81,7 @@ public:
 	bool getVisibleBoundingSphere();
 	void setVisibleBoundingSphere(bool visible);
 
-	const core::matrix4& getWorldMatrix();
+	const glm::mat4x4& getWorldMatrix();
 
 	const core::aabox3d& getBoundingBox();
 
@@ -108,7 +109,7 @@ protected:
 	bool mVisibleBoundingSphere;
 
 	// world matrix
-	core::matrix4 mWorldMatrix;
+	glm::mat4x4 mWorldMatrix;
 
 	//! Bounding box that 'contains' this object.
 	core::aabox3d mBoundingBox;

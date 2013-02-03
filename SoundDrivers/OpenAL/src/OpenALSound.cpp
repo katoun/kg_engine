@@ -53,8 +53,8 @@ OpenALSound::OpenALSound(): Sound()
 		return;
 	}
 
-	core::vector3d position = core::vector3d::ORIGIN_3D;
-	core::vector3d direction = core::vector3d::NEGATIVE_UNIT_Z;
+	glm::vec3 position = glm::vec3(0, 0, 0);
+	glm::vec3 direction = glm::vec3(0, 0, 1);
 
 	alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
 	//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))
@@ -243,8 +243,8 @@ void OpenALSound::updateImpl(float elapsedTime)
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != nullptr)
 			{
-				core::vector3d position = pTransform->getAbsolutePosition();
-				core::vector3d direction = pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z;
+				glm::vec3 position = pTransform->getAbsolutePosition();
+				glm::vec3 direction = pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1);
 
 				alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
 				//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))

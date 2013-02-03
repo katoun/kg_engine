@@ -33,8 +33,8 @@ Shape::Shape()
 {
 	mShapeType = SHAPE_TYPE_UNDEFINED;
 
-	mPosition = core::vector3d::ORIGIN_3D;
-	mOrientation = core::quaternion::IDENTITY;
+	mPosition = glm::vec3(0, 0, 0);
+	mOrientation = glm::quat(0, 0, 0, 1);
 }
 
 Shape::~Shape() {}
@@ -51,22 +51,22 @@ void Shape::setPosition(float x, float y, float z)
 	mPosition.z = z;
 }
 
-void Shape::setPosition(const core::vector3d& pos)
+void Shape::setPosition(const glm::vec3& pos)
 {
 	mPosition = pos;
 }
 
-const core::vector3d& Shape::getPosition() const
+const glm::vec3& Shape::getPosition() const
 {
 	return mPosition;
 }
 
-void Shape::setOrientation(const core::quaternion& q)
+void Shape::setOrientation(const glm::quat& q)
 {
 	mOrientation = q;
 }
 
-const core::quaternion& Shape::getOrientation() const
+const glm::quat& Shape::getOrientation() const
 {
 	return mOrientation;
 }
@@ -77,19 +77,19 @@ const core::quaternion& Shape::getOrientation() const
 PlaneShape::PlaneShape()
 {
 	mShapeType = SHAPE_TYPE_PLANE;
-	mNormal = core::vector3d::UNIT_Y;
+	mNormal = glm::vec3(0, 1, 0);
 	mD = 0.0f;
 }
 
 PlaneShape::~PlaneShape() {}
 
-void PlaneShape::setDimension(const core::vector3d& normal, float d)
+void PlaneShape::setDimension(const glm::vec3& normal, float d)
 {
 	mNormal = normal;
 	mD = d;
 }
 
-const core::vector3d& PlaneShape::getNormal()
+const glm::vec3& PlaneShape::getNormal()
 {
 	return mNormal;
 }
@@ -126,17 +126,17 @@ float SphereShape::getRadius()
 BoxShape::BoxShape()
 {
 	mShapeType = SHAPE_TYPE_BOX;
-	mDimensions = core::vector3d::UNIT_SCALE;
+	mDimensions = glm::vec3(1, 1, 1);
 }
 
 BoxShape::~BoxShape() {}
 
-void BoxShape::setDimension(const core::vector3d& dimensions)
+void BoxShape::setDimension(const glm::vec3& dimensions)
 {
 	mDimensions = dimensions;
 }
 
-const core::vector3d& BoxShape::getDimensions()
+const glm::vec3& BoxShape::getDimensions()
 {
 	return mDimensions;
 }

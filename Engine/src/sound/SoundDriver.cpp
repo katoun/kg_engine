@@ -25,8 +25,6 @@ THE SOFTWARE.
 */
 
 #include <sound/SoundDriver.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 
 namespace sound
 {

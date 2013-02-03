@@ -39,25 +39,10 @@ THE SOFTWARE.
 
 #include <glm/glm.hpp>
 
-////////////////////////
-
 #include <core/Aabox3d.h>
-
-#include <core/Matrix4.h>
-
-#include <core/Line2d.h>
-#include <core/Line3d.h>
-
-#include <core/Vector2d.h>
-#include <core/Vector3d.h>
-#include <core/Vector4d.h>
-
-#include <core/Quaternion.h>
 
 #include <core/Plane3d.h>
 
 #include <core/Sphere3d.h>
-
-#include <core/Position2d.h>
 
 #endif // _CORE_H_

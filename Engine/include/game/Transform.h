@@ -28,11 +28,10 @@ THE SOFTWARE.
 #define _TRANSFORM_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 #include <game/Component.h>
 #include <game/TransformDefines.h>
 
+#include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 #include <string>
@@ -54,25 +53,25 @@ public:
 	void setVisibleAxis(bool visible);
 
 	//! Gets the position.
-	const core::vector3d& getPosition();
+	const glm::vec3& getPosition();
 
 	//! Sets the position.
 	virtual void setPosition(float x, float y, float z);
-	virtual void setPosition(const core::vector3d& pos);
+	virtual void setPosition(const glm::vec3& pos);
 
 	//!Gets the orientation.
-	const core::quaternion& getOrientation();
+	const glm::quat& getOrientation();
 
 	//!Sets the orientation.
 	virtual void setOrientation(float x, float y, float z, float w);
-	virtual void setOrientation(const core::quaternion& q);
+	virtual void setOrientation(const glm::quat& q);
 
 	//!Gets the scaling factor.
-	const core::vector3d& getScale();
+	const glm::vec3& getScale();
 
 	//!Sets the scaling factor.
 	void setScale(float x, float y, float z);
-	void setScale(const core::vector3d& scale);
+	void setScale(const glm::vec3& scale);
 
 	//! Returns true if is affected by orientation applied to the parent.
 	bool getInheritOrientation();
@@ -87,23 +86,23 @@ public:
 	void setInheritScale(bool inherit);
 
 	//! Gets the position as derived from all parents.
-	const core::vector3d& getAbsolutePosition();
+	const glm::vec3& getAbsolutePosition();
 
 	//! Gets the orientation as derived from all parents.
-	const core::quaternion& getAbsoluteOrientation();
+	const glm::quat& getAbsoluteOrientation();
 
 	//! Gets the scaling facto as derived from all parents.
-	const core::vector3d& getAbsoluteScale();
+	const glm::vec3& getAbsoluteScale();
 
 	//Transformations on all coordinates
-	virtual void scale(const core::vector3d& scale);
-	virtual void translate(const core::vector3d& d, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
-	virtual void rotate(const core::quaternion& q, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void scale(const glm::vec3& scale);
+	virtual void translate(const glm::vec3& d, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
+	virtual void rotate(const glm::quat& q, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
 	
-	virtual void rotate(const float& degrees, const core::vector3d& axis, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
-	virtual void rotateX(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
-	virtual void rotateY(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
-	virtual void rotateZ(float degrees, TransformSpace relativeTo = TRANSFORM_SPACE_LOCAL);
+	virtual void rotate(const float& degrees, const glm::vec3& axis, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
+	virtual void rotateX(float degrees, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
+	virtual void rotateY(float degrees, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
+	virtual void rotateZ(float degrees, TransformSpace relativeTo = TRANSFORM_LOCAL_SPACE);
 
 protected:
 
@@ -113,22 +112,22 @@ protected:
 	bool mVisibleAxis;
 
 	//! Stores the position/translation relative to its parent.
-	core::vector3d mPosition;
+	glm::vec3 mPosition;
 
 	//! Stores the orientation relative to it's parent.
-	core::quaternion mOrientation;
+	glm::quat mOrientation;
 
 	//! Stores the scaling factor.
-	core::vector3d mScale;
+	glm::vec3 mScale;
 
 	//! Cached combined position.
-	core::vector3d mAbsolutePosition;
+	glm::vec3 mAbsolutePosition;
 
 	//! Cached combined orientation.
-	core::quaternion mAbsoluteOrientation;
+	glm::quat mAbsoluteOrientation;
 
 	//! Cached combined scale.
-	core::vector3d mAbsoluteScale;
+	glm::vec3 mAbsoluteScale;
 
 	//! Flag indicating transform needs an update.
 	bool mTransformNeedsUpdate;

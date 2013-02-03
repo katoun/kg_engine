@@ -43,7 +43,7 @@ BulletPlaneShape::~BulletPlaneShape()
 	SAFE_DELETE(mPlaneShape);
 }
 
-void BulletPlaneShape::setDimension(const core::vector3d& normal, float d)
+void BulletPlaneShape::setDimension(const glm::vec3& normal, float d)
 {
 	PlaneShape::setDimension(normal, d);
 
@@ -99,7 +99,7 @@ BulletBoxShape::~BulletBoxShape()
 	SAFE_DELETE(mBoxShape);
 }
 
-void BulletBoxShape::setDimension(const core::vector3d& dimensions)
+void BulletBoxShape::setDimension(const glm::vec3& dimensions)
 {
 	BoxShape::setDimension(dimensions);
 

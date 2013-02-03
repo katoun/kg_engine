@@ -29,10 +29,8 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <render/Color.h>
-#include <core/Vector2d.h>
-#include <core/Vector3d.h>
-#include <core/Vector4d.h>
-#include <core/Matrix4.h>
+
+#include <glm/glm.hpp>
 
 namespace render
 {
@@ -49,7 +47,7 @@ public:
 
 	RenderStateData();
 
-	void setWorldMatrix(const core::matrix4& m);
+	void setWorldMatrix(const glm::mat4x4& m);
 	void setCurrentMaterial(Material* material);
 	void setCurrentModel(Model* model);
 	void setCurrentCamera(Camera* cam);
@@ -59,84 +57,84 @@ public:
 	Material* getCurrentMaterial() const;
 	Model* getCurrentModel() const;
 
-	const core::vector3d& getCameraPosition();
-	const core::vector3d& getCameraPositionObjectSpace();
+	const glm::vec3& getCameraPosition();
+	const glm::vec3& getCameraPositionObjectSpace();
 
-	const core::vector3d& getCurrentLightPosition();
-	const core::vector3d& getCurrentLightPositionObjectSpace();
-	const core::vector3d& getCurrentLightPositionViewSpace();
-	const core::vector3d& getCurrentLightDirection();
-	const core::vector3d& getCurrentLightDirectionObjectSpace();
-	const core::vector3d& getCurrentLightDirectionViewSpace();
+	const glm::vec3& getCurrentLightPosition();
+	const glm::vec3& getCurrentLightPositionObjectSpace();
+	const glm::vec3& getCurrentLightPositionViewSpace();
+	const glm::vec3& getCurrentLightDirection();
+	const glm::vec3& getCurrentLightDirectionObjectSpace();
+	const glm::vec3& getCurrentLightDirectionViewSpace();
 
 	void setAmbientLightColor(const Color& ambient);
 	const Color& getAmbientLightColour() const;
 
 	const Color& getCurrentLightDiffuseColour() const;
 	const Color& getCurrentLightSpecularColour() const;
-	core::vector4d getCurrentLightAttenuation() const;
+	glm::vec4 getCurrentLightAttenuation() const;
 
-	const core::matrix4& getWorldMatrix();
-	const core::matrix4& getViewMatrix();
-	const core::matrix4& getProjectionMatrix();
+	const glm::mat4x4& getWorldMatrix();
+	const glm::mat4x4& getViewMatrix();
+	const glm::mat4x4& getProjectionMatrix();
 
-	const core::matrix4& getWorldViewMatrix();
-	const core::matrix4& getViewProjectionMatrix();
-	const core::matrix4& getWorldViewProjMatrix();
+	const glm::mat4x4& getWorldViewMatrix();
+	const glm::mat4x4& getViewProjectionMatrix();
+	const glm::mat4x4& getWorldViewProjMatrix();
 
-	const core::matrix4& getInverseWorldMatrix();
-	const core::matrix4& getInverseViewMatrix();
-	core::matrix4 getInverseProjectionMatrix();
+	const glm::mat4x4& getInverseWorldMatrix();
+	const glm::mat4x4& getInverseViewMatrix();
+	glm::mat4x4 getInverseProjectionMatrix();
 
-	const core::matrix4& getInverseWorldViewMatrix();
-	core::matrix4 getInverseViewProjectionMatrix();
-	core::matrix4 getInverseWorldViewProjMatrix();
+	const glm::mat4x4& getInverseWorldViewMatrix();
+	glm::mat4x4 getInverseViewProjectionMatrix();
+	glm::mat4x4 getInverseWorldViewProjMatrix();
 
-	core::matrix4 getTransposedWorldMatrix();
-	core::matrix4 getTransposedViewMatrix();
-	core::matrix4 getTransposedProjectionMatrix();
+	glm::mat4x4 getTransposedWorldMatrix();
+	glm::mat4x4 getTransposedViewMatrix();
+	glm::mat4x4 getTransposedProjectionMatrix();
 
-	core::matrix4 getTransposedWorldViewMatrix();
-	core::matrix4 getTransposedViewProjectionMatrix();
-	core::matrix4 getTransposedWorldViewProjMatrix();
+	glm::mat4x4 getTransposedWorldViewMatrix();
+	glm::mat4x4 getTransposedViewProjectionMatrix();
+	glm::mat4x4 getTransposedWorldViewProjMatrix();
 
-	const core::matrix4& getInverseTransposedWorldMatrix();
-	core::matrix4 getInverseTransposedViewMatrix();
-	core::matrix4 getInverseTransposedProjectionMatrix();
+	const glm::mat4x4& getInverseTransposedWorldMatrix();
+	glm::mat4x4 getInverseTransposedViewMatrix();
+	glm::mat4x4 getInverseTransposedProjectionMatrix();
 
-	const core::matrix4& getInverseTransposedWorldViewMatrix();
-	core::matrix4 getInverseTransposedViewProjectionMatrix();
-	core::matrix4 getInverseTransposedWorldViewProjMatrix();
+	const glm::mat4x4& getInverseTransposedWorldViewMatrix();
+	glm::mat4x4 getInverseTransposedViewProjectionMatrix();
+	glm::mat4x4 getInverseTransposedWorldViewProjMatrix();
 
 protected:
 
-	core::matrix4 mWorldMatrix;
-	core::matrix4 mViewMatrix;
-	core::matrix4 mProjectionMatrix;
+	glm::mat4x4 mWorldMatrix;
+	glm::mat4x4 mViewMatrix;
+	glm::mat4x4 mProjectionMatrix;
 
-	core::matrix4 mWorldViewMatrix;
-	core::matrix4 mViewProjMatrix;
-	core::matrix4 mWorldViewProjMatrix;
+	glm::mat4x4 mWorldViewMatrix;
+	glm::mat4x4 mViewProjMatrix;
+	glm::mat4x4 mWorldViewProjMatrix;
 	
-	core::matrix4 mInverseWorldMatrix;
-	core::matrix4 mInverseViewMatrix;
+	glm::mat4x4 mInverseWorldMatrix;
+	glm::mat4x4 mInverseViewMatrix;
 
-	core::matrix4 mInverseWorldViewMatrix;
+	glm::mat4x4 mInverseWorldViewMatrix;
 	
-	core::matrix4 mInverseTransposeWorldMatrix;
+	glm::mat4x4 mInverseTransposeWorldMatrix;
 	
-	core::matrix4 mInverseTransposeWorldViewMatrix;
+	glm::mat4x4 mInverseTransposeWorldViewMatrix;
 
-	core::vector3d mCameraPosition;
-	core::vector3d mCameraPositionObjectSpace;
+	glm::vec3 mCameraPosition;
+	glm::vec3 mCameraPositionObjectSpace;
 
-	core::vector3d mLightPosition;
-	core::vector3d mLightPositionObjectSpace;
-	core::vector3d mLightPositionViewSpace;
+	glm::vec3 mLightPosition;
+	glm::vec3 mLightPositionObjectSpace;
+	glm::vec3 mLightPositionViewSpace;
 
-	core::vector3d mLightDirection;
-	core::vector3d mLightDirectionObjectSpace;
-	core::vector3d mLightDirectionViewSpace;
+	glm::vec3 mLightDirection;
+	glm::vec3 mLightDirectionObjectSpace;
+	glm::vec3 mLightDirectionViewSpace;
 
 	Color mAmbientLightColor;
 	Color mFogColor;

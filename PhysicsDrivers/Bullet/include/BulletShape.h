@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include <BulletConfig.h>
 #include <physics/Shape.h>
 
+#include <glm/glm.hpp>
+
 namespace physics
 {
 
@@ -43,7 +45,7 @@ public:
 	BulletPlaneShape();
 	~BulletPlaneShape();
 
-	void setDimension(const core::vector3d& normal, float d);
+	void setDimension(const glm::vec3& normal, float d);
 
 	btCollisionShape* getBulletCollisionShape();
 
@@ -81,7 +83,7 @@ public:
 	BulletBoxShape();
 	~BulletBoxShape();
 
-	void setDimension(const core::vector3d& dimensions);
+	void setDimension(const glm::vec3& dimensions);
 
 	btCollisionShape* getBulletCollisionShape();
 

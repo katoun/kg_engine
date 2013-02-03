@@ -28,10 +28,11 @@ THE SOFTWARE.
 #define _JOINT_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
 #include <physics/JointDefines.h>
 #include <engine/Object.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace physics
 {
@@ -55,9 +56,9 @@ public:
 
 	void setActors(Body* body1, Body* body2);
 
-	virtual void setAnchor(const core::vector3d& anchor);
+	virtual void setAnchor(const glm::vec3& anchor);
 
-	virtual void setAxis(const core::vector3d& axis);
+	virtual void setAxis(const glm::vec3& axis);
 
 protected:
 
@@ -69,8 +70,8 @@ protected:
 	Body* mActor1;
 	Body* mActor2;
 
-	core::vector3d mAnchor;
-	core::vector3d mAxis;
+	glm::vec3 mAnchor;
+	glm::vec3 mAxis;
 };
 
 //////////////////////////////////////////////////////////////////////////

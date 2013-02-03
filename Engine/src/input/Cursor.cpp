@@ -33,8 +33,8 @@ Cursor::Cursor()
 {
 	mAutoCenter = false;
 
-	mPosition = core::position2d::ORIGIN_2D;
-	mAbsolutePosition = core::position2d::ORIGIN_2D;
+	mPosition = glm::vec2(0, 0);
+	mAbsolutePosition = glm::vec2(0, 0);
 }
 
 Cursor::~Cursor() {}
@@ -49,12 +49,12 @@ bool Cursor::isAutoCenter()
 	return mAutoCenter;
 }
 
-const core::position2d& Cursor::getPosition() const
+const glm::vec2& Cursor::getPosition() const
 {
 	return mPosition;
 }
 
-const core::position2d& Cursor::getAbsolutePosition() const
+const glm::vec2& Cursor::getAbsolutePosition() const
 {
 	return mAbsolutePosition;
 }

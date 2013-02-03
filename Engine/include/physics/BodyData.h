@@ -28,8 +28,9 @@ THE SOFTWARE.
 #define _BODY_DATA_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
 #include <resource/Resource.h>
+
+#include <glm/glm.hpp>
 
 #include <string>
 #include <list>
@@ -101,16 +102,16 @@ public:
 	float getAngularDamping();
 
 	//! Sets the linear velocity of the body.
-	void setLinearVelocity(const core::vector3d& velocity);
+	void setLinearVelocity(const glm::vec3& velocity);
 
 	//! Gets the linear velocity of the body.
-	const core::vector3d& getLinearVelocity() const;
+	const glm::vec3& getLinearVelocity() const;
 
 	//! Sets the angular velocity of the body.
-	void setAngularVelocity(const core::vector3d& velocity);
+	void setAngularVelocity(const glm::vec3& velocity);
 
 	//! Gets the angular velocity of the body.
-	const core::vector3d& getAngularVelocity() const;
+	const glm::vec3& getAngularVelocity() const;
 
 	//! Sets the name of the material which this body will use.
 	void setMaterial(const std::string& filename);
@@ -147,10 +148,10 @@ private:
 	float mAngularDamping;
 
 	/// The body's linear velocity in global coordinates.
-	core::vector3d mLinearVelocity;
+	glm::vec3 mLinearVelocity;
 
 	/// The body's angular velocity.
-	core::vector3d mAngularVelocity;
+	glm::vec3 mAngularVelocity;
 
 	//! The material this body uses.
 	Material* mMaterial;

@@ -28,9 +28,9 @@ THE SOFTWARE.
 #define _CAMERA_H_
 
 #include <EngineConfig.h>
-#include <core/Matrix4.h>
-#include <core/Vector3d.h>
 #include <game/Component.h>
+
+#include <glm/glm.hpp>
 
 namespace render
 {
@@ -82,9 +82,9 @@ public:
 	void setVisibleFrustum(bool visible);
 	
 	bool getFixedUp();
-	const core::vector3d& getFixedUpAxis();
+	const glm::vec3& getFixedUpAxis();
 
-	void setFixedUpAxis(bool useFixed, const core::vector3d& fixedAxis = core::vector3d::UNIT_Y);
+	void setFixedUpAxis(bool useFixed, const glm::vec3& fixedAxis = glm::vec3(0, 1, 0));
 	
 	//! Sets the Y-dimension Field Of View (FOV) of the camera.
 	//! Field Of View (FOV) is the angle made between the camera's position, and the left & right edges
@@ -145,10 +145,10 @@ public:
 	//! Gets the projection matrix for this camera.
 	//! The projection matrix which conforms to standard right-handed rules and
 	//! uses depth range [-1,+1].
-	const core::matrix4& getProjectionMatrix();
+	const glm::mat4x4& getProjectionMatrix();
 
 	//! Gets the view matrix for this camera.
-	const core::matrix4& getViewMatrix();
+	const glm::mat4x4& getViewMatrix();
 
 	//! get the frustum of this camera.
 	Frustum* getFrustum() const;
@@ -165,7 +165,7 @@ protected:
 	// Whether to use a fixed Up axis.
 	bool mFixedUp;
 	// Fixed Up axis
-	core::vector3d mFixedUpAxis;
+	glm::vec3 mFixedUpAxis;
 
 	float mFOV;				// Camera y-direction field-of-view (default 45)
 	float mAspect;			// x/y viewport ratio - default 1.3333
@@ -179,8 +179,8 @@ protected:
 
 	bool mVisibleFrustum;
 
-	core::matrix4 mProjMatrix;		// Pre-calced projection matrix
-	core::matrix4 mViewMatrix;		// Pre-calced view matrix	
+	glm::mat4x4 mProjMatrix;		// Pre-calced projection matrix
+	glm::mat4x4 mViewMatrix;		// Pre-calced view matrix	
 	
 	bool mProjectionNeedsUpdate;	// Projection needs an update?
 	bool mViewNeedsUpdate;			// View needs an update?

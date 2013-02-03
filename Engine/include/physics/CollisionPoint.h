@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _COLLISION_POINT_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
+
+#include <glm/glm.hpp>
 
 namespace physics
 {
@@ -39,10 +40,10 @@ struct ENGINE_PUBLIC_EXPORT CollisionPoint
 	CollisionPoint();
 
 	//! The contact position.
-	core::vector3d mCollisionPosition;
+	glm::vec3 mCollisionPosition;
 
 	//! The contact normal.
-	core::vector3d mCollisionNormal;
+	glm::vec3 mCollisionNormal;
 
 	//! The distance between closest points. Negative distance indicates inter-penetrations.
 	float mDistance;
@@ -51,10 +52,10 @@ struct ENGINE_PUBLIC_EXPORT CollisionPoint
 	float mImpulse;
 
 	//! Impulse vector applied to the body based on friction in the direction of travel along the second body.
-	core::vector3d mImpulseLateral1;
+	glm::vec3 mImpulseLateral1;
 
 	//! Impulse vector applied to the body based on friction in the direction normal to both the contact normal and the laterl1 vector
-	core::vector3d mImpulseLateral2;
+	glm::vec3 mImpulseLateral2;
 };
 
 } // end namespace physics

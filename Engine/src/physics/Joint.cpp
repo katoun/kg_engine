@@ -43,8 +43,8 @@ Joint::Joint(): engine::Object("Joint_" + core::intToString(msNextGeneratedJoint
 	mActor1 = nullptr;
 	mActor2 = nullptr;
 
-	mAnchor = core::vector3d::ORIGIN_3D;
-	mAxis = core::vector3d::NEGATIVE_UNIT_Y;
+	mAnchor = glm::vec3(0, 0, 0);
+	mAxis = glm::vec3(0, 1, 0);
 }
 
 Joint::Joint(const std::string& name): engine::Object(name)
@@ -55,8 +55,8 @@ Joint::Joint(const std::string& name): engine::Object(name)
 	mActor1 = nullptr;
 	mActor2 = nullptr;
 
-	mAnchor = core::vector3d::ORIGIN_3D;
-	mAxis = core::vector3d::NEGATIVE_UNIT_Y;
+	mAnchor = glm::vec3(0, 0, 0);
+	mAxis = glm::vec3(0, 1, 0);
 }
 
 Joint::~Joint()
@@ -83,12 +83,12 @@ const JointType& Joint::getJointType() const
 	return mJointType;
 }
 
-void Joint::setAnchor(const core::vector3d& anchor)
+void Joint::setAnchor(const glm::vec3& anchor)
 {
 	mAnchor = anchor;
 }
 
-void Joint::setAxis(const core::vector3d& axis)
+void Joint::setAxis(const glm::vec3& axis)
 {
 	mAxis = axis;
 }

@@ -763,7 +763,7 @@ void RenderManager::findVisibleModels(Camera* camera)
 		Model* pModel = i->second;
 		if (pModel != nullptr)
 		{
-			if (mFrustum->isVisible(pModel->getBoundingSphere()) && mFrustum->isVisible(pModel->getBoundingBox()))
+			//if (mFrustum->isVisible(pModel->getBoundingSphere()) && mFrustum->isVisible(pModel->getBoundingBox()))//TEMP REM FOR TESTING!!!
 			{
 				Material* pMaterial = pModel->getMaterial();
 

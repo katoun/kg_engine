@@ -24,7 +24,6 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <core/Position2d.h>
 #include <engine/EngineSettings.h>
 #include <Win32InputDriver.h>
 #include <Win32Cursor.h>

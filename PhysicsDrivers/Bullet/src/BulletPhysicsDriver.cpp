@@ -114,7 +114,7 @@ void BulletPhysicsDriver::setSolverAccuracy(float accuracy)
 	}
 }
 
-void BulletPhysicsDriver::setGravity(const core::vector3d& gravity)
+void BulletPhysicsDriver::setGravity(const glm::vec3& gravity)
 {
 	if (mDynamicsWorld != nullptr)
 	{
@@ -233,12 +233,12 @@ void BulletPhysicsDriver::updateImpl(float elapsedTime)
 
 			CollisionPoint* newCollisionPoint = new CollisionPoint();
 
-			core::vector3d position = core::vector3d::ORIGIN_3D;
-			core::vector3d normal = core::vector3d::UNIT_Y;
+			glm::vec3 position = glm::vec3(0, 0, 0);
+			glm::vec3 normal = glm::vec3(0, 1, 0);
 			float distance = 0.0f;
 			float impulse = 0.0f;
-			core::vector3d impulseLateral1 = core::vector3d::ORIGIN_3D;
-			core::vector3d impulseLateral2 = core::vector3d::ORIGIN_3D;
+			glm::vec3 impulseLateral1 = glm::vec3(0, 0, 0);
+			glm::vec3 impulseLateral2 = glm::vec3(0, 0, 0);
 
 			btVector3 pos = pt.getPositionWorldOnB();
 			btVector3 norm = pt.m_normalWorldOnB;

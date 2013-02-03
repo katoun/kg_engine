@@ -27,7 +27,8 @@ THE SOFTWARE.
 #include <game/Transform.h>
 #include <game/GameObject.h>
 #include <game/MessageDefines.h>
-#include <core/Matrix4.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace game
 {
@@ -38,9 +39,9 @@ Transform::Transform(): Component()
 
 	mVisibleAxis = false;
 
-	mPosition = mAbsolutePosition = core::vector3d::ORIGIN_3D;
-	mOrientation = mAbsoluteOrientation = core::quaternion::IDENTITY;
-	mScale = mAbsoluteScale = core::vector3d::UNIT_SCALE;
+	mPosition = mAbsolutePosition = glm::vec3(0, 0, 0);
+	mOrientation = mAbsoluteOrientation = glm::quat(0, 0, 0, 1);
+	mScale = mAbsoluteScale = glm::vec3(1, 1, 1);
 
 	mInheritOrientation = true;
 	mInheritScale = true;
@@ -59,7 +60,7 @@ void Transform::setVisibleAxis(bool visible)
 	mVisibleAxis = visible;
 }
 
-const core::vector3d& Transform::getPosition()
+const glm::vec3& Transform::getPosition()
 {
 	return mPosition;
 }
@@ -72,13 +73,13 @@ void Transform::setPosition(float x, float y, float z)
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::setPosition(const core::vector3d& pos)
+void Transform::setPosition(const glm::vec3& pos)
 {
 	mPosition = pos;
 	mTransformNeedsUpdate = true;
 }
 
-const core::quaternion& Transform::getOrientation()
+const glm::quat& Transform::getOrientation()
 {
 	return mOrientation;
 }
@@ -92,13 +93,13 @@ void Transform::setOrientation(float x, float y, float z, float w)
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::setOrientation(const core::quaternion& q)
+void Transform::setOrientation(const glm::quat& q)
 {
 	mOrientation = q;
 	mTransformNeedsUpdate = true;
 }
 
-const core::vector3d& Transform::getScale()
+const glm::vec3& Transform::getScale()
 {
 	return mScale;
 }
@@ -111,7 +112,7 @@ void Transform::setScale(float x, float y, float z)
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::setScale(const core::vector3d& scale)
+void Transform::setScale(const glm::vec3& scale)
 {
 	mScale = scale;
 	mTransformNeedsUpdate = true;
@@ -137,42 +138,40 @@ void Transform::setInheritScale(bool inherit)
 	mInheritScale = inherit;
 }
 
-const core::vector3d& Transform::getAbsolutePosition()
+const glm::vec3& Transform::getAbsolutePosition()
 {
 	return mAbsolutePosition;
 }
 
-const core::quaternion& Transform::getAbsoluteOrientation()
+const glm::quat& Transform::getAbsoluteOrientation()
 {
 	return mAbsoluteOrientation;
 }
 
-const core::vector3d& Transform::getAbsoluteScale()
+const glm::vec3& Transform::getAbsoluteScale()
 {
 	return mAbsoluteScale;
 }
 
-void Transform::scale(const core::vector3d &scale)
+void Transform::scale(const glm::vec3& scale)
 {
-	core::matrix4 m;
-	m.setScale(scale);
-	m.transformVector(mScale);
+	mScale = mScale * scale;
 
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
+void Transform::translate(const glm::vec3& d,  TransformSpace relativeTo)
 {
 	switch (relativeTo)
 	{
-	case TRANSFORM_SPACE_LOCAL:
+	case TRANSFORM_LOCAL_SPACE:
 		// position is relative to parent so transform downwards
 		mPosition += mOrientation * d;
 		break;
-	case TRANSFORM_SPACE_PARENT:
+	case TRANSFORM_PARENT_SPACE:
 		mPosition += d;
 		break;
-	case TRANSFORM_SPACE_WORLD:
+	case TRANSFORM_WORLD_SPACE:
 		// position is relative to parent so transform upwards
 		GameObject* pParent = mGameObject->getParent();
 		if (pParent != nullptr)
@@ -180,10 +179,10 @@ void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
 			Transform* pParentTransform = static_cast<Transform*>(pParent->getComponent(COMPONENT_TYPE_TRANSFORM));
 			if (pParentTransform != nullptr)
 			{
-				core::vector3d offset = pParentTransform->getAbsoluteOrientation().getInverse() * d;
-				core::matrix4 m;
-				m.setInverseScale(pParentTransform->getAbsoluteScale());
-				m.transformVector(offset);
+				glm::vec3 offset = glm::inverse(pParentTransform->getAbsoluteOrientation()) * d;
+
+				offset = offset / pParentTransform->getAbsoluteScale();
+
 				mPosition += offset;
 			}
 			else
@@ -201,51 +200,49 @@ void Transform::translate(const core::vector3d &d,  TransformSpace relativeTo)
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::rotate(const core::quaternion &q, TransformSpace relativeTo)
+void Transform::rotate(const glm::quat& q, TransformSpace relativeTo)
 {
 	// Normalise quaternion to avoid drift
-	core::quaternion qnorm = q;
-	qnorm.normalize();
+	glm::quat qnorm = glm::normalize(q);
 
 	switch (relativeTo)
 	{
-	case TRANSFORM_SPACE_LOCAL:
+	case TRANSFORM_LOCAL_SPACE:
 		// Note the order of the mult, i.e. q comes after
 		mOrientation = mOrientation * qnorm;
 		break;
-	case TRANSFORM_SPACE_PARENT:
+	case TRANSFORM_PARENT_SPACE:
 		// Rotations are normally relative to local axes, transform up
 		mOrientation = qnorm * mOrientation;
 		break;
-	case TRANSFORM_SPACE_WORLD:
+	case TRANSFORM_WORLD_SPACE:
 		// Rotations are normally relative to local axes, transform up
-		mOrientation = mOrientation * getAbsoluteOrientation().getInverse()	* qnorm * getAbsoluteOrientation();
+		mOrientation = mOrientation * glm::inverse(getAbsoluteOrientation()) * qnorm * getAbsoluteOrientation();
 		break;		
 	}
 
 	mTransformNeedsUpdate = true;
 }
 
-void Transform::rotate(const float& degrees, const core::vector3d &axis, TransformSpace relativeTo)
+void Transform::rotate(const float& degrees, const glm::vec3& axis, TransformSpace relativeTo)
 {
-	core::quaternion q;
-	q.fromDegreeAxis(degrees, axis);
+	glm::quat q = glm::angleAxis(degrees, axis);
 	rotate(q, relativeTo);
 }
 
 void Transform::rotateX(float degrees, TransformSpace relativeTo)
 {
-	rotate(degrees, core::vector3d::UNIT_X, relativeTo);
+	rotate(degrees, glm::vec3(1, 0, 0), relativeTo);
 }
 
 void Transform::rotateY(float degrees, TransformSpace relativeTo)
 {
-	rotate(degrees, core::vector3d::UNIT_Y, relativeTo);
+	rotate(degrees, glm::vec3(0, 1, 0), relativeTo);
 }
 
 void Transform::rotateZ(float degrees, TransformSpace relativeTo)
 {
-	rotate(degrees, core::vector3d::UNIT_Z, relativeTo);
+	rotate(degrees, glm::vec3(0, 0, 1), relativeTo);
 }
 
 void Transform::updateImpl(float elapsedTime)
@@ -263,7 +260,7 @@ void Transform::updateImpl(float elapsedTime)
 				if (pParentTransform != nullptr)
 				{
 					// Combine orientation with that of parent
-					const core::quaternion& parentOrientation = pParentTransform->getAbsoluteOrientation();
+					const glm::quat& parentOrientation = pParentTransform->getAbsoluteOrientation();
 					if (mInheritOrientation)
 					{
 						// Combine orientation with that of parent
@@ -275,16 +272,14 @@ void Transform::updateImpl(float elapsedTime)
 						mAbsoluteOrientation = mOrientation;
 					}
 
-					const core::vector3d& parentScale = pParentTransform->getAbsoluteScale();
+					const glm::vec3& parentScale = pParentTransform->getAbsoluteScale();
 					// Update scale
 					if (mInheritScale)
 					{
 						// Set own scale, NB just combine as equivalent axes, no shearing
 						mAbsoluteScale = mScale;
 
-						core::matrix4 m;
-						m.setScale(parentScale);
-						m.transformVector(mAbsoluteScale);
+						mAbsoluteScale = mAbsoluteScale * parentScale;
 					}
 					else
 					{
@@ -292,13 +287,12 @@ void Transform::updateImpl(float elapsedTime)
 						mAbsoluteScale = mScale;
 					}
 
-					const core::vector3d& parentPosition = pParentTransform->getAbsolutePosition();
+					const glm::vec3& parentPosition = pParentTransform->getAbsolutePosition();
 			
 					// Change position vector based on parent's orientation & scale
 					mAbsolutePosition = mPosition;
-					core::matrix4 m;
-					m.setScale(parentScale);
-					m.transformVector(mAbsoluteScale);
+
+					mAbsoluteScale = mAbsoluteScale * parentScale;
 
 					mAbsolutePosition = parentOrientation * mAbsolutePosition;
 					// Add altered position vector to parents

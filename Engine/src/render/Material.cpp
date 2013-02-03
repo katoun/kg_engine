@@ -313,13 +313,13 @@ void Material::setParameter(ShaderParameter* parameter, const Color& col)
 	setParameterImpl(parameter, col);
 }
 
-void Material::setParameter(const std::string& name, const core::vector2d& vec)
+void Material::setParameter(const std::string& name, const glm::vec2& vec)
 {
 	ShaderParameter* param = findParameter(name);
 	setParameter(param, vec);
 }
 
-void Material::setParameter(ShaderParameter* parameter, const core::vector2d& vec)
+void Material::setParameter(ShaderParameter* parameter, const glm::vec2& vec)
 {
 	if (parameter == nullptr)
 		return;
@@ -330,13 +330,13 @@ void Material::setParameter(ShaderParameter* parameter, const core::vector2d& ve
 	setParameterImpl(parameter, vec);
 }
 
-void Material::setParameter(const std::string& name, const core::vector3d& vec)
+void Material::setParameter(const std::string& name, const glm::vec3& vec)
 {
 	ShaderParameter* param = findParameter(name);
 	setParameter(param, vec);
 }
 
-void Material::setParameter(ShaderParameter* parameter, const core::vector3d& vec)
+void Material::setParameter(ShaderParameter* parameter, const glm::vec3& vec)
 {
 	if (parameter == nullptr)
 		return;
@@ -347,13 +347,13 @@ void Material::setParameter(ShaderParameter* parameter, const core::vector3d& ve
 	setParameterImpl(parameter, vec);
 }
 
-void Material::setParameter(const std::string& name, const core::vector4d& vec)
+void Material::setParameter(const std::string& name, const glm::vec4& vec)
 {
 	ShaderParameter* param = findParameter(name);
 	setParameter(param, vec);
 }
 
-void Material::setParameter(ShaderParameter* parameter, const core::vector4d& vec)
+void Material::setParameter(ShaderParameter* parameter, const glm::vec4& vec)
 {
 	if (parameter == nullptr)
 		return;
@@ -364,13 +364,13 @@ void Material::setParameter(ShaderParameter* parameter, const core::vector4d& ve
 	setParameterImpl(parameter, vec);
 }
 
-void Material::setParameter(const std::string& name, const core::matrix4& m)
+void Material::setParameter(const std::string& name, const glm::mat4x4& m)
 {
 	ShaderParameter* param = findParameter(name);
 	setParameter(param, m);
 }
 
-void Material::setParameter(ShaderParameter* parameter, const core::matrix4& m)
+void Material::setParameter(ShaderParameter* parameter, const glm::mat4x4& m)
 {
 	if (parameter == nullptr)
 		return;
@@ -466,10 +466,10 @@ void Material::removeAllParameters()
 }
 
 void Material::setParameterImpl(ShaderParameter* parameter, const Color& col) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const core::matrix4& m) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec) {}
+void Material::setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m) {}
 
 ShaderParameterType Material::getType(ShaderAutoParameterType type)
 {

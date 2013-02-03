@@ -30,7 +30,8 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <core/System.h>
 #include <core/Singleton.h>
-#include <core/Position2d.h>
+
+#include <glm/glm.hpp>
 
 #include <map>
 
@@ -87,7 +88,7 @@ protected:
 
 	Cursor* mCursor;
 
-	core::position2d mCursorCenter;
+	glm::vec2 mCursorCenter;
 
 	InputDriver* mInputDriver;
 };

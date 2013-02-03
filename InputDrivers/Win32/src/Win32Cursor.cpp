@@ -24,7 +24,6 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <core/Vector2d.h>
 #include <Win32Cursor.h>
 
 namespace input
@@ -49,9 +48,9 @@ void Win32Cursor::setAutoCenter(bool set)
 	oi_app_cursor(set ? OI_DISABLE : OI_ENABLE);
 }
 
-void Win32Cursor::setPosition(const core::position2d& pos)
+void Win32Cursor::setPosition(const glm::vec2& pos)
 {
-	setPosition(pos.x, pos.y);
+	setPosition((int)pos.x, (int)pos.y);
 }
 
 void Win32Cursor::setPosition(int x, int y)
@@ -61,9 +60,9 @@ void Win32Cursor::setPosition(int x, int y)
 
 void Win32Cursor::updateImpl(float elapsedTime)
 {
-	oi_mouse_relative(0, &mPosition.x, &mPosition.y);
+	oi_mouse_relative(0, (int*)&mPosition.x, (int*)&mPosition.y);
 
-	oi_mouse_absolute(0, &mAbsolutePosition.x, &mAbsolutePosition.y);
+	oi_mouse_absolute(0, (int*)&mAbsolutePosition.x, (int*)&mAbsolutePosition.y);
 }
 
 } // end namespace input

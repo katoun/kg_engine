@@ -37,13 +37,13 @@ Listener::Listener(): game::Component()
 {
 	mType = game::COMPONENT_TYPE_LISTENER;
 
-	mLastPosition = core::vector3d::ORIGIN_3D;
-	mVelocity = core::vector3d::ORIGIN_3D;
+	mLastPosition = glm::vec3(0, 0, 0);
+	mVelocity = glm::vec3(0, 0, 0);
 }
 
 Listener::~Listener() {}
 
-const core::vector3d& Listener::getVelocity() const
+const glm::vec3& Listener::getVelocity() const
 {
 	return mVelocity;
 }
@@ -58,7 +58,7 @@ void Listener::updateImpl(float elapsedTime)
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
+			glm::vec3 delta = pTransform->getAbsolutePosition() - mLastPosition;
 			mVelocity = delta / elapsedTime;
 			mLastPosition = pTransform->getAbsolutePosition();
 		}

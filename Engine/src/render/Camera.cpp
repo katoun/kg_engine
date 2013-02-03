@@ -35,6 +35,8 @@ THE SOFTWARE.
 #include <core/Math.h>
 #include <core/Utils.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace render
 {
 
@@ -43,7 +45,7 @@ Camera::Camera(): game::Component()
 	mType = game::COMPONENT_TYPE_CAMERA;
 	
 	mFixedUp = true;
-	mFixedUpAxis = core::vector3d::UNIT_Y;
+	mFixedUpAxis = glm::vec3(0, 1, 0);
 
 	// Reasonable defaults to camera params
 	mFOV = 45.0f;
@@ -59,8 +61,8 @@ Camera::Camera(): game::Component()
 	mVisibleFrustum = false;
 
 	// Init matrices
-	mViewMatrix = core::matrix4::ZERO;
-	mProjMatrix = core::matrix4::ZERO;
+	mViewMatrix = glm::mat4x4(1);
+	mProjMatrix = glm::mat4x4(1);
 
 	mProjectionNeedsUpdate = true;
 	mViewNeedsUpdate = true;
@@ -108,12 +110,12 @@ bool Camera::getFixedUp()
 	return mFixedUp;
 }
 
-const core::vector3d& Camera::getFixedUpAxis()
+const glm::vec3& Camera::getFixedUpAxis()
 {
 	return mFixedUpAxis;
 }
 
-void Camera::setFixedUpAxis(bool useFixed, const core::vector3d& fixedAxis)
+void Camera::setFixedUpAxis(bool useFixed, const glm::vec3& fixedAxis)
 {
 	mFixedUp = useFixed;
 	mFixedUpAxis = fixedAxis;
@@ -162,12 +164,12 @@ float Camera::getAspectRatio()
 	return mAspect;
 }
 
-const core::matrix4& Camera::getProjectionMatrix()
+const glm::mat4x4& Camera::getProjectionMatrix()
 {
 	return mProjMatrix;
 }
 
-const core::matrix4& Camera::getViewMatrix()
+const glm::mat4x4& Camera::getViewMatrix()
 {
 	return mViewMatrix;
 }
@@ -199,23 +201,46 @@ void Camera::updateProjection()
 		if(mProjType == PROJECTION_TYPE_PERSPECTIVE)
 		{
 			// PERSPECTIVE transform
-			if (mFarDist != 0)
-				mProjMatrix.buildProjectionMatrixPerspectiveFov(mFOV, mAspect, mNearDist, mFarDist);
+			/*if (mFarDist != 0)
+			{
+				mProjMatrix = glm::perspective(mFOV, mAspect, mNearDist, mFarDist);
+			}
 			else
-				mProjMatrix.buildProjectionMatrixInfinitePerspectiveFov(mFOV, mAspect, mNearDist);
+			{
+				//mProjMatrix = glm::infinitePerspective(mFOV, mAspect, mNearDist);
+				mProjMatrix = glm::mat4x4(1);
+
+				float h = (float)tan(mFOV / 2);
+				float w = h * mAspect;
+	
+				mProjMatrix[0][0] = 2.0f * mNearDist / w;
+				mProjMatrix[1][0] = 0.0f;
+				mProjMatrix[2][0] = 0.0f;
+				mProjMatrix[3][0] = 0.0f;
+
+				mProjMatrix[0][1] = 0.0f;
+				mProjMatrix[1][1] = 2.0f * mNearDist / h;
+				mProjMatrix[2][1] = 0.0f;
+				mProjMatrix[3][1] = 0.0f;
+
+				mProjMatrix[0][2] = 0.0f;
+				mProjMatrix[1][2] = 0.0f;
+				mProjMatrix[2][2] = -1.0f;
+				mProjMatrix[3][2] = -2.0f * mNearDist;
+
+				mProjMatrix[0][3] = 0.0f;
+				mProjMatrix[1][3] = 0.0f;
+				mProjMatrix[2][3] = -1.0f;
+				mProjMatrix[3][3] = 0.0f;
+			}*/
+
+			mProjMatrix = glm::perspective(mFOV, mAspect, 0.1f, 100.0f);
+
+			mProjMatrix = glm::mat4x4(1);
 		}
 		else if(mProjType == PROJECTION_TYPE_ORTHOGRAPHIC)
 		{
 			// ORTHOGRAPHIC projection
-
-			//----------------------------
-			// Matrix elements
-			//----------------------------
-
-			// [ 2/wV	0		0		0		]
-			// [ 0		2/hV	0		0		]
-			// [ 0		0		1/(n-f)	n/(n-f)	]
-			// [ 0		0		0		1		]
 
 			// Get tangent of vertical FOV
 			float thetaY = (mFOV / 2.0f)*core::DEGTORAD;
@@ -226,7 +251,7 @@ void Camera::updateProjection()
 			float width = 2.0f * (sinThetaX * mNearDist);
 			float height = 2.0f * (sinThetaY * mNearDist);
 
-			mProjMatrix.buildProjectionMatrixOrtho(width, height, mNearDist, mFarDist);
+			mProjMatrix = glm::ortho(0.0f, width, 0.0f, height, mNearDist, mFarDist);
 		}
 		
 		mProjectionNeedsUpdate = false;
@@ -247,20 +272,51 @@ void Camera::updateView()
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != nullptr)
 			{
-				core::vector3d pos = pTransform->getAbsolutePosition();
-				core::vector3d target = pos + (pTransform->getAbsoluteOrientation() * core::vector3d::NEGATIVE_UNIT_Z);
-				core::vector3d up = pTransform->getAbsoluteOrientation() * core::vector3d::UNIT_Y;
+				/*glm::vec3 pos = pTransform->getAbsolutePosition();
+				glm::vec3 target = pos + (pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1));
+				glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);*/
 
-				mViewMatrix.buildViewMatrix(pos, target, up);
+				//mViewMatrix = glm::lookAt(pos, target, up);
+				/*mViewMatrix = glm::mat4x4(1);
+
+				glm::vec3 zaxis = glm::normalize(pos - target);
+
+				glm::vec3 xaxis = glm::normalize(glm::cross(up, zaxis));
+
+				glm::vec3 yaxis = glm::normalize(glm::cross(zaxis, xaxis));
+
+				glm::vec3 trans;
+
+				trans.x = - glm::dot(xaxis, pos);
+				trans.y = - glm::dot(yaxis, pos);
+				trans.z = - glm::dot(zaxis, pos);
+
+				mViewMatrix[0][0] = xaxis.x;
+				mViewMatrix[1][0] = xaxis.y;
+				mViewMatrix[2][0] = xaxis.z;
+				mViewMatrix[3][0] = trans.x;
+
+				mViewMatrix[0][1] = yaxis.x;
+				mViewMatrix[1][1] = yaxis.y;
+				mViewMatrix[2][1] = yaxis.z;
+				mViewMatrix[3][1] = trans.y;
+
+				mViewMatrix[0][2] = zaxis.x;
+				mViewMatrix[1][2] = zaxis.y;
+				mViewMatrix[2][2] = zaxis.z;
+				mViewMatrix[3][2] = trans.z;
+
+				mViewMatrix[0][3] = 0.0f;
+				mViewMatrix[1][3] = 0.0f;
+				mViewMatrix[2][3] = 0.0f;
+				mViewMatrix[3][3] = 1.0f;*/
+
+				glm::vec3 pos = glm::vec3(0, 0, 50);
+				glm::vec3 target = glm::vec3(0, 0, 0);
+				glm::vec3 up = glm::vec3(0, 1, 0);
+				mViewMatrix = glm::lookAt(pos, target, up);
 			}
 		}
-		
-#ifdef _DEBUG
-		//std::cout<<"Pos: "<<pos<<std::endl;
-		//std::cout<<"Right: "<<(mOrientation * core::vector3d::UNIT_X)<<std::endl;
-		//std::cout<<"Target: "<<(target)<<std::endl;
-		//std::cout<<"Up: "<<(up)<<std::endl;
-#endif
 
 		mViewNeedsUpdate = false;
 		mFrustumNeedsUpdate = true;

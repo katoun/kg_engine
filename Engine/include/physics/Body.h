@@ -28,9 +28,10 @@ THE SOFTWARE.
 #define _BODY_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
+
+#include <glm/glm.hpp>
 
 #include <string>
 
@@ -103,33 +104,33 @@ public:
 	float getAngularDamping() const;
 
 	//! Sets the linear velocity of the body.
-	void setLinearVelocity(const core::vector3d& velocity);
+	void setLinearVelocity(const glm::vec3& velocity);
 
 	//! Gets the linear velocity of the body.
-	const core::vector3d getLinearVelocity();
+	const glm::vec3 getLinearVelocity();
 
 	//! Sets the angular velocity of the body.
-	void setAngularVelocity(const core::vector3d& velocity);
+	void setAngularVelocity(const glm::vec3& velocity);
 	
 	//! Gets the angular velocity of the body.
-	const core::vector3d getAngularVelocity();
+	const glm::vec3 getAngularVelocity();
 
 	//! Applies a force to the body.
 	//! This applies a force with the direction and strength represented by the input vector.
-	virtual void applyForce(const core::vector3d& force);
+	virtual void applyForce(const glm::vec3& force);
 
 	//! Applies a torque on the body.
 	//! In classical physics, torque is related to angular acceleration by \f$T=I.\alpha\f$ where T is the Torque, I is the moment of inertia, and \f$\alpha\f$ is angular acceleration.
-	virtual void applyTorque(const core::vector3d& torque);
+	virtual void applyTorque(const glm::vec3& torque);
 
 	//! Applys a linear impulse to the body.
 	//! In classical physics, momentum is related to velocity by \f$p=m.v\f$ where p is the Momentum, m is the Mass, and v is the Velocity.
 	//! An impulse is simply a change in momentum.
-	virtual void applyLinearImpulse(const core::vector3d& linearImpulse);
+	virtual void applyLinearImpulse(const glm::vec3& linearImpulse);
 
 	//! Applys an angular impulse to the body.
 	//! This will cause a change in the angular momentum, and subsequently a change in the angular velocity.
-	virtual void applyAngularImpulse(const core::vector3d& angularImpulse);
+	virtual void applyAngularImpulse(const glm::vec3& angularImpulse);
 
 	void setJoint(Joint* joint);
 
@@ -161,10 +162,10 @@ protected:
 	float mAngularDamping;
 
 	/// The body's linear velocity in global coordinates.
-	core::vector3d mLinearVelocity;
+	glm::vec3 mLinearVelocity;
 
 	/// The body's angular velocity.
-	core::vector3d mAngularVelocity;
+	glm::vec3 mAngularVelocity;
 
 	//! The material this body uses.
 	Material* mMaterial;
@@ -172,10 +173,10 @@ protected:
 	/// Determines whether the body is enabled.
 	bool mEnabled;
 
-	core::vector3d mForce;
-	core::vector3d mTorque;
-	core::vector3d mLinearImpulse;
-	core::vector3d mAngularImpulse;
+	glm::vec3 mForce;
+	glm::vec3 mTorque;
+	glm::vec3 mLinearImpulse;
+	glm::vec3 mAngularImpulse;
 
 	Joint* mJoint;
 };

@@ -27,7 +27,9 @@ THE SOFTWARE.
 #ifndef _PLANE_3D_H_
 #define _PLANE_3D_H_
 
-#include <core/Vector3d.h>
+#include <EngineConfig.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
@@ -39,53 +41,53 @@ public:
 
 	plane3d();
 	plane3d(float px, float py, float pz, float nx, float ny, float nz);
-	plane3d(const vector3d& point1, const vector3d& point2, const vector3d& point3);
-	plane3d(const vector3d& MPoint, const vector3d& Normal);
+	plane3d(const glm::vec3& point1, const glm::vec3& point2, const glm::vec3& point3);
+	plane3d(const glm::vec3& MPoint, const glm::vec3& Normal);
 	plane3d(const plane3d& other);
 
 	inline bool operator==(const plane3d& other) const;
 	inline bool operator!=(const plane3d& other) const;
 
-	void setPlane(const vector3d& point, const vector3d& nvector);
+	void setPlane(const glm::vec3& point, const glm::vec3& nvector);
 
-	void setPlane(const vector3d& nvect, float d);
+	void setPlane(const glm::vec3& nvect, float d);
 
-	void setPlane(const vector3d& point1, const vector3d& point2, const vector3d& point3);
+	void setPlane(const glm::vec3& point1, const glm::vec3& point2, const glm::vec3& point3);
 
 	//! Recalculates the distance from origin by applying
 	//! a new member point to the plane.
-	void recalculateD(const vector3d& MPoint);
+	void recalculateD(const glm::vec3& MPoint);
 
 	//! Returns a member point of the plane.
-	vector3d getMemberPoint() const;
+	glm::vec3 getMemberPoint() const;
 
 	//! Returns if the plane is front of backfacing. Note that this only
 	//! works if the normal is Normalized.
 	//! \param lookDirection: Look direction.
 	//! \return Returns true if the plane is front facing, which mean it would
 	//! be visible, and false if it is backfacing.
-	bool isFrontFacing(const vector3d& lookDirection) const;
+	bool isFrontFacing(const glm::vec3& lookDirection) const;
 
 	//! Returns the distance to a point.  Note that this only
 	//! works if the normal is Normalized.
-	float getDistanceTo(const vector3d& point) const;
+	float getDistanceTo(const glm::vec3& point) const;
 
 	//! Returns an intersection with a 3d line.
 	//! \param lineVect: Vector of the line to intersect with.
 	//! \param linePoint: Point of the line to intersect with.
 	//! \param outIntersection: Place to store the intersection point, if there is one.
-	bool getIntersectionWithLine(const vector3d& linePoint, const vector3d& lineVect, vector3d& outIntersection) const;
+	bool getIntersectionWithLine(const glm::vec3& linePoint, const glm::vec3& lineVect, glm::vec3& outIntersection) const;
 	
 	//! Intersects this plane with another.
 	//! \param other: Other plane to intersect with.
 	//! \param outLinePoint: Base point of intersection line.
 	//! \param outLineVect: Vector of intersection.
-	bool getIntersectionWithPlane(const plane3d& other, vector3d& outLinePoint, vector3d& outLineVect) const;
+	bool getIntersectionWithPlane(const plane3d& other, glm::vec3& outLinePoint, glm::vec3& outLineVect) const;
 
 	//! Returns the intersection point with two other planes if there is one.
-	bool getIntersectionWithPlanes(const plane3d& o1, const plane3d& o2, vector3d& outPoint) const;
+	bool getIntersectionWithPlanes(const plane3d& o1, const plane3d& o2, glm::vec3& outPoint) const;
 
-	vector3d Normal;
+	glm::vec3 Normal;
 	float D;	// distance from origin
 };
 

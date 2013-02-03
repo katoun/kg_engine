@@ -28,9 +28,10 @@ THE SOFTWARE.
 #define _SOUND_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
@@ -82,7 +83,7 @@ public:
 	//! Returns true if the sound is stopped.
 	virtual bool isStopped() const;
 
-	const core::vector3d& getVelocity() const;
+	const glm::vec3& getVelocity() const;
 
 	//! Sets the pitch multiplier.
 	virtual void setPitch(float pitch);
@@ -144,8 +145,8 @@ protected:
 
 	SoundData* mSoundData;
 
-	core::vector3d mLastPosition;
-	core::vector3d mVelocity;
+	glm::vec3 mLastPosition;
+	glm::vec3 mVelocity;
 
 	float mPitch;
 	float mGain;

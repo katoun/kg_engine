@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <core/SystemDriver.h>
 
+#include <glm/glm.hpp>
+
 namespace core
 {
 class vector3d;
@@ -71,7 +73,7 @@ public:
 	virtual void setCollisionAccuracy(float accuracy) = 0;
 	virtual void setSolverAccuracy(float accuracy) = 0;
 
-	virtual void setGravity(const core::vector3d& gravity) = 0;
+	virtual void setGravity(const glm::vec3& gravity) = 0;
 
 protected:
 

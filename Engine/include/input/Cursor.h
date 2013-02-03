@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _CURSOR_H_
 
 #include <EngineConfig.h>
-#include <core/Position2d.h>
+
+#include <glm/glm.hpp>
 
 namespace input
 {
@@ -54,7 +55,7 @@ public:
 
 	//! Sets the new position of the cursor.
 	//! \param pos: New position of the cursor.
-	virtual void setPosition(const core::position2d& pos) = 0;
+	virtual void setPosition(const glm::vec2& pos) = 0;
 
 	//! Sets the new position of the cursor.
 	//! \param x: New X position of the cursor.
@@ -63,11 +64,11 @@ public:
 
 	//! Returns the current position of the mouse cursor.
 	//! \return Returns the current position of the cursor.
-	const core::position2d& getPosition() const;
+	const glm::vec2& getPosition() const;
 
 	//! Returns the current position of the mouse cursor.
 	//! \return Returns the current position of the cursor.
-	const core::position2d& getAbsolutePosition() const;
+	const glm::vec2& getAbsolutePosition() const;
 
 	void update(float elapsedTime);
 
@@ -77,8 +78,8 @@ public:
 
 	bool mAutoCenter;
 
-	core::position2d mPosition;
-	core::position2d mAbsolutePosition;
+	glm::vec2 mPosition;
+	glm::vec2 mAbsolutePosition;
 };
 
 } // end namespace input

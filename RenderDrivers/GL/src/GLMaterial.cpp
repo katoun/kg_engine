@@ -188,7 +188,7 @@ void GLMaterial::setParameterImpl(ShaderParameter* parameter, const Color& col)
 	}
 }
 
-void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec)
+void GLMaterial::setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec)
 {
 	GLShaderParameter* glParam = static_cast<GLShaderParameter*>(parameter);
 	if (glParam != nullptr)
@@ -197,7 +197,7 @@ void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector
 	}
 }
 
-void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec)
+void GLMaterial::setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec)
 {
 	GLShaderParameter* glParam = static_cast<GLShaderParameter*>(parameter);
 	if (glParam != nullptr)
@@ -206,7 +206,7 @@ void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector
 	}
 }
 
-void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec)
+void GLMaterial::setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec)
 {
 	GLShaderParameter* glParam = static_cast<GLShaderParameter*>(parameter);
 	if (glParam != nullptr)
@@ -215,12 +215,12 @@ void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::vector
 	}
 }
 
-void GLMaterial::setParameterImpl(ShaderParameter* parameter, const core::matrix4& m)
+void GLMaterial::setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m)
 {
 	GLShaderParameter* glParam = static_cast<GLShaderParameter*>(parameter);
 	if (glParam != nullptr)
 	{
-		glUniformMatrix4fv(glParam->ParameterID, 1, GL_TRUE/*GL_FALSE*/, m.get());
+		glUniformMatrix4fv(glParam->ParameterID, 1, /*GL_TRUE*/GL_FALSE, &m[0][0]);
 	}
 }
 

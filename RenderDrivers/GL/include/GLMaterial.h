@@ -70,10 +70,10 @@ protected:
 	ShaderParameter* createParameterImpl();
 
 	void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
-	void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
+	void setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec);
+	void setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec);
+	void setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec);
+	void setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m);
 
 	static GLenum getGLType(ShaderParameterType type);
 

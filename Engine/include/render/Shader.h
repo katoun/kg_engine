@@ -32,10 +32,6 @@ THE SOFTWARE.
 #include <render/ShaderDefines.h>
 #include <render/TextureDefines.h>
 #include <render/Color.h>
-#include <core/Vector2d.h>
-#include <core/Vector3d.h>
-#include <core/Vector4d.h>
-#include <core/Matrix4.h>
 
 #include <string>
 #include <vector>

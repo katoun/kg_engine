@@ -32,22 +32,22 @@ namespace core
 
 plane3d::plane3d(): Normal(0, 1, 0)
 {
-	recalculateD(vector3d(0, 0, 0));
+	recalculateD(glm::vec3(0, 0, 0));
 }
 
-plane3d::plane3d(const vector3d& MPoint, const vector3d& Normal) : Normal(Normal)
+plane3d::plane3d(const glm::vec3& MPoint, const glm::vec3& Normal) : Normal(Normal)
 {
 	recalculateD(MPoint);
 }
 
 plane3d::plane3d(float px, float py, float pz, float nx, float ny, float nz) : Normal(nx, ny, nz)
 {
-	recalculateD(vector3d(px, py, pz));
+	recalculateD(glm::vec3(px, py, pz));
 }
 
 plane3d::plane3d(const plane3d& other) : Normal(other.Normal), D(other.D) {};
 
-plane3d::plane3d(const vector3d& point1, const vector3d& point2, const vector3d& point3)
+plane3d::plane3d(const glm::vec3& point1, const glm::vec3& point2, const glm::vec3& point3)
 {
 	setPlane(point1, point2, point3);
 }
@@ -62,66 +62,64 @@ inline bool plane3d::operator!=(const plane3d& other) const
 	return ((other.Normal != Normal) || (other.D + EPSILON < D) || (other.D - EPSILON > D));
 }
 
-void plane3d::setPlane(const vector3d& point, const vector3d& nvector)
+void plane3d::setPlane(const glm::vec3& point, const glm::vec3& nvector)
 {
-	Normal = nvector;
-	Normal.normalize();
+	Normal = glm::normalize(nvector);
 	recalculateD(point);
 }
 
-void plane3d::setPlane(const vector3d& nvect, float d)
+void plane3d::setPlane(const glm::vec3& nvect, float d)
 {
 	Normal = nvect;
 	D = d;
 }
 
-void plane3d::setPlane(const vector3d& point1, const vector3d& point2, const vector3d& point3)
+void plane3d::setPlane(const glm::vec3& point1, const glm::vec3& point2, const glm::vec3& point3)
 {
 	// creates the plane from 3 member points
-	Normal = (point2 - point1).crossProduct(point3 - point1);
-	Normal.normalize();
+	Normal = glm::normalize(glm::cross((point2 - point1), (point3 - point1)));
 
 	recalculateD(point1);
 }
 
-void plane3d::recalculateD(const vector3d& MPoint)
+void plane3d::recalculateD(const glm::vec3& MPoint)
 {
-	D = - MPoint.dotProduct(Normal);
+	D = - glm::dot(MPoint, Normal);
 }
 
-vector3d plane3d::getMemberPoint() const
+glm::vec3 plane3d::getMemberPoint() const
 {
 	return Normal * -D;
 }
 
-bool plane3d::isFrontFacing(const vector3d& lookDirection) const
+bool plane3d::isFrontFacing(const glm::vec3& lookDirection) const
 {
-	return (Normal.dotProduct(lookDirection) <= 0.0f);
+	return (glm::dot(Normal, lookDirection) <= 0.0f);
 }
 
-float plane3d::getDistanceTo(const vector3d& point) const
+float plane3d::getDistanceTo(const glm::vec3& point) const
 {
-	return Normal.dotProduct(point) + D;
+	return glm::dot(Normal, point) + D;
 }
 
-bool plane3d::getIntersectionWithLine(const vector3d& linePoint, const vector3d& lineVect, vector3d& outIntersection) const
+bool plane3d::getIntersectionWithLine(const glm::vec3& linePoint, const glm::vec3& lineVect, glm::vec3& outIntersection) const
 {
-	float t2 = Normal.dotProduct(lineVect);
+	float t2 = glm::dot(Normal, lineVect);
 
 	if (t2 == 0.0f)
 		return false;
 
-	float t =- (Normal.dotProduct(linePoint) + D) / t2;
+	float t = - (glm::dot(Normal, linePoint) + D) / t2;
 	outIntersection = linePoint + (lineVect * t);
 
 	return true;
 }
 
-bool plane3d::getIntersectionWithPlane(const plane3d& other, vector3d& outLinePoint, vector3d& outLineVect) const
+bool plane3d::getIntersectionWithPlane(const plane3d& other, glm::vec3& outLinePoint, glm::vec3& outLineVect) const
 {
-	const float fn00 = Normal.getLength();
-	const float fn01 = Normal.dotProduct(other.Normal);
-	const float fn11 = other.Normal.getLength();
+	const float fn00 = sqrt(Normal.x*Normal.x + Normal.y*Normal.y + Normal.z*Normal.z);
+	const float fn01 = glm::dot(Normal, other.Normal);
+	const float fn11 = sqrt(other.Normal.x*other.Normal.x + other.Normal.y*other.Normal.y + other.Normal.z*other.Normal.z);
 	const float det = fn00*fn11 - fn01*fn01;
 
 	if (abs(det) < EPSILON)
@@ -131,15 +129,15 @@ bool plane3d::getIntersectionWithPlane(const plane3d& other, vector3d& outLinePo
 	const float fc0 = (fn11*-D + fn01*other.D) * invdet;
 	const float fc1 = (fn00*-other.D + fn01*D) * invdet;
 
-	outLineVect = Normal.crossProduct(other.Normal);
+	outLineVect = glm::cross(Normal, other.Normal);
 	outLinePoint = Normal*fc0 + other.Normal*fc1;
 
 	return true;
 }
 
-bool plane3d::getIntersectionWithPlanes(const plane3d& o1, const plane3d& o2, vector3d& outPoint) const
+bool plane3d::getIntersectionWithPlanes(const plane3d& o1, const plane3d& o2, glm::vec3& outPoint) const
 {
-	vector3d linePoint, lineVect;
+	glm::vec3 linePoint, lineVect;
 	if (getIntersectionWithPlane(o1, linePoint, lineVect))
 		return o2.getIntersectionWithLine(linePoint, lineVect, outPoint);
 

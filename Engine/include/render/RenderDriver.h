@@ -28,9 +28,6 @@ THE SOFTWARE.
 #define _RENDER_DRIVER_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
-#include <core/Quaternion.h>
-#include <core/Matrix4.h>
 #include <core/SystemDriver.h>
 #include <render/Material.h>
 #include <render/Color.h>

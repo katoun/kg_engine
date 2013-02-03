@@ -35,10 +35,8 @@ THE SOFTWARE.
 #include <render/TextureDefines.h>
 #include <render/VertexBufferDefines.h>
 #include <render/Color.h>
-#include <core/Vector2d.h>
-#include <core/Vector3d.h>
-#include <core/Vector4d.h>
-#include <core/Matrix4.h>
+
+#include <glm/glm.hpp>
 
 #include <string>
 #include <list>
@@ -112,14 +110,14 @@ public:
 
 	void setParameter(const std::string& name, const Color& col);
 	void setParameter(ShaderParameter* parameter, const Color& col);
-	void setParameter(const std::string& name, const core::vector2d& vec);
-	void setParameter(ShaderParameter* parameter, const core::vector2d& vec);
-	void setParameter(const std::string& name, const core::vector3d& vec);
-	void setParameter(ShaderParameter* parameter, const core::vector3d& vec);
-	void setParameter(const std::string& name, const core::vector4d& vec);
-	void setParameter(ShaderParameter* parameter, const core::vector4d& vec);
-	void setParameter(const std::string& name, const core::matrix4& m);
-	void setParameter(ShaderParameter* parameter, const core::matrix4& m);
+	void setParameter(const std::string& name, const glm::vec2& vec);
+	void setParameter(ShaderParameter* parameter, const glm::vec2& vec);
+	void setParameter(const std::string& name, const glm::vec3& vec);
+	void setParameter(ShaderParameter* parameter, const glm::vec3& vec);
+	void setParameter(const std::string& name, const glm::vec4& vec);
+	void setParameter(ShaderParameter* parameter, const glm::vec4& vec);
+	void setParameter(const std::string& name, const glm::mat4x4& m);
+	void setParameter(ShaderParameter* parameter, const glm::mat4x4& m);
 
 protected:
 
@@ -144,10 +142,10 @@ protected:
 	void removeAllParameters();
 
 	virtual void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector2d& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector3d& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const core::vector4d& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const core::matrix4& m);
+	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec);
+	virtual void setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m);
 
 	static ShaderParameterType getType(ShaderAutoParameterType type);
 	static ShaderParameterType getType(TextureType type);

@@ -33,13 +33,13 @@ SoundData::SoundData(const std::string& name, resource::Serializer* serializer):
 {
 	mResourceType = resource::RESOURCE_TYPE_SOUND_DATA;
 
-	mPitch = 1.0f;
-	mGain = 1.0f;
-	mMinDistance = 1.0f * ENGINE_UNIT_M;
-	mMaxDistance = 10000.0f * ENGINE_UNIT_M;
-	mInnerConeAngle = 360.0f;
-	mOuterConeAngle = 360.0f;
-	mOuterConeGain = 1.0f;
+	mPitch = 1;
+	mGain = 1;
+	mMinDistance = 1;
+	mMaxDistance = 10000;
+	mInnerConeAngle = 360;
+	mOuterConeAngle = 360;
+	mOuterConeGain = 1;
 }
 
 SoundData::~SoundData() {}
@@ -144,13 +144,13 @@ float SoundData::getOuterConeGain() const
 
 void SoundData::unloadImpl()
 {
-	mPitch = 1.0f;
-	mGain = 1.0f;
-	mMinDistance = 1.0f * ENGINE_UNIT_M;
-	mMaxDistance = 10000.0f * ENGINE_UNIT_M;
-	mInnerConeAngle = 360.0f;
-	mOuterConeAngle = 360.0f;
-	mOuterConeGain = 1.0f;
+	mPitch = 1;
+	mGain = 1;
+	mMinDistance = 1;
+	mMaxDistance = 10000;
+	mInnerConeAngle = 360;
+	mOuterConeAngle = 360;
+	mOuterConeGain = 1;
 }
 
 } // end namespace sound

@@ -60,7 +60,7 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 	mCollisionAccuracy = 1.0f;
 	mSolverAccuracy = 1.0f;
 
-	mGravity = core::vector3d(0.0f, -9.81f, 0.0f);
+	mGravity = glm::vec3(0, -9.81f, 0);
 
 	mCollisionEvent = new CollisionEvent();
 
@@ -98,7 +98,7 @@ void PhysicsManager::setSolverAccuracy(float accuracy)
 		mPhysicsDriver->setSolverAccuracy(accuracy);
 }
 
-void PhysicsManager::setGravity(const core::vector3d& gravity)
+void PhysicsManager::setGravity(const glm::vec3& gravity)
 {
 	mGravity = gravity;
 

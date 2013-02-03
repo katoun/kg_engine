@@ -33,6 +33,8 @@ THE SOFTWARE.
 #include <physics/PhysicsManager.h>
 #include <resource/BodySerializer.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <tinyxml2.h>
 
 #include <string>
@@ -156,7 +158,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 				z = (float)dvalue;
 			}
 
-			pBodyData->setLinearVelocity(core::vector3d(x, y, z));
+			pBodyData->setLinearVelocity(glm::vec3(x, y, z));
 		}
 
 		pElement = pRoot->FirstChildElement("angular_velocity");
@@ -181,7 +183,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 				z = (float)dvalue;
 			}
 
-			pBodyData->setAngularVelocity(core::vector3d(x, y, z));
+			pBodyData->setAngularVelocity(glm::vec3(x, y, z));
 		}
 
 		pElement = pRoot->FirstChildElement("material");
@@ -258,7 +260,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 							z = (float)dvalue;
 						}
 
-						pShape->setPosition(core::vector3d(x, y, z));
+						pShape->setPosition(glm::vec3(x, y, z));
 					}
 
 					pSubElement = pElement->FirstChildElement("orientation");
@@ -283,7 +285,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 							z = (float)dvalue;
 						}
 
-						pShape->setOrientation(core::quaternion(x, y, z));
+						pShape->setOrientation(glm::quat(glm::vec3(x, y, z)));
 					}
 
 					pSubElement = pElement->FirstChildElement("dimension");
@@ -321,7 +323,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 										d = (float)dvalue;
 									}
 
-									planeShape->setDimension(core::vector3d(x, y, z), d);
+									planeShape->setDimension(glm::vec3(x, y, z), d);
 								}
 							}
 							break;
@@ -361,7 +363,7 @@ bool BodySerializer::importResource(Resource* dest, const std::string& filename)
 										z = (float)dvalue;
 									}
 
-									boxShape->setDimension(core::vector3d(x, y, z));
+									boxShape->setDimension(glm::vec3(x, y, z));
 								}
 							}
 							break;

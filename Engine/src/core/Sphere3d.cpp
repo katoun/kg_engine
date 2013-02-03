@@ -30,9 +30,9 @@ THE SOFTWARE.
 namespace core
 {
 
-sphere3d::sphere3d(): Center(0.0f, 0.0f, 0.0f), Radius(0.0f) {}
+sphere3d::sphere3d(): Center(0, 0, 0), Radius(0) {}
 
-sphere3d::sphere3d(const vector3d& center, const float radius) : Center(center), Radius(radius) {}
+sphere3d::sphere3d(const glm::vec3& center, const float radius) : Center(center), Radius(radius) {}
 
 sphere3d::sphere3d(const sphere3d& other) : Center(other.Center), Radius(other.Radius) {}
 
@@ -53,7 +53,7 @@ bool sphere3d::operator!=(const sphere3d& other) const
 	return ((other.Center != Center) || (other.Radius + EPSILON < Radius) || (other.Radius - EPSILON > Radius));
 }
 
-inline void sphere3d::set(const vector3d center, const float radius)
+inline void sphere3d::set(const glm::vec3 center, const float radius)
 {
 	Center = center;
 	Radius = radius;

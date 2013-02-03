@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include <game/ComponentDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
-#include <core/Vector3d.h>
 #include <core/Utils.h>
 
 namespace sound
@@ -43,16 +42,16 @@ Sound::Sound(): game::Component()
 
 	mSoundData = nullptr;
 
-	mLastPosition = core::vector3d::ORIGIN_3D;
-	mVelocity = core::vector3d::ORIGIN_3D;
+	mLastPosition = glm::vec3(0, 0, 0);
+	mVelocity = glm::vec3(0, 0, 0);
 
-	mPitch = 1.0f;
-	mGain = 1.0f;
-	mMinDistance = 1.0f * ENGINE_UNIT_M;
-	mMaxDistance = 10000.0f * ENGINE_UNIT_M;
-	mInnerConeAngle = 360.0f;
-	mOuterConeAngle = 360.0f;
-	mOuterConeGain = 1.0f;
+	mPitch = 1;
+	mGain = 1;
+	mMinDistance = 1;
+	mMaxDistance = 10000;
+	mInnerConeAngle = 360;
+	mOuterConeAngle = 360;
+	mOuterConeGain = 1;
 
 	mLoop = false;
 }
@@ -133,7 +132,7 @@ bool Sound::isStopped() const
 	return true;
 }
 
-const core::vector3d& Sound::getVelocity() const
+const glm::vec3& Sound::getVelocity() const
 {
 	return mVelocity;
 }
@@ -266,15 +265,15 @@ void Sound::resourceUnloaded(const resource::ResourceEvent& evt)
 {
 	if (evt.source && evt.source == mSoundData)
 	{
-		mVelocity = core::vector3d::ORIGIN_3D;
+		mVelocity = glm::vec3(0, 0, 0);
 
-		mPitch = 1.0f;
-		mGain = 1.0f;
-		mMinDistance = 1.0f * ENGINE_UNIT_M;
-		mMaxDistance = 10000.0f * ENGINE_UNIT_M;
-		mInnerConeAngle = 360.0f;
-		mOuterConeAngle = 360.0f;
-		mOuterConeGain = 1.0f;
+		mPitch = 1;
+		mGain = 1;
+		mMinDistance = 1;
+		mMaxDistance = 10000;
+		mInnerConeAngle = 360;
+		mOuterConeAngle = 360;
+		mOuterConeGain = 1;
 
 		mLoop = false;
 
@@ -284,7 +283,7 @@ void Sound::resourceUnloaded(const resource::ResourceEvent& evt)
 
 void Sound::updateImpl(float elapsedTime)
 {
-	if (elapsedTime == 0.0f)
+	if (elapsedTime == 0)
 		return;
 
 	if (mGameObject != nullptr)
@@ -292,7 +291,7 @@ void Sound::updateImpl(float elapsedTime)
 		game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 		if (pTransform != nullptr)
 		{
-			core::vector3d delta = pTransform->getAbsolutePosition() - mLastPosition;
+			glm::vec3 delta = pTransform->getAbsolutePosition() - mLastPosition;
 			mVelocity = delta / elapsedTime;
 			mLastPosition = pTransform->getAbsolutePosition();
 		}

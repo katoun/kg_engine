@@ -35,9 +35,8 @@ THE SOFTWARE.
 #include <render/IndexBuffer.h>
 #include <render/RenderManager.h>
 #include <render/Color.h>
-#include <core/Vector2d.h>
-#include <core/Vector3d.h>
 
+#include <glm/glm.hpp>
 #include <tinyxml2.h>
 
 #include <string>
@@ -45,41 +44,38 @@ THE SOFTWARE.
 
 struct PositionAndUV
 {
-	core::vector3d position;
-	core::vector2d uv;
+	glm::vec3 position;
+	glm::vec2 uv;
 };
 
 struct TangentAndBinormal
 {
-	core::vector3d tangent;
-	core::vector3d binormal;
+	glm::vec3 tangent;
+	glm::vec3 binormal;
 };
 
-TangentAndBinormal calculateTangentAndBinormal(const core::vector3d& pos1, const core::vector3d& pos2, const core::vector3d& pos3,
-											const core::vector2d& uv1, const core::vector2d& uv2, const core::vector2d& uv3)
+TangentAndBinormal calculateTangentAndBinormal(const glm::vec3& pos1, const glm::vec3& pos2, const glm::vec3& pos3,
+											const glm::vec2& uv1, const glm::vec2& uv2, const glm::vec2& uv3)
 {
 	TangentAndBinormal rez;
 
-	core::vector3d side0 = pos1 - pos2;
-	core::vector3d side1 = pos3 - pos1;
+	glm::vec3 side0 = pos1 - pos2;
+	glm::vec3 side1 = pos3 - pos1;
 
-	core::vector3d normal = side1.crossProduct(side0);
-	normal.normalize();
+	glm::vec3 normal = glm::normalize(glm::cross(side1, side0));
 
 	float deltaV0 = uv1.y - uv2.y;
 	float deltaV1 = uv3.y - uv1.y;
 
-	core::vector3d tangent = side0 * deltaV1 - side1 * deltaV0;
-	tangent.normalize();
+	glm::vec3 tangent = glm::normalize(side0 * deltaV1 - side1 * deltaV0);
 
 	float deltaU0 = uv1.x - uv2.x;
 	float deltaU1 = uv3.x - uv1.x;
 
-	core::vector3d binormal = side0 * deltaU1 - side1 * deltaU0;
-	binormal.normalize();
+	glm::vec3 binormal = glm::normalize(side0 * deltaU1 - side1 * deltaU0);
 
-	core::vector3d tangentCross = tangent.crossProduct(binormal);
-	if (tangentCross.dotProduct(normal) < 0.0f)
+	glm::vec3 tangentCross = glm::cross(tangent, binormal);
+	if (glm::dot(tangentCross, normal) < 0.0f)
 	{
 		tangent = -tangent;
 		binormal = -binormal;
@@ -186,8 +182,8 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				return false;
 
 			core::aabox3d localBox;
-			core::vector3d min = core::vector3d::ORIGIN_3D;
-			core::vector3d max = core::vector3d::ORIGIN_3D;
+			glm::vec3 min = glm::vec3(0, 0, 0);
+			glm::vec3 max = glm::vec3(0, 0, 0);
 			float maxSquaredRadius = -1.0f;
 
 			float x = 0.0f;
@@ -237,13 +233,14 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				pPositionFloat[i * 3 + 1] = y;
 				pPositionFloat[i * 3 + 2] = z;
 
-				core::vector3d vec(x, y, z);
+				glm::vec3 vec(x, y, z);
 
 				vertexArray[i].position = vec;
 
 				// Update sphere bounds
-				if (vec.getLengthSQ() > maxSquaredRadius)
-					maxSquaredRadius = vec.getLengthSQ();
+				float lengthSQ = vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
+				if (lengthSQ > maxSquaredRadius)
+					maxSquaredRadius = lengthSQ;
 
 				// Update box
 				if (vec.x < min.x) min.x = vec.x;
@@ -319,7 +316,7 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 				pTexcoordFloat[i * 2 + 0] = u;
 				pTexcoordFloat[i * 2 + 1] = v;
 
-				vertexArray[i].uv = core::vector2d(u, v);
+				vertexArray[i].uv = glm::vec2(u, v);
 				///Texcoord///
 
 				i++;
@@ -395,13 +392,13 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			unsigned int index1 = indexArray[i + 0];
 			unsigned int index2 = indexArray[i + 1];
 			unsigned int index3 = indexArray[i + 2];
-			core::vector3d pos1 = vertexArray[index1].position;
-			core::vector3d pos2 = vertexArray[index2].position;
-			core::vector3d pos3 = vertexArray[index3].position;
+			glm::vec3 pos1 = vertexArray[index1].position;
+			glm::vec3 pos2 = vertexArray[index2].position;
+			glm::vec3 pos3 = vertexArray[index3].position;
 
-			core::vector2d uv1 = vertexArray[index1].uv;
-			core::vector2d uv2 = vertexArray[index2].uv;
-			core::vector2d uv3 = vertexArray[index3].uv;
+			glm::vec2 uv1 = vertexArray[index1].uv;
+			glm::vec2 uv2 = vertexArray[index2].uv;
+			glm::vec2 uv3 = vertexArray[index3].uv;
 
 			TangentAndBinormal tangentAndBinormal = calculateTangentAndBinormal(pos1, pos2, pos3, uv1, uv2, uv3);
 
@@ -432,8 +429,8 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 
 		for (unsigned int i = 0; i < numVertices; ++i)
 		{
-			tangentArray[i].tangent.normalize();
-			tangentArray[i].binormal.normalize();
+			tangentArray[i].tangent = glm::normalize(tangentArray[i].tangent);
+			tangentArray[i].binormal = glm::normalize(tangentArray[i].binormal);
 
 			pTangentFloat[i * 3 + 0] = tangentArray[i].tangent.x;
 			pTangentFloat[i * 3 + 1] = tangentArray[i].tangent.y;

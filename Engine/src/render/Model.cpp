@@ -36,6 +36,8 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <core/Utils.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace render
 {
 
@@ -44,7 +46,7 @@ Model::Model(): game::Component()
 	mType = game::COMPONENT_TYPE_MODEL;
 
 	// Init matrix
-	mWorldMatrix = core::matrix4::IDENTITY;
+	mWorldMatrix = glm::mat4x4(1);;
 
 	mModelNeedsUpdate = true;
 
@@ -54,8 +56,6 @@ Model::Model(): game::Component()
 
 	mVisibleBoundingBox = false;
 	mVisibleBoundingSphere = false;
-
-	mWorldMatrix = core::matrix4::IDENTITY;
 
 	mRenderOperationType = ROT_TRIANGLE_LIST;
 }
@@ -176,7 +176,7 @@ void Model::setVisibleBoundingSphere(bool visible)
 	mVisibleBoundingSphere = visible;
 }
 
-const core::matrix4& Model::getWorldMatrix()
+const glm::mat4x4& Model::getWorldMatrix()
 {
 	return mWorldMatrix;
 }
@@ -259,18 +259,57 @@ void Model::updateImpl(float elapsedTime)
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != nullptr)
 			{
-				core::vector3d position = pTransform->getAbsolutePosition();
-				core::quaternion orientation = pTransform->getAbsoluteOrientation();
-				core::vector3d scale = pTransform->getAbsoluteScale();
+				glm::vec3 position = pTransform->getAbsolutePosition();
+				glm::quat orientation = pTransform->getAbsoluteOrientation();
+				glm::vec3 scale = pTransform->getAbsoluteScale();
 
-				mWorldMatrix.buildWorldMatrix(position, scale, orientation);
+				// Ordering:
+				//    1. Scale
+				//    2. Rotate
+				//    3. Translate
+				glm::mat4x4 scalingMatrix = glm::scale(glm::mat4x4(1), scale);
+				glm::mat4x4 rotationMatrix = glm::mat4_cast(orientation);
+				glm::mat4x4 translationMatrix = glm::translate(glm::mat4x4(1), position);
+
+				//mWorldMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+				mWorldMatrix = glm::mat4x4(1);
+
+				/*mWorldMatrix[0][0] = scale.x * rotationMatrix[0][0];
+				mWorldMatrix[0][1] = scale.y * rotationMatrix[0][1];
+				mWorldMatrix[0][2] = scale.z * rotationMatrix[0][2];
+				mWorldMatrix[0][3] = position.x;
+
+				mWorldMatrix[1][0] = scale.x * rotationMatrix[1][0];
+				mWorldMatrix[1][1] = scale.y * rotationMatrix[1][1];
+				mWorldMatrix[1][2] = scale.z * rotationMatrix[1][2];
+				mWorldMatrix[1][3] = position.y;
+
+				mWorldMatrix[2][0] = scale.x * rotationMatrix[2][0];
+				mWorldMatrix[2][1] = scale.y * rotationMatrix[2][1];
+				mWorldMatrix[2][2] = scale.z * rotationMatrix[2][2];
+				mWorldMatrix[2][3] = position.z;*/
 
 				// Update bounding box
 				if (mMeshData != nullptr)
 				{
 					mBoundingBox = mMeshData->getBoundingBox();
 
-					mWorldMatrix.transformBox(mBoundingBox);
+					glm::vec3 edges[8];
+					mBoundingBox.getEdges(edges);
+
+					unsigned char i;
+					for (i = 0; i < 8; ++i)
+					{
+						glm::vec4 edge = mWorldMatrix * glm::vec4(edges[i], 1);
+						edges[i].x = edge.x;
+						edges[i].y = edge.y;
+						edges[i].z = edge.z;
+					}
+
+					mBoundingBox.reset(edges[0]);
+
+					for (i = 1; i < 8; ++i)
+						mBoundingBox.addInternalPoint(edges[i]);
 
 					// Update bounding sphere
 					float maxscale = core::max(scale.x, scale.y, scale.z);

@@ -29,13 +29,10 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 
-#include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
-namespace core
-{
-class vector3d;
-class quaternion;
-}
+#include <string>
 
 namespace render
 {
@@ -78,8 +75,8 @@ protected:
 	std::string mVersion;
 };
 
-inline core::vector3d ENGINE_PUBLIC_EXPORT parseVector3d(std::string& params);
-inline core::quaternion ENGINE_PUBLIC_EXPORT parseQuaternion(std::string& params);
+inline glm::vec3 ENGINE_PUBLIC_EXPORT parseVector3d(std::string& params);
+inline glm::quat ENGINE_PUBLIC_EXPORT parseQuaternion(std::string& params);
 inline render::Color ENGINE_PUBLIC_EXPORT parseColor(std::string& params);
 
 }// end namespace resource

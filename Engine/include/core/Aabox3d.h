@@ -28,7 +28,8 @@ THE SOFTWARE.
 #define _AABBOX_3D_H_
 
 #include <EngineConfig.h>
-#include <core/Vector3d.h>
+
+#include <glm/glm.hpp>
 
 namespace core
 {
@@ -40,8 +41,8 @@ class ENGINE_PUBLIC_EXPORT aabox3d
 public:
 
 	aabox3d();
-	aabox3d(const vector3d& min, const vector3d& max);
-	aabox3d(const vector3d& init);
+	aabox3d(const glm::vec3& min, const glm::vec3& max);
+	aabox3d(const glm::vec3& init);
 	aabox3d(float minx, float miny, float minz, float maxx, float maxy, float maxz);
 
 	inline bool operator==(const aabox3d& other) const;
@@ -57,7 +58,7 @@ public:
 	//! Adds a point to the bounding box, causing it to grow bigger,
 	//! if point is outside of the box
 	//! \param p: Point to add into the box.
-	void addInternalPoint(const vector3d& p);
+	void addInternalPoint(const glm::vec3& p);
 
 	//! Adds an other bounding box to the bounding box, causing it to grow bigger,
 	//! if the box is outside of the box
@@ -71,17 +72,17 @@ public:
 	void reset(const aabox3d& initValue);
 
 	//! Resets the bounding box.
-	void reset(const vector3d& initValue);
+	void reset(const glm::vec3& initValue);
 	
 	//! returns center of the bounding box
-	vector3d getCenter() const;
+	glm::vec3 getCenter() const;
 
 	//! returns extent of the box
-	vector3d getExtent() const;
+	glm::vec3 getExtent() const;
 
 	//! stores all 8 edges of the box into a array
 	//! \param edges: Pointer to array of 8 edges
-	void getEdges(vector3d* edges) const;
+	void getEdges(glm::vec3* edges) const;
 
 	//! returns if the box is empty, which means that there is
 	//! no space within the min and the max edge.
@@ -90,8 +91,8 @@ public:
 	//! repairs the box, if for example MinEdge and MaxEdge are swapped.
 	void repair();
 
-	vector3d MinEdge;
-	vector3d MaxEdge;
+	glm::vec3 MinEdge;
+	glm::vec3 MaxEdge;
 };
 
 } // end namespace core
