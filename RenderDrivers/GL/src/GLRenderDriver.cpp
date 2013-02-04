@@ -64,15 +64,7 @@ template<> render::GLRenderDriver* core::Singleton<render::GLRenderDriver>::m_Si
 namespace render
 {
 
-GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver")
-{
-	glm::vec3 pos = glm::vec3(0, 0, 10);
-	glm::vec3 target = glm::vec3(0, 0, 0);
-	glm::vec3 up = glm::vec3(0, 1, 0);
-	ModelMatrix			= glm::mat4x4(1);
-	ViewMatrix			= glm::lookAt(pos, target, up);
-	ProjectionMatrix	= glm::perspective(45.0f, 3.0f / 2.0f, 0.1f, 100.0f);
-}
+GLRenderDriver::GLRenderDriver(): RenderDriver("OpenGL RenderDriver") {}
 
 GLRenderDriver::~GLRenderDriver() {}
 
@@ -183,7 +175,7 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	//////////////////////////////////
 
 	//////////AutoParameters//////////
-	//ModelMatrix			= renderStateData.getWorldMatrix();
+	ModelMatrix			= renderStateData.getWorldMatrix();
 	ViewMatrix			= renderStateData.getViewMatrix();
 	ProjectionMatrix	= renderStateData.getProjectionMatrix();
 

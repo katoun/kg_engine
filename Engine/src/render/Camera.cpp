@@ -244,15 +244,9 @@ void Camera::updateView()
 			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
 			if (pTransform != nullptr)
 			{
-				/*glm::vec3 pos = pTransform->getAbsolutePosition();
+				glm::vec3 pos = pTransform->getAbsolutePosition();
 				glm::vec3 target = pos + (pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1));
 				glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);
-
-				mViewMatrix = glm::lookAt(pos, target, up);*/
-
-				glm::vec3 pos = glm::vec3(0, 0, 10);
-				glm::vec3 target = pos + glm::vec3(0, 0,-1);
-				glm::vec3 up = glm::vec3(0, 1, 0);
 
 				mViewMatrix = glm::lookAt(pos, target, up);
 			}

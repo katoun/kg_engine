@@ -137,8 +137,8 @@ void Win32InputDriver::initializeImpl()
 
 	RECT rect;
 	GetClientRect(mHWnd, &rect);
-	mCursorCenter.x = (int)((rect.right - rect.left) / 2);
-	mCursorCenter.y = (int)((rect.bottom - rect.top) / 2);
+	mCursorCenter.x = (float)((rect.right - rect.left) / 2);
+	mCursorCenter.y = (float)((rect.bottom - rect.top) / 2);
 
 	if (mCursor != nullptr)
 		mCursor->setPosition(mCursorCenter);
