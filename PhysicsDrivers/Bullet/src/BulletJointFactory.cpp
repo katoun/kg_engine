@@ -62,38 +62,6 @@ Joint* BulletJointFactory::createJoint(JointType type)
 	return newJoint;
 }
 
-Joint* BulletJointFactory::createJoint(const std::string& name, JointType type)
-{
-	Joint* newJoint = nullptr;
-
-	switch(type)
-	{
-	case JOINT_TYPE_UNDEFINED:
-		newJoint = nullptr;
-		break;
-	case JOINT_TYPE_SPHERICAL:
-		newJoint = new BulletSphericalJoint(name);
-		break;
-	case JOINT_TYPE_HINGE:
-		newJoint = new BulletHingeJoint(name);
-		break;
-	case JOINT_TYPE_SLIDER:
-		newJoint = new BulletSliderJoint(name);
-		break;
-	case JOINT_TYPE_GENERIC:
-		newJoint = new BulletGenericJoint(name);
-		break;
-	case JOINT_TYPE_RIGID:
-		newJoint = new BulletRigidJoint(name);
-		break;
-	default:
-		newJoint = nullptr;
-		break;	
-	}
-
-	return newJoint;
-}
-
 void BulletJointFactory::destroyJoint(Joint* joint)
 {
 	if (joint == nullptr)

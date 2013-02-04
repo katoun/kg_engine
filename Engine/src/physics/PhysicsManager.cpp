@@ -54,7 +54,9 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 	mDefaultBodyDataFactory = new BodyDataFactory();
 
 	mPhysicsDriver = nullptr;
+	mShapeFactory = nullptr;
 	mDefaultBodyFactory = nullptr;
+	mJointFactory = nullptr;
 
 	mHardware = true;
 	mCollisionAccuracy = 1.0f;
@@ -63,9 +65,6 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 	mGravity = glm::vec3(0, -9.81f, 0);
 
 	mCollisionEvent = new CollisionEvent();
-
-	mShapeFactory = nullptr;
-	mJointFactory = nullptr;
 }
 
 PhysicsManager::~PhysicsManager()
@@ -150,23 +149,8 @@ Joint* PhysicsManager::createJoint(JointType type)
 		return nullptr;
 
 	Joint* newJoint = nullptr;
-	newJoint = mJointFactory->createJoint(type);
-
-	if (newJoint == nullptr)
-		return nullptr;
-
-	mJoints[newJoint->getID()] = newJoint;
-
-	return newJoint;
-}
-
-Joint* PhysicsManager::createJoint(const std::string& name, JointType type)
-{
-	if (mJointFactory == nullptr)
-		return nullptr;
-
-	Joint* newJoint = nullptr;
-	newJoint = mJointFactory->createJoint(name, type);
+	//newJoint = mJointFactory->createJoint(type);
+	//TODO!!!
 
 	if (newJoint == nullptr)
 		return nullptr;

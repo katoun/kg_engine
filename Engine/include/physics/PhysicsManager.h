@@ -100,7 +100,6 @@ public:
 
 	//! Creates a joint to be managed by physics manager.
 	Joint* createJoint(JointType type);
-	Joint* createJoint(const std::string& name, JointType type);
 
 	//! Retrieves a pointer to a joint by id.
 	Joint* getJoint(const unsigned int& id);

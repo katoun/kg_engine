@@ -41,7 +41,6 @@ class BULLET_PUBLIC_EXPORT BulletJointFactory: public JointFactory
 public:
 
 	Joint* createJoint(JointType type);
-	Joint* createJoint(const std::string& name, JointType type);
 
 	void destroyJoint(Joint* joint);
 };

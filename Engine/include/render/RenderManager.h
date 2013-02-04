@@ -91,8 +91,6 @@ enum ShaderType;
 //! Rendering Manager.
 //! 
 //! This class handles everything related to rendering.
-//! \author: Kat'Oun
-//! \version: 1.0
 class ENGINE_PUBLIC_EXPORT RenderManager: public core::System, public core::Singleton<RenderManager>
 {
 public:

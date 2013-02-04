@@ -201,42 +201,14 @@ void Camera::updateProjection()
 		if(mProjType == PROJECTION_TYPE_PERSPECTIVE)
 		{
 			// PERSPECTIVE transform
-			/*if (mFarDist != 0)
+			if (mFarDist != 0)
 			{
 				mProjMatrix = glm::perspective(mFOV, mAspect, mNearDist, mFarDist);
 			}
 			else
 			{
-				//mProjMatrix = glm::infinitePerspective(mFOV, mAspect, mNearDist);
-				mProjMatrix = glm::mat4x4(1);
-
-				float h = (float)tan(mFOV / 2);
-				float w = h * mAspect;
-	
-				mProjMatrix[0][0] = 2.0f * mNearDist / w;
-				mProjMatrix[1][0] = 0.0f;
-				mProjMatrix[2][0] = 0.0f;
-				mProjMatrix[3][0] = 0.0f;
-
-				mProjMatrix[0][1] = 0.0f;
-				mProjMatrix[1][1] = 2.0f * mNearDist / h;
-				mProjMatrix[2][1] = 0.0f;
-				mProjMatrix[3][1] = 0.0f;
-
-				mProjMatrix[0][2] = 0.0f;
-				mProjMatrix[1][2] = 0.0f;
-				mProjMatrix[2][2] = -1.0f;
-				mProjMatrix[3][2] = -2.0f * mNearDist;
-
-				mProjMatrix[0][3] = 0.0f;
-				mProjMatrix[1][3] = 0.0f;
-				mProjMatrix[2][3] = -1.0f;
-				mProjMatrix[3][3] = 0.0f;
-			}*/
-
-			mProjMatrix = glm::perspective(mFOV, mAspect, 0.1f, 100.0f);
-
-			mProjMatrix = glm::mat4x4(1);
+				mProjMatrix = glm::infinitePerspective(mFOV, mAspect, mNearDist);
+			}
 		}
 		else if(mProjType == PROJECTION_TYPE_ORTHOGRAPHIC)
 		{
@@ -274,46 +246,14 @@ void Camera::updateView()
 			{
 				/*glm::vec3 pos = pTransform->getAbsolutePosition();
 				glm::vec3 target = pos + (pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1));
-				glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);*/
+				glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);
 
-				//mViewMatrix = glm::lookAt(pos, target, up);
-				/*mViewMatrix = glm::mat4x4(1);
+				mViewMatrix = glm::lookAt(pos, target, up);*/
 
-				glm::vec3 zaxis = glm::normalize(pos - target);
-
-				glm::vec3 xaxis = glm::normalize(glm::cross(up, zaxis));
-
-				glm::vec3 yaxis = glm::normalize(glm::cross(zaxis, xaxis));
-
-				glm::vec3 trans;
-
-				trans.x = - glm::dot(xaxis, pos);
-				trans.y = - glm::dot(yaxis, pos);
-				trans.z = - glm::dot(zaxis, pos);
-
-				mViewMatrix[0][0] = xaxis.x;
-				mViewMatrix[1][0] = xaxis.y;
-				mViewMatrix[2][0] = xaxis.z;
-				mViewMatrix[3][0] = trans.x;
-
-				mViewMatrix[0][1] = yaxis.x;
-				mViewMatrix[1][1] = yaxis.y;
-				mViewMatrix[2][1] = yaxis.z;
-				mViewMatrix[3][1] = trans.y;
-
-				mViewMatrix[0][2] = zaxis.x;
-				mViewMatrix[1][2] = zaxis.y;
-				mViewMatrix[2][2] = zaxis.z;
-				mViewMatrix[3][2] = trans.z;
-
-				mViewMatrix[0][3] = 0.0f;
-				mViewMatrix[1][3] = 0.0f;
-				mViewMatrix[2][3] = 0.0f;
-				mViewMatrix[3][3] = 1.0f;*/
-
-				glm::vec3 pos = glm::vec3(0, 0, 50);
-				glm::vec3 target = glm::vec3(0, 0, 0);
+				glm::vec3 pos = glm::vec3(0, 0, 10);
+				glm::vec3 target = pos + glm::vec3(0, 0,-1);
 				glm::vec3 up = glm::vec3(0, 1, 0);
+
 				mViewMatrix = glm::lookAt(pos, target, up);
 			}
 		}

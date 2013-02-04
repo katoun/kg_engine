@@ -41,8 +41,6 @@ namespace sound
 {
 
 //!  Defines a sound data resource.
-//!  Author: Kat'Oun
-//!  version: 1.0
 class ENGINE_PUBLIC_EXPORT SoundData: public resource::Resource
 {
 public:

@@ -44,8 +44,6 @@ class Joint;
 enum BodyType;
 
 //! Defines an actor in the physics world.
-//! Author: Kat'Oun
-//! version: 1.0
 class ENGINE_PUBLIC_EXPORT Body: public game::Component, public resource::ResourceEventReceiver
 {
 public:

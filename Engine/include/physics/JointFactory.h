@@ -41,7 +41,6 @@ public:
 
 	//! Creates a new joint.
 	virtual Joint* createJoint(JointType type) = 0;
-	virtual Joint* createJoint(const std::string& name, JointType type) = 0;
 
 	//! Destroys a joint which was created by this factory.
 	virtual void destroyJoint(Joint* joint) = 0;

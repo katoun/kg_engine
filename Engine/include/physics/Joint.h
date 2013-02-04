@@ -29,7 +29,6 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <physics/JointDefines.h>
-#include <engine/Object.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -42,14 +41,16 @@ class Body;
 //! Defines a physical joint.
 //! Author: Kat'Oun
 //! version: 1.0
-class ENGINE_PUBLIC_EXPORT Joint: public engine::Object
+class ENGINE_PUBLIC_EXPORT Joint
 {
 public:
 
 	Joint();
-	Joint(const std::string& name);
 
 	virtual ~Joint();
+
+	//! Returns the id of the game object.
+	const unsigned int& getID() const;
 
 	//! Gets joint type.
 	const JointType& getJointType() const;
@@ -60,10 +61,20 @@ public:
 
 	virtual void setAxis(const glm::vec3& axis);
 
+	//! Initialize input device.
+	void initialize();
+
+	//! Uninitialize input device.
+	void uninitialize();
+
 protected:
 
-	// Incremented count for next index
-	static unsigned int msNextGeneratedJointIndex;
+	virtual void initializeImpl();
+	virtual void uninitializeImpl();
+
+	unsigned int mID;
+
+	static unsigned int mIndexCounter;
 
 	JointType mJointType;
 
@@ -81,7 +92,6 @@ class ENGINE_PUBLIC_EXPORT SphericalJoint: public Joint
 public:
 
 	SphericalJoint();
-	SphericalJoint(const std::string& name);
 
 	virtual ~SphericalJoint();
 
@@ -100,7 +110,6 @@ class ENGINE_PUBLIC_EXPORT HingeJoint: public Joint
 public:
 
 	HingeJoint();
-	HingeJoint(const std::string& name);
 
 	virtual ~HingeJoint();
 
@@ -119,7 +128,6 @@ class ENGINE_PUBLIC_EXPORT SliderJoint: public Joint
 public:
 
 	SliderJoint();
-	SliderJoint(const std::string& name);
 
 	virtual ~SliderJoint();
 };
@@ -131,7 +139,6 @@ class ENGINE_PUBLIC_EXPORT GenericJoint: public Joint
 public:
 
 	GenericJoint();
-	GenericJoint(const std::string& name);
 
 	virtual ~GenericJoint();
 };
@@ -143,7 +150,6 @@ class ENGINE_PUBLIC_EXPORT RigidJoint: public Joint
 public:
 
 	RigidJoint();
-	RigidJoint(const std::string& name);
 
 	virtual ~RigidJoint();
 };

@@ -62,8 +62,6 @@ class ListenerFactory;
 //! Sound Manager.
 //! 
 //! This class handles everything related to sound.
-//! \author: Kat'Oun
-//! \version: 1.0
 class ENGINE_PUBLIC_EXPORT SoundManager: public core::System, public core::Singleton<SoundManager>
 {
 public:

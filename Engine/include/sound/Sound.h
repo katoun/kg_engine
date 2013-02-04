@@ -50,8 +50,6 @@ class SoundData;
 class SoundProperties;
 
 //!  Defines a sound in the sound world.
-//!  Author: Kat'Oun
-//!  version: 1.0
 class ENGINE_PUBLIC_EXPORT Sound: public game::Component, public resource::ResourceEventReceiver
 {
 public:

@@ -40,8 +40,6 @@ class vector3d;
 namespace sound
 {
 //!  Defines a listener in the sound world.
-//!  Author: Kat'Oun
-//!  version: 1.0
 class ENGINE_PUBLIC_EXPORT Listener: public game::Component
 {
 public:

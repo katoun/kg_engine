@@ -40,7 +40,6 @@ class BULLET_PUBLIC_EXPORT BulletSphericalJoint: public SphericalJoint
 public:
 
 	BulletSphericalJoint();
-	BulletSphericalJoint(const std::string& name);
 	~BulletSphericalJoint();
 
 	void setLimits(float coneLimit, float twistLimit);
@@ -59,7 +58,6 @@ class BULLET_PUBLIC_EXPORT BulletHingeJoint: public HingeJoint
 public:
 
 	BulletHingeJoint();
-	BulletHingeJoint(const std::string& name);
 	~BulletHingeJoint();
 
 	void setLimits(float lowerLimit, float upperLimit);
@@ -78,7 +76,6 @@ class BULLET_PUBLIC_EXPORT BulletSliderJoint: public SliderJoint
 public:
 
 	BulletSliderJoint();
-	BulletSliderJoint(const std::string& name);
 	~BulletSliderJoint();
 
 protected:
@@ -95,7 +92,6 @@ class BULLET_PUBLIC_EXPORT BulletGenericJoint: public GenericJoint
 public:
 
 	BulletGenericJoint();
-	BulletGenericJoint(const std::string& name);
 	~BulletGenericJoint();
 
 protected:
@@ -112,7 +108,6 @@ class BULLET_PUBLIC_EXPORT BulletRigidJoint: public RigidJoint
 public:
 
 	BulletRigidJoint();
-	BulletRigidJoint(const std::string& name);
 	~BulletRigidJoint();
 
 protected:

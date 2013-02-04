@@ -37,8 +37,6 @@ namespace physics
 {
 
 //!  Defines a physical shape.
-//!  Author: Kat'Oun
-//!  version: 1.0
 class ENGINE_PUBLIC_EXPORT Shape
 {
 public:

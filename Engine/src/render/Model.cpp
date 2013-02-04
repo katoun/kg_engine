@@ -271,23 +271,7 @@ void Model::updateImpl(float elapsedTime)
 				glm::mat4x4 rotationMatrix = glm::mat4_cast(orientation);
 				glm::mat4x4 translationMatrix = glm::translate(glm::mat4x4(1), position);
 
-				//mWorldMatrix = translationMatrix * rotationMatrix * scalingMatrix;
-				mWorldMatrix = glm::mat4x4(1);
-
-				/*mWorldMatrix[0][0] = scale.x * rotationMatrix[0][0];
-				mWorldMatrix[0][1] = scale.y * rotationMatrix[0][1];
-				mWorldMatrix[0][2] = scale.z * rotationMatrix[0][2];
-				mWorldMatrix[0][3] = position.x;
-
-				mWorldMatrix[1][0] = scale.x * rotationMatrix[1][0];
-				mWorldMatrix[1][1] = scale.y * rotationMatrix[1][1];
-				mWorldMatrix[1][2] = scale.z * rotationMatrix[1][2];
-				mWorldMatrix[1][3] = position.y;
-
-				mWorldMatrix[2][0] = scale.x * rotationMatrix[2][0];
-				mWorldMatrix[2][1] = scale.y * rotationMatrix[2][1];
-				mWorldMatrix[2][2] = scale.z * rotationMatrix[2][2];
-				mWorldMatrix[2][3] = position.z;*/
+				mWorldMatrix = translationMatrix * rotationMatrix * scalingMatrix;
 
 				// Update bounding box
 				if (mMeshData != nullptr)

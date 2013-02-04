@@ -33,23 +33,12 @@ THE SOFTWARE.
 namespace physics
 {
 
-unsigned int Joint::msNextGeneratedJointIndex = 0;
+unsigned int Joint::mIndexCounter = 0;
 
-Joint::Joint(): engine::Object("Joint_" + core::intToString(msNextGeneratedJointIndex++))
+Joint::Joint()
 {
-	mObjectType = engine::OT_JOINT;
-	mJointType = JOINT_TYPE_UNDEFINED;
+	mID = mIndexCounter++;
 
-	mActor1 = nullptr;
-	mActor2 = nullptr;
-
-	mAnchor = glm::vec3(0, 0, 0);
-	mAxis = glm::vec3(0, 1, 0);
-}
-
-Joint::Joint(const std::string& name): engine::Object(name)
-{
-	mObjectType = engine::OT_JOINT;
 	mJointType = JOINT_TYPE_UNDEFINED;
 
 	mActor1 = nullptr;
@@ -65,6 +54,11 @@ Joint::~Joint()
 		mActor1->setJoint(nullptr);
 	if (mActor2 != nullptr)
 		mActor2->setJoint(nullptr);
+}
+
+const unsigned int& Joint::getID() const
+{
+	return mID;
 }
 
 void Joint::setActors(Body* actor1, Body* actor2)
@@ -93,17 +87,23 @@ void Joint::setAxis(const glm::vec3& axis)
 	mAxis = axis;
 }
 
+void Joint::initialize()
+{
+	initializeImpl();
+}
+
+void Joint::uninitialize()
+{
+	uninitializeImpl();
+}
+
+void Joint::initializeImpl() {}
+
+void Joint::uninitializeImpl() {}
+
 //////////////////////////////////////////////////////////////////////////
 //Spherical Joint
 SphericalJoint::SphericalJoint(): Joint()
-{
-	mJointType = JOINT_TYPE_SPHERICAL;
-
-	mConeLimit = 0.0f;
-	mTwistLimit = 0.0f;
-}
-
-SphericalJoint::SphericalJoint(const std::string& name): Joint(name)
 {
 	mJointType = JOINT_TYPE_SPHERICAL;
 
@@ -129,14 +129,6 @@ HingeJoint::HingeJoint(): Joint()
 	mUpperLimit = core::FLOAT_MAX;
 }
 
-HingeJoint::HingeJoint(const std::string& name): Joint(name)
-{
-	mJointType = JOINT_TYPE_HINGE;
-
-	mLowerLimit = -core::FLOAT_MAX;
-	mUpperLimit = core::FLOAT_MAX;
-}
-
 HingeJoint::~HingeJoint() {}
 
 void HingeJoint::setLimits(float lowerLimit, float upperLimit)
@@ -152,12 +144,6 @@ SliderJoint::SliderJoint(): Joint()
 	mJointType = JOINT_TYPE_SLIDER;
 }
 
-SliderJoint::SliderJoint(const std::string& name): Joint(name)
-{
-	mJointType = JOINT_TYPE_SLIDER;
-
-}
-
 SliderJoint::~SliderJoint() {}
 
 //////////////////////////////////////////////////////////////////////////
@@ -167,21 +153,11 @@ GenericJoint::GenericJoint(): Joint()
 	mJointType = JOINT_TYPE_GENERIC;
 }
 
-GenericJoint::GenericJoint(const std::string& name): Joint(name)
-{
-	mJointType = JOINT_TYPE_GENERIC;
-}
-
 GenericJoint::~GenericJoint() {}
 
 //////////////////////////////////////////////////////////////////////////
 //Rigid Joint
 RigidJoint::RigidJoint(): Joint()
-{
-	mJointType = JOINT_TYPE_RIGID;
-}
-
-RigidJoint::RigidJoint(const std::string& name): Joint(name)
 {
 	mJointType = JOINT_TYPE_RIGID;
 }

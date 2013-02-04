@@ -220,7 +220,7 @@ void GLMaterial::setParameterImpl(ShaderParameter* parameter, const glm::mat4x4&
 	GLShaderParameter* glParam = static_cast<GLShaderParameter*>(parameter);
 	if (glParam != nullptr)
 	{
-		glUniformMatrix4fv(glParam->ParameterID, 1, /*GL_TRUE*/GL_FALSE, &m[0][0]);
+		glUniformMatrix4fv(glParam->ParameterID, 1, GL_FALSE, &m[0][0]);
 	}
 }
 

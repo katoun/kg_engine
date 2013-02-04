@@ -47,7 +47,6 @@ public:
 
 	RenderStateData();
 
-	void setWorldMatrix(const glm::mat4x4& m);
 	void setCurrentMaterial(Material* material);
 	void setCurrentModel(Model* model);
 	void setCurrentCamera(Camera* cam);
@@ -108,10 +107,6 @@ public:
 
 protected:
 
-	glm::mat4x4 mWorldMatrix;
-	glm::mat4x4 mViewMatrix;
-	glm::mat4x4 mProjectionMatrix;
-
 	glm::mat4x4 mWorldViewMatrix;
 	glm::mat4x4 mViewProjMatrix;
 	glm::mat4x4 mWorldViewProjMatrix;
@@ -138,10 +133,6 @@ protected:
 
 	Color mAmbientLightColor;
 	Color mFogColor;
-
-	bool mWorldMatrixDirty;
-	bool mViewMatrixDirty;
-	bool mProjMatrixDirty;
 
 	bool mWorldViewMatrixDirty;
 	bool mViewProjMatrixDirty;

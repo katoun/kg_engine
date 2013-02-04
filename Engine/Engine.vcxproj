@@ -150,8 +150,6 @@
     <ClInclude Include="include\engine\EngineEventReceiver.h" />
     <ClInclude Include="include\engine\EngineManager.h" />
     <ClInclude Include="include\engine\EngineSettings.h" />
-    <ClInclude Include="include\engine\Object.h" />
-    <ClInclude Include="include\engine\ObjectDefines.h" />
     <ClInclude Include="include\engine\Plugin.h" />
     <ClInclude Include="include\engine\PluginManager.h" />
     <ClInclude Include="include\core\Aabox3d.h" />
@@ -287,7 +285,6 @@
     <ClCompile Include="src\engine\EngineEventReceiver.cpp" />
     <ClCompile Include="src\engine\EngineManager.cpp" />
     <ClCompile Include="src\engine\EngineSettings.cpp" />
-    <ClCompile Include="src\engine\Object.cpp" />
     <ClCompile Include="src\engine\Plugin.cpp" />
     <ClCompile Include="src\engine\PluginManager.cpp" />
     <ClCompile Include="src\core\Aabox3d.cpp" />

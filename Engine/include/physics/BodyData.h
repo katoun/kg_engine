@@ -56,8 +56,6 @@ enum BodyType
 };
 
 //!  Defines a body resource.
-//!  Author: Kat'Oun
-//!  version: 1.0
 class ENGINE_PUBLIC_EXPORT BodyData: public resource::Resource
 {
 public:

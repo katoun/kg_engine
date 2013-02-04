@@ -48,12 +48,6 @@
     <ClInclude Include="include\engine\EngineSettings.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\Object.h">
-      <Filter>engine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\engine\ObjectDefines.h">
-      <Filter>engine</Filter>
-    </ClInclude>
     <ClInclude Include="include\engine\Plugin.h">
       <Filter>engine</Filter>
     </ClInclude>
@@ -439,9 +433,6 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\EngineSettings.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\Object.cpp">
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\Plugin.cpp">

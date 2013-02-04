@@ -37,8 +37,6 @@ THE SOFTWARE.
 #include <Sound.h>
 #include <Physics.h>
 
-#include <engine/Object.h>
-#include <engine/ObjectDefines.h>
 #include <engine/Plugin.h>
 #include <engine/PluginManager.h>
 #include <engine/EngineSettings.h>

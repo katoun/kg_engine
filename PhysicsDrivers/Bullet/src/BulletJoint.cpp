@@ -39,11 +39,6 @@ BulletSphericalJoint::BulletSphericalJoint(): SphericalJoint()
 	mSphericalConstraint = nullptr;
 }
 
-BulletSphericalJoint::BulletSphericalJoint(const std::string& name): SphericalJoint(name)
-{
-	mSphericalConstraint = nullptr;
-}
-
 BulletSphericalJoint::~BulletSphericalJoint()
 {
 	btDynamicsWorld* pDynamicsWorld = nullptr;
@@ -112,11 +107,6 @@ BulletHingeJoint::BulletHingeJoint(): HingeJoint()
 	mHingeConstraint = nullptr;
 }
 
-BulletHingeJoint::BulletHingeJoint(const std::string& name): HingeJoint(name)
-{
-	mHingeConstraint = nullptr;
-}
-
 BulletHingeJoint::~BulletHingeJoint()
 {
 	btDynamicsWorld* pDynamicsWorld = nullptr;
@@ -180,11 +170,6 @@ BulletSliderJoint::BulletSliderJoint(): SliderJoint()
 	mSliderConstraint = nullptr;
 }
 
-BulletSliderJoint::BulletSliderJoint(const std::string& name): SliderJoint(name)
-{
-	mSliderConstraint = nullptr;
-}
-
 BulletSliderJoint::~BulletSliderJoint()
 {
 	btDynamicsWorld* pDynamicsWorld = nullptr;
@@ -236,11 +221,6 @@ void BulletSliderJoint::initializeImpl()
 /////////////////////////////////////////////////////////////////////////
 //Generic Joint
 BulletGenericJoint::BulletGenericJoint(): GenericJoint()
-{
-	mGenericConstraint = nullptr;
-}
-
-BulletGenericJoint::BulletGenericJoint(const std::string& name): GenericJoint(name)
 {
 	mGenericConstraint = nullptr;
 }
@@ -297,11 +277,6 @@ void BulletGenericJoint::initializeImpl()
 //////////////////////////////////////////////////////////////////////////
 //Rigid Joint
 BulletRigidJoint::BulletRigidJoint(): RigidJoint()
-{
-	mRigidConstraint = nullptr;
-}
-
-BulletRigidJoint::BulletRigidJoint(const std::string& name): RigidJoint(name)
 {
 	mRigidConstraint = nullptr;
 }

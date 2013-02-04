@@ -37,12 +37,9 @@ namespace render
 
 RenderStateData::RenderStateData()
 {
-	mWorldMatrix = glm::mat4x4(1);
 	mInverseWorldMatrix = glm::mat4x4(1);
 	mInverseTransposeWorldMatrix = glm::mat4x4(1);
-	mViewMatrix = glm::mat4x4(1);
 	mInverseViewMatrix = glm::mat4x4(1);
-	mProjectionMatrix = glm::mat4x4(1);
 	mViewProjMatrix = glm::mat4x4(1);
 	mWorldViewMatrix = glm::mat4x4(1);
 	mInverseWorldViewMatrix = glm::mat4x4(1);
@@ -59,10 +56,6 @@ RenderStateData::RenderStateData()
 	mLightDirection = glm::vec3(0, 0, 0);
 	mLightDirectionObjectSpace = glm::vec3(0, 0, 0);
 	mLightDirectionViewSpace = glm::vec3(0, 0, 0);
-
-	mWorldMatrixDirty = true;
-	mViewMatrixDirty = true;
-	mProjMatrixDirty = true;
 
 	mWorldViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
@@ -87,12 +80,6 @@ RenderStateData::RenderStateData()
 	mAmbientLightColor = Color::Black;
 }
 
-void RenderStateData::setWorldMatrix(const glm::mat4x4& m)
-{
-	mWorldMatrix = m;
-	mWorldMatrixDirty = true;
-}
-
 void RenderStateData::setCurrentMaterial(Material* material)
 {
 	mCurrentMaterial = material;
@@ -102,10 +89,6 @@ void RenderStateData::setCurrentModel(Model* model)
 {
 	mCurrentModel = model;
 	
-	mWorldMatrixDirty = true;
-	mViewMatrixDirty = true;
-	mProjMatrixDirty = true;
-
 	mWorldViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
 	mWorldViewProjMatrixDirty = true;
@@ -125,9 +108,6 @@ void RenderStateData::setCurrentCamera(Camera* cam)
 
 	mCameraPositionDirty = true;
 	mCameraPositionObjectSpaceDirty = true;
-
-	mViewMatrixDirty = true;
-	mProjMatrixDirty = true;
 
 	mWorldViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
@@ -338,44 +318,32 @@ glm::vec4 RenderStateData::getCurrentLightAttenuation() const
 
 const glm::mat4x4& RenderStateData::getWorldMatrix()
 {
-	if (mWorldMatrixDirty)
+	if (mCurrentModel != nullptr)
 	{
-		if (mCurrentModel != nullptr)
-		{
-			mWorldMatrix = mCurrentModel->getWorldMatrix();
-		}
-		mWorldMatrixDirty = false;
+		return mCurrentModel->getWorldMatrix();
 	}
 
-	return mWorldMatrix;
+	return glm::mat4x4(1);
 }
 
 const glm::mat4x4& RenderStateData::getViewMatrix()
 {
-	 if (mViewMatrixDirty)
-	 {
-		if (mCurrentCamera != nullptr)
-		{
-			mViewMatrix = mCurrentCamera->getViewMatrix();
-		}
-		mViewMatrixDirty = false;
-	 }
+	if (mCurrentCamera != nullptr)
+	{
+		return mCurrentCamera->getViewMatrix();
+	}
 
-	return mViewMatrix;
+	return glm::mat4x4(1);
 }
 
 const glm::mat4x4& RenderStateData::getProjectionMatrix()
 {
-	if (mProjMatrixDirty)
+	if (mCurrentCamera != nullptr)
 	{
-		if (mCurrentCamera != nullptr)
-		{
-			mProjectionMatrix = mCurrentCamera->getProjectionMatrix();
-		}
-		mProjMatrixDirty = false;
+		return mCurrentCamera->getProjectionMatrix();
 	}
-	
-	return mProjectionMatrix;
+
+	return glm::mat4x4(1);
 }
 
 const glm::mat4x4& RenderStateData::getWorldViewMatrix()
@@ -391,13 +359,7 @@ const glm::mat4x4& RenderStateData::getWorldViewMatrix()
 
 const glm::mat4x4& RenderStateData::getViewProjectionMatrix()
 {
-	if (mProjMatrixDirty)
-	{
-		mViewProjMatrix = getProjectionMatrix() * getViewMatrix();
-		mProjMatrixDirty = false;
-	}
-	
-	return mViewProjMatrix;
+	return getProjectionMatrix() * getViewMatrix();
 }
 
 const glm::mat4x4& RenderStateData::getWorldViewProjMatrix()

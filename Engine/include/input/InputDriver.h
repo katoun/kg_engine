@@ -40,8 +40,6 @@ class InputDevice;
 enum InputType;
 
 //! Defines the functionality of a input API
-//! Author: Kat'Oun
-//! version: 1.0
 class ENGINE_PUBLIC_EXPORT InputDriver: public core::SystemDriver
 {
 public:

@@ -28,7 +28,6 @@ THE SOFTWARE.
 #include <engine/EngineSettings.h>
 #include <engine/EngineEvent.h>
 #include <engine/EngineEventReceiver.h>
-#include <engine/Object.h>
 #include <engine/PluginManager.h>
 #include <game/GameManager.h>
 #include <platform/PlatformManager.h>
