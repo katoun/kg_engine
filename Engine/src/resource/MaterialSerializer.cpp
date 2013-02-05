@@ -62,54 +62,30 @@ render::VertexBufferType convertVertexParameterType(const std::string& param)
 
 render::ShaderAutoParameterType convertAutoParameterType(const std::string& param)
 {
-	if (param == "world_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX;
-	else if (param == "inverse_world_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX;
-	else if (param == "transpose_world_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX;
-	else if (param == "inverse_transpose_world_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX;
+	if (param == "model_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX;
+	else if (param == "inverse_model_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX;
 	else if (param == "view_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX;
 	else if (param == "inverse_view_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX;
-	else if (param == "transpose_view_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX;
-	else if (param == "inverse_transpose_view_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX;
 	else if (param == "projection_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX;
 	else if (param == "inverse_projection_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX;
-	else if (param == "transpose_projection_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX;
-	else if (param == "inverse_transpose_projection_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX;
-	else if (param == "viewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX;
-	else if (param == "inverse_viewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX;
-	else if (param == "transpose_viewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX;
-	else if (param == "inverse_transpose_viewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX;
-	else if (param == "worldview_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX;
-	else if (param == "inverse_worldview_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX;
-	else if (param == "transpose_worldview_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX;
-	else if (param == "inverse_transpose_worldview_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX;
-	else if (param == "worldviewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX;
-	else if (param == "inverse_worldviewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX;
-	else if (param == "transpose_worldviewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX;
-	else if (param == "inverse_transpose_worldviewproj_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX;
+	else if (param == "view_projection_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX;
+	else if (param == "inverse_view_projection_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX;
+	else if (param == "model_view_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX;
+	else if (param == "inverse_model_view_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX;
+	else if (param == "model_view_projection_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX;
+	else if (param == "inverse_model_view_projection_matrix")
+		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX;
 		
 	else if (param == "light_count")
 		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT;

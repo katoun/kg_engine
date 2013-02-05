@@ -351,7 +351,7 @@ void BulletBody::updateImpl(float elapsedTime)
 
 		mBodyNeedsUpdate = false;
 	}
-	else if (mBodyNeedsUpdate)//you can manualy set the transform of the game object only if the body is inactive!
+	else if (mBodyNeedsUpdate)//you can manually set the transform of the game object only if the body is inactive!
 	{
 		btTransform trans;
 		trans.setIdentity();

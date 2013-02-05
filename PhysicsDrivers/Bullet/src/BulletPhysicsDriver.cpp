@@ -118,7 +118,7 @@ void BulletPhysicsDriver::setGravity(const glm::vec3& gravity)
 {
 	if (mDynamicsWorld != nullptr)
 	{
-		mDynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
+		mDynamicsWorld->setGravity(btVector3(gravity.x, -gravity.y, gravity.z));
 	}
 }
 
@@ -138,7 +138,7 @@ void BulletPhysicsDriver::initializeImpl()
 
 	mBroadphase = new btDbvtBroadphase();
 
-	//use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+	//use the default collision dispatcher. For parallel processing you can use a different dispatcher (see Extras/BulletMultiThreaded)
 #ifndef USE_PARALLEL_DISPATCHER
 	mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
 #else
@@ -167,7 +167,7 @@ void BulletPhysicsDriver::initializeImpl()
 
 	mDynamicsWorld = new btSoftRigidDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
-	mDynamicsWorld->setGravity(btVector3(0.0f, -9.81f, 0.0f));
+	mDynamicsWorld->setGravity(btVector3(0.0f, 9.81f, 0.0f));
 
 	mDynamicsWorld->getSolverInfo().m_solverMode = SOLVER_USE_WARMSTARTING | SOLVER_USE_2_FRICTION_DIRECTIONS |
 													SOLVER_RANDMIZE_ORDER | SOLVER_USE_WARMSTARTING | SOLVER_SIMD;

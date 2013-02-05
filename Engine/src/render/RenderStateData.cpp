@@ -37,17 +37,35 @@ namespace render
 
 RenderStateData::RenderStateData()
 {
-	mInverseWorldMatrix = glm::mat4x4(1);
-	mInverseTransposeWorldMatrix = glm::mat4x4(1);
-	mInverseViewMatrix = glm::mat4x4(1);
+	mModelViewMatrix = glm::mat4x4(1);
 	mViewProjMatrix = glm::mat4x4(1);
-	mWorldViewMatrix = glm::mat4x4(1);
-	mInverseWorldViewMatrix = glm::mat4x4(1);
-	mInverseTransposeWorldViewMatrix = glm::mat4x4(1);
-	mWorldViewProjMatrix = glm::mat4x4(1);
+	mModelViewProjMatrix = glm::mat4x4(1);
+
+	mInverseModelMatrix = glm::mat4x4(1);
+	mInverseViewMatrix = glm::mat4x4(1);
+	mInverseProjectionMatrix = glm::mat4x4(1);
+
+	mInverseModelViewMatrix = glm::mat4x4(1);
+	mInverseViewProjectionMatrix = glm::mat4x4(1);
+	mInverseModelViewProjectionMatrix = glm::mat4x4(1);
+	
+	mModelViewMatrixDirty = true;
+	mViewProjMatrixDirty = true;
+	mModelViewProjMatrixDirty = true;
+
+	mInverseModelMatrixDirty = true;
+	mInverseViewMatrixDirty = true;
+	mInverseProjectionMatrixDirty = true;
+
+	mInverseModelViewMatrixDirty = true;
+	mInverseViewProjectionMatrixDirty = true;
+	mInverseModelViewProjectionMatrixDirty = true;
 
 	mCameraPosition = glm::vec3(0, 0, 0);
 	mCameraPositionObjectSpace = glm::vec3(0, 0, 0);
+
+	mCameraPositionDirty = true;
+	mCameraPositionObjectSpaceDirty = true;
 
 	mLightPosition = glm::vec3(0, 0, 0);
 	mLightPositionObjectSpace = glm::vec3(0, 0, 0);
@@ -56,21 +74,6 @@ RenderStateData::RenderStateData()
 	mLightDirection = glm::vec3(0, 0, 0);
 	mLightDirectionObjectSpace = glm::vec3(0, 0, 0);
 	mLightDirectionViewSpace = glm::vec3(0, 0, 0);
-
-	mWorldViewMatrixDirty = true;
-	mViewProjMatrixDirty = true;
-	mWorldViewProjMatrixDirty = true;
-
-	mInverseWorldMatrixDirty = true;
-	mInverseViewMatrixDirty = true;
-
-	mInverseWorldViewMatrixDirty = true;
-
-	mInverseTransposeWorldMatrixDirty = true;
-	mInverseTransposeWorldViewMatrixDirty = true;
-
-	mCameraPositionDirty = true;
-	mCameraPositionObjectSpaceDirty = true;
 
 	mCurrentModel = nullptr;
 	mCurrentCamera = nullptr;
@@ -88,18 +91,14 @@ void RenderStateData::setCurrentMaterial(Material* material)
 void RenderStateData::setCurrentModel(Model* model)
 {
 	mCurrentModel = model;
-	
-	mWorldViewMatrixDirty = true;
-	mViewProjMatrixDirty = true;
-	mWorldViewProjMatrixDirty = true;
 
-	mInverseWorldMatrixDirty = true;
-	mInverseViewMatrixDirty = true;
+	mModelViewMatrixDirty = true;
+	mModelViewProjMatrixDirty = true;
 
-	mInverseWorldViewMatrixDirty = true;
+	mInverseModelMatrixDirty = true;
 
-	mInverseTransposeWorldMatrixDirty = true;
-	mInverseTransposeWorldViewMatrixDirty = true;
+	mInverseModelViewMatrixDirty = true;
+	mInverseModelViewProjectionMatrixDirty = true;
 }
 
 void RenderStateData::setCurrentCamera(Camera* cam)
@@ -109,15 +108,16 @@ void RenderStateData::setCurrentCamera(Camera* cam)
 	mCameraPositionDirty = true;
 	mCameraPositionObjectSpaceDirty = true;
 
-	mWorldViewMatrixDirty = true;
+	mModelViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
-	mWorldViewProjMatrixDirty = true;
+	mModelViewProjMatrixDirty = true;
 
 	mInverseViewMatrixDirty = true;
-	
-	mInverseWorldViewMatrixDirty = true;
-	
-	mInverseTransposeWorldViewMatrixDirty = true;
+	mInverseProjectionMatrixDirty = true;
+
+	mInverseModelViewMatrixDirty = true;
+	mInverseViewProjectionMatrixDirty = true;
+	mInverseModelViewProjectionMatrixDirty = true;
 }
 
 void RenderStateData::setCurrentViewport(Viewport* viewport)
@@ -168,7 +168,7 @@ const glm::vec3& RenderStateData::getCameraPositionObjectSpace()
 			if (pTransform != nullptr)
 			{
 				mCameraPositionObjectSpace = pTransform->getAbsolutePosition();
-				glm::vec4 pos = getInverseWorldMatrix() * glm::vec4(mCameraPositionObjectSpace, 1);
+				glm::vec4 pos = getInverseModelMatrix() * glm::vec4(mCameraPositionObjectSpace, 1);
 				mCameraPositionObjectSpace.x = pos.x;
 				mCameraPositionObjectSpace.y = pos.y;
 				mCameraPositionObjectSpace.z = pos.z;
@@ -200,7 +200,7 @@ const glm::vec3& RenderStateData::getCurrentLightPositionObjectSpace()
 
 	if (mCurrentLight && mCurrentLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
 	{
-		glm::mat4x4 m = glm::inverse(getInverseTransposedWorldMatrix());
+		glm::mat4x4 m = glm::transpose(getModelMatrix());
 
 		glm::vec4 pos = m * glm::vec4(mLightPositionObjectSpace, 1);
 		mLightPositionObjectSpace.x = pos.x;
@@ -211,7 +211,7 @@ const glm::vec3& RenderStateData::getCurrentLightPositionObjectSpace()
 	}
 	else
 	{
-		glm::vec4 pos = getInverseWorldMatrix() * glm::vec4(mLightPositionObjectSpace, 1);
+		glm::vec4 pos = getInverseModelMatrix() * glm::vec4(mLightPositionObjectSpace, 1);
 		mLightPositionObjectSpace.x = pos.x;
 		mLightPositionObjectSpace.y = pos.y;
 		mLightPositionObjectSpace.z = pos.z;
@@ -253,7 +253,7 @@ const glm::vec3& RenderStateData::getCurrentLightDirectionObjectSpace()
 {
 	mLightDirectionObjectSpace = getCurrentLightDirection();
 
-	glm::vec4 dir = getInverseTransposedWorldMatrix() * glm::vec4(mLightDirectionObjectSpace, 1);
+	glm::vec4 dir = glm::transpose(getInverseModelMatrix()) * glm::vec4(mLightDirectionObjectSpace, 1);
 	mLightDirectionObjectSpace.x = dir.x;
 	mLightDirectionObjectSpace.y = dir.y;
 	mLightDirectionObjectSpace.z = dir.z;
@@ -267,7 +267,7 @@ const glm::vec3& RenderStateData::getCurrentLightDirectionViewSpace()
 {
 	mLightDirectionViewSpace = getCurrentLightDirection();
 
-	glm::vec4 dir = getInverseTransposedViewMatrix() * glm::vec4(mLightDirectionViewSpace, 1);
+	glm::vec4 dir = glm::transpose(getInverseViewMatrix()) * glm::vec4(mLightDirectionViewSpace, 1);
 	mLightDirectionViewSpace.x = dir.x;
 	mLightDirectionViewSpace.y = dir.y;
 	mLightDirectionViewSpace.z = dir.z;
@@ -316,7 +316,7 @@ glm::vec4 RenderStateData::getCurrentLightAttenuation() const
 	return lightAttenuation;
 }
 
-const glm::mat4x4& RenderStateData::getWorldMatrix()
+glm::mat4x4 RenderStateData::getModelMatrix()
 {
 	if (mCurrentModel != nullptr)
 	{
@@ -326,7 +326,7 @@ const glm::mat4x4& RenderStateData::getWorldMatrix()
 	return glm::mat4x4(1);
 }
 
-const glm::mat4x4& RenderStateData::getViewMatrix()
+glm::mat4x4 RenderStateData::getViewMatrix()
 {
 	if (mCurrentCamera != nullptr)
 	{
@@ -336,7 +336,7 @@ const glm::mat4x4& RenderStateData::getViewMatrix()
 	return glm::mat4x4(1);
 }
 
-const glm::mat4x4& RenderStateData::getProjectionMatrix()
+glm::mat4x4 RenderStateData::getProjectionMatrix()
 {
 	if (mCurrentCamera != nullptr)
 	{
@@ -346,15 +346,15 @@ const glm::mat4x4& RenderStateData::getProjectionMatrix()
 	return glm::mat4x4(1);
 }
 
-const glm::mat4x4& RenderStateData::getWorldViewMatrix()
+const glm::mat4x4& RenderStateData::getModelViewMatrix()
 {
-	if (mWorldViewMatrixDirty)
+	if (mModelViewMatrixDirty)
 	{
-		mWorldViewMatrix = getViewMatrix() * getWorldMatrix();
-		mWorldViewMatrixDirty = false;
+		mModelViewMatrix = getViewMatrix() * getModelMatrix();
+		mModelViewMatrixDirty = false;
 	}
 
-	return mWorldViewMatrix;
+	return mModelViewMatrix;
 }
 
 const glm::mat4x4& RenderStateData::getViewProjectionMatrix()
@@ -362,26 +362,26 @@ const glm::mat4x4& RenderStateData::getViewProjectionMatrix()
 	return getProjectionMatrix() * getViewMatrix();
 }
 
-const glm::mat4x4& RenderStateData::getWorldViewProjMatrix()
+const glm::mat4x4& RenderStateData::getModelViewProjectionMatrix()
 {
-	if (mWorldViewProjMatrixDirty)
+	if (mModelViewProjMatrixDirty)
 	{
-		mWorldViewProjMatrix = getProjectionMatrix() * getWorldViewMatrix();
-		mWorldViewProjMatrixDirty = false;
+		mModelViewProjMatrix = getProjectionMatrix() * getModelViewMatrix();
+		mModelViewProjMatrixDirty = false;
 	}
 
-	return mWorldViewProjMatrix;
+	return mModelViewProjMatrix;
 }
 
-const glm::mat4x4& RenderStateData::getInverseWorldMatrix()
+const glm::mat4x4& RenderStateData::getInverseModelMatrix()
 {
-	if (mInverseWorldMatrixDirty)
+	if (mInverseModelMatrixDirty)
 	{
-		mInverseWorldMatrix = glm::inverse(getWorldMatrix());
-		mInverseWorldMatrixDirty = false;
+		mInverseModelMatrix = glm::inverse(getModelMatrix());
+		mInverseModelMatrixDirty = false;
 	}
 
-	return mInverseWorldMatrix;
+	return mInverseModelMatrix;
 }
 
 const glm::mat4x4& RenderStateData::getInverseViewMatrix()
@@ -394,101 +394,45 @@ const glm::mat4x4& RenderStateData::getInverseViewMatrix()
 	return mInverseViewMatrix;
 }
 
-glm::mat4x4 RenderStateData::getInverseProjectionMatrix()
+const glm::mat4x4& RenderStateData::getInverseProjectionMatrix()
 {
-	return glm::inverse(getProjectionMatrix());
-}
-
-const glm::mat4x4& RenderStateData::getInverseWorldViewMatrix()
-{
-	if (mInverseWorldViewMatrixDirty)
+	if (mInverseProjectionMatrixDirty)
 	{
-		mInverseWorldViewMatrix = glm::inverse(getWorldViewMatrix());
-		mInverseWorldViewMatrixDirty = false;
-	}
-	return mInverseWorldViewMatrix;
-}
-
-glm::mat4x4 RenderStateData::getInverseViewProjectionMatrix()
-{
-	return glm::inverse(getViewProjectionMatrix());
-}
-
-glm::mat4x4 RenderStateData::getInverseWorldViewProjMatrix()
-{
-	return glm::inverse(getWorldViewProjMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedWorldMatrix()
-{
-	return glm::transpose(getWorldMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedViewMatrix()
-{
-	return glm::transpose(getViewMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedProjectionMatrix()
-{
-	return glm::transpose(getProjectionMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedWorldViewMatrix()
-{
-	return glm::transpose(getWorldViewMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedViewProjectionMatrix()
-{
-	return glm::transpose(getViewProjectionMatrix());
-}
-
-glm::mat4x4 RenderStateData::getTransposedWorldViewProjMatrix()
-{
-	return glm::transpose(getWorldViewProjMatrix());
-}
-
-const glm::mat4x4& RenderStateData::getInverseTransposedWorldMatrix()
-{
-	if (mInverseTransposeWorldMatrixDirty)
-	{
-		mInverseTransposeWorldMatrix = glm::transpose(getInverseWorldMatrix());
-		mInverseTransposeWorldMatrixDirty = false;
+		mInverseProjectionMatrix = glm::inverse(getProjectionMatrix());
+		mInverseProjectionMatrixDirty = false;
 	}
 
-	return mInverseTransposeWorldMatrix;
+	return mInverseProjectionMatrix;
 }
 
-glm::mat4x4 RenderStateData::getInverseTransposedViewMatrix()
+const glm::mat4x4& RenderStateData::getInverseModelViewMatrix()
 {
-	return glm::transpose(getInverseViewMatrix());
-}
-
-glm::mat4x4 RenderStateData::getInverseTransposedProjectionMatrix()
-{
-	return glm::transpose(getInverseProjectionMatrix());
-}
-
-const glm::mat4x4& RenderStateData::getInverseTransposedWorldViewMatrix()
-{
-	if (mInverseTransposeWorldViewMatrixDirty)
+	if (mInverseModelViewMatrixDirty)
 	{
-		mInverseTransposeWorldViewMatrix = glm::transpose(getInverseWorldViewMatrix());
-		mInverseTransposeWorldViewMatrixDirty = false;
+		mInverseModelViewMatrix = glm::inverse(getModelViewMatrix());
+		mInverseModelViewMatrixDirty = false;
 	}
-
-	return mInverseTransposeWorldViewMatrix;
+	return mInverseModelViewMatrix;
 }
 
-glm::mat4x4 RenderStateData::getInverseTransposedViewProjectionMatrix()
+const glm::mat4x4& RenderStateData::getInverseViewProjectionMatrix()
 {
-	return glm::transpose(getInverseViewProjectionMatrix());
+	if (mInverseViewProjectionMatrixDirty)
+	{
+		mInverseViewProjectionMatrix = glm::inverse(getViewProjectionMatrix());
+		mInverseViewProjectionMatrixDirty = false;
+	}
+	return mInverseViewProjectionMatrix;
 }
 
-glm::mat4x4 RenderStateData::getInverseTransposedWorldViewProjMatrix()
+const glm::mat4x4& RenderStateData::getInverseModelViewProjectionMatrix()
 {
-	return glm::transpose(getInverseWorldViewProjMatrix());
+	if (mInverseModelViewProjectionMatrixDirty)
+	{
+		mInverseModelViewProjectionMatrix = glm::inverse(getModelViewProjectionMatrix());
+		mInverseModelViewProjectionMatrixDirty = false;
+	}
+	return mInverseModelViewProjectionMatrix;
 }
 
 } // end namespace render

@@ -7,9 +7,8 @@
 		<param_vertex name="tangent" type="vertex_tangent"/>
 		<param_vertex name="binormal" type="vertex_binormal"/>
 		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
-		<param_auto name="modelViewProjMatrix" type="worldviewproj_matrix"/>
-		<param_auto name="modelViewMatrix" type="worldview_matrix"/>
-		<param_auto name="inverseViewMatrix" type="inverse_view_matrix"/>
+		<param_auto name="modelViewProjMatrix" type="model_view_projection_matrix"/>
+		<param_auto name="modelViewMatrix" type="model_view_matrix"/>
 		<param_auto name="lightPosition" type="light_position"/>
 		<param_auto name="cameraPosition" type="camera_position"/>
 	</vertex_shader>

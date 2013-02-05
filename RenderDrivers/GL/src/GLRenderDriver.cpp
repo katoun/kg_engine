@@ -55,10 +55,6 @@ THE SOFTWARE.
 #include <win32/Win32Window.h>
 #endif
 
-glm::mat4x4 ModelMatrix;
-glm::mat4x4 ViewMatrix;
-glm::mat4x4 ProjectionMatrix;
-
 template<> render::GLRenderDriver* core::Singleton<render::GLRenderDriver>::m_Singleton = nullptr;
 
 namespace render
@@ -175,14 +171,6 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 	//////////////////////////////////
 
 	//////////AutoParameters//////////
-	ModelMatrix			= renderStateData.getWorldMatrix();
-	ViewMatrix			= renderStateData.getViewMatrix();
-	ProjectionMatrix	= renderStateData.getProjectionMatrix();
-
-	glm::mat4x4 ModelViewProjectionMatrix = ProjectionMatrix * ViewMatrix * ModelMatrix;
-	glm::mat4x4 ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
-	glm::mat4x4 WorldViewMatrix = ViewMatrix * ModelMatrix;
-
 	std::list<ShaderAutoParameter*>& shaderAutoParameters = pGLMaterial->getAutoParameters();
 	std::list<ShaderAutoParameter*>::const_iterator ai;
 	for (ai = shaderAutoParameters.begin(); ai != shaderAutoParameters.end(); ++ai)
@@ -197,78 +185,42 @@ void GLRenderDriver::render(RenderStateData& renderStateData)
 
 		switch (pAutoParameter->mAutoParameterType)
 		{
-		case SHADER_AUTO_PARAMETER_TYPE_WORLD_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, ModelMatrix);
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getModelMatrix());
 			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLD_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldMatrix());
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseModelMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLD_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLD_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldMatrix());
-			break;*/
 		case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, ViewMatrix);
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getViewMatrix());
 			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
 			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseViewMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedViewMatrix());
-			break;*/
 		case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, ProjectionMatrix);
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getProjectionMatrix());
 			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
 			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_PROJECTION_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedProjectionMatrix());
+		case SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getViewProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_PROJECTION_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedProjectionMatrix());
-			break;*/
-		case SHADER_AUTO_PARAMETER_TYPE_VIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, ViewProjectionMatrix);
-			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEWPROJ_MATRIX:
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX:
 			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseViewProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_VIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedViewProjectionMatrix());
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getModelViewMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_VIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedViewProjectionMatrix());
-			break;*/
-		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, WorldViewMatrix);
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseModelViewMatrix());
 			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldViewMatrix());
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getModelViewProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldViewMatrix());
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX:
+			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseModelViewProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEW_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldViewMatrix());
-			break;*/
-		case SHADER_AUTO_PARAMETER_TYPE_WORLDVIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, ModelViewProjectionMatrix);
-			break;
-		/*case SHADER_AUTO_PARAMETER_TYPE_INVERSE_WORLDVIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseWorldViewProjMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getTransposedWorldViewProjMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_TRANSPOSE_WORLDVIEWPROJ_MATRIX:
-			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getInverseTransposedWorldViewProjMatrix());
-			break;*/
 
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
 			pGLMaterial->setParameter(pGLShaderParameter, renderStateData.getCurrentLightPosition());

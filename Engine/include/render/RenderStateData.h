@@ -73,55 +73,53 @@ public:
 	const Color& getCurrentLightSpecularColour() const;
 	glm::vec4 getCurrentLightAttenuation() const;
 
-	const glm::mat4x4& getWorldMatrix();
-	const glm::mat4x4& getViewMatrix();
-	const glm::mat4x4& getProjectionMatrix();
+	glm::mat4x4 getModelMatrix();
+	glm::mat4x4 getViewMatrix();
+	glm::mat4x4 getProjectionMatrix();
 
-	const glm::mat4x4& getWorldViewMatrix();
+	const glm::mat4x4& getModelViewMatrix();
 	const glm::mat4x4& getViewProjectionMatrix();
-	const glm::mat4x4& getWorldViewProjMatrix();
+	const glm::mat4x4& getModelViewProjectionMatrix();
 
-	const glm::mat4x4& getInverseWorldMatrix();
+	const glm::mat4x4& getInverseModelMatrix();
 	const glm::mat4x4& getInverseViewMatrix();
-	glm::mat4x4 getInverseProjectionMatrix();
+	const glm::mat4x4& getInverseProjectionMatrix();
 
-	const glm::mat4x4& getInverseWorldViewMatrix();
-	glm::mat4x4 getInverseViewProjectionMatrix();
-	glm::mat4x4 getInverseWorldViewProjMatrix();
-
-	glm::mat4x4 getTransposedWorldMatrix();
-	glm::mat4x4 getTransposedViewMatrix();
-	glm::mat4x4 getTransposedProjectionMatrix();
-
-	glm::mat4x4 getTransposedWorldViewMatrix();
-	glm::mat4x4 getTransposedViewProjectionMatrix();
-	glm::mat4x4 getTransposedWorldViewProjMatrix();
-
-	const glm::mat4x4& getInverseTransposedWorldMatrix();
-	glm::mat4x4 getInverseTransposedViewMatrix();
-	glm::mat4x4 getInverseTransposedProjectionMatrix();
-
-	const glm::mat4x4& getInverseTransposedWorldViewMatrix();
-	glm::mat4x4 getInverseTransposedViewProjectionMatrix();
-	glm::mat4x4 getInverseTransposedWorldViewProjMatrix();
+	const glm::mat4x4& getInverseModelViewMatrix();
+	const glm::mat4x4& getInverseViewProjectionMatrix();
+	const glm::mat4x4& getInverseModelViewProjectionMatrix();
 
 protected:
 
-	glm::mat4x4 mWorldViewMatrix;
+	glm::mat4x4 mModelViewMatrix;
 	glm::mat4x4 mViewProjMatrix;
-	glm::mat4x4 mWorldViewProjMatrix;
-	
-	glm::mat4x4 mInverseWorldMatrix;
-	glm::mat4x4 mInverseViewMatrix;
+	glm::mat4x4 mModelViewProjMatrix;
 
-	glm::mat4x4 mInverseWorldViewMatrix;
-	
-	glm::mat4x4 mInverseTransposeWorldMatrix;
-	
-	glm::mat4x4 mInverseTransposeWorldViewMatrix;
+	glm::mat4x4 mInverseModelMatrix;
+	glm::mat4x4 mInverseViewMatrix;
+	glm::mat4x4 mInverseProjectionMatrix;
+
+	glm::mat4x4 mInverseModelViewMatrix;
+	glm::mat4x4 mInverseViewProjectionMatrix;
+	glm::mat4x4 mInverseModelViewProjectionMatrix;
+
+	bool mModelViewMatrixDirty;
+	bool mViewProjMatrixDirty;
+	bool mModelViewProjMatrixDirty;
+
+	bool mInverseModelMatrixDirty;
+	bool mInverseViewMatrixDirty;
+	bool mInverseProjectionMatrixDirty;
+
+	bool mInverseModelViewMatrixDirty;
+	bool mInverseViewProjectionMatrixDirty;
+	bool mInverseModelViewProjectionMatrixDirty;
 
 	glm::vec3 mCameraPosition;
 	glm::vec3 mCameraPositionObjectSpace;
+
+	bool mCameraPositionDirty;
+	bool mCameraPositionObjectSpaceDirty;
 
 	glm::vec3 mLightPosition;
 	glm::vec3 mLightPositionObjectSpace;
@@ -133,21 +131,6 @@ protected:
 
 	Color mAmbientLightColor;
 	Color mFogColor;
-
-	bool mWorldViewMatrixDirty;
-	bool mViewProjMatrixDirty;
-	bool mWorldViewProjMatrixDirty;
-
-	bool mInverseWorldMatrixDirty;
-	bool mInverseViewMatrixDirty;
-	
-	bool mInverseWorldViewMatrixDirty;
-
-	bool mInverseTransposeWorldMatrixDirty;
-	bool mInverseTransposeWorldViewMatrixDirty;
-
-	bool mCameraPositionDirty;
-	bool mCameraPositionObjectSpaceDirty;
 
 	Material* mCurrentMaterial;
 	Model* mCurrentModel;
