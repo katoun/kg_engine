@@ -1,19 +1,16 @@
-attribute vec3 position;
-attribute vec3 normal;
-attribute vec3 tangent;
-attribute vec3 binormal;
-attribute vec2 texCoords0;
+attribute vec3 vertex_position;
+attribute vec3 vertex_normal;
+attribute vec3 vertex_tangent;
+attribute vec3 vertex_binormal;
+attribute vec2 vertex_uv;
 
 uniform mat4 modelViewProjMatrix;
 uniform mat4 modelViewMatrix;
 
-uniform vec3 lightPosition; // World-space
-uniform vec3 cameraPosition; // World-space
+uniform vec3 light_position; // World-space
+uniform vec3 camera_position; // World-space
 
-uniform vec3 lightPositionOS; // Object-space
-uniform vec3 cameraPositionOS; // Object-space
-
-varying vec2 texCoords;
+varying vec2 uv;
 
 varying vec3 lightVector;
 varying vec3 halfAngle;
@@ -22,32 +19,30 @@ varying vec3 testVector;
 
 void main()
 {
-	texCoords = texCoords0;
-	gl_Position = modelViewProjMatrix * vec4(position, 1.0);
+	gl_Position = modelViewProjMatrix * vec4(vertex_position, 1.0);
 	
-	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+	uv = vertex_uv;
 	
-	vec3 lightVec = normalize(lightPosition - mvPosition.xyz);
-	//vec3 lightVec = normalize(lightPositionOS);
-
-	lightVector.x = dot(lightVec, tangent);
-	lightVector.y = dot(lightVec, binormal);
-	lightVector.z = dot(lightVec, normal);
+	vec4 mvPosition = modelViewMatrix * vec4(vertex_position, 1.0);
+	
+	vec3 lightVec = normalize(light_position - mvPosition.xyz);
+	lightVector.x = dot(lightVec, vertex_tangent);
+	lightVector.y = dot(lightVec, vertex_binormal);
+	lightVector.z = dot(lightVec, vertex_normal);
 	lightVector = normalize(lightVector);
 	
-	vec3 eyeVec = normalize(cameraPosition - mvPosition.xyz);
-	//vec3 eyeVec = normalize(cameraPositionOS - position);
+	vec3 eyeVec = normalize(camera_position - mvPosition.xyz);
 	vec3 eyeVector = normalize(eyeVec);
-	eyeVector.x = dot(eyeVec, tangent);
-	eyeVector.y = dot(eyeVec, binormal);
-	eyeVector.z = dot(eyeVec, normal);
+	eyeVector.x = dot(eyeVec, vertex_tangent);
+	eyeVector.y = dot(eyeVec, vertex_binormal);
+	eyeVector.z = dot(eyeVec, vertex_normal);
 	eyeVector = normalize(eyeVector);
 	
 	vec3 halfVec = normalize(eyeVec + lightVec);
 	
-	halfAngle.x = dot(halfVec, tangent);
-	halfAngle.y = dot(halfVec, binormal);
-	halfAngle.z = dot(halfVec, normal);
+	halfAngle.x = dot(halfVec, vertex_tangent);
+	halfAngle.y = dot(halfVec, vertex_binormal);
+	halfAngle.z = dot(halfVec, vertex_normal);
 	halfAngle = normalize(halfAngle);
 	
 	//testVector = eyeVector;
