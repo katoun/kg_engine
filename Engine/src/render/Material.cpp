@@ -53,6 +53,13 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 Material::~Material()
 {
 	removeAllParameters();
+
+	if (mVertexShader != nullptr)
+			mVertexShader->removeResourceEventReceiver(this);
+	if (mFragmentShader != nullptr)
+			mFragmentShader->removeResourceEventReceiver(this);
+	if (mGeometryShader != nullptr)
+			mGeometryShader->removeResourceEventReceiver(this);
 }
 
 void Material::addTextureUnit(const std::string& filename)
