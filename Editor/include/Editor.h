@@ -28,7 +28,7 @@ public:
 
 	virtual bool OnInit();
 
-	virtual int OnRun();
+	virtual bool ProcessIdle();
 
 	virtual int OnExit();
 

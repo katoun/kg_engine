@@ -25,11 +25,11 @@ bool EditorApp::OnInit()
 {
 	wxApp::OnInit();
 
+	mEngineManager = new engine::EngineManager();
+
 	MainFrame* frame = new MainFrame(NULL);
 	frame->SetIcon(wxICON(amain));
 	frame->Show();
-
-	mEngineManager = new engine::EngineManager();
 
 	if (mEngineManager != nullptr && frame->getRenderView() != nullptr && engine::EngineSettings::getInstance() != nullptr && render::RenderManager::getInstance != nullptr)
 	{
@@ -44,14 +44,14 @@ bool EditorApp::OnInit()
 	return true;
 }
 
-int EditorApp::OnRun()
+bool EditorApp::ProcessIdle()
 {
 	if (mEngineManager != nullptr && mEngineManager->isRunning())
 	{
 		mEngineManager->update(0.0f);
 	}
 
-	return wxApp::OnRun();
+	return wxApp::ProcessIdle();
 }
 
 int EditorApp::OnExit()
