@@ -14,6 +14,9 @@
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
+    <Filter Include="tinyxml2">
+      <UniqueIdentifier>{b811c1a8-740c-4cde-90ab-76a3a794ba11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor.cpp">
@@ -21,6 +24,12 @@
     </ClCompile>
     <ClCompile Include="src\MainFrame.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp">
+      <Filter>tinyxml2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +41,12 @@
     </ClInclude>
     <ClInclude Include="include\MainFrame.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h">
+      <Filter>tinyxml2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

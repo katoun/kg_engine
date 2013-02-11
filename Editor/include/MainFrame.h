@@ -17,6 +17,10 @@ The above is a precis, please do read the full license agreement.
 
 #include <EditorConfig.h>
 
+#include <string>
+
+class RenderView;
+
 class MainFrame: public wxFrame
 {
 public:
@@ -25,15 +29,24 @@ public:
 		
 	~MainFrame();
 
+	RenderView* getRenderView();
+
 protected:
 
-	wxTreeCtrl* m_sceneExplorer;
-	wxPropertyGrid* m_propertyWindow;
+	wxTreeCtrl*		m_sceneExplorer;
+	wxPropertyGrid*	m_propertyWindow;
+	RenderView*		m_RenderView;
 	
-	wxStatusBar* m_statusBar;
-	wxMenuBar* m_menubar;
-	wxMenu* m_menuFile;
-	wxMenu* m_menuEdit;
+	wxStatusBar*	m_statusBar;
+	wxMenuBar*		m_menubar;
+	wxMenu*			m_menuFile;
+	wxMenu*			m_menuEdit;
+
+	void CreateMenus();
+	void CreateDockPanes();
+	void CreateStatusbar();
+	void RegisterEvents();
+	void UnregisterEvents();
 
 	void OnMenuFileNew(wxCommandEvent& event);
 	void OnMenuFileOpen(wxCommandEvent& event);
@@ -54,6 +67,8 @@ protected:
 private:
 
 	wxAuiManager mAuiManager;
+
+	static std::string mDataPath;
 };
 
 

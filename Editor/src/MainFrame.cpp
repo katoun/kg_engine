@@ -13,19 +13,69 @@ The above is a precis, please do read the full license agreement.
 */
 
 #include <MainFrame.h>
+#include <RenderView.h>
+
+#include <tinyxml2.h>
+
+std::string MainFrame::mDataPath = "";
 
 MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style)
 {
+	mDataPath = "";
+
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile("Editor.xml") != tinyxml2::XML_SUCCESS)
+		return;
+
+	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("Editor");
+	if (pRoot != nullptr)
+	{
+		const char* svalue;
+		tinyxml2::XMLElement* pElement = nullptr;
+		pElement = pRoot->FirstChildElement("DataPath");
+		if (pElement != nullptr)
+		{
+			svalue = pElement->Attribute("value");
+			if (svalue != nullptr)
+			{
+				mDataPath = svalue;
+			}
+		}
+	}
+	
+	///////////////////////////////////////////
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	mAuiManager.SetManagedWindow(this);
 
-	///////////////////////////////////////////
-	m_sceneExplorer = new wxTreeCtrl(this, ID_SCENE_EXPLORER, wxDefaultPosition, wxSize(150,-1), wxTR_DEFAULT_STYLE);
+	CreateMenus();
+	CreateDockPanes();
+	CreateStatusbar();
 
-	m_propertyWindow = new wxPropertyGrid(this, ID_PROPERTY_WINDOW, wxDefaultPosition, wxSize(150,-1), wxTR_DEFAULT_STYLE);
+	// tell the manager to "commit" all the changes just made
+	mAuiManager.Update();
+	////////////////////////////////////////////
 
-	m_statusBar = this->CreateStatusBar(1, wxST_SIZEGRIP, ID_STATUS_BAR);
+	this->Centre(wxBOTH);
 
+	// Connect Events
+	RegisterEvents();
+}
+
+MainFrame::~MainFrame()
+{
+	// Disconnect Events
+	UnregisterEvents();
+
+	mAuiManager.UnInit();
+}
+
+RenderView* MainFrame::getRenderView()
+{
+	return m_RenderView;
+}
+
+void MainFrame::CreateMenus()
+{
 	//Menu
 	m_menubar = new wxMenuBar(0);
 	
@@ -94,8 +144,12 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	this->SetMenuBar(m_menubar);
 	//Menu
 	///////////////////////////////////////////
+}
 
-	// add the panes to the manager
+void MainFrame::CreateDockPanes()
+{
+	m_sceneExplorer = new wxTreeCtrl(this, ID_SCENE_EXPLORER, wxDefaultPosition, wxSize(150,-1), wxTR_DEFAULT_STYLE);
+
 	wxAuiPaneInfo paneInfo;
 	paneInfo.Caption(wxT("Scene Explorer"));
 	paneInfo.Left();
@@ -107,6 +161,8 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	
 	mAuiManager.AddPane(m_sceneExplorer, paneInfo);
 
+	m_propertyWindow = new wxPropertyGrid(this, ID_PROPERTY_WINDOW, wxDefaultPosition, wxSize(150,-1), wxTR_DEFAULT_STYLE);
+
 	paneInfo.Caption(wxT("Properties"));
 	paneInfo.Right();
 	paneInfo.PinButton(true);
@@ -117,19 +173,27 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 
 	mAuiManager.AddPane(m_propertyWindow, paneInfo);
 
-	// tell the manager to "commit" all the changes just made
-	mAuiManager.Update();
+	m_RenderView = new RenderView(this, ID_RENDER_WINDOW, wxDefaultPosition, wxSize(-1, -1), wxTR_DEFAULT_STYLE);
 
-	////////////////////////////////////////////
+	paneInfo.Caption(wxT("RenderView"));
+	paneInfo.CenterPane();
+	paneInfo.PaneBorder(false);
 
-	this->Centre(wxBOTH);
+	mAuiManager.AddPane(m_RenderView, paneInfo);
+}
 
-	// Connect Events
-	this->Connect(ID_MENU_FILE_NEW,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileNew));
-	this->Connect(ID_MENU_FILE_OPEN,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
-	this->Connect(ID_MENU_FILE_SAVE,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSave));
-	this->Connect(ID_MENU_FILE_SAVE_AS,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSaveAs));
-	this->Connect(ID_MENU_FILE_EXIT,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileExit));
+void MainFrame::CreateStatusbar()
+{
+	m_statusBar = this->CreateStatusBar(1, wxST_SIZEGRIP, ID_STATUS_BAR);
+}
+
+void MainFrame::RegisterEvents()
+{
+	this->Connect(ID_MENU_FILE_NEW,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileNew));
+	this->Connect(ID_MENU_FILE_OPEN,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
+	this->Connect(ID_MENU_FILE_SAVE,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSave));
+	this->Connect(ID_MENU_FILE_SAVE_AS,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSaveAs));
+	this->Connect(ID_MENU_FILE_EXIT,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileExit));
 
 	this->Connect(ID_MENU_EDIT_UNDO,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditUndo));
 	this->Connect(ID_MENU_EDIT_REDO,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditRedo));
@@ -142,14 +206,13 @@ MainFrame::MainFrame(wxWindow* parent, wxWindowID id, const wxString& title, con
 	this->Connect(ID_MENU_EDIT_SELECT_INVERT,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditSelectInvert));
 }
 
-MainFrame::~MainFrame()
+void MainFrame::UnregisterEvents()
 {
-	// Disconnect Events
-	this->Disconnect(ID_MENU_FILE_NEW,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileNew));
-	this->Disconnect(ID_MENU_FILE_OPEN,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
-	this->Disconnect(ID_MENU_FILE_SAVE,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSave));
-	this->Disconnect(ID_MENU_FILE_SAVE_AS,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSaveAs));
-	this->Disconnect(ID_MENU_FILE_EXIT,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileExit));
+	this->Disconnect(ID_MENU_FILE_NEW,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileNew));
+	this->Disconnect(ID_MENU_FILE_OPEN,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileOpen));
+	this->Disconnect(ID_MENU_FILE_SAVE,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSave));
+	this->Disconnect(ID_MENU_FILE_SAVE_AS,			wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileSaveAs));
+	this->Disconnect(ID_MENU_FILE_EXIT,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuFileExit));
 
 	this->Disconnect(ID_MENU_EDIT_UNDO,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditUndo));
 	this->Disconnect(ID_MENU_EDIT_REDO,				wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditRedo));
@@ -160,8 +223,6 @@ MainFrame::~MainFrame()
 	this->Disconnect(ID_MENU_EDIT_SELECT_ALL,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditSelectAll));
 	this->Disconnect(ID_MENU_EDIT_SELECT_NONE,		wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditSelectNone));
 	this->Disconnect(ID_MENU_EDIT_SELECT_INVERT,	wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnMenuEditSelectInvert));
-
-	mAuiManager.UnInit();
 }
 
 void MainFrame::OnMenuFileNew(wxCommandEvent& event)

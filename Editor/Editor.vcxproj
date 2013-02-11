@@ -11,13 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h" />
     <ClInclude Include="include\Editor.h" />
     <ClInclude Include="include\EditorConfig.h" />
     <ClInclude Include="include\MainFrame.h" />
+    <ClInclude Include="include\RenderView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\MainFrame.cpp" />
+    <ClCompile Include="src\RenderView.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8D80E5F2-1EFF-4FD0-A6BD-DDA6492AEBB7}</ProjectGuid>
@@ -67,7 +71,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\wxMSW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\wxMSW\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WXMSW__;WXUSINGDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

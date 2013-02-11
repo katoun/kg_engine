@@ -14,6 +14,10 @@ The above is a precis, please do read the full license agreement.
 
 #include <Editor.h>
 #include <MainFrame.h>
+#include <RenderView.h>
+#include <engine/EngineManager.h>
+#include <engine/EngineSettings.h>
+#include <render/RenderManager.h>
 
 IMPLEMENT_APP(EditorApp);
 
@@ -27,11 +31,13 @@ bool EditorApp::OnInit()
 
 	mEngineManager = new engine::EngineManager();
 
-	if (mEngineManager != nullptr)
+	if (mEngineManager != nullptr && frame->getRenderView() != nullptr && engine::EngineSettings::getInstance() != nullptr && render::RenderManager::getInstance != nullptr)
 	{
-		//mEngineManager->setMainWindowID((HWND)frame->GetHandle());//TODO!!!
+		engine::EngineSettings::getInstance()->setMainWindowID((HWND)frame->getRenderView()->GetHWND());
 
 		mEngineManager->initialize();
+		
+		frame->getRenderView()->SetRenderWindow(render::RenderManager::getInstance()->getMainWindow());
 		mEngineManager->start();
 	}
 
@@ -41,7 +47,9 @@ bool EditorApp::OnInit()
 int EditorApp::OnRun()
 {
 	if (mEngineManager != nullptr && mEngineManager->isRunning())
-		mEngineManager->update(0);
+	{
+		mEngineManager->update(0.0f);
+	}
 
 	return wxApp::OnRun();
 }

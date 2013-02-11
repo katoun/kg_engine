@@ -16,7 +16,11 @@ The above is a precis, please do read the full license agreement.
 #define _EDITOR_H_
 
 #include <EditorConfig.h>
-#include <Engine.h>
+
+namespace engine
+{
+class EngineManager;
+}
 
 class EditorApp: public wxApp
 {
