@@ -24,24 +24,30 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <GLShaderFactory.h>
-#include <GLShader.h>
+#ifndef _SHADER_H_FACTORY_H_
+#define _SHADER_H_FACTORY_H_
+
+#include <EngineConfig.h>
+#include <resource/ResourceFactory.h>
+
+namespace resource
+{
+class Resource;
+class Serializer;
+}
 
 namespace render
 {
 
-resource::Resource* GLShaderFactory::createResource(const std::string& filename, resource::Serializer* serializer)
+class ENGINE_PRIVATE_EXPORT ShaderFactory: public resource::ResourceFactory
 {
-	return new GLShader(filename, serializer);
-}
+public:
 
-void GLShaderFactory::destroyResource(resource::Resource* resource)
-{
-	GLShader* glShader = static_cast<GLShader*>(resource);
+	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
 
-	assert(glShader != nullptr);
-	SAFE_DELETE(glShader);
-}
-
+	void destroyResource(resource::Resource* resource);
+};
 
 } // end namespace render
+
+#endif

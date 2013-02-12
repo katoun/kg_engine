@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _INDEX_BUFFER_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <render/IndexBufferDefines.h>
 #include <resource/Buffer.h>
 
@@ -50,11 +51,24 @@ public:
 	//! Get the size in bytes of each index.
 	unsigned int getIndexSize();
 
+	void readData(unsigned int offset, unsigned int length, void* pDest);
+
+	void writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer = false);
+
+	GLuint getGLBufferId() const;
+
 protected:
+
+	void* lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options);
+
+	void unlockImpl();
+
+	GLuint			mBufferId;
+	GLenum			mGLUsage;
 	
-	IndexType mIndexType;
-	unsigned int mNumIndexes;
-	unsigned int mIndexSize;
+	IndexType		mIndexType;
+	unsigned int	mNumIndexes;
+	unsigned int	mIndexSize;
 };
 
 }// end namespace render

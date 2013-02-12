@@ -24,10 +24,10 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_TEXTURE_H_FACTORY_H_
-#define _GL_TEXTURE_H_FACTORY_H_
+#ifndef _TEXTURE_H_FACTORY_H_
+#define _TEXTURE_H_FACTORY_H_
 
-#include <GLConfig.h>
+#include <EngineConfig.h>
 #include <resource/ResourceFactory.h>
 
 namespace resource
@@ -39,7 +39,7 @@ class Serializer;
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLTextureFactory: public resource::ResourceFactory
+class ENGINE_PRIVATE_EXPORT TextureFactory: public resource::ResourceFactory
 {
 public:
 

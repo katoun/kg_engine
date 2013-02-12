@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "..\Engine\Engine.vcxproj", "{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputDriver_Win32", "..\InputDrivers\Win32\InputDriver_Win32.vcxproj", "{2808D114-179C-45E2-8FE1-2D913F7CAA91}"
@@ -19,11 +19,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoundDriver_OpenAL", "..\So
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Launcher", "..\Launcher\Launcher.vcxproj", "{67D39118-0563-4178-AEA0-F9C62961EF47}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderDriver_GL", "..\RenderDrivers\GL\RenderDriver_GL.vcxproj", "{7D0A20FE-40A6-4E64-AD26-5E34AE391DF4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B1E07D82-13D5-4574-948E-4ACDDDEBD9ED} = {B1E07D82-13D5-4574-948E-4ACDDDEBD9ED}
 	EndProjectSection
@@ -59,18 +54,10 @@ Global
 		{67D39118-0563-4178-AEA0-F9C62961EF47}.Debug|Win32.Build.0 = Debug|Win32
 		{67D39118-0563-4178-AEA0-F9C62961EF47}.Release|Win32.ActiveCfg = Release|Win32
 		{67D39118-0563-4178-AEA0-F9C62961EF47}.Release|Win32.Build.0 = Release|Win32
-		{7D0A20FE-40A6-4E64-AD26-5E34AE391DF4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7D0A20FE-40A6-4E64-AD26-5E34AE391DF4}.Debug|Win32.Build.0 = Debug|Win32
-		{7D0A20FE-40A6-4E64-AD26-5E34AE391DF4}.Release|Win32.ActiveCfg = Release|Win32
-		{7D0A20FE-40A6-4E64-AD26-5E34AE391DF4}.Release|Win32.Build.0 = Release|Win32
 		{8D80E5F2-1EFF-4FD0-A6BD-DDA6492AEBB7}.Debug|Win32.ActiveCfg = Debug|Win32
 		{8D80E5F2-1EFF-4FD0-A6BD-DDA6492AEBB7}.Debug|Win32.Build.0 = Debug|Win32
 		{8D80E5F2-1EFF-4FD0-A6BD-DDA6492AEBB7}.Release|Win32.ActiveCfg = Release|Win32
 		{8D80E5F2-1EFF-4FD0-A6BD-DDA6492AEBB7}.Release|Win32.Build.0 = Release|Win32
-		{95E2A8E0-7AFB-4E9D-A14F-371059B1CC9D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{95E2A8E0-7AFB-4E9D-A14F-371059B1CC9D}.Debug|Win32.Build.0 = Debug|Win32
-		{95E2A8E0-7AFB-4E9D-A14F-371059B1CC9D}.Release|Win32.ActiveCfg = Release|Win32
-		{95E2A8E0-7AFB-4E9D-A14F-371059B1CC9D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

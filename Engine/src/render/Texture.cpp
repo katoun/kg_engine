@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <core/System.h>
 #include <render/Texture.h>
 #include <resource/PixelFormat.h>
+#include <render/GLPixelFormat.h>
 
 namespace render
 {
@@ -159,8 +160,109 @@ bool Texture::hasAlpha()
 	return mHasAlpha;
 }
 
+GLuint Texture::getGLID() const
+{
+	return mTextureID;
+}
+
+bool Texture::loadImpl()
+{
+	if (!Resource::loadImpl())
+		return false;
+
+	if (mBuffer == nullptr)
+		return false;
+
+	if (mTextureType == TEX_TYPE_2D)
+	{
+		// Create the GL texture
+		glGenTextures(1, &mTextureID);
+
+		glActiveTexture(GL_TEXTURE15);
+		// Set texture type
+		glBindTexture(getGLTextureType(), mTextureID);
+
+		// This needs to be set otherwise the texture doesn't get rendered
+		glTexParameteri(getGLTextureType(), GL_TEXTURE_MAX_LEVEL, mNumMipmaps);
+
+		// Set some misc default parameters so NVidia won't complain, these can of course be changed later
+		glTexParameteri(getGLTextureType(), GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(getGLTextureType(), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(getGLTextureType(), GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(getGLTextureType(), GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexParameteri(getGLTextureType(), GL_GENERATE_MIPMAP, GL_TRUE);
+
+		GLenum format = GLPixelUtil::getGLOriginFormat(mPixelFormat);
+		GLenum internalFormat = GLPixelUtil::getClosestGLInternalFormat(mPixelFormat);
+		unsigned int width = mWidth;
+		unsigned int height = mHeight;
+		unsigned int depth = mDepth;
+
+		if(resource::PixelUtil::isCompressed(mPixelFormat))
+		{
+			// Compressed formats
+			for(unsigned int mip=0; mip<=mNumMipmaps; mip++)
+			{
+				unsigned int size = resource::PixelUtil::getMemorySize(width, height, depth, mPixelFormat);
+				switch(mTextureType)
+				{
+				case TEX_TYPE_1D:
+					glCompressedTexImage1D(GL_TEXTURE_1D, mip, internalFormat, width, 0, size, mBuffer);
+					break;
+				case TEX_TYPE_2D:
+					glCompressedTexImage2D(GL_TEXTURE_2D, mip, internalFormat, width, height, 0, size, mBuffer);
+					break;
+				case TEX_TYPE_3D:
+					glCompressedTexImage3D(GL_TEXTURE_3D, mip, internalFormat, width, height, depth, 0, size, mBuffer);
+					break;
+				}
+
+				if(width>1)		width = width/2;
+				if(height>1)	height = height/2;
+				if(depth>1)		depth = depth/2;
+			}
+		}
+		else
+		{
+			// Run through this process to pre-generate mip=map pyramid
+			for(unsigned int mip=0; mip<=mNumMipmaps; mip++)
+			{
+				// Normal formats
+				switch(mTextureType)
+				{
+				case TEX_TYPE_1D:
+					glTexImage1D(GL_TEXTURE_1D, mip, internalFormat, width, 0, format, GL_UNSIGNED_BYTE, mBuffer);
+					break;
+				case TEX_TYPE_2D:
+					glTexImage2D(GL_TEXTURE_2D, mip, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, mBuffer);
+					break;
+				case TEX_TYPE_3D:
+					glTexImage3D(GL_TEXTURE_3D, mip, internalFormat, width, height, depth, 0, format, GL_UNSIGNED_BYTE, mBuffer);
+					break;
+				}
+
+				if(width>1)		width = width/2;
+				if(height>1)	height = height/2;
+				if(depth>1)		depth = depth/2;
+			}
+		}
+
+		glBindTexture(getGLTextureType(), 0);
+	}
+
+	return true;
+}
+
 void Texture::unloadImpl()
 {
+	if (mTextureType == TEX_TYPE_2D)
+	{
+		glDeleteTextures(1, &mTextureID);
+
+		mTextureType = TEX_TYPE_2D;
+	}
+
 	SAFE_DELETE_ARRAY(mBuffer);
 
 	mPixelFormat = resource::PF_UNKNOWN;
@@ -179,5 +281,21 @@ void Texture::unloadImpl()
 
 	mHasAlpha = false;
 }
+
+GLenum Texture::getGLTextureType() const
+{
+	switch(mTextureType)
+	{
+	case TEX_TYPE_1D:
+		return GL_TEXTURE_1D;
+	case TEX_TYPE_2D:
+		return GL_TEXTURE_2D;
+	case TEX_TYPE_3D:
+		return GL_TEXTURE_3D;
+	default:
+		return GL_TEXTURE_2D;
+	}
+}
+
 
 } // end namespace render

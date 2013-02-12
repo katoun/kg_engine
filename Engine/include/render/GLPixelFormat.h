@@ -24,30 +24,32 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_MATERIAL_FACTORY_H_
-#define _GL_MATERIAL_FACTORY_H_
+#ifndef _GL_PIXEL_FORMAT_H_
+#define _GL_PIXEL_FORMAT_H_
 
-#include <GLConfig.h>
-#include <resource/ResourceFactory.h>
-
-namespace resource
-{
-class Resource;
-class Serializer;
-}
+#include <EngineConfig.h>
+#include <render/GLConfig.h>
+#include <resource/PixelFormat.h>
 
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLMaterialFactory: public resource::ResourceFactory
+class GLPixelUtil
 {
 public:
 
-	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
-
-	void destroyResource(resource::Resource* resource);
+	//!* Takes the pixel format and returns the appropriate GL one.
+	static GLenum getGLOriginFormat(resource::PixelFormat mFormat);
+	
+	//!	Takes the pixel format and returns the type that must be provided to GL as internal format.
+	static GLenum getGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma = false);
+	
+	//!	Takes the pixel format and returns the type that must be provided to GL as internal format.
+	//!If no match exists, returns the closest match.
+	static GLenum getClosestGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma = false);
 };
 
-} // end namespace render
+}// end namespace render
 
-#endif
+
+#endif// _GL_PIXEL_FORMAT_H_

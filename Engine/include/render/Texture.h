@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _TEXTURE_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <render/TextureDefines.h>
 #include <resource/Resource.h>
 
@@ -110,9 +111,15 @@ public:
 	//! Returns true if the texture has an alpha layer.
 	bool hasAlpha();
 
+	GLuint getGLID() const;
+
 protected:
 
-	virtual void unloadImpl();
+	bool loadImpl();
+
+	void unloadImpl();
+
+	GLuint mTextureID;
 
 	TextureType mTextureType;
 
@@ -131,6 +138,8 @@ protected:
 	unsigned int mNumMipmaps;
 
 	bool mHasAlpha;
+
+	GLenum getGLTextureType() const;
 };
 
 } // end namespace render

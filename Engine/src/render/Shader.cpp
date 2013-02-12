@@ -42,11 +42,10 @@ namespace render
 
 Shader::Shader(const std::string& name, resource::Serializer* serializer): resource::Resource(name, serializer)
 {
-	mResourceType = resource::RESOURCE_TYPE_SHADER;
-
-	mShaderType = SHADER_TYPE_VERTEX;
-
-	mSource = "";
+	mResourceType	= resource::RESOURCE_TYPE_SHADER;
+	mShaderType		= SHADER_TYPE_VERTEX;
+	mGLHandle		= 0;
+	mSource			= "";
 }
 
 Shader::~Shader() {}
@@ -71,36 +70,81 @@ void Shader::setEntryPoint(const std::string& entry)
 	mEntryPoint = entry;
 }
 
-bool Shader::loadImpl()
+
+GLhandleARB Shader::getGLHandle() const
 {
-	if (resource::ResourceManager::getInstance() != nullptr)
-	{
-		std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
-	
-		FILE* pFile = fopen(filePath.c_str(), "rb");
-	
-		if (pFile != nullptr)
-		{
-			fseek(pFile, 0, SEEK_END);
-			mSize = (unsigned int)ftell(pFile);
-
-			fseek(pFile, 0, SEEK_SET);
-
-			char* pBuffer = new char[mSize];
-			fread(pBuffer, mSize, 1, pFile);
-
-			mSource.insert(0, (const char*)pBuffer, mSize);
-			SAFE_DELETE_ARRAY(pBuffer);
-
-			fclose(pFile);
-
-			return true;
-		}
-	}
-
-	return false;
+	return mGLHandle;
 }
 
-void Shader::unloadImpl() {}
+bool Shader::loadImpl()
+{
+	if (resource::ResourceManager::getInstance() == nullptr)
+		return false;
+
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
+	
+	FILE* pFile = fopen(filePath.c_str(), "rb");
+	
+	if (pFile == nullptr)
+		return false;
+
+		
+	fseek(pFile, 0, SEEK_END);
+	mSize = (unsigned int)ftell(pFile);
+
+	fseek(pFile, 0, SEEK_SET);
+
+	char* pBuffer = new char[mSize];
+	fread(pBuffer, mSize, 1, pFile);
+
+	mSource.insert(0, (const char*)pBuffer, mSize);
+	SAFE_DELETE_ARRAY(pBuffer);
+
+	fclose(pFile);
+
+	mGLHandle = glCreateShader(getShaderType(mShaderType));
+
+	const char* source = mSource.c_str();
+	glShaderSource(mGLHandle, 1, &source, NULL);
+
+	int InfoLogLength;
+	GLint compiled;
+	glCompileShader(mGLHandle);
+	// check for compile errors
+	glGetShaderiv(mGLHandle, GL_COMPILE_STATUS, &compiled);
+#ifdef _DEBUG
+	glGetShaderiv(mGLHandle, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0)
+	{
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(mGLHandle, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		printf("%s\n", &VertexShaderErrorMessage[0]);
+	}
+#endif
+
+	return (compiled == 1);
+}
+
+void Shader::unloadImpl()
+{
+	glDeleteShader(mGLHandle);
+}
+
+GLenum Shader::getShaderType(ShaderType type)
+{
+	switch(type)
+	{
+	case SHADER_TYPE_VERTEX:
+		return GL_VERTEX_SHADER;
+	case SHADER_TYPE_FRAGMENT:
+		return GL_FRAGMENT_SHADER;
+	case SHADER_TYPE_GEOMETRY:
+		return GL_GEOMETRY_SHADER;
+	default:
+		return 0x0000;
+	}
+
+	return 0x0000;
+}
 
 } // end namespace render

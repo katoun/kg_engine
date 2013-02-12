@@ -28,13 +28,15 @@ THE SOFTWARE.
 #include <core/Utils.h>
 #include <core/LogDefines.h>
 #include <render/RenderManager.h>
-#include <render/RenderDriver.h>
 #include <render/Frustum.h>
 #include <render/Light.h>
 #include <render/LightFactory.h>
 #include <render/Camera.h>
 #include <render/CameraFactory.h>
 #include <render/Material.h>
+#include <render/MaterialFactory.h>
+#include <render/Texture.h>
+#include <render/TextureFactory.h>
 #include <render/Model.h>
 #include <render/ModelFactory.h>
 #include <render/RenderDefines.h>
@@ -45,6 +47,8 @@ THE SOFTWARE.
 #include <render/MeshData.h>
 #include <render/MeshDataFactory.h>
 #include <render/Shader.h>
+#include <render/ShaderFactory.h>
+#include <render/ShaderParameter.h>
 #include <render/Font.h>
 #include <render/FontFactory.h>
 #include <render/Viewport.h>
@@ -59,6 +63,10 @@ THE SOFTWARE.
 #include <game/GameManager.h>
 #include <engine/EngineSettings.h>
 
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#include <render/win32/Win32Window.h>
+#endif
+
 #include <algorithm>
 
 template<> render::RenderManager* core::Singleton<render::RenderManager>::m_Singleton = nullptr;
@@ -70,14 +78,16 @@ std::list<FrameEventReceiver*> RenderManager::mFrameEventReceivers;
 
 RenderManager::RenderManager(): core::System("RenderManager")
 {
-	mDefaultFontFactory = new FontFactory();
-	mDefaultMeshDataFactory = new MeshDataFactory();
+	mShaderFactory = new ShaderFactory();
+	mMaterialFactory = new MaterialFactory();
+	mTextureFactory = new TextureFactory();
+	mFontFactory = new FontFactory();
+	mMeshDataFactory = new MeshDataFactory();
 	mDefaultCameraFactory = new CameraFactory();
 	mDefaultLightFactory = new LightFactory();
 	mDefaultModelFactory = new ModelFactory();
 
 	mMainWindow = nullptr;
-	mRenderDriver = nullptr;
 	mCurrentViewport = nullptr;
 
 	mDefaultMaterial = nullptr;
@@ -93,8 +103,11 @@ RenderManager::RenderManager(): core::System("RenderManager")
 
 RenderManager::~RenderManager()
 {
-	SAFE_DELETE(mDefaultFontFactory);
-	SAFE_DELETE(mDefaultMeshDataFactory);
+	SAFE_DELETE(mShaderFactory);
+	SAFE_DELETE(mMaterialFactory);
+	SAFE_DELETE(mTextureFactory);
+	SAFE_DELETE(mFontFactory);
+	SAFE_DELETE(mMeshDataFactory);
 	SAFE_DELETE(mDefaultCameraFactory);
 	SAFE_DELETE(mDefaultLightFactory);
 	SAFE_DELETE(mDefaultModelFactory);
@@ -102,16 +115,25 @@ RenderManager::~RenderManager()
 
 RenderWindow* RenderManager::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
 {
-	if (!mRenderDriver) return nullptr;
+	
+	// Create the window
+	RenderWindow* pRenderWindow = nullptr;
 
-	RenderWindow* win = mRenderDriver->createRenderWindow(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+	pRenderWindow = new Win32Window();
+#endif
+
+	if (pRenderWindow != nullptr)
+	{
+		pRenderWindow->create(width, height, colorDepth, fullScreen, left, top, depthBuffer, windowId);
+	}
 
 	std::string message = "RenderWindow Created --> " + core::intToString(width) + ", " + core::intToString(height) + ", " + core::intToString(colorDepth) + ".";
 	if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderManager", message);
 
-	mRenderWindows[win->getID()] = win;
+	mRenderWindows[pRenderWindow->getID()] = pRenderWindow;
 
-	return win;
+	return pRenderWindow;
 }
 
 void RenderManager::setMainWindow(RenderWindow* window)
@@ -371,17 +393,13 @@ void RenderManager::removeAllShaders()
 
 VertexBuffer* RenderManager::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
 {
-	if (mRenderDriver)
+	VertexBuffer* pVertexBuffer = new VertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
+	if (pVertexBuffer != nullptr)
 	{
-		VertexBuffer* buf = mRenderDriver->createVertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
-		if (buf != nullptr)
-		{
-			mVertexBuffers.push_back(buf);
-		}
-
-		return buf;
+		mVertexBuffers.push_back(pVertexBuffer);
 	}
-	return nullptr;
+
+	return pVertexBuffer;
 }
 
 void RenderManager::removeVertexBuffer(VertexBuffer* buf)
@@ -391,12 +409,10 @@ void RenderManager::removeVertexBuffer(VertexBuffer* buf)
 	{
 		if ((*i) == buf)
 		{
+			VertexBuffer* pVertexBuffer = (*i);
 			mVertexBuffers.erase(i);
+			SAFE_DELETE(pVertexBuffer);
 
-			if (mRenderDriver != nullptr)
-			{
-				mRenderDriver->removeVertexBuffer((*i));
-			}
 			return;
 		}
 	}
@@ -407,27 +423,21 @@ void RenderManager::removeAllVertexBuffers()
 	std::list<VertexBuffer*>::iterator i;
 	for (i = mVertexBuffers.begin(); i != mVertexBuffers.end(); ++i)
 	{
-		if (mRenderDriver != nullptr)
-		{
-			mRenderDriver->removeVertexBuffer((*i));
-		}
+		VertexBuffer* pVertexBuffer = (*i);
+		SAFE_DELETE(pVertexBuffer);
 	}
 	mVertexBuffers.clear();
 }
 
 IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage)
 {
-	if (mRenderDriver)
+	IndexBuffer* pIndexBuffer = new IndexBuffer(idxType, numIndexes, usage);
+	if (pIndexBuffer != nullptr)
 	{
-		IndexBuffer* buf = mRenderDriver->createIndexBuffer(idxType, numIndexes, usage);
-		if (buf != nullptr)
-		{
-			mIndexBuffers.push_back(buf);
-		}
-
-		return buf;
+		mIndexBuffers.push_back(pIndexBuffer);
 	}
-	return nullptr;
+
+	return pIndexBuffer;
 }
 
 void RenderManager::removeIndexBuffer(IndexBuffer* buf)
@@ -437,12 +447,10 @@ void RenderManager::removeIndexBuffer(IndexBuffer* buf)
 	{
 		if ((*i) == buf)
 		{
+			IndexBuffer* pIndexBuffer = (*i);
 			mIndexBuffers.erase(i);
+			SAFE_DELETE(pIndexBuffer);
 
-			if (mRenderDriver != nullptr)
-			{
-				mRenderDriver->removeIndexBuffer((*i));
-			}
 			return;
 		}
 	}
@@ -453,10 +461,8 @@ void RenderManager::removeAllIndexBuffers()
 	std::list<IndexBuffer*>::iterator i;
 	for (i = mIndexBuffers.begin(); i != mIndexBuffers.end(); ++i)
 	{
-		if (mRenderDriver != nullptr)
-		{
-			mRenderDriver->removeIndexBuffer((*i));
-		}
+		IndexBuffer* pIndexBuffer = (*i);
+		SAFE_DELETE(pIndexBuffer);
 	}
 	mIndexBuffers.clear();
 }
@@ -467,6 +473,43 @@ void RenderManager::initializeImpl()
 		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
 
 	mModelMaterialPairs.reserve(1024);
+
+	GLenum err = glewInit();
+
+	if (GLEW_OK != err)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderManager", "Can't Initialize GLew.", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	// Check for OpenGL 3.1
+	/*if(!GLEW_VERSION_3_1)
+	{
+		MessageBox(nullptr, "Can't Initialize OpenGL 3.1.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}*/
+
+	// Check for OpenGL 4.2
+	/*if(!GLEW_VERSION_4_2)
+	{
+		MessageBox(nullptr, "Can't Initialize OpenGL 4.2.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return;
+	}*/
+
+	glClearDepth(1.0f);
+	glColor4f(1.0f,1.0f,1.0f,1.0f);						// Set Color to initial value
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS);
+
+	glDepthMask(GL_TRUE);
+
+	// Cull triangles which normal is not towards the camera
+	glEnable(GL_CULL_FACE);
+
+	glDisable(GL_BLEND);								// Turn Blending Off
 }
 
 void RenderManager::uninitializeImpl()
@@ -539,22 +582,15 @@ void RenderManager::updateImpl(float elapsedTime)
 	fireFrameEnded();
 }
 
-void RenderManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
-{
-	mRenderDriver = static_cast<RenderDriver*>(systemDriver);
-}
-
-void RenderManager::removeSystemDriverImpl()
-{
-	mRenderDriver = nullptr;
-}
-
 void RenderManager::registerDefaultFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_FONT, mDefaultFontFactory);
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mDefaultMeshDataFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SHADER, mShaderFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL, mMaterialFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_TEXTURE, mTextureFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_FONT, mFontFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_MESH_DATA, mMeshDataFactory);
 	}
 
 	if (game::GameManager::getInstance() != nullptr)
@@ -569,6 +605,9 @@ void RenderManager::removeDefaultFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SHADER);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_RENDER_MATERIAL);
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_TEXTURE);
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_FONT);
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_MESH_DATA);
 	}
@@ -726,10 +765,24 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 	{
 		mCurrentViewport = viewport;
 
-		if (mRenderDriver != nullptr)
-		{
-			mRenderDriver->setViewport(viewport);
-		}
+		if (viewport == nullptr)
+			return;
+
+		GLsizei x, y, w, h;
+
+		RenderTarget* target;
+		target = viewport->getTarget();
+
+		// Calculate the "lower-left" corner of the viewport
+		w = viewport->getActualWidth();
+		h = viewport->getActualHeight();
+		x = viewport->getActualLeft();
+		y = target->getHeight() - viewport->getActualTop() - h;
+
+		glViewport(x, y, w, h);
+
+		// Configure the viewport clipping
+		glScissor(x, y, w, h);
 	}
 }
 
@@ -742,7 +795,18 @@ void RenderManager::beginFrame(Viewport* viewport)
 	}
 	
 	// Clear the viewport if required
-	mRenderDriver->beginFrame(viewport);
+	if (viewport->getClearEveryFrame())
+	{
+		// Activate the viewport clipping
+		glEnable(GL_SCISSOR_TEST);
+
+		Color col = viewport->getBackgroundColor();
+
+		glClearColor(col.r, col.g, col.b, col.a);
+
+		glClearDepth(1.0f);									// Depth Buffer Setup
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
+	}
 }
 
 void RenderManager::findVisibleModels(Camera* camera)
@@ -806,14 +870,308 @@ void RenderManager::renderSingleModel(Model* model)
 
 			addGeometryCount(model);
 
-			mRenderDriver->render(mRenderStateData);
+			render(mRenderStateData);
 		}
+	}
+}
+
+void RenderManager::render(RenderStateData& renderStateData)
+{
+	if (renderStateData.getCurrentMaterial() == nullptr)
+		return;
+
+	Material* pMaterial = renderStateData.getCurrentMaterial();
+	if (pMaterial == nullptr)
+		return;
+
+	Model* pModel = renderStateData.getCurrentModel();
+
+	if (pModel == nullptr)
+		return;
+
+	if (pModel->getVertexBuffer(VERTEX_BUFFER_TYPE_POSITION) == nullptr || pModel->getIndexBuffer() == nullptr)
+		return;
+
+	glUseProgram(pMaterial->getGLHandle());
+
+	ShaderParameter* pShaderParameter = nullptr;
+	ShaderVertexParameter* pShaderVertexParameter = nullptr;
+
+	/////////////Textures/////////////
+	std::vector<ShaderTextureParameter*>& shaderTextureParameters = pMaterial->getTextureParameters();
+	std::list<ShaderTextureParameter*>::const_iterator ti;
+	for (unsigned int i = 0; i < shaderTextureParameters.size(); ++i)
+	{
+		ShaderTextureParameter* pTextureParameter = shaderTextureParameters[i];
+		if (pTextureParameter == nullptr)
+			continue;
+
+		pShaderParameter = pTextureParameter->mParameter;
+		Texture* pTexture = pMaterial->getTextureUnit(i);
+		if (pTexture == nullptr || pShaderParameter == nullptr)
+			continue;
+
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, pTexture->getGLID());
+		glUniform1i(pShaderParameter->mParameterID, i);
+	}
+	//////////////////////////////////
+
+	//////////AutoParameters//////////
+	std::list<ShaderAutoParameter*>& shaderAutoParameters = pMaterial->getAutoParameters();
+	std::list<ShaderAutoParameter*>::const_iterator ai;
+	for (ai = shaderAutoParameters.begin(); ai != shaderAutoParameters.end(); ++ai)
+	{
+		ShaderAutoParameter* pAutoParameter = (*ai);
+		if (pAutoParameter == nullptr)
+			continue;
+
+		pShaderParameter = pAutoParameter->mParameter;
+		if (pShaderParameter == nullptr)
+			continue;
+
+		switch (pAutoParameter->mAutoParameterType)
+		{
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getModelMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getModelViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelViewMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getModelViewProjectionMatrix());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelViewProjectionMatrix());
+			break;
+
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPosition());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPositionObjectSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPositionViewSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirection());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirectionObjectSpace());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirectionViewSpace());
+			break;
+
+		case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getAmbientLightColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDiffuseColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightSpecularColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightAttenuation());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCameraPosition());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getCameraPositionObjectSpace());
+			break;
+		}
+	}
+	//////////////////////////////////
+
+	/////////////Buffers//////////////
+	std::vector<ShaderVertexParameter*>& vertexParameters = pMaterial->getVertexParameters();
+	for (std::size_t vertexType = VERTEX_BUFFER_TYPE_POSITION; vertexType != VERTEX_BUFFER_TYPE_COUNT; ++vertexType)
+	{
+		if (vertexParameters[vertexType] == nullptr)
+			continue;
+
+		pShaderVertexParameter = vertexParameters[vertexType];
+
+		if (pShaderParameter == nullptr)
+			continue;
+
+		VertexBuffer* pVertexBuffer = pModel->getVertexBuffer((VertexBufferType)vertexType);
+		if (pVertexBuffer == nullptr)
+			continue;
+
+		glBindBuffer(GL_ARRAY_BUFFER, pVertexBuffer->getGLBufferId());
+
+		GLuint index = pShaderVertexParameter->mParameterID;
+		GLenum type = getGLType(pVertexBuffer->getVertexElementType());
+		GLint size = 0;
+		switch (pVertexBuffer->getVertexElementType())
+		{
+		case VERTEX_ELEMENT_TYPE_COLOR:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT1:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT2:
+			size = 2;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT3:
+			size = 3;
+			break;
+		case VERTEX_ELEMENT_TYPE_FLOAT4:
+			size = 4;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT1:
+			size = 1;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT2:
+			size = 2;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT3:
+			size = 3;
+			break;
+		case VERTEX_ELEMENT_TYPE_SHORT4:
+			size = 4;
+			break;
+		}
+
+		GLsizei stride = (GLsizei)(pVertexBuffer->getVertexSize());
+
+		glVertexAttribPointer(
+			index,			// The attribute we want to configure
+			size,			// size
+			type,			// type
+			GL_FALSE,		// normalized?
+			stride,			// stride
+			(void*)0		// array buffer offset
+			);
+		glEnableVertexAttribArray(index);
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (pModel->getIndexBuffer())->getGLBufferId());
+
+	GLenum primType = getGLType(pModel->getRenderOperationType());
+	GLenum indexType = (pModel->getIndexBuffer()->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+
+	glDrawElements(primType, pModel->getIndexBuffer()->getNumIndexes(), indexType, (void*)0);
+	//////////////////////////////////
+
+	for (unsigned int i = 0; i < vertexParameters.size(); ++i)
+	{
+		pShaderVertexParameter = vertexParameters[i];
+
+		if (pShaderVertexParameter == nullptr)
+			continue;
+
+		glDisableVertexAttribArray(pShaderVertexParameter->mParameterID);
 	}
 }
 
 void RenderManager::endFrame()
 {
-	mRenderDriver->endFrame();
+	// Deactivate the viewport clipping
+	glDisable(GL_SCISSOR_TEST);
+}
+
+GLenum RenderManager::getGLUsage(resource::BufferUsage usage)
+{
+	switch(usage)
+	{
+	case resource::BU_STATIC:
+	case resource::BU_STATIC_WRITE_ONLY:
+		return GL_STATIC_DRAW;
+	case resource::BU_DYNAMIC:
+	case resource::BU_DYNAMIC_WRITE_ONLY:
+		return GL_DYNAMIC_DRAW;
+	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+		return GL_STREAM_DRAW;
+	default:
+		return GL_DYNAMIC_DRAW;
+	};
+}
+
+GLenum RenderManager::getGLType(ShaderType type)
+{
+	switch(type)
+	{
+	case SHADER_TYPE_VERTEX:
+		return GL_VERTEX_SHADER;
+	case SHADER_TYPE_FRAGMENT:
+		return GL_FRAGMENT_SHADER;
+	case SHADER_TYPE_GEOMETRY:
+		return GL_GEOMETRY_SHADER;
+	default:
+		return GL_VERTEX_SHADER;
+	}
+}
+
+GLenum RenderManager::getGLType(VertexElementType type)
+{
+	switch(type)
+	{
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT2:
+	case VERTEX_ELEMENT_TYPE_FLOAT3:
+	case VERTEX_ELEMENT_TYPE_FLOAT4:
+		return GL_FLOAT;
+	case VERTEX_ELEMENT_TYPE_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT2:
+	case VERTEX_ELEMENT_TYPE_SHORT3:
+	case VERTEX_ELEMENT_TYPE_SHORT4:
+		return GL_SHORT;
+	case VERTEX_ELEMENT_TYPE_COLOR:
+		return GL_UNSIGNED_BYTE;
+	default:
+		return 0;
+	}
+}
+
+GLenum RenderManager::getGLType(RenderOperationType type)
+{
+	switch (type)
+	{
+	case render::ROT_POINT_LIST:
+		return GL_POINTS;
+	case render::ROT_LINE_LIST:
+		return GL_LINES;
+	case render::ROT_LINE_STRIP:
+		return GL_LINE_STRIP;
+	case render::ROT_TRIANGLE_LIST:
+		return GL_TRIANGLES;
+	case render::ROT_TRIANGLE_STRIP:
+		return GL_TRIANGLE_STRIP;
+	case render::ROT_TRIANGLE_FAN:
+		return GL_TRIANGLE_FAN;
+	default:
+		return GL_FLOAT;
+	}
 }
 
 RenderManager* RenderManager::getInstance()

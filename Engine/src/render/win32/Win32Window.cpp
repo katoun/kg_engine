@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <render/Viewport.h>
 #include <resource/LoadEvent.h>
 #include <engine/EngineManager.h>
-#include <win32/Win32Window.h>
+#include <render/win32/Win32Window.h>
 
 namespace render
 {
@@ -326,7 +326,7 @@ void Win32Window::setFullscreen(bool fullScreen, unsigned int width, unsigned in
 		{
 			dwStyle |= WS_OVERLAPPEDWINDOW;
 
-			// drop out of fullscreen
+			// drop out of full screen
 			ChangeDisplaySettings(nullptr, 0);
 
 			// calculate overall dimensions for requested client area
@@ -554,7 +554,7 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	switch (message)
 	{
 		case WM_ACTIVATE:
-			if(LOWORD(wParam) != WA_INACTIVE)				
+			if(LOWORD(wParam) != WA_INACTIVE)
 				win->setActive(true);
 #ifndef _DEBUG			
 			else
@@ -594,7 +594,7 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			// Previent rendering while moving / sizing
+			// Prevent rendering while moving / sizing
 			win->setActive(false);
 			break;
 
@@ -622,7 +622,7 @@ LRESULT Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			return 0;
 
 		case WM_SYSCOMMAND:
-			// prevent screensaver or monitor powersave mode from starting
+			// prevent screen saver or monitor power save mode from starting
 			if ((wParam == SC_SCREENSAVE) || (wParam == SC_MONITORPOWER) ||	(wParam == SC_KEYMENU))
 				return 0;
 	}

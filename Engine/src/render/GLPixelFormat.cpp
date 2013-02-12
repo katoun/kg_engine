@@ -24,12 +24,12 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <GLPixelFormat.h>
+#include <render/GLPixelFormat.h>
 
-namespace resource
+namespace render
 {
 
-GLenum GLPixelUtil::getGLOriginFormat(PixelFormat mFormat)
+GLenum GLPixelUtil::getGLOriginFormat(resource::PixelFormat mFormat)
 {
 	switch(mFormat)
 	{
@@ -111,7 +111,7 @@ GLenum GLPixelUtil::getGLOriginFormat(PixelFormat mFormat)
 	}
 }
 
-GLenum GLPixelUtil::getGLInternalFormat(PixelFormat mFormat, bool hwGamma)
+GLenum GLPixelUtil::getGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
 {
 	switch(mFormat)
 	{
@@ -193,7 +193,7 @@ GLenum GLPixelUtil::getGLInternalFormat(PixelFormat mFormat, bool hwGamma)
 	}
 }
 
-GLenum GLPixelUtil::getClosestGLInternalFormat(PixelFormat mFormat, bool hwGamma)
+GLenum GLPixelUtil::getClosestGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
 {
 	GLenum format = getGLInternalFormat(mFormat, hwGamma);
 	if(format == GL_NONE)

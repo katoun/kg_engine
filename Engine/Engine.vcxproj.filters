@@ -34,6 +34,9 @@
     <Filter Include="resource\serializers">
       <UniqueIdentifier>{5b579fc7-1a92-48b1-bbfe-a28ffaafeaf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="render\win32">
+      <UniqueIdentifier>{5ded181c-8829-4f9c-ab6e-393b34fc1ab7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine\EngineEvent.h">
@@ -103,9 +106,6 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\RenderManager.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\RenderDriver.h">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\RenderTarget.h">
@@ -424,6 +424,24 @@
       <Filter>resource\serializers</Filter>
     </ClInclude>
     <ClInclude Include="include\EngineConfig.h" />
+    <ClInclude Include="include\render\win32\Win32Window.h">
+      <Filter>render\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\GLConfig.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\GLPixelFormat.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\MaterialFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\TextureFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\ShaderFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -484,9 +502,6 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\RenderManager.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\RenderDriver.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\RenderTarget.cpp">
@@ -726,6 +741,21 @@
     </ClCompile>
     <ClCompile Include="src\resource\TextureSerializer.cpp">
       <Filter>resource\serializers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\win32\Win32Window.cpp">
+      <Filter>render\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\GLPixelFormat.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\MaterialFactory.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\TextureFactory.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\ShaderFactory.cpp">
+      <Filter>render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

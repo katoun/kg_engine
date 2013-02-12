@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _RENDERMATERIAL_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <resource/Resource.h>
 #include <resource/ResourceEventReceiver.h>
 #include <render/ShaderParameterDefines.h>
@@ -59,8 +60,8 @@ struct ShaderAutoParameter;
 
 //! Class encapsulates surface properties of a mesh.
 //!
-//! To optimise rendering, changes in render state must be
-//! minimised. One of the most frequent render state changes are
+//! To optimize rendering, changes in render state must be
+//! minimized. One of the most frequent render state changes are
 //! changes to materials, mostly to textures. An mesh can have 
 //! only one material.
 class ENGINE_PUBLIC_EXPORT Material: public resource::Resource, public resource::ResourceEventReceiver
@@ -119,9 +120,18 @@ public:
 	void setParameter(const std::string& name, const glm::mat4x4& m);
 	void setParameter(ShaderParameter* parameter, const glm::mat4x4& m);
 
+	void resourceLoaded(const resource::ResourceEvent& evt);
+	void resourceUnloaded(const resource::ResourceEvent& evt);
+
+	GLhandleARB getGLHandle() const;
+
 protected:
 
+	bool loadImpl();
+
 	void unloadImpl();
+
+	GLhandleARB mGLHandle;
 
 	// Textures
 	std::list<Texture*> mTextureUnits;
@@ -132,20 +142,11 @@ protected:
 
 	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type);
 
-	virtual ShaderVertexParameter* createVertexParameterImpl();
-	virtual ShaderParameter* createParameterImpl();
-
 	ShaderParameter* findParameter(const std::string& name);
 	ShaderTextureParameter* findTextureParameter(ShaderParameter* parameter);
 	ShaderAutoParameter* findAutoParameter(ShaderParameter* parameter);
 
 	void removeAllParameters();
-
-	virtual void setParameterImpl(ShaderParameter* parameter, const Color& col);
-	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec);
-	virtual void setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m);
 
 	static ShaderParameterType getType(ShaderAutoParameterType type);
 	static ShaderParameterType getType(TextureType type);
@@ -154,6 +155,8 @@ protected:
 	std::vector<ShaderVertexParameter*> mVertexParameters;
 	std::vector<ShaderTextureParameter*> mTextureParameters;
 	std::list<ShaderAutoParameter*> mAutoParameters;
+
+	static GLenum getGLType(ShaderParameterType type);
 };
 
 } //namespace render

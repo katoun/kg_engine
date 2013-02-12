@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -84,8 +84,8 @@
       </SubSystem>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -94,7 +94,8 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,7 +107,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -120,7 +121,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -128,13 +129,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -190,19 +192,21 @@
     <ClInclude Include="include\render\FrameEventReceiver.h" />
     <ClInclude Include="include\render\Frustum.h" />
     <ClInclude Include="include\render\FrustumDefines.h" />
+    <ClInclude Include="include\render\GLConfig.h" />
+    <ClInclude Include="include\render\GLPixelFormat.h" />
     <ClInclude Include="include\render\IndexBuffer.h" />
     <ClInclude Include="include\render\IndexBufferDefines.h" />
     <ClInclude Include="include\render\Light.h" />
     <ClInclude Include="include\render\LightDefines.h" />
     <ClInclude Include="include\render\LightFactory.h" />
     <ClInclude Include="include\render\Material.h" />
+    <ClInclude Include="include\render\MaterialFactory.h" />
     <ClInclude Include="include\render\MeshData.h" />
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
     <ClInclude Include="include\render\ModelFactory.h" />
     <ClInclude Include="include\render\RenderDefines.h" />
     <ClInclude Include="include\render\RenderManager.h" />
-    <ClInclude Include="include\render\RenderDriver.h" />
     <ClInclude Include="include\render\RenderTarget.h" />
     <ClInclude Include="include\render\RenderTargetEvent.h" />
     <ClInclude Include="include\render\RenderTargetEventReceiver.h" />
@@ -210,13 +214,16 @@
     <ClInclude Include="include\render\Shader.h" />
     <ClInclude Include="include\render\ShaderDefines.h" />
     <ClInclude Include="include\render\RenderStateData.h" />
+    <ClInclude Include="include\render\ShaderFactory.h" />
     <ClInclude Include="include\render\ShaderParameter.h" />
     <ClInclude Include="include\render\ShaderParameterDefines.h" />
     <ClInclude Include="include\render\Texture.h" />
     <ClInclude Include="include\render\TextureDefines.h" />
+    <ClInclude Include="include\render\TextureFactory.h" />
     <ClInclude Include="include\render\VertexBuffer.h" />
     <ClInclude Include="include\render\VertexBufferDefines.h" />
     <ClInclude Include="include\render\Viewport.h" />
+    <ClInclude Include="include\render\win32\Win32Window.h" />
     <ClInclude Include="include\resource\BodySerializer.h" />
     <ClInclude Include="include\resource\FontSerializer.h" />
     <ClInclude Include="include\resource\MaterialSerializer.h" />
@@ -311,26 +318,30 @@
     <ClCompile Include="src\render\FontFactory.cpp" />
     <ClCompile Include="src\render\FrameEventReceiver.cpp" />
     <ClCompile Include="src\render\Frustum.cpp" />
+    <ClCompile Include="src\render\GLPixelFormat.cpp" />
     <ClCompile Include="src\render\IndexBuffer.cpp" />
     <ClCompile Include="src\render\Light.cpp" />
     <ClCompile Include="src\render\LightFactory.cpp" />
     <ClCompile Include="src\render\Material.cpp" />
+    <ClCompile Include="src\render\MaterialFactory.cpp" />
     <ClCompile Include="src\render\MeshData.cpp" />
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />
     <ClCompile Include="src\render\ModelFactory.cpp" />
     <ClCompile Include="src\render\RenderManager.cpp" />
-    <ClCompile Include="src\render\RenderDriver.cpp" />
     <ClCompile Include="src\render\RenderTarget.cpp" />
     <ClCompile Include="src\render\RenderTargetEvent.cpp" />
     <ClCompile Include="src\render\RenderTargetEventReceiver.cpp" />
     <ClCompile Include="src\render\RenderWindow.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\RenderStateData.cpp" />
+    <ClCompile Include="src\render\ShaderFactory.cpp" />
     <ClCompile Include="src\render\ShaderParameter.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="src\render\TextureFactory.cpp" />
     <ClCompile Include="src\render\VertexBuffer.cpp" />
     <ClCompile Include="src\render\Viewport.cpp" />
+    <ClCompile Include="src\render\win32\Win32Window.cpp" />
     <ClCompile Include="src\resource\BodySerializer.cpp" />
     <ClCompile Include="src\resource\FontSerializer.cpp" />
     <ClCompile Include="src\resource\LoadEvent.cpp" />

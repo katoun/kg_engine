@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _SHADER_PARAMETER_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <render/VertexBufferDefines.h>
 #include <render/ShaderParameterDefines.h>
 
@@ -40,16 +41,18 @@ struct ENGINE_PUBLIC_EXPORT ShaderParameter
 {
 	ShaderParameter();
 
-	std::string mName;
-	ShaderParameterType mParameterType;
+	std::string			mName;
+	ShaderParameterType	mParameterType;
+	GLuint				mParameterID;
 };
 
 struct ENGINE_PUBLIC_EXPORT ShaderVertexParameter
 {
 	ShaderVertexParameter();
 
-	std::string mName;
-	VertexBufferType mVertexBufferType;
+	std::string			mName;
+	VertexBufferType	mVertexBufferType;
+	GLuint				mParameterID;
 };
 
 struct ENGINE_PUBLIC_EXPORT ShaderTextureParameter

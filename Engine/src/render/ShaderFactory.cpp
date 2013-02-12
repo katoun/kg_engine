@@ -24,40 +24,24 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_TEXTURE_H_
-#define _GL_TEXTURE_H_
-
-#include <GLConfig.h>
-#include <render/Texture.h>
-
-namespace resource
-{
-class Image;
-}
+#include <render/ShaderFactory.h>
+#include <render/Shader.h>
 
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLTexture: public Texture
+resource::Resource* ShaderFactory::createResource(const std::string& filename, resource::Serializer* serializer)
 {
-public:
+	return new Shader(filename, serializer);
+}
 
-	GLTexture(const std::string& filename, resource::Serializer* serializer);
-	~GLTexture();
+void ShaderFactory::destroyResource(resource::Resource* resource)
+{
+	Shader* pShader = static_cast<Shader*>(resource);
 
-	GLuint getGLID() const;
+	assert(pShader != nullptr);
+	SAFE_DELETE(pShader);
+}
 
-protected:
-
-	bool loadImpl();
-
-	void unloadImpl();
-
-	GLuint mTextureID;
-
-	GLenum getGLTextureType() const;
-};
 
 } // end namespace render
-
-#endif // _GL_TEXTURE_H_

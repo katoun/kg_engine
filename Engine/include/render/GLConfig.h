@@ -24,35 +24,27 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_SHADER_H_
-#define _GL_SHADER_H_
+#ifndef _GL_CONFIG_H_
+#define _GL_CONFIG_H_
 
-#include <GLConfig.h>
-#include <render/Shader.h>
+#include <EngineConfig.h>
 
-namespace render
-{
+#if ENGINE_PLATFORM == PLATFORM_WINDOWS
+#	include <gl\glew.h>			// Header File For The Glew Library
+#	include <gl\gl.h>			// Header File For The OpenGL32 Library
+#	include <gl\glu.h>			// Header File For The GLu32 Library
+#elif ENGINE_PLATFORM == PLATFORM_LINUX
+#	include <gl\glew.h>
+#	include <GL/gl.h>
+#	include <GL/glu.h>
+#elif ENGINE_PLATFORM == PLATFORM_APPLE
+#	include <gl\glew.h>
+#	include <OpenGL/gl.h>
+#	define GL_EXT_texture_env_combine 1
+#	include <OpenGL/glu.h>
+#	include <OpenGL/glext.h>
+#endif
 
-class GL_PUBLIC_EXPORT GLShader: public Shader
-{
-public:
-
-	GLShader(const std::string& name, resource::Serializer* serializer);
-	~GLShader();
-
-	GLhandleARB getGLHandle() const;
-
-protected:
-
-	bool loadImpl();
-
-	void unloadImpl();
-
-	GLhandleARB mGLHandle;
-
-	static GLenum getShaderType(ShaderType type);
-};
-
-} // end namespace render
+#define GL_PARAMETER_NAME_BUFFERSIZE 255
 
 #endif

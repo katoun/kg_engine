@@ -24,50 +24,24 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _WIN32_WINDOW_H_
-#define _WIN32_WINDOW_H_
-
-#include <GLConfig.h>
-#include <render/RenderWindow.h>
+#include <render/TextureFactory.h>
+#include <render/Texture.h>
 
 namespace render
 {
 
-class GL_PUBLIC_EXPORT Win32Window: public RenderWindow
+resource::Resource* TextureFactory::createResource(const std::string& filename, resource::Serializer* serializer)
 {
-public:
+	return new Texture(filename, serializer);
+}
 
-	Win32Window();
-	~Win32Window();
+void TextureFactory::destroyResource(resource::Resource* resource)
+{
+	Texture* pTexture = static_cast<Texture*>(resource);
 
-	void create(unsigned int width, unsigned int height, unsigned int colorDepth, bool fullScreen, unsigned int left, unsigned int top, bool depthBuffer, void* windowId = nullptr);
-	void setFullscreen(bool fullScreen, unsigned int width, unsigned int height);
+	assert(pTexture != nullptr);
+	SAFE_DELETE(pTexture);
+}
 
-	bool isVisible() const;
-	void setActive(bool state);
-	
-	void reposition(int top, int left);
-	void resize(unsigned int width, unsigned int height);
-	void setCaption(const std::string& text);
-
-	//! Method for dealing with resize / move & 3d library.
-	void windowMovedOrResized();
-
-	void destroy();
-
-protected:
-
-	void updateImpl(float elapsedTime);
-
-	HWND	mHWnd;					// Win32 Window handle
-	HDC		mHDC;
-	HGLRC	mGlrc;
-	bool    mIsExternal;
-	int     mDisplayFrequency;      // fullscreen only, to restore display
-
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-};
 
 } // end namespace render
-
-#endif

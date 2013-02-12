@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _SHADER_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <resource/Resource.h>
 #include <render/ShaderDefines.h>
 #include <render/TextureDefines.h>
@@ -69,15 +70,21 @@ public:
 
 	void setEntryPoint(const std::string& entry);
 
+	GLhandleARB getGLHandle() const;
+
 protected:
 
 	virtual bool loadImpl();
 	virtual void unloadImpl();
 
+	GLhandleARB mGLHandle;
+
 	ShaderType mShaderType;
 
 	std::string mSource;		// The assembler source of the program (may be blank until file loaded)
 	std::string mEntryPoint;	// Entry point eg. main_vp, main_fp etc
+
+	static GLenum getShaderType(ShaderType type);
 };
 
 } // end namespace render

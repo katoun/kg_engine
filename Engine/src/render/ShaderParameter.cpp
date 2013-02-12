@@ -31,14 +31,16 @@ namespace render
 
 ShaderParameter::ShaderParameter()
 {
-	mName = "";
-	mParameterType = SHADER_PARAMETER_TYPE_UNKNOWN;
+	mName			= "";
+	mParameterType	= SHADER_PARAMETER_TYPE_UNKNOWN;
+	mParameterID	= 0;
 }
 
 ShaderVertexParameter::ShaderVertexParameter()
 {
-	mName = "";
-	mVertexBufferType = VERTEX_BUFFER_TYPE_COUNT;
+	mName				= "";
+	mVertexBufferType	= VERTEX_BUFFER_TYPE_COUNT;
+	mParameterID		= 0;
 }
 
 ShaderTextureParameter::ShaderTextureParameter()
@@ -48,8 +50,8 @@ ShaderTextureParameter::ShaderTextureParameter()
 
 ShaderAutoParameter::ShaderAutoParameter()
 {
-	mParameter = nullptr;
-	mAutoParameterType = SHADER_AUTO_PARAMETER_TYPE_NONE;
+	mParameter			= nullptr;
+	mAutoParameterType	= SHADER_AUTO_PARAMETER_TYPE_NONE;
 }
 
 } // end namespace render

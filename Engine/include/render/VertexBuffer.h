@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define _VERTEX_BUFFER_H_
 
 #include <EngineConfig.h>
+#include <render/GLConfig.h>
 #include <resource/Buffer.h>
 #include <render/VertexBufferDefines.h>
 
@@ -54,12 +55,25 @@ public:
 	//! Get the size in bytes of each vertex.
 	unsigned int getVertexSize();
 
+	void readData(unsigned int offset, unsigned int length, void* pDest);
+
+	void writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer = false);
+
+	GLuint getGLBufferId() const;
+
 protected:
+
+	void* lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options);
+
+	void unlockImpl();
+
+	GLuint				mBufferId;
+	GLenum				mGLUsage;
 	
-	VertexBufferType mVertexBufferType;
-	VertexElementType mVertexElementType;
-	unsigned int mNumVertices;
-	unsigned int mVertexSize;
+	VertexBufferType	mVertexBufferType;
+	VertexElementType	mVertexElementType;
+	unsigned int		mNumVertices;
+	unsigned int		mVertexSize;
 };
 
 }// end namespace render

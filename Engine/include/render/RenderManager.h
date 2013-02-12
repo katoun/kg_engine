@@ -71,12 +71,15 @@ class TextOverlay;
 class Font;
 class MeshData;
 class Material;
+class MaterialFactory;
+class Texture;
+class TextureFactory;
 class Viewport;
 class RenderWindow;
-class RenderDriver;
 class FrameEventReceiver;
 struct FrameEvent;
 class Shader;
+class ShaderFactory;
 class VertexBuffer;
 class IndexBuffer;
 class VertexDeclaration;
@@ -85,6 +88,7 @@ class FontFactory;
 class MeshDataFactory;
 enum VertexBufferType;
 enum VertexElementType;
+enum RenderOperationType;
 enum IndexType;
 enum ShaderType;
 
@@ -199,6 +203,12 @@ public:
 	//! Removes all index buffers.
 	void removeAllIndexBuffers();
 
+	//! Utility function to get the correct GL types.
+	static GLenum getGLUsage(resource::BufferUsage usage);
+	static GLenum getGLType(ShaderType type);
+	static GLenum getGLType(VertexElementType type);
+	static GLenum getGLType(RenderOperationType type);
+
 	static RenderManager* getInstance();
 
 protected:
@@ -208,19 +218,18 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void setSystemDriverImpl(core::SystemDriver* systemDriver);
-	void removeSystemDriverImpl();
 	void registerDefaultFactoriesImpl();
 	void removeDefaultFactoriesImpl();
 
-	FontFactory* mDefaultFontFactory;
-	MeshDataFactory* mDefaultMeshDataFactory;
+	ShaderFactory* mShaderFactory;
+	MaterialFactory* mMaterialFactory;
+	TextureFactory* mTextureFactory;
+	FontFactory* mFontFactory;
+	MeshDataFactory* mMeshDataFactory;
 
 	game::ComponentFactory* mDefaultCameraFactory;
 	game::ComponentFactory* mDefaultLightFactory;
 	game::ComponentFactory* mDefaultModelFactory;
-
-	RenderDriver* mRenderDriver;
 
 	static std::list<FrameEventReceiver*> mFrameEventReceivers;
 
@@ -308,6 +317,8 @@ protected:
 	void renderVisibleModels();
 
 	void renderSingleModel(Model* model);
+
+	void render(RenderStateData& renderStateData);
 
 	void endFrame();
 };

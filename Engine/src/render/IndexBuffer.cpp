@@ -24,6 +24,8 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <core/Log.h>
+#include <core/LogDefines.h>
 #include <render/IndexBuffer.h>
 
 namespace render
@@ -48,9 +50,39 @@ IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, resource::B
 	}
 	
 	mSizeInBytes = mIndexSize * mNumIndexes;
+
+	switch(usage)
+	{
+	case resource::BU_STATIC:
+	case resource::BU_STATIC_WRITE_ONLY:
+		mGLUsage = GL_STATIC_DRAW;
+	case resource::BU_DYNAMIC:
+	case resource::BU_DYNAMIC_WRITE_ONLY:
+		mGLUsage = GL_DYNAMIC_DRAW;
+	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+		mGLUsage = GL_STREAM_DRAW;
+	default:
+		mGLUsage = GL_DYNAMIC_DRAW;
+	};
+
+	glGenBuffers(1, &mBufferId);
+
+	if (!mBufferId)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Cannot create GL index buffer", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+
+	// Initialize buffer and set usage
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
 }
 
-IndexBuffer::~IndexBuffer() {}
+IndexBuffer::~IndexBuffer()
+{
+	glDeleteBuffers(1, &mBufferId);
+}
 
 IndexType IndexBuffer::getType()
 {
@@ -65,6 +97,102 @@ unsigned int IndexBuffer::getNumIndexes()
 unsigned int IndexBuffer::getIndexSize()
 {
 	return mIndexSize;
+}
+
+
+void IndexBuffer::readData(unsigned int offset, unsigned int length, void* pDest)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, length, pDest);
+}
+
+void IndexBuffer::writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+
+	if (offset == 0 && length == mSizeInBytes)
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, pSource, mGLUsage);
+	}
+	else
+	{
+		if(discardWholeBuffer)
+		{
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
+		}
+
+		// Now update the real buffer
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, length, pSource);
+	}
+}
+
+GLuint IndexBuffer::getGLBufferId() const
+{
+	return mBufferId;
+}
+
+void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options)
+{
+	GLenum access = 0;
+
+	if(mIsLocked)
+	{		
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+
+	if(options == resource::BL_DISCARD)
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
+
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+
+	}
+	else if(options == resource::BL_READ_ONLY)
+	{
+		if(mUsage & resource::BU_WRITE_ONLY)
+		{
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock a write-only index buffer as read-only", core::LOG_LEVEL_ERROR);
+			return nullptr;
+		}
+		access = GL_READ_ONLY;
+	}
+	else if(options == resource::BL_NORMAL || options == resource::BL_NO_OVERWRITE)
+	{
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+	}
+	else
+	{	
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	void* pBuffer = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, access);
+
+	if(pBuffer == nullptr)
+	{		
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Index Buffer: Out of memory", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	mIsLocked = true;
+	// return offset-ed
+	return static_cast<void*>(static_cast<unsigned char*>(pBuffer) + offset);
+}
+
+void IndexBuffer::unlockImpl()
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+
+	if(!glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER))
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	mIsLocked = false;
 }
 
 }// end namespace render

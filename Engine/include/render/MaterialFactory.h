@@ -24,40 +24,30 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _GL_INDEX_BUFFER_H_
-#define _GL_INDEX_BUFFER_H_
+#ifndef _MATERIAL_FACTORY_H_
+#define _MATERIAL_FACTORY_H_
 
-#include <GLConfig.h>
-#include <render/IndexBuffer.h>
+#include <EngineConfig.h>
+#include <resource/ResourceFactory.h>
+
+namespace resource
+{
+class Resource;
+class Serializer;
+}
 
 namespace render
 {
 
-class GL_PUBLIC_EXPORT GLIndexBuffer: public IndexBuffer
+class ENGINE_PRIVATE_EXPORT MaterialFactory: public resource::ResourceFactory
 {
 public:
 
-	GLIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage);
+	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
 
-	virtual ~GLIndexBuffer();
-
-	void readData(unsigned int offset, unsigned int length, void* pDest);
-
-	void writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer = false);
-
-	GLuint getGLBufferId() const;
-
-private:
-
-	GLuint mBufferId;
-
-protected:
-
-	void* lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options);
-
-	void unlockImpl();
+	void destroyResource(resource::Resource* resource);
 };
 
-}// end namespace render
+} // end namespace render
 
-#endif// _GL_INDEX_BUFFER_H_
+#endif

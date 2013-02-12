@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <render/ShaderParameter.h>
 #include <render/Texture.h>
 #include <render/RenderManager.h>
+#include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 
 namespace render
@@ -38,13 +39,14 @@ namespace render
 
 Material::Material(const std::string& name, resource::Serializer* serializer): resource::Resource(name, serializer)
 {
-	mResourceType = resource::RESOURCE_TYPE_RENDER_MATERIAL;
+	mResourceType	= resource::RESOURCE_TYPE_RENDER_MATERIAL;
+	mGLHandle		= 0;
 
 	mTextureUnits.clear();
 
-	mVertexShader = nullptr;
-	mFragmentShader = nullptr;
-	mGeometryShader = nullptr;
+	mVertexShader	= nullptr;
+	mFragmentShader	= nullptr;
+	mGeometryShader	= nullptr;
 
 	mVertexParameters.reserve(VERTEX_BUFFER_TYPE_COUNT);
 	mVertexParameters.resize(VERTEX_BUFFER_TYPE_COUNT, nullptr);
@@ -113,17 +115,13 @@ void Material::removeAllTextureUnits()
 void Material::setVertexShader(const std::string& filename)
 {
 	if (filename.empty())
-	{
-		mVertexShader = nullptr;
-	}
-	else
-	{
-		if (RenderManager::getInstance() != nullptr)
-			mVertexShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_VERTEX);
+		return;
 
-		if (mVertexShader != nullptr)
-			mVertexShader->addResourceEventReceiver(this);
-	}
+	Shader* pShader = nullptr;
+	if (RenderManager::getInstance() != nullptr)
+		pShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_VERTEX);
+
+	setVertexShader(pShader);
 }
 
 void Material::setVertexShader(Shader* shader)
@@ -131,7 +129,13 @@ void Material::setVertexShader(Shader* shader)
 	if (shader && shader->getShaderType() != SHADER_TYPE_VERTEX)
 		return;
 
-	mVertexShader = shader;	
+	if (mVertexShader != nullptr)
+		mVertexShader->removeResourceEventReceiver(this);
+
+	mVertexShader = shader;
+
+	if (mVertexShader != nullptr)
+		mVertexShader->addResourceEventReceiver(this);
 }
 
 Shader* Material::getVertexShader()
@@ -142,17 +146,13 @@ Shader* Material::getVertexShader()
 void Material::setFragmentShader(const std::string& filename)
 {
 	if (filename.empty())
-	{
-		mFragmentShader = nullptr;
-	}
-	else
-	{
-		if (RenderManager::getInstance() != nullptr)
-			mFragmentShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_FRAGMENT);
+		return;
 
-		if (mFragmentShader != nullptr)
-			mFragmentShader->addResourceEventReceiver(this);
-	}
+	Shader* pShader = nullptr;
+	if (RenderManager::getInstance() != nullptr)
+		pShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_FRAGMENT);
+
+	setFragmentShader(pShader);
 }
 
 void Material::setFragmentShader(Shader* shader)
@@ -160,7 +160,15 @@ void Material::setFragmentShader(Shader* shader)
 	if (shader && shader->getShaderType() != SHADER_TYPE_FRAGMENT)
 		return;
 
-	mFragmentShader = shader;	
+	mFragmentShader = shader;
+
+	if (mFragmentShader != nullptr)
+		mFragmentShader->removeResourceEventReceiver(this);
+
+	mFragmentShader = shader;
+
+	if (mFragmentShader != nullptr)
+		mFragmentShader->addResourceEventReceiver(this);
 }
 
 Shader* Material::getFragmentShader()
@@ -171,17 +179,13 @@ Shader* Material::getFragmentShader()
 void Material::setGeometryShader(const std::string& filename)
 {
 	if (filename.empty())
-	{
-		mGeometryShader = nullptr;
-	}
-	else
-	{
-		if (RenderManager::getInstance() != nullptr)
-			mGeometryShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_GEOMETRY);
+		return;
 
-		if (mGeometryShader != nullptr)
-			mGeometryShader->addResourceEventReceiver(this);
-	}
+	Shader* pShader = nullptr;
+	if (RenderManager::getInstance() != nullptr)
+		pShader = RenderManager::getInstance()->createShader(filename, SHADER_TYPE_GEOMETRY);
+
+	setGeometryShader(pShader);
 }
 
 void Material::setGeometryShader(Shader* shader)
@@ -189,7 +193,15 @@ void Material::setGeometryShader(Shader* shader)
 	if (shader && shader->getShaderType() != SHADER_TYPE_GEOMETRY)
 		return;
 
-	mGeometryShader = shader;	
+	mGeometryShader = shader;
+
+	if (mGeometryShader != nullptr)
+		mGeometryShader->removeResourceEventReceiver(this);
+
+	mGeometryShader = shader;
+
+	if (mGeometryShader != nullptr)
+		mGeometryShader->addResourceEventReceiver(this);	
 }
 
 Shader* Material::getGeometryShader()
@@ -217,7 +229,7 @@ void Material::addVertexParameter(const std::string& name, VertexBufferType type
 	ShaderVertexParameter* pVertexParam = mVertexParameters[(std::size_t)type];
 	if (pVertexParam == nullptr)
 	{
-		pVertexParam = createVertexParameterImpl();
+		pVertexParam = new ShaderVertexParameter();
 	}
 
 	if (pVertexParam == nullptr)
@@ -317,7 +329,7 @@ void Material::setParameter(ShaderParameter* parameter, const Color& col)
 	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
 		return;
 
-	setParameterImpl(parameter, col);
+	glUniform4f(parameter->mParameterID, col.r, col.g, col.b, col.a);
 }
 
 void Material::setParameter(const std::string& name, const glm::vec2& vec)
@@ -334,7 +346,7 @@ void Material::setParameter(ShaderParameter* parameter, const glm::vec2& vec)
 	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT2)
 		return;
 
-	setParameterImpl(parameter, vec);
+	glUniform2f(parameter->mParameterID, vec.x, vec.y);
 }
 
 void Material::setParameter(const std::string& name, const glm::vec3& vec)
@@ -351,7 +363,7 @@ void Material::setParameter(ShaderParameter* parameter, const glm::vec3& vec)
 	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT3)
 		return;
 
-	setParameterImpl(parameter, vec);
+	glUniform3f(parameter->mParameterID, vec.x, vec.y, vec.z);
 }
 
 void Material::setParameter(const std::string& name, const glm::vec4& vec)
@@ -368,7 +380,7 @@ void Material::setParameter(ShaderParameter* parameter, const glm::vec4& vec)
 	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
 		return;
 
-	setParameterImpl(parameter, vec);
+	glUniform4f(parameter->mParameterID, vec.x, vec.y, vec.z, vec.w);
 }
 
 void Material::setParameter(const std::string& name, const glm::mat4x4& m)
@@ -385,11 +397,127 @@ void Material::setParameter(ShaderParameter* parameter, const glm::mat4x4& m)
 	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_MATRIX4)
 		return;
 
-	setParameterImpl(parameter, m);
+	glUniformMatrix4fv(parameter->mParameterID, 1, GL_FALSE, &m[0][0]);
+}
+
+void Material::resourceLoaded(const resource::ResourceEvent& evt)
+{
+	if (evt.source != nullptr)
+	{
+		if (evt.source == mVertexShader)
+		{
+			Shader* pShader = static_cast<Shader*>(mVertexShader);
+			if (pShader != nullptr)
+			{
+				glAttachShader(mGLHandle, pShader->getGLHandle());
+			}
+		}
+
+		if (evt.source == mFragmentShader)
+		{
+			Shader* pShader = static_cast<Shader*>(mFragmentShader);
+			if (pShader != nullptr)
+			{
+				glAttachShader(mGLHandle, pShader->getGLHandle());
+			}
+		}
+
+		if (evt.source == mGeometryShader)
+		{
+			Shader* pShader = static_cast<Shader*>(mGeometryShader);
+			if (pShader != nullptr)
+			{
+				glAttachShader(mGLHandle, pShader->getGLHandle());
+			}
+		}
+
+		if (((mVertexShader == nullptr) || (mVertexShader != nullptr && mVertexShader->getState() == resource::RESOURCE_STATE_LOADED)) &&
+			((mFragmentShader == nullptr) || (mFragmentShader != nullptr && mFragmentShader->getState() == resource::RESOURCE_STATE_LOADED)) &&
+			((mGeometryShader == nullptr) || (mGeometryShader != nullptr && mGeometryShader->getState() == resource::RESOURCE_STATE_LOADED)))
+		{
+
+			GLint linked;
+			glLinkProgram(mGLHandle);
+
+			glGetProgramiv(mGLHandle, GL_LINK_STATUS, &linked);
+
+			if (linked == 1)
+			{
+				char   uniformName[GL_PARAMETER_NAME_BUFFERSIZE];
+				GLenum		type;
+				GLint		size;
+				GLint		count;
+				glGetProgramiv(mGLHandle, GL_ACTIVE_UNIFORMS, &count);
+				for (GLint idx=0; idx<count; idx++)
+				{
+					glGetActiveUniform(mGLHandle, idx, GL_PARAMETER_NAME_BUFFERSIZE, NULL, &size, &type, uniformName);
+
+					if (type != GL_SAMPLER_1D && type != GL_SAMPLER_2D && type != GL_SAMPLER_3D)
+						continue;
+
+					ShaderParameterType paramType = SHADER_PARAMETER_TYPE_UNKNOWN;
+					switch (type)
+					{
+					case GL_SAMPLER_1D:
+						paramType = SHADER_PARAMETER_TYPE_SAMPLER1D;
+						break;
+					case GL_SAMPLER_2D:
+						paramType = SHADER_PARAMETER_TYPE_SAMPLER2D;
+						break;
+					case GL_SAMPLER_3D:
+						paramType = SHADER_PARAMETER_TYPE_SAMPLER3D;
+						break;
+					}
+
+					addTextureParameter(std::string(uniformName), paramType);
+				}
+				//////////////////////////////////
+
+				for (unsigned int i = 0; i < mVertexParameters.size(); i++)
+				{
+					ShaderVertexParameter* pShaderVertexParameter = mVertexParameters[i];
+					if (pShaderVertexParameter == nullptr)
+						continue;
+
+					pShaderVertexParameter->mParameterID = glGetAttribLocation(mGLHandle, pShaderVertexParameter->mName.c_str());
+				}
+
+				hashmap<std::string, ShaderParameter*>::iterator pi;
+				for (pi = mParameters.begin(); pi != mParameters.end(); ++pi)
+				{
+					ShaderParameter* pShaderParameter = pi->second;
+					if (pShaderParameter == nullptr)
+						continue;
+
+					pShaderParameter->mParameterID = glGetUniformLocation(mGLHandle, pi->first.c_str());
+				}
+				//////////////////////////////////
+			}
+		}
+	}
+}
+
+void Material::resourceUnloaded(const resource::ResourceEvent& evt) {}
+
+GLhandleARB Material::getGLHandle() const
+{
+	return mGLHandle;
+}
+
+bool Material::loadImpl()
+{
+	if (!Resource::loadImpl())
+		return false;
+
+	mGLHandle = glCreateProgram();
+
+	return true;
 }
 
 void Material::unloadImpl()
 {
+	glDeleteProgram(mGLHandle);
+
 	// Remove all TextureUnits
 	removeAllTextureUnits();
 
@@ -400,7 +528,7 @@ void Material::unloadImpl()
 
 ShaderParameter* Material::createParameter(const std::string& name, ShaderParameterType type)
 {
-	ShaderParameter* pShaderParameter = createParameterImpl();
+	ShaderParameter* pShaderParameter = new ShaderParameter();
 
 	if (pShaderParameter != nullptr)
 	{
@@ -410,16 +538,6 @@ ShaderParameter* Material::createParameter(const std::string& name, ShaderParame
 	}
 
 	return pShaderParameter;
-}
-
-ShaderVertexParameter* Material::createVertexParameterImpl()
-{
-	return nullptr;
-}
-
-ShaderParameter* Material::createParameterImpl()
-{
-	return nullptr;
 }
 
 ShaderParameter* Material::findParameter(const std::string& name)
@@ -471,12 +589,6 @@ void Material::removeAllParameters()
 	mTextureParameters.clear();
 	mAutoParameters.clear();
 }
-
-void Material::setParameterImpl(ShaderParameter* parameter, const Color& col) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec2& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec3& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const glm::vec4& vec) {}
-void Material::setParameterImpl(ShaderParameter* parameter, const glm::mat4x4& m) {}
 
 ShaderParameterType Material::getType(ShaderAutoParameterType type)
 {
@@ -535,6 +647,44 @@ ShaderParameterType Material::getType(TextureType type)
 		return SHADER_PARAMETER_TYPE_SAMPLER3D;
 	default:
 		return SHADER_PARAMETER_TYPE_SAMPLER2D;
+	}
+}
+
+
+GLenum Material::getGLType(ShaderParameterType type)
+{
+	switch(type)
+	{
+	case SHADER_PARAMETER_TYPE_FLOAT:
+		return GL_FLOAT;
+	case SHADER_PARAMETER_TYPE_FLOAT2:
+		return GL_FLOAT_VEC2;
+	case SHADER_PARAMETER_TYPE_FLOAT3:
+		return GL_FLOAT_VEC3;
+	case SHADER_PARAMETER_TYPE_FLOAT4:
+		return GL_FLOAT_VEC4;
+	case SHADER_PARAMETER_TYPE_INT:
+		return GL_INT;
+	case SHADER_PARAMETER_TYPE_INT2:
+		return GL_INT_VEC2;
+	case SHADER_PARAMETER_TYPE_INT3:
+		return GL_INT_VEC3;
+	case SHADER_PARAMETER_TYPE_INT4:
+		return GL_INT_VEC4;
+	case SHADER_PARAMETER_TYPE_MATRIX2:
+		return GL_FLOAT_MAT2;
+	case SHADER_PARAMETER_TYPE_MATRIX3:
+		return GL_FLOAT_MAT3;
+	case SHADER_PARAMETER_TYPE_MATRIX4:
+		return GL_FLOAT_MAT4;
+	case SHADER_PARAMETER_TYPE_SAMPLER1D:
+		return GL_SAMPLER_1D;
+	case SHADER_PARAMETER_TYPE_SAMPLER2D:
+		return GL_SAMPLER_2D;
+	case SHADER_PARAMETER_TYPE_SAMPLER3D:
+		return GL_SAMPLER_3D;
+	default:
+		return 0;
 	}
 }
 

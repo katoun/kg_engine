@@ -31,7 +31,6 @@ THE SOFTWARE.
 namespace render
 {
 
-
 VertexBuffer::VertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
 : resource::Buffer(usage)
 {
@@ -73,11 +72,41 @@ VertexBuffer::VertexBuffer(VertexBufferType vertexBufferType, VertexElementType 
 		break;
 	}
 
+	switch(usage)
+	{
+	case resource::BU_STATIC:
+	case resource::BU_STATIC_WRITE_ONLY:
+		mGLUsage = GL_STATIC_DRAW;
+	case resource::BU_DYNAMIC:
+	case resource::BU_DYNAMIC_WRITE_ONLY:
+		mGLUsage = GL_DYNAMIC_DRAW;
+	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+		mGLUsage = GL_STREAM_DRAW;
+	default:
+		mGLUsage = GL_DYNAMIC_DRAW;
+	};
+
 	// Calculate the size of the vertices
 	mSizeInBytes = mVertexSize * numVertices;
+
+	glGenBuffers(1, &mBufferId);
+
+	if (!mBufferId)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Cannot create GL vertex buffer", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+
+	// Initialize mapped buffer and set usage
+	glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
 }
 
-VertexBuffer::~VertexBuffer() {}
+VertexBuffer::~VertexBuffer()
+{
+	glDeleteBuffers(1, &mBufferId);
+}
 
 VertexBufferType VertexBuffer::getVertexBufferType()
 {
@@ -97,6 +126,101 @@ unsigned int VertexBuffer::getNumVertices()
 unsigned int VertexBuffer::getVertexSize()
 {
 	return mVertexSize;
+}
+
+void VertexBuffer::readData(unsigned int offset, unsigned int length, void* pDest)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+	glGetBufferSubData(GL_ARRAY_BUFFER, offset, length, pDest);
+}
+
+void VertexBuffer::writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+
+	if (offset == 0 && length == mSizeInBytes)
+	{
+		glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, pSource, mGLUsage);
+	}
+	else
+	{
+		if(discardWholeBuffer)
+		{
+			glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
+		}
+
+		// Now update the real buffer
+		glBufferSubData(GL_ARRAY_BUFFER, offset, length, pSource);
+	}
+}
+
+GLuint VertexBuffer::getGLBufferId() const
+{
+	return mBufferId;
+}
+
+void* VertexBuffer::lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options)
+{
+	GLenum access = 0;
+
+	if(mIsLocked)
+	{		
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid attempt to lock an index buffer that has already been locked", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+
+	if(options == resource::BL_DISCARD)
+	{
+		glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
+
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+
+	}
+	else if(options == resource::BL_READ_ONLY)
+	{
+		if(mUsage & resource::BU_WRITE_ONLY)
+		{
+			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid attempt to lock a write-only vertex buffer as read-only", core::LOG_LEVEL_ERROR);
+			return nullptr;
+		}
+		access = GL_READ_ONLY;
+	}
+	else if(options == resource::BL_NORMAL || options == resource::BL_NO_OVERWRITE)
+	{
+		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+	}
+	else
+	{	
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Invalid locking option set", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	void* pBuffer = glMapBuffer(GL_ARRAY_BUFFER, access);
+
+	if(pBuffer == nullptr)
+	{		
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Vertex Buffer: Out of memory", core::LOG_LEVEL_ERROR);
+		return nullptr;
+	}
+
+	mIsLocked = true;
+	// return offset-ed
+	return static_cast<void*>(static_cast<unsigned char*>(pBuffer) + offset);
+}
+
+void VertexBuffer::unlockImpl()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+
+	if(!glUnmapBuffer(GL_ARRAY_BUFFER))
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLVertexBuffer", "Buffer data corrupted, please reload", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	mIsLocked = false;
 }
 
 }// end namespace render
