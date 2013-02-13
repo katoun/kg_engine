@@ -24,11 +24,15 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <core/Log.h>
+#include <core/LogDefines.h>
+#include <sound/SoundUtils.h>
 #include <sound/Sound.h>
 #include <sound/SoundData.h>
 #include <game/GameObject.h>
 #include <game/Transform.h>
 #include <game/ComponentDefines.h>
+#include <game/MessageDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceManager.h>
 #include <core/Utils.h>
@@ -54,6 +58,35 @@ Sound::Sound(): game::Component()
 	mOuterConeGain = 1;
 
 	mLoop = false;
+
+	alGetError(); // Clear Error Code
+
+	mSourceNeedsUpdate = true;
+
+	// Generate a Source to playback the Buffer
+	alGenSources(1, &mSourceId);
+	//if (checkALError("initialize::alGenSources :"))
+	//	return;
+	if (!mSourceId)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("Sound", "Cannot create OpenAL sound source", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	glm::vec3 position = glm::vec3(0, 0, 0);
+	glm::vec3 direction = glm::vec3(0, 0, 1);
+
+	alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
+	//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))
+	//	return;
+	alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.x, (ALfloat)direction.y, (ALfloat)direction.z);
+	//if (checkALError("OpenALSound::alSourcefv:AL_DIRECTION"))
+	//	return;
+	alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.x, (ALfloat)mVelocity.y, (ALfloat)mVelocity.z);
+	//if (checkALError("OpenALSound::alSourcefv:AL_VELOCITY"))
+	//	return;
+
+	alSourcei(mSourceId, AL_LOOPING, mLoop);
 }
 
 Sound::~Sound()
@@ -64,6 +97,11 @@ Sound::~Sound()
 	}
 
 	uninitialize();
+
+	stop();
+
+	alSourceStop(mSourceId);
+	alDeleteSources(1, &mSourceId);
 }
 
 void Sound::setSoundData(const std::string& filename)
@@ -111,25 +149,73 @@ SoundData* Sound::getSoundData() const
 	return mSoundData;
 }
 
-void Sound::play() {}
+void Sound::play()
+{
+	if (isPlaying())
+		return;
 
-void Sound::pause() {}
+	if(mSourceId != AL_NONE)
+		alSourcePlay(mSourceId);
+}
 
-void Sound::stop() {}
+void Sound::pause()
+{
+	if (isPaused())
+		return;
+
+	if(mSourceId != AL_NONE)
+		alSourcePause(mSourceId);
+}
+
+void Sound::stop()
+{
+	if (isStopped())
+		return;
+
+	if(mSourceId != AL_NONE)
+		alSourceStop(mSourceId);
+}
 
 bool Sound::isPlaying() const
 {
+	if(mSourceId != AL_NONE)
+	{
+		ALint state;
+		alGetSourcei(mSourceId, AL_SOURCE_STATE, &state);
+
+		if (state == AL_PLAYING)
+			return true;
+	}
+
 	return false;
 }
 
 bool Sound::isPaused() const
 {
-	return true;
+	if(mSourceId != AL_NONE)
+	{
+		ALint state;
+		alGetSourcei(mSourceId, AL_SOURCE_STATE, &state);
+
+		if (state == AL_PAUSED)
+			return true;
+	}
+
+	return false;
 }
 
 bool Sound::isStopped() const
 {
-	return true;
+	if(mSourceId != AL_NONE)
+	{
+		ALint state;
+		alGetSourcei(mSourceId, AL_SOURCE_STATE, &state);
+
+		if (state == AL_STOPPED)
+			return true;
+	}
+
+	return false;
 }
 
 const glm::vec3& Sound::getVelocity() const
@@ -143,6 +229,9 @@ void Sound::setPitch(float pitch)
 		return;
 
 	mPitch = pitch;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_PITCH, mPitch);
 }
 
 float Sound::getPitch() const
@@ -156,6 +245,9 @@ void Sound::setGain(float gain)
 		return;
 
 	mGain = gain;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_GAIN, mGain);
 }
 
 float Sound::getGain() const
@@ -175,6 +267,8 @@ void Sound::setMinDistance(float minDistance)
 		return;
 
 	mMinDistance = minDistance;
+
+	//TODO!!!
 }
 
 void Sound::setMaxDistance(float maxDistance)
@@ -183,6 +277,9 @@ void Sound::setMaxDistance(float maxDistance)
 		return;
 
 	mMaxDistance = maxDistance;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_MAX_DISTANCE, mMaxDistance);
 }
 
 float Sound::getMinDistance() const
@@ -205,6 +302,9 @@ void Sound::setConeSettings(float innerConeAngle, float outerConeAngle, float ou
 void Sound::setInnerConeAngle(float innerConeAngle)
 {
 	mInnerConeAngle = innerConeAngle;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_CONE_INNER_ANGLE, mInnerConeAngle);
 }
 
 float Sound::getInnerConeAngle() const
@@ -215,6 +315,9 @@ float Sound::getInnerConeAngle() const
 void Sound::setOuterConeAngle(float outerConeAngle)
 {
 	mOuterConeAngle = outerConeAngle;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_CONE_OUTER_ANGLE, mOuterConeAngle);
 }
 
 float Sound::getOuterConeAngle() const
@@ -228,6 +331,9 @@ void Sound::setOuterConeGain(float outerConeGain)
 		return;
 
 	mOuterConeGain = outerConeGain;
+
+	if(mSourceId != AL_NONE)
+		alSourcef(mSourceId, AL_CONE_OUTER_GAIN, mOuterConeGain);
 }
 
 float Sound::getOuterConeGain() const
@@ -238,6 +344,9 @@ float Sound::getOuterConeGain() const
 void Sound::setLoop(bool loop)
 {
 	mLoop = loop;
+
+	if(mSourceId != AL_NONE)
+		alSourcei(mSourceId, AL_LOOPING, mLoop);
 }
 
 bool Sound::isLooping() const
@@ -281,6 +390,21 @@ void Sound::resourceUnloaded(const resource::ResourceEvent& evt)
 	}
 }
 
+void Sound::initializeImpl()
+{
+	if (mSoundData == nullptr)
+		return;
+
+	alSourcei(mSourceId, AL_BUFFER, mSoundData->getOpenALBufferID());
+
+	alSourcei(mSourceId, AL_LOOPING, mLoop);
+}
+
+void Sound::uninitializeImpl()
+{
+	alSourcei(mSourceId, AL_BUFFER, -1);//TODO: see if it works!!!
+}
+
 void Sound::updateImpl(float elapsedTime)
 {
 	if (elapsedTime == 0)
@@ -296,8 +420,52 @@ void Sound::updateImpl(float elapsedTime)
 			mLastPosition = pTransform->getAbsolutePosition();
 		}
 	}
+
+	if (mSourceNeedsUpdate)
+	{
+		if (mGameObject != nullptr)
+		{
+			game::Transform* pTransform = static_cast<game::Transform*>(mGameObject->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+			if (pTransform != nullptr)
+			{
+				glm::vec3 position = pTransform->getAbsolutePosition();
+				glm::vec3 direction = pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1);
+
+				alSource3f(mSourceId, AL_POSITION, (ALfloat)position.x, (ALfloat)position.y, (ALfloat)position.z);
+				//if (checkALError(core::string("OpenALSound::alSourcefv:AL_POSITION")))
+				//	return;
+				alSource3f(mSourceId, AL_DIRECTION, (ALfloat)direction.x, (ALfloat)direction.y, (ALfloat)direction.z);
+				//if (checkALError("OpenALSound::alSourcefv:AL_DIRECTION"))
+				//	return;
+				alSource3f(mSourceId, AL_VELOCITY, (ALfloat)mVelocity.x, (ALfloat)mVelocity.y, (ALfloat)mVelocity.z);
+				//if (checkALError("OpenALSound::alSourcefv:AL_VELOCITY"))
+				//	return;
+			}
+		}
+
+		mSourceNeedsUpdate = false;
+	}
 }
 
-void Sound::setSoundDataImpl(SoundData* soundData) {}
+void Sound::onMessageImpl(unsigned int messageID)
+{
+	if (messageID == game::MESSAGE_TRANSFORM_NEEDS_UPDATE)
+	{
+		mSourceNeedsUpdate = true;
+	}
+}
+
+void Sound::setSoundDataImpl(SoundData* soundData)
+{
+	if (soundData == nullptr)
+		return;
+
+	alSourcef(mSourceId, AL_PITCH,					mSoundData->getPitch());
+	alSourcef(mSourceId, AL_GAIN,					mSoundData->getGain());
+	alSourcef(mSourceId, AL_MAX_DISTANCE,			mSoundData->getMaxDistance());
+	alSourcef(mSourceId, AL_CONE_OUTER_GAIN,		mSoundData->getOuterConeGain());
+	alSourcef(mSourceId, AL_CONE_INNER_ANGLE,		mSoundData->getInnerConeAngle());
+	alSourcef(mSourceId, AL_CONE_OUTER_ANGLE,		mSoundData->getOuterConeAngle());
+}
 
 } // end namespace sound

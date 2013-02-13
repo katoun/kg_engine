@@ -24,14 +24,19 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <core/Log.h>
+#include <core/LogDefines.h>
+#include <sound/SoundUtils.h>
 #include <sound/SoundManager.h>
 #include <sound/Sound.h>
+#include <sound/SoundFactory.h>
 #include <sound/SoundData.h>
+#include <sound/SoundDataFactory.h>
 #include <sound/Listener.h>
 #include <sound/ListenerFactory.h>
 #include <sound/SoundFactory.h>
-#include <sound/SoundDriver.h>
 #include <game/GameObject.h>
+#include <game/Transform.h>
 #include <game/ComponentDefines.h>
 #include <game/ComponentFactory.h>
 #include <game/GameManager.h>
@@ -43,19 +48,23 @@ namespace sound
 
 SoundManager::SoundManager(): core::System("SoundManager")
 {
-	mSoundDriver = nullptr;
 	mActiveListener = nullptr;
 
 	mDopplerFactor = 1.0f;
 	mSoundSpeed = 343.3f;
 
-	mDefaultListenerFactory = new ListenerFactory();
-	mDefaultSoundFactory = nullptr;
+	mSoundDataFactory = new SoundDataFactory();
+	mListenerFactory = new ListenerFactory();
+	mSoundFactory = new SoundFactory();
+
+	mContext = nullptr;
+	mDevice = nullptr;
 }
 
 SoundManager::~SoundManager()
 {
-	SAFE_DELETE(mDefaultListenerFactory);
+	SAFE_DELETE(mSoundDataFactory);
+	SAFE_DELETE(mListenerFactory);
 }
 
 void SoundManager::addSound(Sound* sound)
@@ -134,8 +143,10 @@ void SoundManager::setDopplerFactor(float dopplerFactor)
 		return;
 
 	mDopplerFactor = dopplerFactor;
-	if (mSoundDriver != nullptr)
-		mSoundDriver->setDopplerFactor(dopplerFactor);
+
+	alDopplerFactor(mDopplerFactor);
+	if (checkALError("setDopplerFactor::alDopplerFactor:"))
+		return;
 }
 
 float SoundManager::getDopplerFactor() const
@@ -150,8 +161,10 @@ void SoundManager::setSoundSpeed(float soundSpeed)
 		return;
 
 	mSoundSpeed = soundSpeed;
-	if (mSoundDriver != nullptr)
-		mSoundDriver->setSoundSpeed(soundSpeed);
+
+	alSpeedOfSound(soundSpeed);
+	if (checkALError("setSoundSpeed::alSpeedOfSound:"))
+		return;
 }
 
 float SoundManager::getSoundSpeed() const
@@ -161,20 +174,65 @@ float SoundManager::getSoundSpeed() const
 
 void SoundManager::setDefaultSoundFactory(game::ComponentFactory* factory)
 {
-	mDefaultSoundFactory = factory;
+	mSoundFactory = factory;
 }
 
 void SoundManager::removeDefaultSoundFactory()
 {
-	mDefaultSoundFactory = nullptr;
+	mSoundFactory = nullptr;
 }
 
-void SoundManager::initializeImpl() {}
+void SoundManager::initializeImpl()
+{
+	alcGetIntegerv(nullptr, ALC_MAJOR_VERSION, sizeof(mMajorVersion), &mMajorVersion);
+	alcGetIntegerv(nullptr, ALC_MINOR_VERSION, sizeof(mMinorVersion), &mMinorVersion);
+
+	// Open an audio device
+	mDevice = alcOpenDevice(nullptr);
+	if (!mDevice)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not create sound device", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	// Create OpenAL Context
+	mContext = alcCreateContext(mDevice, nullptr);
+	if (!mContext)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not create sound context", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	alcMakeContextCurrent(mContext);
+	if (checkALError("initialize()"))
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("SoundSystem", "OpenAL::initialize could not make sound context current and active.", core::LOG_LEVEL_ERROR);
+		return;
+	}
+
+	alListenerf(AL_MAX_DISTANCE, 10000.0f);
+	alListenerf(AL_MIN_GAIN, 0.0f);
+	alListenerf(AL_MAX_GAIN, 1.0f);
+	alListenerf(AL_GAIN, 1.0f);
+
+	// Initialize Doppler
+	alDopplerFactor(1.0f); // 1.2 = exaggerate the pitch shift by 20%
+	alDopplerVelocity(343.0f); // m/s this may need to be scaled at some point
+}
 
 void SoundManager::uninitializeImpl()
 {
 	// Remove all Sounds
 	removeAllSounds();
+
+	// Release the OpenAL Context and the Audio device
+	if (mContext != nullptr)
+	{
+		alcMakeContextCurrent(nullptr);
+		alcDestroyContext(mContext);
+	}
+	if (mDevice != nullptr)
+		alcCloseDevice(mDevice);
 }
 
 void SoundManager::startImpl() {}
@@ -183,33 +241,62 @@ void SoundManager::stopImpl() {}
 
 void SoundManager::updateImpl(float elapsedTime)
 {
-	if (mSoundDriver != nullptr && mActiveListener != nullptr)
+	if (mActiveListener == nullptr)
+		return;
+
+	if (mActiveListener->getGameObject() != nullptr)
 	{
-		mSoundDriver->updateListener(mActiveListener);
+		game::Transform* pTransform = static_cast<game::Transform*>(mActiveListener->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != nullptr)
+		{
+			glm::vec3 position = pTransform->getAbsolutePosition();
+			glm::vec3 direction = pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1);
+			glm::vec3 up = pTransform->getAbsoluteOrientation() * glm::vec3(0, 1, 0);
+			glm::vec3 velocity = mActiveListener->getVelocity();
+
+			// Initial orientation of the listener = direction + direction up
+			ALfloat lorientation[6];
+			lorientation[0] = -direction.x;
+			lorientation[1] = -direction.y;
+			lorientation[2] = -direction.z;
+			lorientation[3] = up.x;
+			lorientation[4] = up.y;
+			lorientation[5] = up.z;
+
+			alListener3f(AL_POSITION, position.x, position.y, position.z);
+			if (checkALError("setListenerPosition::alListenerfv:AL_POSITION"))
+				return;
+			alListenerfv(AL_ORIENTATION, lorientation);
+			if (checkALError("setListenerPosition::alListenerfv:AL_DIRECTION"))
+				return;
+			alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+			if (checkALError("setListenerPosition::alListenerfv:AL_VELOCITY"))
+				return;
+		}
 	}
 }
 
-void SoundManager::setSystemDriverImpl(core::SystemDriver* systemDriver)
+void SoundManager::registerFactoriesImpl()
 {
-	mSoundDriver = static_cast<SoundDriver*>(systemDriver);
-}
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA, mSoundDataFactory);
+	}
 
-void SoundManager::removeSystemDriverImpl()
-{
-	mSoundDriver = nullptr;
-}
-
-void SoundManager::registerDefaultFactoriesImpl()
-{
 	if (game::GameManager::getInstance() != nullptr)
 	{
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LISTENER, mDefaultListenerFactory);
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_SOUND, mDefaultSoundFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LISTENER, mListenerFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_SOUND, mSoundFactory);
 	}
 }
 
-void SoundManager::removeDefaultFactoriesImpl()
+void SoundManager::removeFactoriesImpl()
 {
+	if (resource::ResourceManager::getInstance() != nullptr)
+	{
+		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SOUND_DATA);
+	}
+
 	if (game::GameManager::getInstance() != nullptr)
 	{
 		game::GameManager::getInstance()->removeComponentFactory(game::COMPONENT_TYPE_LISTENER);

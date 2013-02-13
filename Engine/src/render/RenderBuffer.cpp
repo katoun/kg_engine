@@ -24,32 +24,64 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <OpenALSoundFactory.h>
-#include <OpenALSound.h>
-#include <sound/SoundManager.h>
+#include <render/RenderBuffer.h>
 
-namespace sound
+namespace render
 {
 
-game::Component* OpenALSoundFactory::createComponent()
+RenderBuffer::RenderBuffer(BufferUsage usage)
 {
-	OpenALSound* pSound = new OpenALSound();
-	
-	if (SoundManager::getInstance() != nullptr)
-		SoundManager::getInstance()->addSound(pSound);
-
-	return pSound;
+	mUsage = usage;
+	mIsLocked = false;
 }
 
-void OpenALSoundFactory::destroyComponent(game::Component* component)
+RenderBuffer::~RenderBuffer() {}
+
+void* RenderBuffer::lock(unsigned int offset, unsigned int length, BufferLocking options)
 {
-	OpenALSound* pSound = static_cast<OpenALSound*>(component);
+	assert((!isLocked()) && "Cannot lock this buffer, it is already locked!");
 
-	if (SoundManager::getInstance() != nullptr)
-		SoundManager::getInstance()->removeSound(pSound);
-
-	assert(pSound != nullptr);
-	SAFE_DELETE(pSound);
+	void* ret = lockImpl(offset, length, options);
+	mIsLocked = true;
+	mLockStart = offset;
+	mLockSize = length;
+	return ret;
 }
 
-} // end namespace sound
+void* RenderBuffer::lock(BufferLocking options)
+{
+	return this->lock(0, mSizeInBytes, options);
+}
+
+void RenderBuffer::unlock()
+{
+	assert((isLocked()) && "Cannot unlock this buffer, it is not locked!");
+
+	// Otherwise, unlock the real one
+	unlockImpl();
+	mIsLocked = false;
+}
+
+void RenderBuffer::copyData(RenderBuffer& srcBuffer, unsigned int srcOffset, unsigned int dstOffset, unsigned int length, bool discardWholeBuffer)
+{
+	const void *srcData = srcBuffer.lock(srcOffset, length, BL_READ_ONLY);
+	this->writeData(dstOffset, length, srcData, discardWholeBuffer);
+	srcBuffer.unlock();
+}
+
+unsigned int RenderBuffer::getSizeInBytes() const
+{ 
+	return mSizeInBytes;
+}
+
+BufferUsage RenderBuffer::getUsage() const
+{
+	return mUsage;
+}
+
+bool RenderBuffer::isLocked() const
+{
+	return mIsLocked;
+}
+
+}// end namespace render

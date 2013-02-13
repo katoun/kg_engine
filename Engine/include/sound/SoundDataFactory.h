@@ -24,64 +24,30 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <resource/Buffer.h>
+#ifndef _SOUND_DATA_FACTORY_H_
+#define _SOUND_DATA_FACTORY_H_
+
+#include <EngineConfig.h>
+#include <resource/ResourceFactory.h>
 
 namespace resource
 {
+class Resource;
+class Serializer;
+}
 
-Buffer::Buffer(BufferUsage usage)
+namespace sound
 {
-	mUsage = usage;
-	mIsLocked = false;
-}
 
-Buffer::~Buffer() {}
-
-void* Buffer::lock(unsigned int offset, unsigned int length, BufferLocking options)
+class ENGINE_PRIVATE_EXPORT SoundDataFactory: public resource::ResourceFactory
 {
-	assert((!isLocked()) && "Cannot lock this buffer, it is already locked!");
+public:
 
-	void* ret = lockImpl(offset, length, options);
-	mIsLocked = true;
-	mLockStart = offset;
-	mLockSize = length;
-	return ret;
-}
+	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
 
-void* Buffer::lock(BufferLocking options)
-{
-	return this->lock(0, mSizeInBytes, options);
-}
+	void destroyResource(resource::Resource* resource);
+};
 
-void Buffer::unlock()
-{
-	assert((isLocked()) && "Cannot unlock this buffer, it is not locked!");
+} // end namespace sound
 
-	// Otherwise, unlock the real one
-	unlockImpl();
-	mIsLocked = false;
-}
-
-void Buffer::copyData(Buffer& srcBuffer, unsigned int srcOffset, unsigned int dstOffset, unsigned int length, bool discardWholeBuffer)
-{
-	const void *srcData = srcBuffer.lock(srcOffset, length, BL_READ_ONLY);
-	this->writeData(dstOffset, length, srcData, discardWholeBuffer);
-	srcBuffer.unlock();
-}
-
-unsigned int Buffer::getSizeInBytes() const
-{ 
-	return mSizeInBytes;
-}
-
-BufferUsage Buffer::getUsage() const
-{
-	return mUsage;
-}
-
-bool Buffer::isLocked() const
-{
-	return mIsLocked;
-}
-
-}// end namespace resource
+#endif

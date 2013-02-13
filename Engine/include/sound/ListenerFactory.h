@@ -38,7 +38,7 @@ class Component;
 namespace sound
 {
 
-class ENGINE_PUBLIC_EXPORT ListenerFactory: public game::ComponentFactory
+class ENGINE_PRIVATE_EXPORT ListenerFactory: public game::ComponentFactory
 {
 public:
 

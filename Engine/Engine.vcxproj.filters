@@ -37,6 +37,12 @@
     <Filter Include="render\win32">
       <UniqueIdentifier>{5ded181c-8829-4f9c-ab6e-393b34fc1ab7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\CPUInfo">
+      <UniqueIdentifier>{6f29e0a3-2b6c-4b07-82e0-e61da746f2d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sound\alure">
+      <UniqueIdentifier>{fc3eb65d-691c-452d-b969-54a0e4be3962}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine\EngineEvent.h">
@@ -183,9 +189,6 @@
     <ClInclude Include="include\input\MouseEventReceiver.h">
       <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="include\resource\Buffer.h">
-      <Filter>resource</Filter>
-    </ClInclude>
     <ClInclude Include="include\resource\LoadEvent.h">
       <Filter>resource</Filter>
     </ClInclude>
@@ -217,9 +220,6 @@
       <Filter>sound</Filter>
     </ClInclude>
     <ClInclude Include="include\sound\SoundManager.h">
-      <Filter>sound</Filter>
-    </ClInclude>
-    <ClInclude Include="include\sound\SoundDriver.h">
       <Filter>sound</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\Body.h">
@@ -402,9 +402,6 @@
     <ClInclude Include="include\render\IndexBufferDefines.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="include\resource\BodySerializer.h">
       <Filter>resource\serializers</Filter>
     </ClInclude>
@@ -430,9 +427,6 @@
     <ClInclude Include="include\render\GLConfig.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\GLPixelFormat.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\MaterialFactory.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -440,6 +434,36 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="include\render\ShaderFactory.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h">
+      <Filter>platform\CPUInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\SoundDataFactory.h">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\SoundUtils.h">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\RenderUtils.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\alure\include\config.h">
+      <Filter>sound\alure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\alure\include\AL\alure.h">
+      <Filter>sound\alure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\alure\include\alext.h">
+      <Filter>sound\alure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\alure\include\main.h">
+      <Filter>sound\alure</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\RenderBuffer.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\RenderBufferDefines.h">
       <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
@@ -570,9 +594,6 @@
     <ClCompile Include="src\input\MouseEventReceiver.cpp">
       <Filter>input</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\Buffer.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
     <ClCompile Include="src\resource\LoadEventReceiver.cpp">
       <Filter>resource</Filter>
     </ClCompile>
@@ -598,9 +619,6 @@
       <Filter>sound</Filter>
     </ClCompile>
     <ClCompile Include="src\sound\SoundManager.cpp">
-      <Filter>sound</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sound\SoundDriver.cpp">
       <Filter>sound</Filter>
     </ClCompile>
     <ClCompile Include="src\physics\Body.cpp">
@@ -721,9 +739,6 @@
     <ClCompile Include="src\render\ShaderParameter.cpp">
       <Filter>render</Filter>
     </ClCompile>
-    <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="src\resource\BodySerializer.cpp">
       <Filter>resource\serializers</Filter>
     </ClCompile>
@@ -745,9 +760,6 @@
     <ClCompile Include="src\render\win32\Win32Window.cpp">
       <Filter>render\win32</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\GLPixelFormat.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\MaterialFactory.cpp">
       <Filter>render</Filter>
     </ClCompile>
@@ -756,6 +768,48 @@
     </ClCompile>
     <ClCompile Include="src\render\ShaderFactory.cpp">
       <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp">
+      <Filter>platform\CPUInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound\SoundDataFactory.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sound\SoundUtils.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RenderUtils.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\alure.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\codec_aiff.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\codec_vorbisfile.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\codec_wav.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\istream.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\stream.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\streamdec.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\streamplay.cpp">
+      <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RenderBuffer.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\alure\src\buffer.cpp">
+      <Filter>sound\alure</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

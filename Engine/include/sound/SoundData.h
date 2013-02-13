@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <resource/Resource.h>
 
+#include <AL/alure.h>
+
 #include <string>
 
 namespace resource
@@ -92,10 +94,22 @@ public:
 	void setOuterConeGain(float outerConeGain);
 	//! Returns the outerConeGain.
 	float getOuterConeGain() const;
+
+	ALuint getOpenALBufferID() const;
 	
 protected:
 
-	virtual void unloadImpl();
+	bool loadImpl();
+	void unloadImpl();
+
+	ALuint mBufferId;
+
+	ALvoid* mData;
+	ALint mDataSize;
+	ALint mFrequency;
+	ALint mChannels;
+	ALint mBPS;
+	ALenum mBufferFormat;
 
 	float mPitch;
 	float mGain;

@@ -148,15 +148,10 @@ protected:
 
 	void removeAllParameters();
 
-	static ShaderParameterType getType(ShaderAutoParameterType type);
-	static ShaderParameterType getType(TextureType type);
-
 	hashmap<std::string, ShaderParameter*> mParameters;
 	std::vector<ShaderVertexParameter*> mVertexParameters;
 	std::vector<ShaderTextureParameter*> mTextureParameters;
 	std::list<ShaderAutoParameter*> mAutoParameters;
-
-	static GLenum getGLType(ShaderParameterType type);
 };
 
 } //namespace render

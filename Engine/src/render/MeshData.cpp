@@ -28,7 +28,6 @@ THE SOFTWARE.
 #include <render/VertexBuffer.h>
 #include <render/IndexBuffer.h>
 #include <render/Material.h>
-#include <resource/Buffer.h>
 #include <resource/ResourceManager.h>
 #include <platform/PlatformManager.h>
 #include <core/Math.h>

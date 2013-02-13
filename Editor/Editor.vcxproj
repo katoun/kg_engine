@@ -71,7 +71,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\wxMSW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\wxMSW\include;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WXMSW__;WXUSINGDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -115,7 +115,7 @@ copy "$(ProjectDir)..\dependencies\wxMSW\lib\vc_dll\wxmsw294ud_ribbon_vc_custom.
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\wxMSW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\Engine\include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\wxMSW\include;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WXMSW__;WXUSINGDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>

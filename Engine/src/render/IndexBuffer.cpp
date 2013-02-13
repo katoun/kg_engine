@@ -31,8 +31,7 @@ THE SOFTWARE.
 namespace render
 {
 
-IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage)
-: resource::Buffer(usage)
+IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage): RenderBuffer(usage)
 {
 	mIndexType = idxType;
 	mNumIndexes = numIndexes;
@@ -53,13 +52,13 @@ IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, resource::B
 
 	switch(usage)
 	{
-	case resource::BU_STATIC:
-	case resource::BU_STATIC_WRITE_ONLY:
+	case BU_STATIC:
+	case BU_STATIC_WRITE_ONLY:
 		mGLUsage = GL_STATIC_DRAW;
-	case resource::BU_DYNAMIC:
-	case resource::BU_DYNAMIC_WRITE_ONLY:
+	case BU_DYNAMIC:
+	case BU_DYNAMIC_WRITE_ONLY:
 		mGLUsage = GL_DYNAMIC_DRAW;
-	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+	case BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
 		mGLUsage = GL_STREAM_DRAW;
 	default:
 		mGLUsage = GL_DYNAMIC_DRAW;
@@ -131,7 +130,7 @@ GLuint IndexBuffer::getGLBufferId() const
 	return mBufferId;
 }
 
-void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options)
+void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, BufferLocking options)
 {
 	GLenum access = 0;
 
@@ -143,25 +142,25 @@ void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, resource::
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
-	if(options == resource::BL_DISCARD)
+	if(options == BL_DISCARD)
 	{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, nullptr, mGLUsage);
 
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+		access = (mUsage & BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 
 	}
-	else if(options == resource::BL_READ_ONLY)
+	else if(options == BL_READ_ONLY)
 	{
-		if(mUsage & resource::BU_WRITE_ONLY)
+		if(mUsage & BU_WRITE_ONLY)
 		{
 			if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("GLIndexBuffer", "Invalid attempt to lock a write-only index buffer as read-only", core::LOG_LEVEL_ERROR);
 			return nullptr;
 		}
 		access = GL_READ_ONLY;
 	}
-	else if(options == resource::BL_NORMAL || options == resource::BL_NO_OVERWRITE)
+	else if(options == BL_NORMAL || options == BL_NO_OVERWRITE)
 	{
-		access = (mUsage & resource::BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
+		access = (mUsage & BU_DYNAMIC) ? GL_READ_WRITE : GL_WRITE_ONLY;
 	}
 	else
 	{	

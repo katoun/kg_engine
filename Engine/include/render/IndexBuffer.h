@@ -30,17 +30,18 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <render/GLConfig.h>
 #include <render/IndexBufferDefines.h>
-#include <resource/Buffer.h>
+#include <render/RenderBuffer.h>
+#include <render/RenderBufferDefines.h>
 
 namespace render
 {
 
 //! Class for index buffers, still abstract.
-class ENGINE_PUBLIC_EXPORT IndexBuffer: public resource::Buffer
+class ENGINE_PUBLIC_EXPORT IndexBuffer: public RenderBuffer
 {
 public:
 
-	IndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage);
+	IndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage);
 
 	virtual ~IndexBuffer();
 
@@ -59,7 +60,7 @@ public:
 
 protected:
 
-	void* lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options);
+	void* lockImpl(unsigned int offset, unsigned int length, BufferLocking options);
 
 	void unlockImpl();
 

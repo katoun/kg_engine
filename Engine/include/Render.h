@@ -28,6 +28,9 @@ THE SOFTWARE.
 #define _ENGINE_RENDER_H_
 
 #include <render/Color.h>
+#include <render/RenderUtils.h>
+#include <render/RenderBuffer.h>
+#include <render/RenderBufferDefines.h>
 #include <render/IndexBuffer.h>
 #include <render/IndexBufferDefines.h>
 #include <render/VertexBuffer.h>

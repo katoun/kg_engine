@@ -33,7 +33,7 @@ THE SOFTWARE.
 namespace physics
 {
 
-class BULLET_PUBLIC_EXPORT BulletBodyFactory: public BodyFactory
+class ENGINE_PRIVATE_EXPORT BulletBodyFactory: public BodyFactory
 {
 public:
 

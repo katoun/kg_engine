@@ -25,6 +25,8 @@ THE SOFTWARE.
 */
 
 #include <sound/SoundFactory.h>
+#include <sound/Sound.h>
+#include <sound/SoundManager.h>
 
 namespace sound
 {
@@ -32,6 +34,27 @@ namespace sound
 SoundFactory::SoundFactory(): game::ComponentFactory()
 {
 	mName = "Sound";
+}
+
+game::Component* SoundFactory::createComponent()
+{
+	Sound* pSound = new Sound();
+
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->addSound(pSound);
+
+	return pSound;
+}
+
+void SoundFactory::destroyComponent(game::Component* component)
+{
+	Sound* pSound = static_cast<Sound*>(component);
+
+	if (SoundManager::getInstance() != nullptr)
+		SoundManager::getInstance()->removeSound(pSound);
+
+	assert(pSound != nullptr);
+	SAFE_DELETE(pSound);
 }
 
 } // end namespace sound

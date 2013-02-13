@@ -35,7 +35,7 @@ namespace resource
 class Resource;
 class Serializer;
 
-class ENGINE_PUBLIC_EXPORT ResourceFactory
+class ENGINE_PRIVATE_EXPORT ResourceFactory
 {
 public:
 

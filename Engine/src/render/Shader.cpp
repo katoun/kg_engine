@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 #include <core/Log.h>
 #include <core/LogDefines.h>
-#include <core/System.h>
+#include <render/RenderUtils.h>
 #include <render/Shader.h>
 #include <render/Light.h>
 #include <render/Texture.h>
@@ -102,7 +102,7 @@ bool Shader::loadImpl()
 
 	fclose(pFile);
 
-	mGLHandle = glCreateShader(getShaderType(mShaderType));
+	mGLHandle = glCreateShader(getGLType(mShaderType));
 
 	const char* source = mSource.c_str();
 	glShaderSource(mGLHandle, 1, &source, NULL);
@@ -128,23 +128,6 @@ bool Shader::loadImpl()
 void Shader::unloadImpl()
 {
 	glDeleteShader(mGLHandle);
-}
-
-GLenum Shader::getShaderType(ShaderType type)
-{
-	switch(type)
-	{
-	case SHADER_TYPE_VERTEX:
-		return GL_VERTEX_SHADER;
-	case SHADER_TYPE_FRAGMENT:
-		return GL_FRAGMENT_SHADER;
-	case SHADER_TYPE_GEOMETRY:
-		return GL_GEOMETRY_SHADER;
-	default:
-		return 0x0000;
-	}
-
-	return 0x0000;
 }
 
 } // end namespace render

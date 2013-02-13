@@ -38,7 +38,7 @@ class Component;
 namespace render
 {
 
-class ENGINE_PUBLIC_EXPORT ModelFactory: public game::ComponentFactory
+class ENGINE_PRIVATE_EXPORT ModelFactory: public game::ComponentFactory
 {
 public:
 

@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <core/Log.h>
 #include <core/Utils.h>
 #include <core/LogDefines.h>
+#include <render/RenderUtils.h>
 #include <render/RenderManager.h>
 #include <render/Frustum.h>
 #include <render/Light.h>
@@ -83,9 +84,9 @@ RenderManager::RenderManager(): core::System("RenderManager")
 	mTextureFactory = new TextureFactory();
 	mFontFactory = new FontFactory();
 	mMeshDataFactory = new MeshDataFactory();
-	mDefaultCameraFactory = new CameraFactory();
-	mDefaultLightFactory = new LightFactory();
-	mDefaultModelFactory = new ModelFactory();
+	mCameraFactory = new CameraFactory();
+	mLightFactory = new LightFactory();
+	mModelFactory = new ModelFactory();
 
 	mMainWindow = nullptr;
 	mCurrentViewport = nullptr;
@@ -108,9 +109,9 @@ RenderManager::~RenderManager()
 	SAFE_DELETE(mTextureFactory);
 	SAFE_DELETE(mFontFactory);
 	SAFE_DELETE(mMeshDataFactory);
-	SAFE_DELETE(mDefaultCameraFactory);
-	SAFE_DELETE(mDefaultLightFactory);
-	SAFE_DELETE(mDefaultModelFactory);
+	SAFE_DELETE(mCameraFactory);
+	SAFE_DELETE(mLightFactory);
+	SAFE_DELETE(mModelFactory);
 }
 
 RenderWindow* RenderManager::createRenderWindow(int width, int height, int colorDepth, bool fullScreen, int left, int top, bool depthBuffer, void* windowId)
@@ -391,7 +392,7 @@ void RenderManager::removeAllShaders()
 	mShaders.clear();
 }
 
-VertexBuffer* RenderManager::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage)
+VertexBuffer* RenderManager::createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, BufferUsage usage)
 {
 	VertexBuffer* pVertexBuffer = new VertexBuffer(vertexBufferType, vertexElementType, numVertices, usage);
 	if (pVertexBuffer != nullptr)
@@ -429,7 +430,7 @@ void RenderManager::removeAllVertexBuffers()
 	mVertexBuffers.clear();
 }
 
-IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage)
+IndexBuffer* RenderManager::createIndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage)
 {
 	IndexBuffer* pIndexBuffer = new IndexBuffer(idxType, numIndexes, usage);
 	if (pIndexBuffer != nullptr)
@@ -582,7 +583,7 @@ void RenderManager::updateImpl(float elapsedTime)
 	fireFrameEnded();
 }
 
-void RenderManager::registerDefaultFactoriesImpl()
+void RenderManager::registerFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
@@ -595,13 +596,13 @@ void RenderManager::registerDefaultFactoriesImpl()
 
 	if (game::GameManager::getInstance() != nullptr)
 	{
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mDefaultCameraFactory);
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mDefaultLightFactory);
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_MODEL, mDefaultModelFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_CAMERA, mCameraFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_LIGHT, mLightFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_MODEL, mModelFactory);
 	}
 }
 
-void RenderManager::removeDefaultFactoriesImpl()
+void RenderManager::removeFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
@@ -1075,6 +1076,9 @@ void RenderManager::render(RenderStateData& renderStateData)
 		glEnableVertexAttribArray(index);
 	}
 
+	if (pModel->getIndexBuffer() == nullptr)
+		return;
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (pModel->getIndexBuffer())->getGLBufferId());
 
 	GLenum primType = getGLType(pModel->getRenderOperationType());
@@ -1098,80 +1102,6 @@ void RenderManager::endFrame()
 {
 	// Deactivate the viewport clipping
 	glDisable(GL_SCISSOR_TEST);
-}
-
-GLenum RenderManager::getGLUsage(resource::BufferUsage usage)
-{
-	switch(usage)
-	{
-	case resource::BU_STATIC:
-	case resource::BU_STATIC_WRITE_ONLY:
-		return GL_STATIC_DRAW;
-	case resource::BU_DYNAMIC:
-	case resource::BU_DYNAMIC_WRITE_ONLY:
-		return GL_DYNAMIC_DRAW;
-	case resource::BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
-		return GL_STREAM_DRAW;
-	default:
-		return GL_DYNAMIC_DRAW;
-	};
-}
-
-GLenum RenderManager::getGLType(ShaderType type)
-{
-	switch(type)
-	{
-	case SHADER_TYPE_VERTEX:
-		return GL_VERTEX_SHADER;
-	case SHADER_TYPE_FRAGMENT:
-		return GL_FRAGMENT_SHADER;
-	case SHADER_TYPE_GEOMETRY:
-		return GL_GEOMETRY_SHADER;
-	default:
-		return GL_VERTEX_SHADER;
-	}
-}
-
-GLenum RenderManager::getGLType(VertexElementType type)
-{
-	switch(type)
-	{
-	case VERTEX_ELEMENT_TYPE_FLOAT1:
-	case VERTEX_ELEMENT_TYPE_FLOAT2:
-	case VERTEX_ELEMENT_TYPE_FLOAT3:
-	case VERTEX_ELEMENT_TYPE_FLOAT4:
-		return GL_FLOAT;
-	case VERTEX_ELEMENT_TYPE_SHORT1:
-	case VERTEX_ELEMENT_TYPE_SHORT2:
-	case VERTEX_ELEMENT_TYPE_SHORT3:
-	case VERTEX_ELEMENT_TYPE_SHORT4:
-		return GL_SHORT;
-	case VERTEX_ELEMENT_TYPE_COLOR:
-		return GL_UNSIGNED_BYTE;
-	default:
-		return 0;
-	}
-}
-
-GLenum RenderManager::getGLType(RenderOperationType type)
-{
-	switch (type)
-	{
-	case render::ROT_POINT_LIST:
-		return GL_POINTS;
-	case render::ROT_LINE_LIST:
-		return GL_LINES;
-	case render::ROT_LINE_STRIP:
-		return GL_LINE_STRIP;
-	case render::ROT_TRIANGLE_LIST:
-		return GL_TRIANGLES;
-	case render::ROT_TRIANGLE_STRIP:
-		return GL_TRIANGLE_STRIP;
-	case render::ROT_TRIANGLE_FAN:
-		return GL_TRIANGLE_FAN;
-	default:
-		return GL_FLOAT;
-	}
 }
 
 RenderManager* RenderManager::getInstance()

@@ -24,66 +24,44 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _SHADER_H_
-#define _SHADER_H_
+
+#ifndef _RENDER_UTILS_H_
+#define _RENDER_UTILS_H_
 
 #include <EngineConfig.h>
 #include <render/GLConfig.h>
-#include <resource/Resource.h>
 #include <render/ShaderDefines.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderBufferDefines.h>
+#include <render/VertexBufferDefines.h>
+#include <render/RenderDefines.h>
 #include <render/TextureDefines.h>
-#include <render/Color.h>
+#include <resource/PixelFormat.h>
+
 
 #include <string>
-#include <vector>
-#include <map>
-
-namespace resource
-{
-class Serializer;
-}
 
 namespace render
 {
 
-class Light;
-class Texture;
+//!* Takes the pixel format and returns the appropriate GL one.
+inline ENGINE_PUBLIC_EXPORT GLenum getGLOriginFormat(resource::PixelFormat mFormat);
 
-//! Abstract class representing a Shader resource.
-//!
-//! This class defines the low-level program in assembler code,
-//! the sort used to directly assemble into machine instructions for the GPU to execute.
-class ENGINE_PUBLIC_EXPORT Shader: public resource::Resource
-{
-public:
+//!	Takes the pixel format and returns the type that must be provided to GL as internal format.
+inline ENGINE_PUBLIC_EXPORT GLenum getGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma = false);
 
-	Shader(const std::string& name, resource::Serializer* serializer);
-	virtual ~Shader();
+//!	Takes the pixel format and returns the type that must be provided to GL as internal format.
+//!If no match exists, returns the closest match.
+inline ENGINE_PUBLIC_EXPORT GLenum getClosestGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma = false);
 
-	//! Sets the type of texture,
-	void setShaderType(const ShaderType& type);
-
-	//! Gets the type of shader.
-	ShaderType getShaderType();
-
-	void setSource(const std::string& source);
-
-	void setEntryPoint(const std::string& entry);
-
-	GLhandleARB getGLHandle() const;
-
-protected:
-
-	virtual bool loadImpl();
-	virtual void unloadImpl();
-
-	GLhandleARB mGLHandle;
-
-	ShaderType mShaderType;
-
-	std::string mSource;		// The assembler source of the program (may be blank until file loaded)
-	std::string mEntryPoint;	// Entry point eg. main_vp, main_fp etc
-};
+inline ENGINE_PUBLIC_EXPORT GLenum getGLUsage(BufferUsage usage);
+inline ENGINE_PUBLIC_EXPORT GLenum getGLType(ShaderType type);
+inline ENGINE_PUBLIC_EXPORT GLenum getGLType(VertexElementType type);
+inline ENGINE_PUBLIC_EXPORT GLenum getGLType(RenderOperationType type);
+inline ENGINE_PUBLIC_EXPORT GLenum getGLType(TextureType type);
+inline ENGINE_PUBLIC_EXPORT GLenum getGLType(ShaderParameterType type);
+inline ENGINE_PUBLIC_EXPORT ShaderParameterType getType(ShaderAutoParameterType type);
+inline ENGINE_PUBLIC_EXPORT ShaderParameterType getType(TextureType type);
 
 } // end namespace render
 

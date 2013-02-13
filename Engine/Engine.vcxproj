@@ -58,8 +58,8 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -84,8 +84,8 @@
       </SubSystem>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -95,7 +95,11 @@
     </Bscmake>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
-copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration)\OpenAL32.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration)\libogg.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbis.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbisfile.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -107,8 +111,8 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -121,7 +125,7 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -129,17 +133,25 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)..\dependencies\glew\bin\glew32.dll" "$(OutDir)"
-copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Command>
+copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration)\OpenAL32.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration)\libogg.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbis.dll" "$(OutDir)"
+copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration)\libvorbisfile.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\alure\include\alext.h" />
+    <ClInclude Include="..\dependencies\alure\include\AL\alure.h" />
+    <ClInclude Include="..\dependencies\alure\include\config.h" />
+    <ClInclude Include="..\dependencies\alure\include\main.h" />
     <ClInclude Include="..\dependencies\CPUInfo\CPUInfo.h" />
     <ClInclude Include="..\dependencies\tinyxml2\tinyxml2.h" />
     <ClInclude Include="include\core\Log.h" />
@@ -193,7 +205,6 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClInclude Include="include\render\Frustum.h" />
     <ClInclude Include="include\render\FrustumDefines.h" />
     <ClInclude Include="include\render\GLConfig.h" />
-    <ClInclude Include="include\render\GLPixelFormat.h" />
     <ClInclude Include="include\render\IndexBuffer.h" />
     <ClInclude Include="include\render\IndexBufferDefines.h" />
     <ClInclude Include="include\render\Light.h" />
@@ -205,11 +216,14 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
     <ClInclude Include="include\render\ModelFactory.h" />
+    <ClInclude Include="include\render\RenderBuffer.h" />
+    <ClInclude Include="include\render\RenderBufferDefines.h" />
     <ClInclude Include="include\render\RenderDefines.h" />
     <ClInclude Include="include\render\RenderManager.h" />
     <ClInclude Include="include\render\RenderTarget.h" />
     <ClInclude Include="include\render\RenderTargetEvent.h" />
     <ClInclude Include="include\render\RenderTargetEventReceiver.h" />
+    <ClInclude Include="include\render\RenderUtils.h" />
     <ClInclude Include="include\render\RenderWindow.h" />
     <ClInclude Include="include\render\Shader.h" />
     <ClInclude Include="include\render\ShaderDefines.h" />
@@ -246,7 +260,6 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClInclude Include="include\input\Mouse.h" />
     <ClInclude Include="include\input\MouseEvent.h" />
     <ClInclude Include="include\input\MouseEventReceiver.h" />
-    <ClInclude Include="include\resource\Buffer.h" />
     <ClInclude Include="include\resource\LoadEvent.h" />
     <ClInclude Include="include\resource\LoadEventReceiver.h" />
     <ClInclude Include="include\resource\PixelFormat.h" />
@@ -260,9 +273,9 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClInclude Include="include\sound\ListenerFactory.h" />
     <ClInclude Include="include\sound\Sound.h" />
     <ClInclude Include="include\sound\SoundData.h" />
+    <ClInclude Include="include\sound\SoundDataFactory.h" />
     <ClInclude Include="include\sound\SoundFactory.h" />
     <ClInclude Include="include\sound\SoundManager.h" />
-    <ClInclude Include="include\sound\SoundDriver.h" />
     <ClInclude Include="include\physics\Body.h" />
     <ClInclude Include="include\physics\BodyData.h" />
     <ClInclude Include="include\physics\CollisionEvent.h" />
@@ -281,8 +294,18 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClInclude Include="include\Render.h" />
     <ClInclude Include="include\Resource.h" />
     <ClInclude Include="include\Sound.h" />
+    <ClInclude Include="include\sound\SoundUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\alure\src\alure.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\buffer.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\codec_aiff.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\codec_vorbisfile.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\codec_wav.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\istream.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\stream.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\streamdec.cpp" />
+    <ClCompile Include="..\dependencies\alure\src\streamplay.cpp" />
     <ClCompile Include="..\dependencies\CPUInfo\CPUInfo.cpp" />
     <ClCompile Include="..\dependencies\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
@@ -318,7 +341,6 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClCompile Include="src\render\FontFactory.cpp" />
     <ClCompile Include="src\render\FrameEventReceiver.cpp" />
     <ClCompile Include="src\render\Frustum.cpp" />
-    <ClCompile Include="src\render\GLPixelFormat.cpp" />
     <ClCompile Include="src\render\IndexBuffer.cpp" />
     <ClCompile Include="src\render\Light.cpp" />
     <ClCompile Include="src\render\LightFactory.cpp" />
@@ -328,10 +350,12 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />
     <ClCompile Include="src\render\ModelFactory.cpp" />
+    <ClCompile Include="src\render\RenderBuffer.cpp" />
     <ClCompile Include="src\render\RenderManager.cpp" />
     <ClCompile Include="src\render\RenderTarget.cpp" />
     <ClCompile Include="src\render\RenderTargetEvent.cpp" />
     <ClCompile Include="src\render\RenderTargetEventReceiver.cpp" />
+    <ClCompile Include="src\render\RenderUtils.cpp" />
     <ClCompile Include="src\render\RenderWindow.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\RenderStateData.cpp" />
@@ -364,7 +388,6 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClCompile Include="src\input\Mouse.cpp" />
     <ClCompile Include="src\input\MouseEvent.cpp" />
     <ClCompile Include="src\input\MouseEventReceiver.cpp" />
-    <ClCompile Include="src\resource\Buffer.cpp" />
     <ClCompile Include="src\resource\LoadEventReceiver.cpp" />
     <ClCompile Include="src\resource\PixelFormat.cpp" />
     <ClCompile Include="src\resource\Resource.cpp" />
@@ -376,9 +399,9 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClCompile Include="src\sound\ListenerFactory.cpp" />
     <ClCompile Include="src\sound\Sound.cpp" />
     <ClCompile Include="src\sound\SoundData.cpp" />
+    <ClCompile Include="src\sound\SoundDataFactory.cpp" />
     <ClCompile Include="src\sound\SoundFactory.cpp" />
     <ClCompile Include="src\sound\SoundManager.cpp" />
-    <ClCompile Include="src\sound\SoundDriver.cpp" />
     <ClCompile Include="src\physics\Body.cpp" />
     <ClCompile Include="src\physics\BodyData.cpp" />
     <ClCompile Include="src\physics\CollisionEventReceiver.cpp" />
@@ -393,6 +416,7 @@ copy "$(ProjectDir)..\dependencies\FreeImage\Dist\FreeImage.dll" "$(OutDir)"</Co
     <ClCompile Include="src\physics\PhysicsDriver.cpp" />
     <ClCompile Include="src\physics\Shape.cpp" />
     <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\sound\SoundUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

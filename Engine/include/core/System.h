@@ -66,8 +66,8 @@ public:
 	void setSystemDriver(SystemDriver* systemDriver);
 	void removeSystemDriver();
 
-	void registerDefaultFactories();
-	void removeDefaultFactories();
+	void registerFactories();
+	void removeFactories();
 
 protected:
 
@@ -78,8 +78,8 @@ protected:
 	virtual void updateImpl(float elapsedTime);
 	virtual void setSystemDriverImpl(SystemDriver* systemDriver);
 	virtual void removeSystemDriverImpl();
-	virtual void registerDefaultFactoriesImpl();
-	virtual void removeDefaultFactoriesImpl();
+	virtual void registerFactoriesImpl();
+	virtual void removeFactoriesImpl();
 
 	std::string mName;
 

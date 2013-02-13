@@ -24,12 +24,12 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <render/GLPixelFormat.h>
+#include <render/RenderUtils.h>
 
 namespace render
 {
 
-GLenum GLPixelUtil::getGLOriginFormat(resource::PixelFormat mFormat)
+GLenum getGLOriginFormat(resource::PixelFormat mFormat)
 {
 	switch(mFormat)
 	{
@@ -111,7 +111,7 @@ GLenum GLPixelUtil::getGLOriginFormat(resource::PixelFormat mFormat)
 	}
 }
 
-GLenum GLPixelUtil::getGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
+GLenum getGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
 {
 	switch(mFormat)
 	{
@@ -193,7 +193,7 @@ GLenum GLPixelUtil::getGLInternalFormat(resource::PixelFormat mFormat, bool hwGa
 	}
 }
 
-GLenum GLPixelUtil::getClosestGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
+GLenum getClosestGLInternalFormat(resource::PixelFormat mFormat, bool hwGamma)
 {
 	GLenum format = getGLInternalFormat(mFormat, hwGamma);
 	if(format == GL_NONE)
@@ -207,4 +207,191 @@ GLenum GLPixelUtil::getClosestGLInternalFormat(resource::PixelFormat mFormat, bo
 		return format;
 }
 
-}// end namespace resource
+
+GLenum getGLUsage(BufferUsage usage)
+{
+	switch(usage)
+	{
+	case BU_STATIC:
+	case BU_STATIC_WRITE_ONLY:
+		return GL_STATIC_DRAW;
+	case BU_DYNAMIC:
+	case BU_DYNAMIC_WRITE_ONLY:
+		return GL_DYNAMIC_DRAW;
+	case BU_DYNAMIC_WRITE_ONLY_DISCARDABLE:
+		return GL_STREAM_DRAW;
+	default:
+		return GL_DYNAMIC_DRAW;
+	};
+}
+
+GLenum getGLType(ShaderType type)
+{
+	switch(type)
+	{
+	case SHADER_TYPE_VERTEX:
+		return GL_VERTEX_SHADER;
+	case SHADER_TYPE_FRAGMENT:
+		return GL_FRAGMENT_SHADER;
+	case SHADER_TYPE_GEOMETRY:
+		return GL_GEOMETRY_SHADER;
+	default:
+		return GL_VERTEX_SHADER;
+	}
+}
+
+GLenum getGLType(VertexElementType type)
+{
+	switch(type)
+	{
+	case VERTEX_ELEMENT_TYPE_FLOAT1:
+	case VERTEX_ELEMENT_TYPE_FLOAT2:
+	case VERTEX_ELEMENT_TYPE_FLOAT3:
+	case VERTEX_ELEMENT_TYPE_FLOAT4:
+		return GL_FLOAT;
+	case VERTEX_ELEMENT_TYPE_SHORT1:
+	case VERTEX_ELEMENT_TYPE_SHORT2:
+	case VERTEX_ELEMENT_TYPE_SHORT3:
+	case VERTEX_ELEMENT_TYPE_SHORT4:
+		return GL_SHORT;
+	case VERTEX_ELEMENT_TYPE_COLOR:
+		return GL_UNSIGNED_BYTE;
+	default:
+		return 0;
+	}
+}
+
+GLenum getGLType(RenderOperationType type)
+{
+	switch (type)
+	{
+	case render::ROT_POINT_LIST:
+		return GL_POINTS;
+	case render::ROT_LINE_LIST:
+		return GL_LINES;
+	case render::ROT_LINE_STRIP:
+		return GL_LINE_STRIP;
+	case render::ROT_TRIANGLE_LIST:
+		return GL_TRIANGLES;
+	case render::ROT_TRIANGLE_STRIP:
+		return GL_TRIANGLE_STRIP;
+	case render::ROT_TRIANGLE_FAN:
+		return GL_TRIANGLE_FAN;
+	default:
+		return GL_FLOAT;
+	}
+}
+
+GLenum getGLType(TextureType type)
+{
+	switch(type)
+	{
+	case TEX_TYPE_1D:
+		return GL_TEXTURE_1D;
+	case TEX_TYPE_2D:
+		return GL_TEXTURE_2D;
+	case TEX_TYPE_3D:
+		return GL_TEXTURE_3D;
+	default:
+		return GL_TEXTURE_2D;
+	}
+}
+
+GLenum getGLType(ShaderParameterType type)
+{
+	switch(type)
+	{
+	case SHADER_PARAMETER_TYPE_FLOAT:
+		return GL_FLOAT;
+	case SHADER_PARAMETER_TYPE_FLOAT2:
+		return GL_FLOAT_VEC2;
+	case SHADER_PARAMETER_TYPE_FLOAT3:
+		return GL_FLOAT_VEC3;
+	case SHADER_PARAMETER_TYPE_FLOAT4:
+		return GL_FLOAT_VEC4;
+	case SHADER_PARAMETER_TYPE_INT:
+		return GL_INT;
+	case SHADER_PARAMETER_TYPE_INT2:
+		return GL_INT_VEC2;
+	case SHADER_PARAMETER_TYPE_INT3:
+		return GL_INT_VEC3;
+	case SHADER_PARAMETER_TYPE_INT4:
+		return GL_INT_VEC4;
+	case SHADER_PARAMETER_TYPE_MATRIX2:
+		return GL_FLOAT_MAT2;
+	case SHADER_PARAMETER_TYPE_MATRIX3:
+		return GL_FLOAT_MAT3;
+	case SHADER_PARAMETER_TYPE_MATRIX4:
+		return GL_FLOAT_MAT4;
+	case SHADER_PARAMETER_TYPE_SAMPLER1D:
+		return GL_SAMPLER_1D;
+	case SHADER_PARAMETER_TYPE_SAMPLER2D:
+		return GL_SAMPLER_2D;
+	case SHADER_PARAMETER_TYPE_SAMPLER3D:
+		return GL_SAMPLER_3D;
+	default:
+		return 0;
+	}
+}
+
+ShaderParameterType getType(ShaderAutoParameterType type)
+{
+	switch(type)
+	{
+	case SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX:
+	case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX:
+		return SHADER_PARAMETER_TYPE_MATRIX4;
+
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT:
+		return SHADER_PARAMETER_TYPE_INT;
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
+		return SHADER_PARAMETER_TYPE_FLOAT3;
+
+	case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
+		return SHADER_PARAMETER_TYPE_FLOAT4;
+	case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POWER_SCALE:
+		return SHADER_PARAMETER_TYPE_FLOAT;
+
+	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
+	case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
+		return SHADER_PARAMETER_TYPE_FLOAT3;
+
+	default:
+		return SHADER_PARAMETER_TYPE_UNKNOWN;
+	}
+}
+
+ShaderParameterType getType(TextureType type)
+{
+	switch(type)
+	{
+	case TEX_TYPE_1D:
+		return SHADER_PARAMETER_TYPE_SAMPLER1D;
+	case TEX_TYPE_2D:
+		return SHADER_PARAMETER_TYPE_SAMPLER2D;
+	case TEX_TYPE_3D:
+		return SHADER_PARAMETER_TYPE_SAMPLER3D;
+	default:
+		return SHADER_PARAMETER_TYPE_SAMPLER2D;
+	}
+}
+
+}// end namespace render

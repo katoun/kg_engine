@@ -102,8 +102,8 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void registerDefaultFactoriesImpl();
-	void removeDefaultFactoriesImpl();
+	void registerFactoriesImpl();
+	void removeFactoriesImpl();
 
 	std::string mNewSceneName;
 	Scene* mCurrentScene;
@@ -112,7 +112,7 @@ protected:
 	std::map<unsigned int, Component*> mComponents;
 	std::map<unsigned int, ComponentFactory*> mComponentFactories;
 
-	SceneFactory* mDefaultSceneFactory;
+	SceneFactory* mSceneFactory;
 
 	TransformFactory* mDefaultTransformFactory;
 };

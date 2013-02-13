@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
 
+#include <AL/alure.h>
 #include <glm/glm.hpp>
 
 namespace core
@@ -138,8 +139,15 @@ public:
 
 protected:
 
+	void initializeImpl();
+	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
-	virtual void setSoundDataImpl(SoundData* soundData);
+	void onMessageImpl(unsigned int messageID);
+	void setSoundDataImpl(SoundData* soundData);
+
+	ALuint mSourceId;
+
+	bool mSourceNeedsUpdate;
 
 	SoundData* mSoundData;
 

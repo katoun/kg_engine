@@ -34,6 +34,8 @@ THE SOFTWARE.
 #include <resource/Resource.h>
 #include <resource/ResourceManager.h>
 
+#include <AL/alure.h>
+
 #include <string>
 #include <list>
 #include <map>
@@ -54,8 +56,8 @@ namespace sound
 
 class Sound;
 class SoundData;
+class SoundDataFactory;
 class Listener;
-class SoundDriver;
 class SoundFactory;
 class ListenerFactory;
 
@@ -125,15 +127,19 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void setSystemDriverImpl(core::SystemDriver* systemDriver);
-	void removeSystemDriverImpl();
-	void registerDefaultFactoriesImpl();
-	void removeDefaultFactoriesImpl();
+	void registerFactoriesImpl();
+	void removeFactoriesImpl();
 
-	game::ComponentFactory* mDefaultListenerFactory;
-	game::ComponentFactory* mDefaultSoundFactory;
+	int mMajorVersion;
+	int mMinorVersion;
 
-	SoundDriver* mSoundDriver;
+	ALCcontext* mContext;
+	ALCdevice* mDevice;
+
+	SoundDataFactory* mSoundDataFactory;
+
+	game::ComponentFactory* mListenerFactory;
+	game::ComponentFactory* mSoundFactory;
 
 	//! Central list of sounds - for easy memory management and lookup.
 	std::map<unsigned int, Sound*> mSounds;

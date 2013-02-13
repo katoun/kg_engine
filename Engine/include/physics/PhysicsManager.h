@@ -150,11 +150,11 @@ protected:
 	void updateImpl(float elapsedTime);
 	void setSystemDriverImpl(core::SystemDriver* systemDriver);
 	void removeSystemDriverImpl();
-	void registerDefaultFactoriesImpl();
-	void removeDefaultFactoriesImpl();
+	void registerFactoriesImpl();
+	void removeFactoriesImpl();
 
-	BodyDataFactory* mDefaultBodyDataFactory;
-	game::ComponentFactory* mDefaultBodyFactory;
+	BodyDataFactory* mBodyDataFactory;
+	game::ComponentFactory* mBodyFactory;
 	
 	PhysicsDriver* mPhysicsDriver;
 

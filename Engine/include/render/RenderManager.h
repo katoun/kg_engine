@@ -48,7 +48,6 @@ namespace resource
 {
 class Resource;
 class Serializer;
-enum BufferUsage;
 enum PixelFormat;
 }
 
@@ -86,6 +85,7 @@ class VertexDeclaration;
 class VertexBufferBinding;
 class FontFactory;
 class MeshDataFactory;
+enum BufferUsage;
 enum VertexBufferType;
 enum VertexElementType;
 enum RenderOperationType;
@@ -190,24 +190,18 @@ public:
 	void removeAllShaders();
 
 	//! Create a vertex buffer.
-	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer* createVertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, BufferUsage usage);
 	//! Removes a vertex buffer.
 	void removeVertexBuffer(VertexBuffer* buf);
 	//! Removes all vertex buffers.
 	void removeAllVertexBuffers();
 	
 	//! Create an index buffer.
-	IndexBuffer* createIndexBuffer(IndexType idxType, unsigned int numIndexes, resource::BufferUsage usage);
+	IndexBuffer* createIndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage);
 	//! Removes an index buffer.
 	void removeIndexBuffer(IndexBuffer* buf);
 	//! Removes all index buffers.
 	void removeAllIndexBuffers();
-
-	//! Utility function to get the correct GL types.
-	static GLenum getGLUsage(resource::BufferUsage usage);
-	static GLenum getGLType(ShaderType type);
-	static GLenum getGLType(VertexElementType type);
-	static GLenum getGLType(RenderOperationType type);
 
 	static RenderManager* getInstance();
 
@@ -218,8 +212,8 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void registerDefaultFactoriesImpl();
-	void removeDefaultFactoriesImpl();
+	void registerFactoriesImpl();
+	void removeFactoriesImpl();
 
 	ShaderFactory* mShaderFactory;
 	MaterialFactory* mMaterialFactory;
@@ -227,9 +221,9 @@ protected:
 	FontFactory* mFontFactory;
 	MeshDataFactory* mMeshDataFactory;
 
-	game::ComponentFactory* mDefaultCameraFactory;
-	game::ComponentFactory* mDefaultLightFactory;
-	game::ComponentFactory* mDefaultModelFactory;
+	game::ComponentFactory* mCameraFactory;
+	game::ComponentFactory* mLightFactory;
+	game::ComponentFactory* mModelFactory;
 
 	static std::list<FrameEventReceiver*> mFrameEventReceivers;
 

@@ -24,66 +24,24 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _OPENAL_SOUND_H_
-#define _OPENAL_SOUND_H_
-
-#include <OpenALConfig.h>
-#include <sound/Sound.h>
+#include <sound/SoundDataFactory.h>
+#include <sound/SoundData.h>
 
 namespace sound
 {
 
-class OPENAL_PUBLIC_EXPORT OpenALSound: public Sound
+resource::Resource* SoundDataFactory::createResource(const std::string& filename, resource::Serializer* serializer)
 {
-public:
+	return new SoundData(filename, serializer);
+}
 
-	OpenALSound();
-	~OpenALSound();
+void SoundDataFactory::destroyResource(resource::Resource* resource)
+{
+	SoundData* pSoundData = static_cast<SoundData*>(resource);
 
-	void play();
+	assert(pSoundData != nullptr);
+	SAFE_DELETE(pSoundData);
+}
 
-	void pause();
-
-	void stop();
-
-	bool isPlaying() const;
-
-	bool isPaused() const;
-
-	bool isStopped() const;
-
-	void setPitch(float pitch);
-	
-	void setGain(float gain);
-	
-	void setMinDistance(float minDistance);
-	
-	void setMaxDistance(float maxDistance);
-	
-	void setInnerConeAngle(float innerConeAngle);
-	
-	void setOuterConeAngle(float outerConeAngle);
-
-	void setOuterConeGain(float outerConeGain);
-
-	void setLoop(bool loop);
-
-protected:
-
-	void initializeImpl();
-	void uninitializeImpl();
-	void updateImpl(float elapsedTime);
-	void onMessageImpl(unsigned int messageID);
-	void setSoundDataImpl(SoundData* soundData);
-
-	ALuint mSourceId;
-
-	bool mSourceNeedsUpdate;
-
-	static bool checkALError();
-	static bool checkALError(const std::string& message);
-};
 
 } // end namespace sound
-
-#endif

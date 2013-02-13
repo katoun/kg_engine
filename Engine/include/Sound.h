@@ -28,9 +28,9 @@ THE SOFTWARE.
 #define _ENGINE_SOUND_H_
 
 #include <sound/Sound.h>
+#include <sound/SoundUtils.h>
 #include <sound/SoundData.h>
 #include <sound/Listener.h>
-#include <sound/SoundDriver.h>
 #include <sound/SoundFactory.h>
 #include <sound/SoundManager.h>
 

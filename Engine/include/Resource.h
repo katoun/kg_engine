@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include <resource/ResourceDefines.h>
 #include <resource/ResourceEvent.h>
 #include <resource/ResourceEventReceiver.h>
-#include <resource/Buffer.h>
 #include <resource/PixelFormat.h>
 #include <resource/Serializer.h>
 #include <resource/LoadEvent.h>

@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <core/LogDefines.h>
 #include <resource/ResourceManager.h>
 #include <render/MeshData.h>
+#include <render/RenderBufferDefines.h>
 #include <render/VertexBuffer.h>
 #include <render/IndexBuffer.h>
 #include <render/RenderManager.h>
@@ -166,18 +167,18 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			float *pNormalFloat = nullptr;
 			float *pTexcoordFloat = nullptr;
 
-			pPositionVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_POSITION, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource::BU_STATIC_WRITE_ONLY);
-			pPositionFloat = (float*)(pPositionVertexBuffer->lock(resource::BL_DISCARD));
+			pPositionVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_POSITION, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, render::BU_STATIC_WRITE_ONLY);
+			pPositionFloat = (float*)(pPositionVertexBuffer->lock(render::BL_DISCARD));
 			if (pPositionFloat == nullptr)
 				return false;
 
-			pNormalVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_NORMAL, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource::BU_STATIC_WRITE_ONLY);
-			pNormalFloat = (float*)(pNormalVertexBuffer->lock(resource::BL_DISCARD));
+			pNormalVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_NORMAL, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, render::BU_STATIC_WRITE_ONLY);
+			pNormalFloat = (float*)(pNormalVertexBuffer->lock(render::BL_DISCARD));
 			if (pNormalFloat == nullptr)
 				return false;
 
-			pTexcoordVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES, render::VERTEX_ELEMENT_TYPE_FLOAT2, numVertices, resource::BU_STATIC_WRITE_ONLY);
-			pTexcoordFloat = (float*)(pTexcoordVertexBuffer->lock(resource::BL_DISCARD));
+			pTexcoordVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_TEXTURE_COORDINATES, render::VERTEX_ELEMENT_TYPE_FLOAT2, numVertices, render::BU_STATIC_WRITE_ONLY);
+			pTexcoordFloat = (float*)(pTexcoordVertexBuffer->lock(render::BL_DISCARD));
 			if (pTexcoordFloat == nullptr)
 				return false;
 
@@ -353,10 +354,10 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 			indexArray.reserve(numIndexes);
 			indexArray.resize(numIndexes,0);
 
-			render::IndexBuffer* pIndexBuffer = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, numIndexes, resource::BU_STATIC_WRITE_ONLY);
+			render::IndexBuffer* pIndexBuffer = render::RenderManager::getInstance()->createIndexBuffer(render::IT_32BIT, numIndexes, render::BU_STATIC_WRITE_ONLY);
 			resource->setIndexBuffer(pIndexBuffer);
 
-			unsigned int* pIdx = (unsigned int*)(pIndexBuffer->lock(resource::BL_DISCARD));
+			unsigned int* pIdx = (unsigned int*)(pIndexBuffer->lock(render::BL_DISCARD));
 			if (pIdx == nullptr)
 				return false;
 
@@ -417,13 +418,13 @@ bool MeshSerializer::importResource(Resource* dest, const std::string& filename)
 		float *pTangentFloat = nullptr;
 		float *pBinormalFloat = nullptr;
 
-		pTangentVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_TANGENT, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource::BU_STATIC_WRITE_ONLY);
-		pTangentFloat = (float*)(pTangentVertexBuffer->lock(resource::BL_DISCARD));
+		pTangentVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_TANGENT, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, render::BU_STATIC_WRITE_ONLY);
+		pTangentFloat = (float*)(pTangentVertexBuffer->lock(render::BL_DISCARD));
 		if (pTangentFloat == nullptr)
 			return false;
 
-		pBinormalVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_BINORMAL, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, resource::BU_STATIC_WRITE_ONLY);
-		pBinormalFloat = (float*)(pBinormalVertexBuffer->lock(resource::BL_DISCARD));
+		pBinormalVertexBuffer = render::RenderManager::getInstance()->createVertexBuffer(render::VERTEX_BUFFER_TYPE_BINORMAL, render::VERTEX_ELEMENT_TYPE_FLOAT3, numVertices, render::BU_STATIC_WRITE_ONLY);
+		pBinormalFloat = (float*)(pBinormalVertexBuffer->lock(render::BL_DISCARD));
 		if (pBinormalFloat == nullptr)
 			return false;
 

@@ -24,50 +24,19 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _SOUND_DRIVER_H_
-#define _SOUND_DRIVER_H_
+#ifndef _SOUND_UTILS_H_
+#define _SOUND_UTILS_H_
 
 #include <EngineConfig.h>
-#include <core/SystemDriver.h>
 
-namespace core
-{
-class vector3d;
-class quaternion;
-}
+#include <string>
 
 namespace sound
 {
 
-class Sound;
-class SoundData;
-class Listener;
+inline ENGINE_PUBLIC_EXPORT bool checkALError();
+inline ENGINE_PUBLIC_EXPORT bool checkALError(const std::string& message);
 
-//! Defines the functionality of a 3D Sound API
-//!
-//! The SoundSystem class provides a base interface
-//! which abstracts the general functionality of the 3D API
-//! e.g. OpenAL or Fmod. Whilst a few of the general
-//! methods have implementations, most of this class is
-//! abstract, requiring a subclass based on a specific API
-//! to be constructed to provide the full functionality.
-class ENGINE_PUBLIC_EXPORT SoundDriver : core::SystemDriver
-{
-public:
-
-	// Default Constructor
-	SoundDriver(const std::string& name);
-
-	// Destructor
-	virtual ~SoundDriver();
-
-	virtual void updateListener(Listener* listener) = 0;
-	
-	virtual void setDopplerFactor(float dopplerFactor) = 0;
-
-	virtual void setSoundSpeed(float soundSpeed) = 0;
-};
-
-} // end namespace sound
+} // end namespace core
 
 #endif

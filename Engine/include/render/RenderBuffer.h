@@ -24,46 +24,24 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _BUFFER_H_
-#define _BUFFER_H_
+#ifndef _RENDER_BUFFER_H_
+#define _RENDER_BUFFER_H_
 
 #include <EngineConfig.h>
+#include <render/RenderBufferDefines.h>
 
-namespace resource
+namespace render
 {
 
-//! Locking options
-enum BufferLocking
-{
-	BL_NORMAL,		//! Normal mode, ie allows read/write and contents are preserved.    
-	BL_DISCARD,		//! Discards the entire buffer while locking; Only allowed with the BU_DYNAMIC flag.   
-	BL_READ_ONLY,	//! Lock the buffer for reading only. Not allowed with the BU_WRITE_ONLY flag. Mandatory on static buffers.    
-	BL_NO_OVERWRITE	//! As BL_NORMAL, except the application do not overwrite any region of the buffer which has already been used in this frame.
-};
-
-//! Enum describing buffer usage; not mutually exclusive
-enum BufferUsage
-{
-	BU_STATIC = 1,							//! Static buffer which the application rarely modifies once created.
-	BU_DYNAMIC = 2,							//! Dynamic buffer which the application fairly often modifies once created.    
-	BU_WRITE_ONLY = 4,						//! The application will never read the contents of the buffer back, it will only ever write data.
-	BU_STATIC_WRITE_ONLY = 5,				//! Combination of BU_STATIC and BU_WRITE_ONLY.
-	BU_DYNAMIC_WRITE_ONLY = 6,				//! Combination of BU_DYNAMIC and BU_WRITE_ONLY.
-	BU_DISCARDABLE = 8,						//! Discardable buffer which the application will be refilling the contents of the buffer regularly (not just updating, but generating the contents from scratch)
-	BU_DYNAMIC_WRITE_ONLY_DISCARDABLE = 14	//! Combination of BU_DYNAMIC, BU_WRITE_ONLY and BU_DISCARDABLE
-};
-
-//! Abstract class defining common features of buffers.
-//! A 'buffer' is any area of memory held inside or outside of core system ram.
-//! Can refer to video ram or other memory areas such as sound card memory, custom
-//! co-processor memory etc, called 'hardware buffers'.
-class ENGINE_PUBLIC_EXPORT Buffer
+//! Abstract class defining common features of render buffers.
+//! A 'render buffer' is any area of memory held inside of video ram.
+class ENGINE_PUBLIC_EXPORT RenderBuffer
 {
 public:
 
-	Buffer(BufferUsage usage);
+	RenderBuffer(BufferUsage usage);
 
-	virtual ~Buffer();
+	virtual ~RenderBuffer();
 	//! Lock the buffer for (potentially) reading / writing.
 	//! \param offset: The byte offset from the start of the buffer to lock
 	//! \param length: The size of the area to lock, in bytes
@@ -112,7 +90,7 @@ public:
 	//! \param dstOffset: Offset in the destination buffer to start writing
 	//! \param length: Length of the data to copy, in bytes.
 	//! \param discardWholeBuffer: If true, will discard the entire contents of this buffer before copying
-	virtual void copyData(Buffer& srcBuffer, unsigned int srcOffset, unsigned int dstOffset, unsigned int length, bool discardWholeBuffer = false);
+	virtual void copyData(RenderBuffer& srcBuffer, unsigned int srcOffset, unsigned int dstOffset, unsigned int length, bool discardWholeBuffer = false);
 
 	//! Returns the size of this buffer in bytes.
 	unsigned int getSizeInBytes() const;
@@ -136,6 +114,6 @@ protected:
 	virtual void unlockImpl() = 0;
 };
 
-}// end namespace resource
+}// end namespace render
 
-#endif// _BUFFER_H_
+#endif// _RENDER_BUFFER_H_

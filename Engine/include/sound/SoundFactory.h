@@ -33,11 +33,17 @@ THE SOFTWARE.
 namespace sound
 {
 
-class ENGINE_PUBLIC_EXPORT SoundFactory: public game::ComponentFactory
+class ENGINE_PRIVATE_EXPORT SoundFactory: public game::ComponentFactory
 {
 public:
 
 	SoundFactory();
+
+	//! Creates a new sound component.
+	game::Component* createComponent();
+
+	//! Destroys a sound component which was created by this factory.
+	void destroyComponent(game::Component* component);
 };
 
 } // end namespace sound

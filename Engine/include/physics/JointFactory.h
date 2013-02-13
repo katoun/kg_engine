@@ -35,7 +35,7 @@ namespace physics
 class Joint;
 enum JointType;
 
-class ENGINE_PUBLIC_EXPORT JointFactory
+class ENGINE_PRIVATE_EXPORT JointFactory
 {
 public:
 

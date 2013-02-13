@@ -51,11 +51,11 @@ std::list<CollisionEventReceiver*> PhysicsManager::mCollisionEventReceivers;
 
 PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 {
-	mDefaultBodyDataFactory = new BodyDataFactory();
+	mBodyDataFactory = new BodyDataFactory();
 
 	mPhysicsDriver = nullptr;
 	mShapeFactory = nullptr;
-	mDefaultBodyFactory = nullptr;
+	mBodyFactory = nullptr;
 	mJointFactory = nullptr;
 
 	mHardware = true;
@@ -70,7 +70,7 @@ PhysicsManager::PhysicsManager(): core::System("PhysicsManager")
 PhysicsManager::~PhysicsManager()
 {
 	SAFE_DELETE(mCollisionEvent);
-	SAFE_DELETE(mDefaultBodyDataFactory);
+	SAFE_DELETE(mBodyDataFactory);
 }
 
 void PhysicsManager::setHardware(bool state)
@@ -240,12 +240,12 @@ void PhysicsManager::removeCollisionEventReceiver(CollisionEventReceiver* oldEve
 
 void PhysicsManager::setDefaultBodyFactory(game::ComponentFactory* factory)
 {
-	mDefaultBodyFactory = factory;
+	mBodyFactory = factory;
 }
 
 void PhysicsManager::removeDefaultBodyFactory()
 {
-	mDefaultBodyFactory = nullptr;
+	mBodyFactory = nullptr;
 }
 
 void PhysicsManager::setShapeFactory(ShapeFactory* factory)
@@ -348,16 +348,16 @@ void PhysicsManager::removeSystemDriverImpl()
 	mPhysicsDriver = nullptr;
 }
 
-void PhysicsManager::registerDefaultFactoriesImpl()
+void PhysicsManager::registerFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_BODY_DATA, mDefaultBodyDataFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_BODY_DATA, mBodyDataFactory);
 
 	if (game::GameManager::getInstance() != nullptr)
-		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_BODY, mDefaultBodyFactory);
+		game::GameManager::getInstance()->registerComponentFactory(game::COMPONENT_TYPE_BODY, mBodyFactory);
 }
 
-void PhysicsManager::removeDefaultFactoriesImpl()
+void PhysicsManager::removeFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_BODY_DATA);

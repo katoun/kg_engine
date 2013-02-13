@@ -24,24 +24,61 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <OpenALSoundDataFactory.h>
-#include <OpenALSoundData.h>
+#include <sound/SoundUtils.h>
+
+#include <AL/alure.h>
 
 namespace sound
 {
 
-resource::Resource* OpenALSoundDataFactory::createResource(const std::string& filename, resource::Serializer* serializer)
+bool checkALError()
 {
-	return new OpenALSoundData(filename, serializer);
+	ALenum errCode;
+	if ((errCode = alGetError()) == AL_NO_ERROR) return false;
+
+	char mStr[256];
+	sprintf_s(mStr,"OpenAL error! %s\n", (char*)alGetString(errCode));
+
+#ifdef _DEBUG
+	std::cout<<mStr<<std::endl;
+#endif
+
+	return true;
 }
 
-void OpenALSoundDataFactory::destroyResource(resource::Resource* resource)
+bool checkALError(const std::string& message)
 {
-	OpenALSoundData* soundData = static_cast<OpenALSoundData*>(resource);
+	ALenum errCode;
+	if ((errCode = alGetError()) == AL_NO_ERROR) return false;
 
-	assert(soundData != nullptr);
-	SAFE_DELETE(soundData);
+	char mStr[256];
+	switch (errCode)
+	{
+	case AL_INVALID_NAME:
+		sprintf_s(mStr,"ERROR SoundManager::%s Invalid Name", message.c_str());
+		break;
+	case AL_INVALID_ENUM:
+		sprintf_s(mStr,"ERROR SoundManager::%s Invalid Enum", message.c_str());
+		break;
+	case AL_INVALID_VALUE:
+		sprintf_s(mStr,"ERROR SoundManager::%s Invalid Value", message.c_str());
+		break;
+	case AL_INVALID_OPERATION:
+		sprintf_s(mStr,"ERROR SoundManager::%s Invalid Operation", message.c_str());
+		break;
+	case AL_OUT_OF_MEMORY:
+		sprintf_s(mStr,"ERROR SoundManager::%s Out Of Memory", message.c_str());
+		break;
+	default:
+		sprintf_s(mStr,"ERROR SoundManager::%s Unknown error (%i) case in testALError()", message.c_str(), errCode);
+		break;
+	};
+
+#ifdef _DEBUG
+	std::cout<<mStr<<std::endl;
+#endif
+
+	return true;
 }
 
-
-} // end namespace sound
+} // end namespace core

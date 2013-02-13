@@ -43,14 +43,14 @@ GameManager::GameManager(): core::System("GameManager")
 	mNewSceneName				= "NewScene";
 	mCurrentScene				= nullptr;
 
-	mDefaultSceneFactory		= new SceneFactory();
+	mSceneFactory		= new SceneFactory();
 
 	mDefaultTransformFactory	= new TransformFactory();
 }
 
 GameManager::~GameManager()
 {
-	SAFE_DELETE(mDefaultSceneFactory);
+	SAFE_DELETE(mSceneFactory);
 	SAFE_DELETE(mDefaultTransformFactory);
 }
 
@@ -344,15 +344,15 @@ void GameManager::updateImpl(float elapsedTime)
 	}
 }
 
-void GameManager::registerDefaultFactoriesImpl()
+void GameManager::registerFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
-		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SCENE, mDefaultSceneFactory);
+		resource::ResourceManager::getInstance()->registerResourceFactory(resource::RESOURCE_TYPE_SCENE, mSceneFactory);
 
 	registerComponentFactory(COMPONENT_TYPE_TRANSFORM, mDefaultTransformFactory);
 }
 
-void GameManager::removeDefaultFactoriesImpl()
+void GameManager::removeFactoriesImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 		resource::ResourceManager::getInstance()->removeResourceFactory(resource::RESOURCE_TYPE_SCENE);

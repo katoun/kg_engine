@@ -35,7 +35,7 @@ namespace game
 
 class Component;
 
-class ENGINE_PUBLIC_EXPORT TransformFactory: public ComponentFactory
+class ENGINE_PRIVATE_EXPORT TransformFactory: public ComponentFactory
 {
 public:
 

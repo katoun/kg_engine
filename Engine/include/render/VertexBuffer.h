@@ -29,7 +29,8 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <render/GLConfig.h>
-#include <resource/Buffer.h>
+#include <render/RenderBuffer.h>
+#include <render/RenderBufferDefines.h>
 #include <render/VertexBufferDefines.h>
 
 #include <list>
@@ -39,11 +40,11 @@ namespace render
 {
 
 //! Class for index buffers, still abstract.
-class ENGINE_PUBLIC_EXPORT VertexBuffer: public resource::Buffer
+class ENGINE_PUBLIC_EXPORT VertexBuffer: public RenderBuffer
 {
 public:
 
-	VertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, resource::BufferUsage usage);
+	VertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, BufferUsage usage);
 
 	virtual ~VertexBuffer();
 
@@ -63,7 +64,7 @@ public:
 
 protected:
 
-	void* lockImpl(unsigned int offset, unsigned int length, resource::BufferLocking options);
+	void* lockImpl(unsigned int offset, unsigned int length, BufferLocking options);
 
 	void unlockImpl();
 

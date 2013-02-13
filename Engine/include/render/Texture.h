@@ -138,8 +138,6 @@ protected:
 	unsigned int mNumMipmaps;
 
 	bool mHasAlpha;
-
-	GLenum getGLTextureType() const;
 };
 
 } // end namespace render

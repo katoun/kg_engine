@@ -24,7 +24,11 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
+#include <core/Log.h>
+#include <core/LogDefines.h>
+#include <sound/SoundUtils.h>
 #include <sound/SoundData.h>
+#include <resource/ResourceManager.h>
 
 namespace sound
 {
@@ -40,6 +44,22 @@ SoundData::SoundData(const std::string& name, resource::Serializer* serializer):
 	mInnerConeAngle = 360;
 	mOuterConeAngle = 360;
 	mOuterConeGain = 1;
+
+	mData = nullptr;
+	mDataSize = 0;
+	mFrequency = 0;
+	mChannels = 0;
+	mBPS = 0;
+	mBufferFormat = 0;
+
+	// Generate an AL Buffer
+	alGenBuffers(1, &mBufferId);
+
+	if (!mBufferId)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Cannot create OpenAL sound buffer", core::LOG_LEVEL_ERROR);
+		return;
+	}
 }
 
 SoundData::~SoundData() {}
@@ -142,6 +162,55 @@ float SoundData::getOuterConeGain() const
 	return mOuterConeGain;
 }
 
+ALuint SoundData::getOpenALBufferID() const
+{
+	return mBufferId;
+}
+
+bool SoundData::loadImpl()
+{
+	std::string extention;
+
+	// Get extension.
+	size_t pos = mFilename.find_last_of('.');
+	if (pos == std::string::npos)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Unable to load sound - invalid extension.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	if (resource::ResourceManager::getInstance() == nullptr)
+	{
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", "Unable to load sound - resources data path not set.", core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	extention = mFilename.substr(pos + 1, mFilename.size() - pos);
+
+	std::string filePath = resource::ResourceManager::getInstance()->getDataPath() + "/" + mFilename;
+
+	if (extention == "wav" || extention == "ogg")
+	{
+		alGetError(); // Clear Error Code
+
+		ALboolean ret = alureBufferDataFromFile(filePath.c_str(), mBufferId);
+
+		if (checkALError("OpenALSoundData::loadImpl()::alBufferData:"))
+			return false;
+	}
+	else
+	{
+		std::string message = "Unable to load sound - ";
+		message += extention;
+		message += " unsupported extension.";
+
+		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("OpenALSoundData", message, core::LOG_LEVEL_ERROR);
+		return false;
+	}
+
+	return true;
+}
+
 void SoundData::unloadImpl()
 {
 	mPitch = 1;
@@ -151,6 +220,8 @@ void SoundData::unloadImpl()
 	mInnerConeAngle = 360;
 	mOuterConeAngle = 360;
 	mOuterConeGain = 1;
+
+	alDeleteBuffers(1, &mBufferId);
 }
 
 } // end namespace sound

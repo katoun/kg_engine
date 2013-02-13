@@ -59,7 +59,7 @@ void System::initialize()
 	if (mSystemDriver != nullptr)
 		mSystemDriver->initialize();
 
-	registerDefaultFactories();
+	registerFactories();
 	initializeImpl();
 
 	mState = SYSTEM_STATE_INITIALIZED;
@@ -80,7 +80,7 @@ void System::uninitialize()
 		mSystemDriver->uninitialize();
 
 	uninitializeImpl();
-	removeDefaultFactories();
+	removeFactories();
 
 	mState = SYSTEM_STATE_UNINITIALIZED;
 
@@ -190,14 +190,14 @@ void System::removeSystemDriver()
 	removeSystemDriverImpl();
 }
 
-void System::registerDefaultFactories()
+void System::registerFactories()
 {
-	registerDefaultFactoriesImpl();
+	registerFactoriesImpl();
 }
 
-void System::removeDefaultFactories()
+void System::removeFactories()
 {
-	removeDefaultFactoriesImpl();
+	removeFactoriesImpl();
 }
 
 void System::initializeImpl() {}
@@ -214,7 +214,7 @@ void System::setSystemDriverImpl(SystemDriver* systemDriver) {}
 
 void System::removeSystemDriverImpl() {}
 
-void System::registerDefaultFactoriesImpl() {}
-void System::removeDefaultFactoriesImpl() {}
+void System::registerFactoriesImpl() {}
+void System::removeFactoriesImpl() {}
 
 } // end namespace engine

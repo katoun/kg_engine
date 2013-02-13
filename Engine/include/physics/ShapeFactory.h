@@ -35,7 +35,7 @@ namespace physics
 class Shape;
 enum ShapeType;
 
-class ENGINE_PUBLIC_EXPORT ShapeFactory
+class ENGINE_PRIVATE_EXPORT ShapeFactory
 {
 public:
 

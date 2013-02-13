@@ -2,10 +2,6 @@
 #define ALURE_VER_MAJOR 1
 #define ALURE_VER_MINOR 2
 
-/* Define to the version of the library being built */
-#define ALURE_VER_MAJOR 1
-#define ALURE_VER_MINOR 2
-
 /* Define if we have GCC's constructor attribute */
 /* #undef HAVE_GCC_CONSTRUCTOR */
 
