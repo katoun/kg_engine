@@ -24,19 +24,14 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _BULLET_PHYSICS_DRIVER_H_
-#define _BULLET_PHYSICS_DRIVER_H_
+#ifndef _PHYSICS_MATERIAL_FACTORY_H_
+#define _PHYSICS_MATERIAL_FACTORY_H_
 
-#include <BulletConfig.h>
-#include <core/Singleton.h>
-#include <physics/PhysicsDriver.h>
-
-#include <vector>
-#include <map>
+#include <EngineConfig.h>
+#include <resource/ResourceFactory.h>
 
 namespace resource
 {
-// Forward definition of references
 class Resource;
 class Serializer;
 }
@@ -44,64 +39,15 @@ class Serializer;
 namespace physics
 {
 
-// Forward definition of references
-struct CollisionPoint;
-
-struct CollisionData
-{
-	CollisionData();
-
-	~CollisionData();
-
-	unsigned long long int hashID;
-
-	Body* body1;
-	Body* body2;
-
-	std::vector<CollisionPoint*> collisionPoints;
-};
-
-class BulletPhysicsDriver: public PhysicsDriver, public core::Singleton<BulletPhysicsDriver>
+class ENGINE_PRIVATE_EXPORT MaterialFactory: public resource::ResourceFactory
 {
 public:
-	// Default constructor / destructor
-	BulletPhysicsDriver();
-	~BulletPhysicsDriver();
 
-	void setHardware(bool state);
+	resource::Resource* createResource(const std::string& filename, resource::Serializer* serializer);
 
-	void setCollisionAccuracy(float accuracy);
-	void setSolverAccuracy(float accuracy);
-
-	void setGravity(const glm::vec3& gravity);
-
-	btDynamicsWorld* getDynamicsWorld();
-
-	std::vector<short> mCollisionMasks;
-
-	static BulletPhysicsDriver* getInstance();
-
-protected:
-
-	void initializeImpl();
-	void uninitializeImpl();
-	void updateImpl(float elapsedTime);
-
-	float m_fFixedTimeStep;
-	int set_substeps;
-	int set_pe;
-
-	btDynamicsWorld*					mDynamicsWorld;
-	btBroadphaseInterface*				mBroadphase;
-	btCollisionDispatcher*				mDispatcher;
-	btConstraintSolver*					mSolver;
-	btDefaultCollisionConfiguration*	mCollisionConfiguration;
-
-	std::map<unsigned long long int, CollisionData*>	mLastCollisions;
-
-	void removeAllCollisions();
+	void destroyResource(resource::Resource* resource);
 };
 
-} // end namespace game
+} // end namespace physics
 
 #endif

@@ -24,32 +24,23 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include <physics/PhysicsDriver.h>
-#include <physics/PhysicsManager.h>
+#include <physics/MaterialFactory.h>
+#include <physics/Material.h>
 
 namespace physics
 {
 
-PhysicsDriver::PhysicsDriver(const std::string& name): core::SystemDriver(name) {}
-
-PhysicsDriver::~PhysicsDriver() {}
-
-void PhysicsDriver::fireCollisionStarted(Body* body1, Body* body2, const std::vector<CollisionPoint*>& points)
+resource::Resource* MaterialFactory::createResource(const std::string& filename, resource::Serializer* serializer)
 {
-	if (PhysicsManager::getInstance() != nullptr)
-		PhysicsManager::getInstance()->fireCollisionStarted(body1, body2, points);
+	return new Material(filename, serializer);
 }
 
-void PhysicsDriver::fireCollisionUpdate(Body* body1, Body* body2, const std::vector<CollisionPoint*>& points)
+void MaterialFactory::destroyResource(resource::Resource* resource)
 {
-	if (PhysicsManager::getInstance() != nullptr)
-		PhysicsManager::getInstance()->fireCollisionUpdate(body1, body2, points);
-}
+	Material* pMaterial = static_cast<Material*>(resource);
 
-void PhysicsDriver::fireCollisionEnded(Body* body1, Body* body2)
-{
-	if (PhysicsManager::getInstance() != nullptr)
-		PhysicsManager::getInstance()->fireCollisionEnded(body1, body2);
+	assert(pMaterial != nullptr);
+	SAFE_DELETE(pMaterial);
 }
 
 } // end namespace physics

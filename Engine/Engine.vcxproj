@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/D "_CRT_SECURE_NO_DEPRECATE" /D "_SCL_SECURE_NO_WARNINGS" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;$(ProjectDir)..\dependencies\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -68,8 +68,8 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -84,8 +84,8 @@
       </SubSystem>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\bullet\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;BulletCollision_vs2012_debug.lib;BulletDynamics_vs2012_debug.lib;BulletSoftBody_vs2012_debug.lib;LinearMath_vs2012_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -111,7 +111,7 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\dependencies\glm;$(ProjectDir)..\dependencies\tinyxml2;$(ProjectDir)..\dependencies\CPUInfo;$(ProjectDir)..\dependencies\glew\include;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\include\AL;$(ProjectDir)..\dependencies\alure\include;$(ProjectDir)..\dependencies\libogg\include;$(ProjectDir)..\dependencies\libvorbis\include;$(ProjectDir)..\dependencies\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;ALURE_STATIC_LIBRARY;GAME_ENGINE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -122,10 +122,11 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\dependencies\glew\lib;$(ProjectDir)..\dependencies\FreeImage\Dist;$(ProjectDir)..\dependencies\openal-soft\build\$(Configuration);$(ProjectDir)..\dependencies\libogg\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configuration);$(ProjectDir)..\dependencies\bullet\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -133,7 +134,7 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(ProjectDir)..\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImage.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;BulletCollision_vs2012.lib;BulletDynamics_vs2012.lib;BulletSoftBody_vs2012.lib;LinearMath_vs2012.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -190,10 +191,10 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\input\MouseDefines.h" />
     <ClInclude Include="include\physics\BodyDataFactory.h" />
     <ClInclude Include="include\physics\BodyFactory.h" />
-    <ClInclude Include="include\physics\JointDefines.h" />
-    <ClInclude Include="include\physics\JointFactory.h" />
+    <ClInclude Include="include\physics\Constraint.h" />
+    <ClInclude Include="include\physics\ConstraintDefines.h" />
+    <ClInclude Include="include\physics\MaterialFactory.h" />
     <ClInclude Include="include\physics\ShapeDefines.h" />
-    <ClInclude Include="include\physics\ShapeFactory.h" />
     <ClInclude Include="include\platform\PlatformDefines.h" />
     <ClInclude Include="include\render\Camera.h" />
     <ClInclude Include="include\render\CameraDefines.h" />
@@ -281,10 +282,8 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\physics\CollisionEvent.h" />
     <ClInclude Include="include\physics\CollisionEventReceiver.h" />
     <ClInclude Include="include\physics\CollisionPoint.h" />
-    <ClInclude Include="include\physics\Joint.h" />
     <ClInclude Include="include\physics\Material.h" />
     <ClInclude Include="include\physics\PhysicsManager.h" />
-    <ClInclude Include="include\physics\PhysicsDriver.h" />
     <ClInclude Include="include\physics\Shape.h" />
     <ClInclude Include="include\Core.h" />
     <ClInclude Include="include\Engine.h" />
@@ -334,6 +333,8 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClCompile Include="src\physics\BodyFactory.cpp" />
     <ClCompile Include="src\physics\CollisionEvent.cpp" />
     <ClCompile Include="src\physics\CollisionPoint.cpp" />
+    <ClCompile Include="src\physics\Constraint.cpp" />
+    <ClCompile Include="src\physics\MaterialFactory.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
     <ClCompile Include="src\render\CameraFactory.cpp" />
     <ClCompile Include="src\render\Color.cpp" />
@@ -405,7 +406,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClCompile Include="src\physics\Body.cpp" />
     <ClCompile Include="src\physics\BodyData.cpp" />
     <ClCompile Include="src\physics\CollisionEventReceiver.cpp" />
-    <ClCompile Include="src\physics\Joint.cpp" />
     <ClCompile Include="src\physics\Material.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
@@ -413,7 +413,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="src\physics\PhysicsManager.cpp" />
-    <ClCompile Include="src\physics\PhysicsDriver.cpp" />
     <ClCompile Include="src\physics\Shape.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\sound\SoundUtils.cpp" />

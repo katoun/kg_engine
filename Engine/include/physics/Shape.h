@@ -33,6 +33,8 @@ THE SOFTWARE.
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+class btCollisionShape;
+
 namespace physics
 {
 
@@ -60,9 +62,13 @@ public:
 	//!Gets the orientation of this shape.
 	const glm::quat& getOrientation() const;
 
+	btCollisionShape* getBulletCollisionShape();
+
 protected:
 
 	ShapeType mShapeType;
+
+	btCollisionShape* mCollisionShape;
 
 	//! Stores the position/translation of the shape relative to its body.
 	glm::vec3 mPosition;

@@ -26,12 +26,16 @@ THE SOFTWARE.
 
 #include <physics/Shape.h>
 
+#include <btBulletCollisionCommon.h>
+
 namespace physics
 {
 
 Shape::Shape()
 {
 	mShapeType = SHAPE_TYPE_UNDEFINED;
+
+	mCollisionShape = nullptr;
 
 	mPosition = glm::vec3(0, 0, 0);
 	mOrientation = glm::quat(0, 0, 0, 1);
@@ -71,6 +75,11 @@ const glm::quat& Shape::getOrientation() const
 	return mOrientation;
 }
 
+btCollisionShape* Shape::getBulletCollisionShape()
+{
+	return mCollisionShape;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //Plane Shape
 
@@ -87,6 +96,11 @@ void PlaneShape::setDimension(const glm::vec3& normal, float d)
 {
 	mNormal = normal;
 	mD = d;
+
+	btVector3 planeNorm(normal.x, normal.y, normal.z);
+	btScalar planeConst(d);
+
+	mCollisionShape = new btStaticPlaneShape(planeNorm, planeConst);
 }
 
 const glm::vec3& PlaneShape::getNormal()
@@ -113,6 +127,10 @@ SphereShape::~SphereShape() {}
 void SphereShape::setDimension(float radius)
 {
 	mRadius = radius;
+
+	btScalar rad(radius);
+
+	mCollisionShape = new btSphereShape(rad);
 }
 
 float SphereShape::getRadius()
@@ -134,6 +152,10 @@ BoxShape::~BoxShape() {}
 void BoxShape::setDimension(const glm::vec3& dimensions)
 {
 	mDimensions = dimensions;
+
+	btVector3 dim(dimensions.x, dimensions.y, dimensions.z);
+
+	mCollisionShape = new btBoxShape(dim);
 }
 
 const glm::vec3& BoxShape::getDimensions()

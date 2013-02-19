@@ -38,6 +38,12 @@ class ENGINE_PUBLIC_EXPORT BodyFactory: public game::ComponentFactory
 public:
 
 	BodyFactory();
+
+	//! Creates a new body component.
+	game::Component* createComponent();
+
+	//! Destroys a body component which was created by this factory.
+	void destroyComponent(game::Component* component);
 };
 
 } // end namespace physics

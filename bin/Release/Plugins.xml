@@ -1,4 +1,3 @@
 <Plugins>
 	<Plugin>InputDriver_Win32</Plugin>
-	<Plugin>PhysicsDriver_Bullet</Plugin>
 </Plugins>

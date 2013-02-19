@@ -24,25 +24,21 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _BULLET_SHAPE_FACTORY_H_
-#define _BULLET_SHAPE_FACTORY_H_
-
-#include <BulletConfig.h>
-#include <physics/ShapeFactory.h>
+#ifndef _CONSTRAINT_DEFINES_H_
+#define _CONSTRAINT_DEFINES_H_
 
 namespace physics
 {
 
-class Shape;
-enum ShapeType;
-
-class BULLET_PUBLIC_EXPORT BulletShapeFactory: public ShapeFactory
+enum ConstraintType
 {
-public:
-
-	Shape* createShape(ShapeType type);
-
-	void destroyShape(Shape* shape);
+	CONSTRAINT_TYPE_UNDEFINED,
+	CONSTRAINT_TYPE_SPHERICAL,	// Ball & Socket 3d rotation
+	CONSTRAINT_TYPE_HINGE,		// Hinge 1d rotation
+	CONSTRAINT_TYPE_SLIDER,		// Slider 1d translation
+	CONSTRAINT_TYPE_GENERIC,		// Generic 6DOF
+	CONSTRAINT_TYPE_RIGID,		// Rigid
+	CONSTRAINT_TYPE_COUNT
 };
 
 } // end namespace physics

@@ -25,6 +25,8 @@ THE SOFTWARE.
 */
 
 #include <physics/BodyFactory.h>
+#include <physics/Body.h>
+#include <physics/PhysicsManager.h>
 
 namespace physics
 {
@@ -32,6 +34,27 @@ namespace physics
 BodyFactory::BodyFactory(): game::ComponentFactory()
 {
 	mName = "Body";
+}
+
+game::Component* BodyFactory::createComponent()
+{
+	Body* pBody = new Body();
+
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->addBody(pBody);
+
+	return pBody;
+}
+
+void BodyFactory::destroyComponent(game::Component* component)
+{
+	Body* pBody = static_cast<Body*>(component);
+
+	if (PhysicsManager::getInstance() != nullptr)
+		PhysicsManager::getInstance()->removeBody(pBody);
+
+	assert(pBody != nullptr);
+	SAFE_DELETE(pBody);
 }
 
 } // end namespace physics

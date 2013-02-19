@@ -35,12 +35,17 @@ THE SOFTWARE.
 
 #include <string>
 
+class btCollisionShape;
+class btRigidBody;
+struct btDefaultMotionState;
+
 namespace physics
 {
 
 class Material;
 class BodyData;
-class Joint;
+class Constraint;
+class Shape;
 enum BodyType;
 
 //! Defines an actor in the physics world.
@@ -61,8 +66,8 @@ public:
 	BodyData* getBodyData() const;
 
 	//! Sets the name of the material which this body will use.
-	virtual void setMaterial(const std::string& filename);
-	virtual void setMaterial(Material* material);
+	void setMaterial(const std::string& filename);
+	void setMaterial(Material* material);
 
 	Material* getMaterial() const;
 
@@ -130,14 +135,24 @@ public:
 	//! This will cause a change in the angular momentum, and subsequently a change in the angular velocity.
 	virtual void applyAngularImpulse(const glm::vec3& angularImpulse);
 
-	void setJoint(Joint* joint);
+	void setConstraint(Constraint* joint);
 
 	void resourceLoaded(const resource::ResourceEvent& evt);
 	void resourceUnloaded(const resource::ResourceEvent& evt);
 
+	btRigidBody* getBulletRigidBody();
+
 protected:
 
-	virtual void setBodyDataImpl(BodyData* bodyData);
+	void initializeImpl();
+	void uninitializeImpl();
+	void updateImpl(float elapsedTime);
+	void onMessageImpl(unsigned int messageID);
+
+	btCollisionShape* addBulletShape(Shape* shape);
+
+	btRigidBody*			mRigidBody;
+	btDefaultMotionState*	mMotionState;
 
 	BodyData* mBodyData;
 
@@ -171,12 +186,14 @@ protected:
 	/// Determines whether the body is enabled.
 	bool mEnabled;
 
+	bool mBodyNeedsUpdate;
+
 	glm::vec3 mForce;
 	glm::vec3 mTorque;
 	glm::vec3 mLinearImpulse;
 	glm::vec3 mAngularImpulse;
 
-	Joint* mJoint;
+	Constraint* mConstraint;
 };
 
 } // end namespace physics

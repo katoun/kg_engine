@@ -39,6 +39,12 @@ THE SOFTWARE.
 #include <string>
 #include <map>
 
+class btDynamicsWorld;
+class btBroadphaseInterface;
+class btCollisionDispatcher;
+class btConstraintSolver;
+class btDefaultCollisionConfiguration;
+
 namespace game
 {
 class ComponentFactory;
@@ -52,16 +58,28 @@ class BodyFactory;
 class BodyData;
 class BodyDataFactory;
 class Shape;
-class ShapeFactory;
-class Joint;
-class JointFactory;
+class Constraint;
 class Material;
-class PhysicsDriver;
+class MaterialFactory;
 struct CollisionPoint;
 struct CollisionEvent;
 enum BodyType;
 enum ShapeType;
-enum JointType;
+enum ConstraintType;
+
+struct CollisionData
+{
+	CollisionData();
+
+	~CollisionData();
+
+	unsigned long long int hashID;
+
+	Body* body1;
+	Body* body2;
+
+	std::vector<CollisionPoint*> collisionPoints;
+};
 
 //! Physics Manager.
 //! 
@@ -70,8 +88,6 @@ enum JointType;
 //! \version: 1.0
 class ENGINE_PUBLIC_EXPORT PhysicsManager: public core::System, public core::Singleton<PhysicsManager>
 {
-	friend class PhysicsDriver;
-
 public:
 
 	// Default Constructor
@@ -99,37 +115,21 @@ public:
 	Shape* createShape(ShapeType type);
 
 	//! Creates a joint to be managed by physics manager.
-	Joint* createJoint(JointType type);
+	Constraint* createConstraint(ConstraintType type);
 
-	//! Retrieves a pointer to a joint by id.
-	Joint* getJoint(const unsigned int& id);
-
-	//! Retrieves the total number of created joints.
-	unsigned int getNumberOfJoints() const;
-
-	//! Removes a joint.
-	void removeJoint(Joint *joint);
-	//! Removes a joint.
-	void removeJoint(const unsigned int& id);
-	//! Removes (and destroys) all bodies.
-	void removeAllJoints();
+	//! Removes a constraint.
+	void removeConstraint(Constraint* constraint);
+	//! Removes a constraint.
+	void removeConstraint(const unsigned int& id);
+	//! Removes (and destroys) all constraints.
+	void removeAllConstraints();
 
 	Material* createMaterial(const std::string& materialFilename);
 
 	void addCollisionEventReceiver(CollisionEventReceiver* newEventReceiver);
 	void removeCollisionEventReceiver(CollisionEventReceiver* oldEventReceiver);
 
-	void setBodyFactory(BodyFactory* factory);
-	void removeBodyFactory();
-
-	void setDefaultBodyFactory(game::ComponentFactory* factory);
-	void removeDefaultBodyFactory();
-
-	void setShapeFactory(ShapeFactory* factory);
-	void removeShapeFactory();
-
-	void setJointFactory(JointFactory* factory);
-	void removeJointFactory();
+	btDynamicsWorld* getDynamicsWorld();
 
 	static PhysicsManager* getInstance();
 
@@ -148,30 +148,40 @@ protected:
 	void startImpl();
 	void stopImpl();
 	void updateImpl(float elapsedTime);
-	void setSystemDriverImpl(core::SystemDriver* systemDriver);
-	void removeSystemDriverImpl();
 	void registerFactoriesImpl();
 	void removeFactoriesImpl();
+
+	void removeLastCollisions();
+
+	btDynamicsWorld*					mDynamicsWorld;
+	btBroadphaseInterface*				mBroadphase;
+	btCollisionDispatcher*				mDispatcher;
+	btConstraintSolver*					mSolver;
+	btDefaultCollisionConfiguration*	mCollisionConfiguration;
+
+	float m_fFixedTimeStep;
+	int set_substeps;
+	int set_pe;
+
+	MaterialFactory* mMaterialFactory;
 
 	BodyDataFactory* mBodyDataFactory;
 	game::ComponentFactory* mBodyFactory;
 	
-	PhysicsDriver* mPhysicsDriver;
-
 	static CollisionEvent* mCollisionEvent;
 	static std::list<CollisionEventReceiver*> mCollisionEventReceivers;
+
+	std::vector<short> mCollisionMasks;
+	std::map<unsigned long long int, CollisionData*> mLastCollisions;
 
 	//! Central list of bodies - for easy memory management and lookup.
 	std::map<unsigned int, Body*> mBodies;
 
 	//! Central list of joints - for easy memory management and lookup.
-	std::map<unsigned int, Joint*> mJoints;
+	std::map<unsigned int, Constraint*> mConstraints;
 
 	//! Central list of materials - for easy memory management and lookup.
 	std::map<unsigned int, Material*> mMaterials;
-
-	ShapeFactory* mShapeFactory;
-	JointFactory* mJointFactory;
 
 	bool mHardware;
 	float mCollisionAccuracy;

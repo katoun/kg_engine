@@ -83,6 +83,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <BrowseInformation>true</BrowseInformation>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Engined.lib;wxbase29ud.lib;wxmsw29ud_core.lib;wxmsw29ud_aui.lib;wxmsw29ud_adv.lib;wxmsw29ud_propgrid.lib;wxmsw29ud_ribbon.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -129,6 +130,7 @@ copy "$(ProjectDir)..\dependencies\wxMSW\lib\vc_dll\wxmsw294ud_ribbon_vc_custom.
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Engine.lib;wxbase29u.lib;wxmsw29u_core.lib;wxmsw29u_aui.lib;wxmsw29u_adv.lib;wxmsw29u_propgrid.lib;wxmsw29u_ribbon.lib;%(AdditionalDependencies)</AdditionalDependencies>

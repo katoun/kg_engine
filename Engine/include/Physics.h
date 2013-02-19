@@ -34,14 +34,11 @@ THE SOFTWARE.
 #include <physics/Material.h>
 #include <physics/Shape.h>
 #include <physics/ShapeDefines.h>
-#include <physics/ShapeFactory.h>
-#include <physics/Joint.h>
-#include <physics/JointDefines.h>
-#include <physics/JointFactory.h>
+#include <physics/Constraint.h>
+#include <physics/ConstraintDefines.h>
 #include <physics/CollisionPoint.h>
 #include <physics/CollisionEvent.h>
 #include <physics/CollisionEventReceiver.h>
-#include <physics/PhysicsDriver.h>
 #include <physics/PhysicsManager.h>
 
 #endif // _GAMESCENE_H_

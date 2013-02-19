@@ -237,16 +237,10 @@
     <ClInclude Include="include\physics\CollisionPoint.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\physics\Joint.h">
-      <Filter>physics</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\Material.h">
       <Filter>physics</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\PhysicsManager.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\PhysicsDriver.h">
       <Filter>physics</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\Shape.h">
@@ -262,9 +256,6 @@
     <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\input\InputDeviceDefines.h">
       <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\JointDefines.h">
-      <Filter>physics</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\ShapeDefines.h">
       <Filter>physics</Filter>
@@ -285,12 +276,6 @@
       <Filter>resource</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\BodyFactory.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\JointFactory.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\ShapeFactory.h">
       <Filter>physics</Filter>
     </ClInclude>
     <ClInclude Include="include\render\FontFactory.h">
@@ -466,6 +451,15 @@
     <ClInclude Include="include\render\RenderBufferDefines.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\MaterialFactory.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Constraint.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\ConstraintDefines.h">
+      <Filter>physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\EngineEventReceiver.cpp">
@@ -630,16 +624,10 @@
     <ClCompile Include="src\physics\CollisionEventReceiver.cpp">
       <Filter>physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\Joint.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
     <ClCompile Include="src\physics\Material.cpp">
       <Filter>physics</Filter>
     </ClCompile>
     <ClCompile Include="src\physics\PhysicsManager.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\physics\PhysicsDriver.cpp">
       <Filter>physics</Filter>
     </ClCompile>
     <ClCompile Include="src\physics\Shape.cpp">
@@ -810,6 +798,12 @@
     </ClCompile>
     <ClCompile Include="..\dependencies\alure\src\buffer.cpp">
       <Filter>sound\alure</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\MaterialFactory.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Constraint.cpp">
+      <Filter>physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

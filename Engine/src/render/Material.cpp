@@ -161,8 +161,6 @@ void Material::setFragmentShader(Shader* shader)
 	if (shader && shader->getShaderType() != SHADER_TYPE_FRAGMENT)
 		return;
 
-	mFragmentShader = shader;
-
 	if (mFragmentShader != nullptr)
 		mFragmentShader->removeResourceEventReceiver(this);
 
@@ -193,8 +191,6 @@ void Material::setGeometryShader(Shader* shader)
 {
 	if (shader && shader->getShaderType() != SHADER_TYPE_GEOMETRY)
 		return;
-
-	mGeometryShader = shader;
 
 	if (mGeometryShader != nullptr)
 		mGeometryShader->removeResourceEventReceiver(this);

@@ -24,14 +24,18 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _JOINT_H_
-#define _JOINT_H_
+#ifndef _CONSTRAINT_H_
+#define _CONSTRAINT_H_
 
 #include <EngineConfig.h>
-#include <physics/JointDefines.h>
+#include <physics/ConstraintDefines.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+
+class btGeneric6DofConstraint;
+class btHingeConstraint;
+class btSliderConstraint;
 
 namespace physics
 {
@@ -41,21 +45,21 @@ class Body;
 //! Defines a physical joint.
 //! Author: Kat'Oun
 //! version: 1.0
-class ENGINE_PUBLIC_EXPORT Joint
+class ENGINE_PUBLIC_EXPORT Constraint
 {
 public:
 
-	Joint();
+	Constraint();
 
-	virtual ~Joint();
+	virtual ~Constraint();
 
 	//! Returns the id of the game object.
 	const unsigned int& getID() const;
 
 	//! Gets joint type.
-	const JointType& getJointType() const;
+	const ConstraintType& getConstraintType() const;
 
-	void setActors(Body* body1, Body* body2);
+	void setBodies(Body* body1, Body* body2);
 
 	virtual void setAnchor(const glm::vec3& anchor);
 
@@ -76,82 +80,108 @@ protected:
 
 	static unsigned int mIndexCounter;
 
-	JointType mJointType;
+	ConstraintType mConstraintType;
 
-	Body* mActor1;
-	Body* mActor2;
+	Body* mBody1;
+	Body* mBody2;
 
 	glm::vec3 mAnchor;
 	glm::vec3 mAxis;
 };
 
 //////////////////////////////////////////////////////////////////////////
-//Spherical Joint
-class ENGINE_PUBLIC_EXPORT SphericalJoint: public Joint
+//Spherical Constraint
+class ENGINE_PUBLIC_EXPORT SphericalConstraint: public Constraint
 {
 public:
 
-	SphericalJoint();
+	SphericalConstraint();
 
-	virtual ~SphericalJoint();
+	virtual ~SphericalConstraint();
 
-	virtual void setLimits(float coneLimit, float twistLimit);
+	void setLimits(float coneLimit, float twistLimit);
 
 protected:
+
+	void initializeImpl();
+
+	btGeneric6DofConstraint* mSphericalConstraint;
 
 	float mConeLimit; // The maximum limit of rotational movement (radians)
 	float mTwistLimit; // The maximum limit of twisting movement (radians)
 };
 
 //////////////////////////////////////////////////////////////////////////
-//Hinge Joint
-class ENGINE_PUBLIC_EXPORT HingeJoint: public Joint
+//Hinge Constraint
+class ENGINE_PUBLIC_EXPORT HingeConstraint: public Constraint
 {
 public:
 
-	HingeJoint();
+	HingeConstraint();
 
-	virtual ~HingeJoint();
+	virtual ~HingeConstraint();
 
-	virtual void setLimits(float lowerLimit, float upperLimit);
+	void setLimits(float lowerLimit, float upperLimit);
 
 protected:
+
+	void initializeImpl();
+
+	btHingeConstraint* mHingeConstraint;
 
 	float mLowerLimit;
 	float mUpperLimit;
 };
 
 //////////////////////////////////////////////////////////////////////////
-//Slider Joint
-class ENGINE_PUBLIC_EXPORT SliderJoint: public Joint
+//Slider Constraint
+class ENGINE_PUBLIC_EXPORT SliderConstraint: public Constraint
 {
 public:
 
-	SliderJoint();
+	SliderConstraint();
 
-	virtual ~SliderJoint();
+	virtual ~SliderConstraint();
+
+protected:
+
+	void initializeImpl();
+
+	btSliderConstraint* mSliderConstraint;
 };
 
 //////////////////////////////////////////////////////////////////////////
-//Generic Joint
-class ENGINE_PUBLIC_EXPORT GenericJoint: public Joint
+//Generic Constraint
+class ENGINE_PUBLIC_EXPORT GenericConstraint: public Constraint
 {
 public:
 
-	GenericJoint();
+	GenericConstraint();
 
-	virtual ~GenericJoint();
+	virtual ~GenericConstraint();
+
+protected:
+
+	void initializeImpl();
+
+	btGeneric6DofConstraint* mGenericConstraint;
 };
 
 //////////////////////////////////////////////////////////////////////////
-//Rigid Joint
-class ENGINE_PUBLIC_EXPORT RigidJoint: public Joint
+//Rigid Constraint
+class ENGINE_PUBLIC_EXPORT RigidConstraint: public Constraint
 {
 public:
 
-	RigidJoint();
+	RigidConstraint();
 
-	virtual ~RigidJoint();
+	virtual ~RigidConstraint();
+
+protected:
+
+	void initializeImpl();
+
+	btHingeConstraint* mRigidConstraint;
 };
 
 } // end namespace physics
