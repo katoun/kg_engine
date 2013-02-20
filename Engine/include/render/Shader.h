@@ -74,8 +74,8 @@ public:
 
 protected:
 
-	virtual bool loadImpl();
-	virtual void unloadImpl();
+	bool loadImpl();
+	void unloadImpl();
 
 	GLhandleARB mGLHandle;
 

@@ -47,7 +47,7 @@ public:
 	Listener();
 	Listener(const std::string& name);
 
-	virtual ~Listener();
+	~Listener();
 
 	const glm::vec3& getVelocity() const;
 

@@ -120,20 +120,20 @@ public:
 
 	//! Applies a force to the body.
 	//! This applies a force with the direction and strength represented by the input vector.
-	virtual void applyForce(const glm::vec3& force);
+	void applyForce(const glm::vec3& force);
 
 	//! Applies a torque on the body.
 	//! In classical physics, torque is related to angular acceleration by \f$T=I.\alpha\f$ where T is the Torque, I is the moment of inertia, and \f$\alpha\f$ is angular acceleration.
-	virtual void applyTorque(const glm::vec3& torque);
+	void applyTorque(const glm::vec3& torque);
 
-	//! Applys a linear impulse to the body.
+	//! Applies a linear impulse to the body.
 	//! In classical physics, momentum is related to velocity by \f$p=m.v\f$ where p is the Momentum, m is the Mass, and v is the Velocity.
 	//! An impulse is simply a change in momentum.
-	virtual void applyLinearImpulse(const glm::vec3& linearImpulse);
+	void applyLinearImpulse(const glm::vec3& linearImpulse);
 
-	//! Applys an angular impulse to the body.
+	//! Applies an angular impulse to the body.
 	//! This will cause a change in the angular momentum, and subsequently a change in the angular velocity.
-	virtual void applyAngularImpulse(const glm::vec3& angularImpulse);
+	void applyAngularImpulse(const glm::vec3& angularImpulse);
 
 	void setConstraint(Constraint* joint);
 

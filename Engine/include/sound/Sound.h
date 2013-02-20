@@ -65,32 +65,32 @@ public:
 	SoundData* getSoundData() const;
 
 	//! Plays the sound.
-	virtual void play();
+	void play();
 
 	//! Pauses the sound. Upon calling play again, the sound will resume where it left off.
-	virtual void pause();
+	void pause();
 
 	//! Stops the sound. Upon calling play again, the sound will resume from the begining.
-	virtual void stop();
+	void stop();
 
 	//! Returns true if the sound is playing.
-	virtual bool isPlaying() const;
+	 bool isPlaying() const;
 
 	//! Returns true if the sound is paused.
-	virtual bool isPaused() const;
+	bool isPaused() const;
 
 	//! Returns true if the sound is stopped.
-	virtual bool isStopped() const;
+	bool isStopped() const;
 
 	const glm::vec3& getVelocity() const;
 
 	//! Sets the pitch multiplier.
-	virtual void setPitch(float pitch);
+	void setPitch(float pitch);
 	//! Returns the pitch multiplier.
 	float getPitch() const;
 
 	//! Sets the gain.
-	virtual void setGain(float gain);
+	void setGain(float gain);
 	//! Returns the gain.
 	float getGain() const;
 
@@ -99,9 +99,9 @@ public:
 	//! \param maxDistance: The max distance a sound stops attenuating at.
 	void setDistanceValues(float minDistance, float maxDistance);
 	//! Sets the Min Distance.
-	virtual void setMinDistance(float minDistance);
+	void setMinDistance(float minDistance);
 	//! Sets the Max Distance.
-	virtual void setMaxDistance(float maxDistance);
+	void setMaxDistance(float maxDistance);
 	
 	//! Returns the min distance.
 	float getMinDistance() const;
@@ -115,22 +115,22 @@ public:
 	void setConeSettings(float innerConeAngle, float outerConeAngle, float outerConeGain);
 	
 	//! Sets the inner angle of the sound cone for a directional sound.
-	virtual void setInnerConeAngle(float innerConeAngle);
+	void setInnerConeAngle(float innerConeAngle);
 	//! Return the innerConeAngle.
 	float getInnerConeAngle() const;
 	
 	//! Sets the outer angle of the sound cone for a directional sound.
-	virtual void setOuterConeAngle(float outerConeAngle);
+	void setOuterConeAngle(float outerConeAngle);
 	//! Returns the outerConeAngle.
 	float getOuterConeAngle() const;
 
 	//! Sets the gain outside the sound cone of a directional sound.
-	virtual void setOuterConeGain(float outerConeGain);
+	void setOuterConeGain(float outerConeGain);
 	//! Returns the outerConeGain.
 	float getOuterConeGain() const;
 
 	//! Sets the looping state.
-	virtual void setLoop(bool loop);
+	void setLoop(bool loop);
 	//! Returns looping state.
 	bool isLooping() const;
 
@@ -143,7 +143,6 @@ protected:
 	void uninitializeImpl();
 	void updateImpl(float elapsedTime);
 	void onMessageImpl(unsigned int messageID);
-	void setSoundDataImpl(SoundData* soundData);
 
 	ALuint mSourceId;
 

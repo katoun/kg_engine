@@ -303,7 +303,7 @@ unsigned long long EngineManager::getMilliseconds()
     if (msecOff < -100 || msecOff > 100)
     {
         // We must keep the timer running forward :)
-        LONGLONG adjust = (msecOff * mFrequency.QuadPart / 1000 < newTime - mLastTime) ? (msecOff * mFrequency.QuadPart / 1000) : (newTime - mLastTime);
+        LONGLONG adjust = (msecOff * mFrequency.QuadPart / 1000 < (LONGLONG)(newTime - mLastTime)) ? (msecOff * mFrequency.QuadPart / 1000) : (newTime - mLastTime);
         mStartTime.QuadPart += adjust;
         newTime -= adjust;
 
@@ -315,6 +315,8 @@ unsigned long long EngineManager::getMilliseconds()
     mLastTime = newTime;
 
     return newTicks;
+#else
+	return 0;//TODO!!!
 #endif
 }
 

@@ -108,21 +108,8 @@ void Sound::setSoundData(const std::string& filename)
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
 	{
-		SoundData* newSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
-		if (newSoundData == nullptr)
-			return;
-
-		if (mSoundData != nullptr)
-		{
-			mSoundData->removeResourceEventReceiver(this);
-
-			uninitialize();
-		}
-
-		mSoundData = newSoundData;
-		mSoundData->addResourceEventReceiver(this);
-
-		setSoundDataImpl(mSoundData);
+		SoundData* pSoundData = static_cast<SoundData*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_SOUND_DATA, filename));
+		setSoundData(pSoundData);
 	}
 }
 
@@ -141,7 +128,15 @@ void Sound::setSoundData(SoundData* soundData)
 	mSoundData = soundData;
 	mSoundData->addResourceEventReceiver(this);
 
-	setSoundDataImpl(mSoundData);
+	if (soundData != nullptr)
+	{
+		alSourcef(mSourceId, AL_PITCH,					mSoundData->getPitch());
+		alSourcef(mSourceId, AL_GAIN,					mSoundData->getGain());
+		alSourcef(mSourceId, AL_MAX_DISTANCE,			mSoundData->getMaxDistance());
+		alSourcef(mSourceId, AL_CONE_OUTER_GAIN,		mSoundData->getOuterConeGain());
+		alSourcef(mSourceId, AL_CONE_INNER_ANGLE,		mSoundData->getInnerConeAngle());
+		alSourcef(mSourceId, AL_CONE_OUTER_ANGLE,		mSoundData->getOuterConeAngle());
+	}
 }
 
 SoundData* Sound::getSoundData() const
@@ -453,19 +448,6 @@ void Sound::onMessageImpl(unsigned int messageID)
 	{
 		mSourceNeedsUpdate = true;
 	}
-}
-
-void Sound::setSoundDataImpl(SoundData* soundData)
-{
-	if (soundData == nullptr)
-		return;
-
-	alSourcef(mSourceId, AL_PITCH,					mSoundData->getPitch());
-	alSourcef(mSourceId, AL_GAIN,					mSoundData->getGain());
-	alSourcef(mSourceId, AL_MAX_DISTANCE,			mSoundData->getMaxDistance());
-	alSourcef(mSourceId, AL_CONE_OUTER_GAIN,		mSoundData->getOuterConeGain());
-	alSourcef(mSourceId, AL_CONE_INNER_ANGLE,		mSoundData->getInnerConeAngle());
-	alSourcef(mSourceId, AL_CONE_OUTER_ANGLE,		mSoundData->getOuterConeAngle());
 }
 
 } // end namespace sound

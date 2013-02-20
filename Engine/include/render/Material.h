@@ -128,7 +128,6 @@ public:
 protected:
 
 	bool loadImpl();
-
 	void unloadImpl();
 
 	GLhandleARB mGLHandle;
