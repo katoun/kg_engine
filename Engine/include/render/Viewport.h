@@ -140,10 +140,6 @@ protected:
 	// Stored number of visible faces in the last render
 	unsigned int mRenderedFaces;
 
-	// Background options
-	Color mBackColor;
-	bool mClearEveryFrame;
-
 	bool mIsVisible;
 
 	bool mShowOverlays;

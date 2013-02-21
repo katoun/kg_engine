@@ -43,9 +43,6 @@ Viewport::Viewport(Camera* camera, RenderTarget* target)
 	mRelativeWidth = 1.0f;
 	mRelativeHeight = 1.0f;
 
-	mBackColor = render::Color::Black;
-	mClearEveryFrame = true;
-
 	mIsVisible = true;
 
 	mShowOverlays = true;
@@ -160,26 +157,6 @@ int Viewport::getActualHeight()
 void Viewport::setDimenionsChanged()
 {
 	mDimentionsNeedsUpdate = true;
-}
-
-void Viewport::setBackgroundColor(Color& color)
-{
-	mBackColor = color;
-}
-
-Color Viewport::getBackgroundColor()
-{
-	return mBackColor;
-}
-
-void Viewport::setClearEveryFrame(bool clear)
-{
-	mClearEveryFrame = clear;
-}
-
-bool Viewport::getClearEveryFrame()
-{
-	return mClearEveryFrame;
 }
 
 void Viewport::update(float elapsedTime)

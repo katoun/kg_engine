@@ -179,19 +179,22 @@ bool Texture::loadImpl()
 		glGenTextures(1, &mTextureID);
 
 		glActiveTexture(GL_TEXTURE15);
-		// Set texture type
-		glBindTexture(getGLType(mTextureType), mTextureID);
 
-		// This needs to be set otherwise the texture doesn't get rendered
-		glTexParameteri(getGLType(mTextureType), GL_TEXTURE_MAX_LEVEL, mNumMipmaps);
+		GLenum textureType = getGLType(mTextureType);
+		// Set texture type
+		glBindTexture(textureType, mTextureID);
 
 		// Set some misc default parameters so NVidia won't complain, these can of course be changed later
-		glTexParameteri(getGLType(mTextureType), GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(getGLType(mTextureType), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(getGLType(mTextureType), GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(getGLType(mTextureType), GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(textureType, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(textureType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTexParameteri(getGLType(mTextureType), GL_GENERATE_MIPMAP, GL_TRUE);
+		// This needs to be set otherwise the texture doesn't get rendered
+		glTexParameteri(textureType, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(textureType, GL_TEXTURE_MAX_LEVEL, mNumMipmaps);
+
+		glGenerateMipmap(textureType);
 
 		GLenum format = getGLOriginFormat(mPixelFormat);
 		GLenum internalFormat = getClosestGLInternalFormat(mPixelFormat);
@@ -247,8 +250,6 @@ bool Texture::loadImpl()
 				if(depth>1)		depth = depth/2;
 			}
 		}
-
-		glBindTexture(getGLType(mTextureType), 0);
 	}
 
 	return true;

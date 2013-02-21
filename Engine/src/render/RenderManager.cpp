@@ -483,12 +483,12 @@ void RenderManager::initializeImpl()
 		return;
 	}
 
-	// Check for OpenGL 3.1
-	/*if(!GLEW_VERSION_3_1)
+	// Check for OpenGL 3.3
+	if(!GLEW_VERSION_3_3)
 	{
-		MessageBox(nullptr, "Can't Initialize OpenGL 3.1.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, "Can't Initialize OpenGL 3.3.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return;
-	}*/
+	}
 
 	// Check for OpenGL 4.2
 	/*if(!GLEW_VERSION_4_2)
@@ -497,20 +497,12 @@ void RenderManager::initializeImpl()
 		return;
 	}*/
 
-	glClearDepth(1.0f);
-	glColor4f(1.0f,1.0f,1.0f,1.0f);						// Set Color to initial value
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Enable depth test
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
-
-	glDepthMask(GL_TRUE);
-
-	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
-
-	glDisable(GL_BLEND);								// Turn Blending Off
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 }
 
 void RenderManager::uninitializeImpl()
@@ -743,7 +735,7 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 	bool viewportChanged = false;
 
 	// Check if viewport is different
-	if (viewport == mCurrentViewport)
+	if (mCurrentViewport == viewport)
 	{
 		std::list<Viewport*>::const_iterator i;
 		for (i = mUpdatedViewports.begin(); i != mUpdatedViewports.end(); ++i)
@@ -766,9 +758,6 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 	{
 		mCurrentViewport = viewport;
 
-		if (viewport == nullptr)
-			return;
-
 		GLsizei x, y, w, h;
 
 		RenderTarget* target;
@@ -781,33 +770,12 @@ void RenderManager::setCurrentViewport(Viewport* viewport)
 		y = target->getHeight() - viewport->getActualTop() - h;
 
 		glViewport(x, y, w, h);
-
-		// Configure the viewport clipping
-		glScissor(x, y, w, h);
 	}
 }
 
 void RenderManager::beginFrame(Viewport* viewport)
 {
-	if (viewport == nullptr)
-	{
-		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("RenderManager", "::beginFrame() Cannot begin frame - no viewport selected.", core::LOG_LEVEL_ERROR);
-		return;
-	}
-	
-	// Clear the viewport if required
-	if (viewport->getClearEveryFrame())
-	{
-		// Activate the viewport clipping
-		glEnable(GL_SCISSOR_TEST);
-
-		Color col = viewport->getBackgroundColor();
-
-		glClearColor(col.r, col.g, col.b, col.a);
-
-		glClearDepth(1.0f);									// Depth Buffer Setup
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
-	}
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 }
 
 void RenderManager::findVisibleModels(Camera* camera)
@@ -1065,15 +1033,15 @@ void RenderManager::render(RenderStateData& renderStateData)
 
 		GLsizei stride = (GLsizei)(pVertexBuffer->getVertexSize());
 
+		glEnableVertexAttribArray(index);
 		glVertexAttribPointer(
 			index,			// The attribute we want to configure
 			size,			// size
 			type,			// type
 			GL_FALSE,		// normalized?
 			stride,			// stride
-			(void*)0		// array buffer offset
+			0				// array buffer offset
 			);
-		glEnableVertexAttribArray(index);
 	}
 
 	if (pModel->getIndexBuffer() == nullptr)
@@ -1084,7 +1052,7 @@ void RenderManager::render(RenderStateData& renderStateData)
 	GLenum primType = getGLType(pModel->getRenderOperationType());
 	GLenum indexType = (pModel->getIndexBuffer()->getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
-	glDrawElements(primType, pModel->getIndexBuffer()->getNumIndexes(), indexType, (void*)0);
+	glDrawElements(primType, pModel->getIndexBuffer()->getNumIndexes(), indexType, 0);
 	//////////////////////////////////
 
 	for (unsigned int i = 0; i < vertexParameters.size(); ++i)
@@ -1098,11 +1066,7 @@ void RenderManager::render(RenderStateData& renderStateData)
 	}
 }
 
-void RenderManager::endFrame()
-{
-	// Deactivate the viewport clipping
-	glDisable(GL_SCISSOR_TEST);
-}
+void RenderManager::endFrame() {}
 
 RenderManager* RenderManager::getInstance()
 {

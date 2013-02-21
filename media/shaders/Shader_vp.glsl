@@ -1,8 +1,10 @@
-attribute vec3 vertex_position;
-attribute vec3 vertex_normal;
-attribute vec3 vertex_tangent;
-attribute vec3 vertex_binormal;
-attribute vec2 vertex_uv;
+#version 330
+
+in vec3 vertex_position;
+in vec3 vertex_normal;
+in vec3 vertex_tangent;
+in vec3 vertex_binormal;
+in vec2 vertex_uv;
 
 uniform mat4 modelViewProjMatrix;
 uniform mat4 modelViewMatrix;
@@ -10,12 +12,12 @@ uniform mat4 modelViewMatrix;
 uniform vec3 light_position; // World-space
 uniform vec3 camera_position; // World-space
 
-varying vec2 uv;
+out vec2 uv;
 
-varying vec3 lightVector;
-varying vec3 halfAngle;
+out vec3 lightVector;
+out vec3 halfAngle;
 
-varying vec3 testVector;
+out vec3 testVector;
 
 void main()
 {

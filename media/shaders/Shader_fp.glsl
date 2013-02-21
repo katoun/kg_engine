@@ -1,3 +1,12 @@
+#version 330
+
+in vec2 uv;
+
+in vec3 lightVector;
+in vec3 halfAngle;
+
+in vec3 testVector;
+
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 uniform sampler2D specularMap;
@@ -5,12 +14,7 @@ uniform sampler2D specularMap;
 uniform vec4 lightDiffuse;
 uniform vec4 lightSpecular;
 
-varying vec2 uv;
-
-varying vec3 lightVector;
-varying vec3 halfAngle;
-
-varying vec3 testVector;
+out vec4 fragColor;
 
 float saturate(float inValue)
 {
@@ -19,8 +23,8 @@ float saturate(float inValue)
 
 void main()
 {
-	//gl_FragColor = vec4(testVector, 1.0);
-	//gl_FragColor = texture2D(diffuseMap, uv);
+	//fragColor = vec4(testVector, 1.0);
+	//fragColor = texture2D(diffuseMap, uv);
 
 	float specularPower = 2.0;
 
@@ -40,8 +44,8 @@ void main()
 	float shininess = pow(max(dot_h, 0.0), specularPower);
 	
 	//Diffuse and bump
-	gl_FragColor = diffuseColor * lightDiffuse * saturate(dot_l);
+	fragColor = diffuseColor * lightDiffuse * saturate(dot_l);
 	
 	//Specular
-	gl_FragColor += specularColor * lightSpecular * shininess;
+	fragColor += specularColor * lightSpecular * shininess;
 }
