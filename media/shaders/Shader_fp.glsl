@@ -3,9 +3,11 @@
 in vec2 uv;
 
 in vec3 lightVector;
-in vec3 halfAngle;
+in vec3 halfVector;
 
 in vec3 testVector;
+
+out vec4 fragColor;
 
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
@@ -13,8 +15,6 @@ uniform sampler2D specularMap;
 
 uniform vec4 lightDiffuse;
 uniform vec4 lightSpecular;
-
-out vec4 fragColor;
 
 float saturate(float inValue)
 {
@@ -33,7 +33,7 @@ void main()
 	vec4 specularColor = texture2D(specularMap, uv);
 	
 	vec3 lightVec = normalize(lightVector);
-	vec3 halfVec = normalize(halfAngle);
+	vec3 halfVec = normalize(halfVector);
 	
 	// get bump map vector, again expand from range-compressed
 	vec3 bumpVec = normalize(normalColor.xyz * 2.0 - 1.0);
