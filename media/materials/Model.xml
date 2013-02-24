@@ -8,14 +8,13 @@
 		<param_vertex name="vertex_binormal" type="vertex_binormal"/>
 		<param_vertex name="vertex_uv" type="vertex_texture_coordinates"/>
 		<param_auto name="modelViewProjMatrix" type="model_view_projection_matrix"/>
-		<param_auto name="modelViewMatrix" type="model_view_matrix"/>
 		<param_auto name="modelMatrix" type="model_matrix"/>
-		<param_auto name="viewMatrix" type="view_matrix"/>
 		<param_auto name="light_position" type="light_position"/>
 		<param_auto name="camera_position" type="camera_position"/>
 	</vertex_shader>
 	<fragment_shader>
 		<shader value="shaders/Model_fp.glsl"/>
+		<param_auto name="specular_power" type="material_specular_power"/>
 		<param_auto name="light_diffuse" type="light_diffuse_colour"/>
 		<param_auto name="light_specular" type="light_specular_colour"/>
 	</fragment_shader>

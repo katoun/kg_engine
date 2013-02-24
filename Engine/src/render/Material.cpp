@@ -46,7 +46,7 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 	mAmbient = glm::vec4(1, 1, 1, 1);
 	mDiffuse = glm::vec4(0, 0, 0, 1);
 	mSpecular = glm::vec4(0, 0, 0, 1);
-	mShininess = 0.0f;
+	mSpecularPower = 1.0f;
 
 	mTextureUnits.clear();
 
@@ -124,14 +124,14 @@ const glm::vec4& Material::getSpecularColor() const
 	return mSpecular;
 }
 
-void Material::setShininess(float shininess)
+void Material::setSpecularPower(float power)
 {
-	mShininess = shininess;
+	mSpecularPower = power;
 }
 
-float Material::getShininess() const
+float Material::getSpecularPower() const
 {
-	return mShininess;
+	return mSpecularPower;
 }
 
 void Material::addTextureUnit(const std::string& filename)

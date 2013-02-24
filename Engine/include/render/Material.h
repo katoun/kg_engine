@@ -82,8 +82,8 @@ public:
 	void setSpecularColor(const glm::vec4& color);
 	const glm::vec4& getSpecularColor() const;
 
-	void setShininess(float shininess);
-	float getShininess() const;
+	void setSpecularPower(float power);
+	float getSpecularPower() const;
 
 	//! Inserts a new texture unit in the material.
 	void addTextureUnit(const std::string& filename);
@@ -149,7 +149,7 @@ protected:
 	glm::vec4 mAmbient;
 	glm::vec4 mDiffuse;
 	glm::vec4 mSpecular;
-	float mShininess;
+	float mSpecularPower;
 	
 	Shader* mVertexShader;
 	Shader* mFragmentShader;

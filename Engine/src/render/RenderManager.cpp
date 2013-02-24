@@ -929,8 +929,8 @@ void RenderManager::render(RenderStateData& renderStateData)
 		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialSpecularColour());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialShininess());
+		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_POWER:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialSpecularPower());
 			break;
 		
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:

@@ -80,8 +80,8 @@ render::ShaderAutoParameterType convertAutoParameterType(const std::string& para
 		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_DIFFUSE_COLOUR;
 	else if (param == "material_specular_colour")
 		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR;
-	else if (param == "material_shininess")
-		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS;
+	else if (param == "material_specular_power")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_POWER;
 		
 	else if (param == "light_count")
 		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT;
@@ -257,12 +257,12 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 				renderMaterial->setSpecularColor(r, g, b, a);
 			}
 
-			pElement = pRoot->FirstChildElement("shininess");
+			pElement = pRoot->FirstChildElement("specular_power");
 			if (pElement != nullptr)
 			{
 				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
-					renderMaterial->setShininess((float)dvalue);
+					renderMaterial->setSpecularPower((float)dvalue);
 				}
 			}
 			

@@ -175,12 +175,12 @@ glm::vec4 RenderStateData::getMaterialSpecularColour()
 	return mCurrentMaterial->getSpecularColor();
 }
 
-float RenderStateData::getMaterialShininess()
+float RenderStateData::getMaterialSpecularPower()
 {
 	if (mCurrentMaterial == nullptr)
 		return 0;
 
-	return mCurrentMaterial->getShininess();
+	return mCurrentMaterial->getSpecularPower();
 }
 
 glm::vec3 RenderStateData::getLightPosition()

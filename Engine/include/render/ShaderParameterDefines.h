@@ -61,7 +61,7 @@ enum ShaderAutoParameterType
 	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_AMBIENT_COLOUR,							//! Material ambient color
 	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_DIFFUSE_COLOUR,							//! Material diffuse color
 	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR,						//! Material specular color
-	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS,								//! Material shininess
+	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_POWER,							//! Material specular power
 	
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT,										//! The number of active light sources
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION,									//! Light position in world space

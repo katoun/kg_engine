@@ -66,7 +66,7 @@ public:
 	glm::vec4 getMaterialAmbientColour();
 	glm::vec4 getMaterialDiffuseColour();
 	glm::vec4 getMaterialSpecularColour();
-	float getMaterialShininess();
+	float getMaterialSpecularPower();
 
 	glm::vec3 getLightPosition();
 	glm::vec4 getLightAmbientColour();
