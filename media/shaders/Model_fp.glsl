@@ -13,8 +13,8 @@ uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 uniform sampler2D specularMap;
 
-uniform vec4 lightDiffuse;
-uniform vec4 lightSpecular;
+uniform vec4 light_diffuse;
+uniform vec4 light_specular;
 
 float saturate(float inValue)
 {
@@ -45,7 +45,7 @@ void main()
 	float shininess = pow(max(dot_h, 0.0), specularPower);
 
 	fragColor = ambientColor;
-	//fragColor += diffuseColor * lightDiffuse * lamberFactor;
+	//fragColor += diffuseColor * light_diffuse * lamberFactor;
 	fragColor += diffuseColor * vec4(1,1,1,1) * lamberFactor;
-	fragColor += specularColor * lightSpecular * shininess;
+	fragColor += specularColor * light_specular * shininess;
 }

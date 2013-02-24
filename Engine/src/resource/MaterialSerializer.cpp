@@ -64,46 +64,33 @@ render::ShaderAutoParameterType convertAutoParameterType(const std::string& para
 {
 	if (param == "model_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX;
-	else if (param == "inverse_model_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX;
 	else if (param == "view_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX;
-	else if (param == "inverse_view_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX;
 	else if (param == "projection_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX;
-	else if (param == "inverse_projection_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX;
 	else if (param == "view_projection_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX;
-	else if (param == "inverse_view_projection_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX;
 	else if (param == "model_view_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX;
-	else if (param == "inverse_model_view_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX;
 	else if (param == "model_view_projection_matrix")
 		return render::SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX;
-	else if (param == "inverse_model_view_projection_matrix")
-		return render::SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX;
+
+	else if (param == "material_ambient_colour")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_AMBIENT_COLOUR;
+	else if (param == "material_diffuse_colour")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_DIFFUSE_COLOUR;
+	else if (param == "material_specular_colour")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR;
+	else if (param == "material_shininess")
+		return render::SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS;
 		
 	else if (param == "light_count")
 		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT;
 	else if (param == "light_position")
 		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION;
-	else if (param == "light_position_object_space")
-		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE;
-	else if (param == "light_position_view_space")
-		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE;
-	else if (param == "light_direction")
-		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION;
-	else if (param == "light_direction_object_space")
-		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE;
-	else if (param == "light_direction_view_space")
-		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE;
-		
-	else if (param == "ambient_light_colour")
-		return render::SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR;
+	
+	else if (param == "light_ambient_colour")
+		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_AMBIENT_COLOUR;
 	else if (param == "light_diffuse_colour")
 		return render::SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR;
 	else if (param == "light_specular_colour")
@@ -115,8 +102,6 @@ render::ShaderAutoParameterType convertAutoParameterType(const std::string& para
 
 	else if (param == "camera_position")
 		return render::SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION;
-	else if (param == "camera_position_object_space")
-		return render::SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE;
 	else
 	{
 		if (core::Log::getInstance() != nullptr) core::Log::getInstance()->logMessage("MaterialSerializer", "Invalid auto parameter type, using default.", core::LOG_LEVEL_ERROR);
@@ -175,6 +160,108 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 
 		if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
 		{
+			pElement = pRoot->FirstChildElement("ambient_color");
+			if (pElement != nullptr)
+			{
+				float r = 0.0f;
+				float g = 0.0f;
+				float b = 0.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setAmbientColor(render::Color(r, g, b, a));
+			}
+
+			pElement = pRoot->FirstChildElement("diffuse_color");
+			if (pElement != nullptr)
+			{
+				float r = 0.0f;
+				float g = 0.0f;
+				float b = 0.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setDiffuseColor(render::Color(r, g, b, a));
+			}
+
+			pElement = pRoot->FirstChildElement("specular_color");
+			if (pElement != nullptr)
+			{
+				float r = 0.0f;
+				float g = 0.0f;
+				float b = 0.0f;
+				float a = 1.0f;
+
+				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					r = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("g", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					g = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("b", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					b = (float)dvalue;
+				}
+
+				if (pElement->QueryDoubleAttribute("a", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					a = (float)dvalue;
+				}
+
+				renderMaterial->setSpecularColor(render::Color(r, g, b, a));
+			}
+
+			pElement = pRoot->FirstChildElement("shininess");
+			if (pElement != nullptr)
+			{
+				if (pElement->QueryDoubleAttribute("value", &dvalue) == tinyxml2::XML_SUCCESS)
+				{
+					renderMaterial->setShininess((float)dvalue);
+				}
+			}
+			
 			std::vector<std::string> shaderkeys(3);
 
 			shaderkeys[0] = "vertex_shader";

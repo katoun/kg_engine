@@ -16,8 +16,8 @@
 	</vertex_shader>
 	<fragment_shader>
 		<shader value="shaders/Model_fp.glsl"/>
-		<param_auto name="lightDiffuse" type="light_diffuse_colour"/>
-		<param_auto name="lightSpecular" type="light_specular_colour"/>
+		<param_auto name="light_diffuse" type="light_diffuse_colour"/>
+		<param_auto name="light_specular" type="light_specular_colour"/>
 	</fragment_shader>
 	<texture_unit>
 		<texture value="textures/brick_d.tga"/>

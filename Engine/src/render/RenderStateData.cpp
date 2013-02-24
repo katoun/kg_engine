@@ -25,6 +25,8 @@ THE SOFTWARE.
 */
 
 #include <render/RenderStateData.h>
+#include <render/Color.h>
+#include <render/Material.h>
 #include <render/Light.h>
 #include <render/Camera.h>
 #include <render/Model.h>
@@ -40,47 +42,15 @@ RenderStateData::RenderStateData()
 	mModelViewMatrix = glm::mat4x4(1);
 	mViewProjMatrix = glm::mat4x4(1);
 	mModelViewProjMatrix = glm::mat4x4(1);
-
-	mInverseModelMatrix = glm::mat4x4(1);
-	mInverseViewMatrix = glm::mat4x4(1);
-	mInverseProjectionMatrix = glm::mat4x4(1);
-
-	mInverseModelViewMatrix = glm::mat4x4(1);
-	mInverseViewProjectionMatrix = glm::mat4x4(1);
-	mInverseModelViewProjectionMatrix = glm::mat4x4(1);
 	
 	mModelViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
 	mModelViewProjMatrixDirty = true;
 
-	mInverseModelMatrixDirty = true;
-	mInverseViewMatrixDirty = true;
-	mInverseProjectionMatrixDirty = true;
-
-	mInverseModelViewMatrixDirty = true;
-	mInverseViewProjectionMatrixDirty = true;
-	mInverseModelViewProjectionMatrixDirty = true;
-
-	mCameraPosition = glm::vec3(0, 0, 0);
-	mCameraPositionObjectSpace = glm::vec3(0, 0, 0);
-
-	mCameraPositionDirty = true;
-	mCameraPositionObjectSpaceDirty = true;
-
-	mLightPosition = glm::vec3(0, 0, 0);
-	mLightPositionObjectSpace = glm::vec3(0, 0, 0);
-	mLightPositionViewSpace = glm::vec3(0, 0, 0);
-
-	mLightDirection = glm::vec3(0, 0, 0);
-	mLightDirectionObjectSpace = glm::vec3(0, 0, 0);
-	mLightDirectionViewSpace = glm::vec3(0, 0, 0);
-
 	mCurrentModel = nullptr;
 	mCurrentCamera = nullptr;
 	mCurrentLight = nullptr;
 	mCurrentViewport = nullptr;
-
-	mAmbientLightColor = Color::Black;
 }
 
 void RenderStateData::setCurrentMaterial(Material* material)
@@ -94,30 +64,15 @@ void RenderStateData::setCurrentModel(Model* model)
 
 	mModelViewMatrixDirty = true;
 	mModelViewProjMatrixDirty = true;
-
-	mInverseModelMatrixDirty = true;
-
-	mInverseModelViewMatrixDirty = true;
-	mInverseModelViewProjectionMatrixDirty = true;
 }
 
 void RenderStateData::setCurrentCamera(Camera* cam)
 {
 	mCurrentCamera = cam;
 
-	mCameraPositionDirty = true;
-	mCameraPositionObjectSpaceDirty = true;
-
 	mModelViewMatrixDirty = true;
 	mViewProjMatrixDirty = true;
 	mModelViewProjMatrixDirty = true;
-
-	mInverseViewMatrixDirty = true;
-	mInverseProjectionMatrixDirty = true;
-
-	mInverseModelViewMatrixDirty = true;
-	mInverseViewProjectionMatrixDirty = true;
-	mInverseModelViewProjectionMatrixDirty = true;
 }
 
 void RenderStateData::setCurrentViewport(Viewport* viewport)
@@ -130,190 +85,14 @@ void RenderStateData::setCurrentLight(Light* light)
 	mCurrentLight = light;
 }
 
-Material* RenderStateData::getCurrentMaterial() const
+Material* RenderStateData::getCurrentMaterial()
 {
 	return mCurrentMaterial;
 }
 
-Model* RenderStateData::getCurrentModel() const
+Model* RenderStateData::getCurrentModel()
 {
 	return mCurrentModel;
-}
-
-const glm::vec3& RenderStateData::getCameraPosition()
-{
-	if(mCameraPositionDirty)
-	{
-		if (mCurrentCamera != nullptr && mCurrentCamera->getGameObject() != nullptr)
-		{
-			game::Transform* pTransform = static_cast<game::Transform*>(mCurrentCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != nullptr)
-			{
-				mCameraPosition = pTransform->getAbsolutePosition();
-			}
-		}
-		mCameraPositionDirty = false;
-	}
-
-	return mCameraPosition;
-}
-
-const glm::vec3& RenderStateData::getCameraPositionObjectSpace()
-{
-	if(mCameraPositionObjectSpaceDirty)
-	{
-		if (mCurrentCamera != nullptr && mCurrentCamera->getGameObject() != nullptr)
-		{
-			game::Transform* pTransform = static_cast<game::Transform*>(mCurrentCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-			if (pTransform != nullptr)
-			{
-				mCameraPositionObjectSpace = pTransform->getAbsolutePosition();
-				glm::vec4 pos = getInverseModelMatrix() * glm::vec4(mCameraPositionObjectSpace, 1);
-				mCameraPositionObjectSpace.x = pos.x;
-				mCameraPositionObjectSpace.y = pos.y;
-				mCameraPositionObjectSpace.z = pos.z;
-			}
-		}
-		mCameraPositionObjectSpaceDirty = false;
-	}
-
-	return mCameraPositionObjectSpace;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightPosition()
-{
-	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
-	{
-		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != nullptr)
-		{
-			mLightPosition = pTransform->getAbsolutePosition();
-		}
-	}
-
-	return mLightPosition;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightPositionObjectSpace()
-{
-	mLightPositionObjectSpace = getCurrentLightPosition();
-
-	if (mCurrentLight && mCurrentLight->getLightType() == LIGHT_TYPE_DIRECTIONAL)
-	{
-		glm::mat4x4 m = glm::transpose(getModelMatrix());
-
-		glm::vec4 pos = m * glm::vec4(mLightPositionObjectSpace, 1);
-		mLightPositionObjectSpace.x = pos.x;
-		mLightPositionObjectSpace.y = pos.y;
-		mLightPositionObjectSpace.z = pos.z;
-
-		mLightPositionObjectSpace = glm::normalize(mLightPositionObjectSpace);
-	}
-	else
-	{
-		glm::vec4 pos = getInverseModelMatrix() * glm::vec4(mLightPositionObjectSpace, 1);
-		mLightPositionObjectSpace.x = pos.x;
-		mLightPositionObjectSpace.y = pos.y;
-		mLightPositionObjectSpace.z = pos.z;
-	}
-
-	return mLightPositionObjectSpace;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightPositionViewSpace()
-{
-	mLightPositionViewSpace = getCurrentLightPosition();
-
-	glm::vec4 dir = getViewMatrix() * glm::vec4(mLightPositionViewSpace, 1);
-	mLightPositionViewSpace.x = dir.x;
-	mLightPositionViewSpace.y = dir.y;
-	mLightPositionViewSpace.z = dir.z;
-
-	return mLightPositionViewSpace;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightDirection()
-{
-	if (mCurrentLight != nullptr)
-		
-
-	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
-	{
-		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
-		if (pTransform != nullptr)
-		{
-			mLightDirection = pTransform->getAbsoluteOrientation() * glm::vec3(0, 0, 1);
-		}
-	}
-
-	return mLightDirection;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightDirectionObjectSpace()
-{
-	mLightDirectionObjectSpace = getCurrentLightDirection();
-
-	glm::vec4 dir = glm::transpose(getInverseModelMatrix()) * glm::vec4(mLightDirectionObjectSpace, 1);
-	mLightDirectionObjectSpace.x = dir.x;
-	mLightDirectionObjectSpace.y = dir.y;
-	mLightDirectionObjectSpace.z = dir.z;
-
-	mLightDirectionObjectSpace = glm::normalize(mLightDirectionObjectSpace);
-
-	return mLightDirectionObjectSpace;
-}
-
-const glm::vec3& RenderStateData::getCurrentLightDirectionViewSpace()
-{
-	mLightDirectionViewSpace = getCurrentLightDirection();
-
-	glm::vec4 dir = glm::transpose(getInverseViewMatrix()) * glm::vec4(mLightDirectionViewSpace, 1);
-	mLightDirectionViewSpace.x = dir.x;
-	mLightDirectionViewSpace.y = dir.y;
-	mLightDirectionViewSpace.z = dir.z;
-
-	mLightDirectionViewSpace = glm::normalize(mLightDirectionViewSpace);
-
-	return mLightDirectionViewSpace;
-}
-
-void RenderStateData::setAmbientLightColor(const Color& ambient)
-{
-	mAmbientLightColor = ambient;
-}
-
-const Color& RenderStateData::getAmbientLightColour() const
-{
-	return mAmbientLightColor;
-}
-
-const Color& RenderStateData::getCurrentLightDiffuseColour() const
-{
-	if (mCurrentLight) return mCurrentLight->getDiffuseColor();
-
-	return Color::White;
-}
-
-const Color& RenderStateData::getCurrentLightSpecularColour() const
-{
-	if (mCurrentLight) return mCurrentLight->getSpecularColor();
-
-	return Color::Black;
-}
-
-glm::vec4 RenderStateData::getCurrentLightAttenuation() const
-{
-	glm::vec4 lightAttenuation(1000.0f, 1.0f, 0.0f, 0.0f);
-
-	if (mCurrentLight != nullptr)
-	{
-		lightAttenuation.x = mCurrentLight->getAttenuationRange();
-		lightAttenuation.y = mCurrentLight->getAttenuationConstant();
-		lightAttenuation.z = mCurrentLight->getAttenuationLinear();
-		lightAttenuation.w = mCurrentLight->getAttenuationQuadric();
-	}
-
-	return lightAttenuation;
 }
 
 glm::mat4x4 RenderStateData::getModelMatrix()
@@ -373,66 +152,103 @@ const glm::mat4x4& RenderStateData::getModelViewProjectionMatrix()
 	return mModelViewProjMatrix;
 }
 
-const glm::mat4x4& RenderStateData::getInverseModelMatrix()
+Color RenderStateData::getMaterialAmbientColour()
 {
-	if (mInverseModelMatrixDirty)
-	{
-		mInverseModelMatrix = glm::inverse(getModelMatrix());
-		mInverseModelMatrixDirty = false;
-	}
+	if (mCurrentMaterial == nullptr)
+		return Color::White;
 
-	return mInverseModelMatrix;
+	return mCurrentMaterial->getAmbientColor();
 }
 
-const glm::mat4x4& RenderStateData::getInverseViewMatrix()
+Color RenderStateData::getMaterialDiffuseColour()
 {
-	if (mInverseViewMatrixDirty)
-	{
-		mInverseViewMatrix = glm::inverse(getViewMatrix());
-		mInverseViewMatrixDirty = false;
-	}
-	return mInverseViewMatrix;
+	if (mCurrentMaterial == nullptr)
+		return Color::White;
+
+	return mCurrentMaterial->getDiffuseColor();
 }
 
-const glm::mat4x4& RenderStateData::getInverseProjectionMatrix()
+Color RenderStateData::getMaterialSpecularColour()
 {
-	if (mInverseProjectionMatrixDirty)
-	{
-		mInverseProjectionMatrix = glm::inverse(getProjectionMatrix());
-		mInverseProjectionMatrixDirty = false;
-	}
+	if (mCurrentMaterial == nullptr)
+		return Color::Black;
 
-	return mInverseProjectionMatrix;
+	return mCurrentMaterial->getSpecularColor();
 }
 
-const glm::mat4x4& RenderStateData::getInverseModelViewMatrix()
+float RenderStateData::getMaterialShininess()
 {
-	if (mInverseModelViewMatrixDirty)
-	{
-		mInverseModelViewMatrix = glm::inverse(getModelViewMatrix());
-		mInverseModelViewMatrixDirty = false;
-	}
-	return mInverseModelViewMatrix;
+	if (mCurrentMaterial == nullptr)
+		return 0;
+
+	return mCurrentMaterial->getShininess();
 }
 
-const glm::mat4x4& RenderStateData::getInverseViewProjectionMatrix()
+glm::vec3 RenderStateData::getLightPosition()
 {
-	if (mInverseViewProjectionMatrixDirty)
+	if (mCurrentLight != nullptr && mCurrentLight->getGameObject() != nullptr)
 	{
-		mInverseViewProjectionMatrix = glm::inverse(getViewProjectionMatrix());
-		mInverseViewProjectionMatrixDirty = false;
+		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentLight->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != nullptr)
+		{
+			return pTransform->getAbsolutePosition();
+		}
 	}
-	return mInverseViewProjectionMatrix;
+
+	return glm::vec3(0);
 }
 
-const glm::mat4x4& RenderStateData::getInverseModelViewProjectionMatrix()
+Color RenderStateData::getLightAmbientColour()
 {
-	if (mInverseModelViewProjectionMatrixDirty)
+	if (mCurrentLight == nullptr)
+		return Color::White;
+
+	return mCurrentLight->getAmbientColor();
+}
+
+Color RenderStateData::getLightDiffuseColour()
+{
+	if (mCurrentLight == nullptr)
+		return Color::White;
+
+	return mCurrentLight->getDiffuseColor();
+}
+
+Color RenderStateData::getLightSpecularColour()
+{
+	if (mCurrentLight == nullptr)
+		return Color::Black;
+
+	return mCurrentLight->getSpecularColor();
+}
+
+glm::vec4 RenderStateData::getLightAttenuation()
+{
+	glm::vec4 lightAttenuation(1000, 1, 0, 0);
+
+	if (mCurrentLight != nullptr)
 	{
-		mInverseModelViewProjectionMatrix = glm::inverse(getModelViewProjectionMatrix());
-		mInverseModelViewProjectionMatrixDirty = false;
+		lightAttenuation.x = mCurrentLight->getAttenuationRange();
+		lightAttenuation.y = mCurrentLight->getAttenuationConstant();
+		lightAttenuation.z = mCurrentLight->getAttenuationLinear();
+		lightAttenuation.w = mCurrentLight->getAttenuationQuadric();
 	}
-	return mInverseModelViewProjectionMatrix;
+
+	return lightAttenuation;
+}
+
+glm::vec3 RenderStateData::getCameraPosition()
+{
+	if (mCurrentCamera != nullptr && mCurrentCamera->getGameObject() != nullptr)
+	{
+		game::Transform* pTransform = static_cast<game::Transform*>(mCurrentCamera->getGameObject()->getComponent(game::COMPONENT_TYPE_TRANSFORM));
+		if (pTransform != nullptr)
+		{
+			return pTransform->getAbsolutePosition();
+		}
+	}
+
+	return glm::vec3(0);
 }
 
 } // end namespace render

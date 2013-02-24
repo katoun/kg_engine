@@ -41,6 +41,8 @@ Light::Light(): game::Component()
 	mDiffuse = render::Color::Black;
 	mSpecular = render::Color::White;
 
+	mPowerScale = 1.0f;
+
 	mSpotOuter = 40.0f;
 	mSpotInner = 30.0f;
 	mSpotFalloff = 1.0f;
@@ -48,7 +50,6 @@ Light::Light(): game::Component()
 	mAttenuationConst = 1.0f;
 	mAttenuationLinear = 0.0f;
 	mAttenuationQuad = 0.0f;
-	mPowerScale = 1.0f;
 }
 
 Light::~Light() {}
@@ -112,6 +113,16 @@ void Light::setSpecularColor(const render::Color& color)
 const render::Color& Light::getSpecularColor() const
 {
 	return mSpecular;
+}
+
+void Light::setPowerScale(float power)
+{
+	mPowerScale = power;
+}
+
+float Light::getPowerScale() const
+{
+	return mPowerScale;
 }
 
 void Light::setAttenuation(float range, float constant, float linear, float quadratic)
@@ -207,16 +218,6 @@ float Light::getSpotlightOuterAngle() const
 float Light::getSpotlightFalloff() const
 {
 	return mSpotFalloff;
-}
-
-void Light::setPowerScale(float power)
-{
-	mPowerScale = power;
-}
-
-float Light::getPowerScale() const
-{
-	return mPowerScale;
 }
 
 void Light::setVisible(bool visible)

@@ -59,6 +59,9 @@ public:
 	void setSpecularColor(const render::Color& color);
 	const render::Color& getSpecularColor() const;
 
+	void setPowerScale(float power);
+	float getPowerScale() const;
+
 	void setAttenuation(float range, float constant, float linear, float quadratic);
 	void setAttenuationRange(float range);
 	void setAttenuationConstant(float constant);
@@ -77,9 +80,6 @@ public:
 	float getSpotlightOuterAngle() const;
 	float getSpotlightFalloff() const;
 
-	void setPowerScale(float power);
-	float getPowerScale() const;
-
 	void setVisible(bool visible);
 	bool isVisible();
 
@@ -91,6 +91,8 @@ private:
 	render::Color mDiffuse;
 	render::Color mSpecular;
 
+	float mPowerScale;
+
 	float mSpotOuter;
 	float mSpotInner;
 	float mSpotFalloff;
@@ -98,7 +100,6 @@ private:
 	float mAttenuationConst;
 	float mAttenuationLinear;
 	float mAttenuationQuad;
-	float mPowerScale;
 
 	bool mVisible;
 };

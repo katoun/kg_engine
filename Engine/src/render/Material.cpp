@@ -43,6 +43,11 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 	mResourceType	= resource::RESOURCE_TYPE_RENDER_MATERIAL;
 	mGLHandle		= 0;
 
+	mAmbient = render::Color::White;
+	mDiffuse = render::Color::Black;
+	mSpecular = render::Color::White;
+	mShininess = 0.0f;
+
 	mTextureUnits.clear();
 
 	mVertexShader	= nullptr;
@@ -63,6 +68,67 @@ Material::~Material()
 			mFragmentShader->removeResourceEventReceiver(this);
 	if (mGeometryShader != nullptr)
 			mGeometryShader->removeResourceEventReceiver(this);
+}
+
+void Material::setAmbientColor(float red, float green, float blue)
+{
+	mAmbient.r = red;
+	mAmbient.g = green;
+	mAmbient.b = blue;
+}
+
+void Material::setAmbientColor(const render::Color& color)
+{
+	mAmbient = color;
+}
+
+const render::Color& Material::getAmbientColor() const
+{
+	return mAmbient;
+}
+
+void Material::setDiffuseColor(float red, float green, float blue)
+{
+	mDiffuse.r = red;
+	mDiffuse.g = green;
+	mDiffuse.b = blue;
+}
+
+void Material::setDiffuseColor(const render::Color& color)
+{
+	mDiffuse = color;
+}
+
+const render::Color& Material::getDiffuseColor() const
+{
+	return mDiffuse;
+}
+
+void Material::setSpecularColor(float red, float green, float blue)
+{
+	mSpecular.r = red;
+	mSpecular.g = green;
+	mSpecular.b = blue;
+}
+
+void Material::setSpecularColor(const render::Color& color)
+{
+	mSpecular = color;
+}
+
+const render::Color& Material::getSpecularColor() const
+{
+	return mSpecular;
+}
+
+void Material::setShininess(float shininess)
+{
+	mShininess = shininess;
+}
+
+float Material::getShininess() const
+{
+	return mShininess;
 }
 
 void Material::addTextureUnit(const std::string& filename)
@@ -310,6 +376,23 @@ void Material::addParameter(const std::string& name, ShaderParameterType type)
 	{
 		param = createParameter(name, type);
 	}
+}
+
+void Material::setParameter(const std::string& name, const float value)
+{
+	ShaderParameter* param = findParameter(name);
+	setParameter(param, value);
+}
+
+void Material::setParameter(ShaderParameter* parameter, const float value)
+{
+	if (parameter == nullptr)
+		return;
+
+	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT)
+		return;
+
+	glUniform1f(parameter->mParameterID, value);
 }
 
 void Material::setParameter(const std::string& name, const Color& col)

@@ -53,25 +53,8 @@ public:
 	void setCurrentViewport(Viewport* viewport);
 	void setCurrentLight(Light* light);
 
-	Material* getCurrentMaterial() const;
-	Model* getCurrentModel() const;
-
-	const glm::vec3& getCameraPosition();
-	const glm::vec3& getCameraPositionObjectSpace();
-
-	const glm::vec3& getCurrentLightPosition();
-	const glm::vec3& getCurrentLightPositionObjectSpace();
-	const glm::vec3& getCurrentLightPositionViewSpace();
-	const glm::vec3& getCurrentLightDirection();
-	const glm::vec3& getCurrentLightDirectionObjectSpace();
-	const glm::vec3& getCurrentLightDirectionViewSpace();
-
-	void setAmbientLightColor(const Color& ambient);
-	const Color& getAmbientLightColour() const;
-
-	const Color& getCurrentLightDiffuseColour() const;
-	const Color& getCurrentLightSpecularColour() const;
-	glm::vec4 getCurrentLightAttenuation() const;
+	Material* getCurrentMaterial();
+	Model* getCurrentModel();
 
 	glm::mat4x4 getModelMatrix();
 	glm::mat4x4 getViewMatrix();
@@ -81,13 +64,18 @@ public:
 	const glm::mat4x4& getViewProjectionMatrix();
 	const glm::mat4x4& getModelViewProjectionMatrix();
 
-	const glm::mat4x4& getInverseModelMatrix();
-	const glm::mat4x4& getInverseViewMatrix();
-	const glm::mat4x4& getInverseProjectionMatrix();
+	Color getMaterialAmbientColour();
+	Color getMaterialDiffuseColour();
+	Color getMaterialSpecularColour();
+	float getMaterialShininess();
 
-	const glm::mat4x4& getInverseModelViewMatrix();
-	const glm::mat4x4& getInverseViewProjectionMatrix();
-	const glm::mat4x4& getInverseModelViewProjectionMatrix();
+	glm::vec3 getLightPosition();
+	Color getLightAmbientColour();
+	Color getLightDiffuseColour();
+	Color getLightSpecularColour();
+	glm::vec4 getLightAttenuation();
+
+	glm::vec3 getCameraPosition();
 
 protected:
 
@@ -95,42 +83,9 @@ protected:
 	glm::mat4x4 mViewProjMatrix;
 	glm::mat4x4 mModelViewProjMatrix;
 
-	glm::mat4x4 mInverseModelMatrix;
-	glm::mat4x4 mInverseViewMatrix;
-	glm::mat4x4 mInverseProjectionMatrix;
-
-	glm::mat4x4 mInverseModelViewMatrix;
-	glm::mat4x4 mInverseViewProjectionMatrix;
-	glm::mat4x4 mInverseModelViewProjectionMatrix;
-
 	bool mModelViewMatrixDirty;
 	bool mViewProjMatrixDirty;
 	bool mModelViewProjMatrixDirty;
-
-	bool mInverseModelMatrixDirty;
-	bool mInverseViewMatrixDirty;
-	bool mInverseProjectionMatrixDirty;
-
-	bool mInverseModelViewMatrixDirty;
-	bool mInverseViewProjectionMatrixDirty;
-	bool mInverseModelViewProjectionMatrixDirty;
-
-	glm::vec3 mCameraPosition;
-	glm::vec3 mCameraPositionObjectSpace;
-
-	bool mCameraPositionDirty;
-	bool mCameraPositionObjectSpaceDirty;
-
-	glm::vec3 mLightPosition;
-	glm::vec3 mLightPositionObjectSpace;
-	glm::vec3 mLightPositionViewSpace;
-
-	glm::vec3 mLightDirection;
-	glm::vec3 mLightDirectionObjectSpace;
-	glm::vec3 mLightDirectionViewSpace;
-
-	Color mAmbientLightColor;
-	Color mFogColor;
 
 	Material* mCurrentMaterial;
 	Model* mCurrentModel;
@@ -138,7 +93,7 @@ protected:
 	Light* mCurrentLight;
 	Viewport* mCurrentViewport;
 	
-	std::list<Light*> mLights;
+	std::list<Light*> mLights;//TODO!!!
 };
 
 } // end namespace render

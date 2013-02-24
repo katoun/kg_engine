@@ -52,34 +52,26 @@ enum ShaderParameterType
 enum ShaderAutoParameterType
 {
 	SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX,									//! The current model matrix
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX,							//! The current model matrix, inverted
 	SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX,										//! The current view matrix
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX,								//! The current view matrix, inverted
 	SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX,								//! The current projection matrix
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX,						//! Provides inverse of projection matrix.
 	SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX,							//! The current view & projection matrices concatenated
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX,					//! Provides inverse of concatenated view and projection matrices.
 	SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX,								//! The current model & view matrices concatenated
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX,						//! The current model & view matrices concatenated, then inverted
 	SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX,					//! The current model, view & projection matrices concatenated
-	SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX,			//! Provides inverse of concatenated model, view and projection matrices.
+
+	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_AMBIENT_COLOUR,							//! Material ambient color
+	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_DIFFUSE_COLOUR,							//! Material diffuse color
+	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR,						//! Material specular color
+	SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS,								//! Material shininess
 	
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_COUNT,										//! The number of active light sources
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION,									//! A light position in world space
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE,						//! A light position in object space
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE,						//! A light position in view space
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION,									//! A light direction in world space
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE,					//! A light direction in object space
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE,						//! A light direction in view space
-
-	SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR,							//! The ambient light color set in the scene
+	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION,									//! Light position in world space
+	SHADER_AUTO_PARAMETER_TYPE_LIGHT_AMBIENT_COLOUR,							//! Light ambient color
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR,							//! Light diffuse color
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR,							//! Light specular color
-	SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION,								//! Light attenuation parameters, Vector4(range, constant, linear, quadric)
+	SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION,								//! Light attenuation parameters, vec4(range, constant, linear, quadric)
 	SHADER_AUTO_PARAMETER_TYPE_LIGHT_POWER_SCALE,								//! Light power level
 
 	SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION,									//! The current camera's position in world space
-	SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE,					//! The current camera's position in object space 
 
 	SHADER_AUTO_PARAMETER_TYPE_NONE
 };

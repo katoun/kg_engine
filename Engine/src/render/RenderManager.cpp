@@ -904,76 +904,53 @@ void RenderManager::render(RenderStateData& renderStateData)
 		case SHADER_AUTO_PARAMETER_TYPE_MODEL_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getModelMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelMatrix());
-			break;
 		case SHADER_AUTO_PARAMETER_TYPE_VIEW_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getViewMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseViewMatrix());
 			break;
 		case SHADER_AUTO_PARAMETER_TYPE_PROJECTION_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_PROJECTION_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseProjectionMatrix());
-			break;
 		case SHADER_AUTO_PARAMETER_TYPE_VIEW_PROJECTION_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getViewProjectionMatrix());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_VIEW_PROJECTION_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseViewProjectionMatrix());
 			break;
 		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getModelViewMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelViewMatrix());
-			break;
 		case SHADER_AUTO_PARAMETER_TYPE_MODEL_VIEW_PROJECTION_MATRIX:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getModelViewProjectionMatrix());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_INVERSE_MODEL_VIEW_PROJECTION_MATRIX:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getInverseModelViewProjectionMatrix());
-			break;
 
+		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_AMBIENT_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialAmbientColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_DIFFUSE_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialDiffuseColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SPECULAR_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialSpecularColour());
+			break;
+		case SHADER_AUTO_PARAMETER_TYPE_MATERIAL_SHININESS:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getMaterialShininess());
+			break;
+		
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPosition());
+			pMaterial->setParameter(pShaderParameter, renderStateData.getLightPosition());
 			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_OBJECT_SPACE:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPositionObjectSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_POSITION_VIEW_SPACE:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightPositionViewSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirection());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_OBJECT_SPACE:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirectionObjectSpace());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIRECTION_VIEW_SPACE:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDirectionViewSpace());
-			break;
-
-		case SHADER_AUTO_PARAMETER_TYPE_AMBIENT_LIGHT_COLOUR:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getAmbientLightColour());
+		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_AMBIENT_COLOUR:
+			pMaterial->setParameter(pShaderParameter, renderStateData.getLightAmbientColour());
 			break;
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_DIFFUSE_COLOUR:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightDiffuseColour());
+			pMaterial->setParameter(pShaderParameter, renderStateData.getLightDiffuseColour());
 			break;
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_SPECULAR_COLOUR:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightSpecularColour());
+			pMaterial->setParameter(pShaderParameter, renderStateData.getLightSpecularColour());
 			break;
 		case SHADER_AUTO_PARAMETER_TYPE_LIGHT_ATTENUATION:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCurrentLightAttenuation());
+			pMaterial->setParameter(pShaderParameter, renderStateData.getLightAttenuation());
 			break;
+
 		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION:
 			pMaterial->setParameter(pShaderParameter, renderStateData.getCameraPosition());
-			break;
-		case SHADER_AUTO_PARAMETER_TYPE_CAMERA_POSITION_OBJECT_SPACE:
-			pMaterial->setParameter(pShaderParameter, renderStateData.getCameraPositionObjectSpace());
 			break;
 		}
 	}

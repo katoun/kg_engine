@@ -71,6 +71,21 @@ public:
 	Material(const std::string& name, resource::Serializer* serializer);
 	virtual ~Material();
 
+	void setAmbientColor(float red, float green, float blue);
+	void setAmbientColor(const render::Color& color);
+	const render::Color& getAmbientColor() const;
+
+	void setDiffuseColor(float red, float green, float blue);
+	void setDiffuseColor(const render::Color& color);
+	const render::Color& getDiffuseColor() const;
+
+	void setSpecularColor(float red, float green, float blue);
+	void setSpecularColor(const render::Color& color);
+	const render::Color& getSpecularColor() const;
+
+	void setShininess(float shininess);
+	float getShininess() const;
+
 	//! Inserts a new texture unit in the material.
 	void addTextureUnit(const std::string& filename);
 	void addTextureUnit(Texture* texture);
@@ -109,6 +124,8 @@ public:
 
 	void addParameter(const std::string& name, ShaderParameterType type);
 
+	void setParameter(const std::string& name, const float value);
+	void setParameter(ShaderParameter* parameter, const float value);
 	void setParameter(const std::string& name, const Color& col);
 	void setParameter(ShaderParameter* parameter, const Color& col);
 	void setParameter(const std::string& name, const glm::vec2& vec);
@@ -132,12 +149,17 @@ protected:
 
 	GLhandleARB mGLHandle;
 
-	// Textures
-	std::list<Texture*> mTextureUnits;
-
+	render::Color mAmbient;
+	render::Color mDiffuse;
+	render::Color mSpecular;
+	float mShininess;
+	
 	Shader* mVertexShader;
 	Shader* mFragmentShader;
 	Shader* mGeometryShader;
+
+	// Textures
+	std::list<Texture*> mTextureUnits;
 
 	ShaderParameter* createParameter(const std::string& name, ShaderParameterType type);
 
