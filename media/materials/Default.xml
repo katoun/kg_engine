@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material>
+	<vertex_shader>
+		<shader value="shaders/Grid_vp.glsl"/>
+		<param_vertex name="vertex_position" type="vertex_position"/>
+		<param_vertex name="vertex_uv" type="vertex_texture_coordinates"/>
+		<param_auto name="modelViewProjMatrix" type="model_view_projection_matrix"/>
+	</vertex_shader>
+	<fragment_shader>
+		<shader value="shaders/Grid_fp.glsl"/>
+	</fragment_shader>
+	<texture_unit>
+		<texture value="textures/Grid1x1m.tga"/>
+	</texture_unit>
+</material>

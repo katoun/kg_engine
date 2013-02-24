@@ -36,7 +36,7 @@ void main()
 	vec3 eye_direction_cameraspace = - vertex_position_cameraspace;
 	
 	vec3 light_position_cameraspace = mat3(viewMatrix) * light_position;
-	vec3 light_direction_cameraspace = light_position_cameraspace + eye_direction_cameraspace;
+	vec3 light_direction_cameraspace = light_position_cameraspace - vertex_position_cameraspace;
 
 	lightVector.x = dot(light_direction_cameraspace, t);
 	lightVector.y = dot(light_direction_cameraspace, b);

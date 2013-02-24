@@ -38,8 +38,8 @@ Light::Light(): game::Component()
 	mLightType = LIGHT_TYPE_POINT;
 	mVisible = true;
 	mAmbient = render::Color::White;
-	mDiffuse = render::Color::White;
-	mSpecular = render::Color::Black;
+	mDiffuse = render::Color::Black;
+	mSpecular = render::Color::White;
 
 	mSpotOuter = 40.0f;
 	mSpotInner = 30.0f;

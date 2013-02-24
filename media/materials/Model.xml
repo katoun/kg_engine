@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <material>
 	<vertex_shader>
-		<shader value="shaders/Shader_vp.glsl"/>
-		<param_vertex name="position" type="vertex_position"/>
-		<param_vertex name="normal" type="vertex_normal"/>
-		<param_vertex name="tangent" type="vertex_tangent"/>
-		<param_vertex name="binormal" type="vertex_binormal"/>
-		<param_vertex name="texCoords0" type="vertex_texture_coordinates"/>
+		<shader value="shaders/Model_vp.glsl"/>
+		<param_vertex name="vertex_position" type="vertex_position"/>
+		<param_vertex name="vertex_normal" type="vertex_normal"/>
+		<param_vertex name="vertex_tangent" type="vertex_tangent"/>
+		<param_vertex name="vertex_binormal" type="vertex_binormal"/>
+		<param_vertex name="vertex_uv" type="vertex_texture_coordinates"/>
 		<param_auto name="modelViewProjMatrix" type="model_view_projection_matrix"/>
 		<param_auto name="modelViewMatrix" type="model_view_matrix"/>
-		<param_auto name="lightPosition" type="light_position"/>
-		<param_auto name="cameraPosition" type="camera_position"/>
+		<param_auto name="modelMatrix" type="model_matrix"/>
+		<param_auto name="viewMatrix" type="view_matrix"/>
+		<param_auto name="light_position" type="light_position"/>
+		<param_auto name="camera_position" type="camera_position"/>
 	</vertex_shader>
 	<fragment_shader>
-		<shader value="shaders/Shader_fp.glsl"/>
+		<shader value="shaders/Model_fp.glsl"/>
 		<param_auto name="lightDiffuse" type="light_diffuse_colour"/>
 		<param_auto name="lightSpecular" type="light_specular_colour"/>
 	</fragment_shader>

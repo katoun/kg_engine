@@ -474,7 +474,8 @@ void Win32Window::windowMovedOrResized()
 
 void Win32Window::destroy()
 {
-	if (!mHWnd)	return;
+	if (!mHWnd)
+		return;
 
 	if (mGlrc)											// Do We Have A Rendering Context?
 	{

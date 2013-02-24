@@ -471,7 +471,7 @@ void RenderManager::removeAllIndexBuffers()
 void RenderManager::initializeImpl()
 {
 	if (resource::ResourceManager::getInstance() != nullptr)
-		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/DefaultMaterial.xml"));
+		mDefaultMaterial = static_cast<Material*>(resource::ResourceManager::getInstance()->createResource(resource::RESOURCE_TYPE_RENDER_MATERIAL, "materials/Default.xml"));
 
 	mModelMaterialPairs.reserve(1024);
 
@@ -519,14 +519,14 @@ void RenderManager::uninitializeImpl()
 	// Remove all Fonts
 	removeAllFonts();
 
-	// Remove all Render Windows
-	removeAllRenderWindows();
-
 	//! Removes all Vertex Buffers.
 	removeAllVertexBuffers();
 
 	//! Removes all Index Buffers.
 	removeAllIndexBuffers();
+
+	// Remove all Render Windows
+	removeAllRenderWindows();
 
 	// Remove ModelMaterialPairs
 	mModelMaterialPairs.clear();
