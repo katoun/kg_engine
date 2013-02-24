@@ -37,9 +37,9 @@ Light::Light(): game::Component()
 
 	mLightType = LIGHT_TYPE_POINT;
 	mVisible = true;
-	mAmbient = render::Color::White;
-	mDiffuse = render::Color::Black;
-	mSpecular = render::Color::White;
+	mAmbient = glm::vec4(1, 1, 1, 1);
+	mDiffuse = glm::vec4(0, 0, 0, 1);
+	mSpecular = glm::vec4(0, 0, 0, 1);
 
 	mPowerScale = 1.0f;
 
@@ -64,53 +64,56 @@ LightType Light::getLightType()
 	return mLightType;
 }
 
-void Light::setAmbientColor(float red, float green, float blue)
+void Light::setAmbientColor(float red, float green, float blue, float alpha)
 {
 	mAmbient.r = red;
 	mAmbient.g = green;
 	mAmbient.b = blue;
+	mAmbient.a = alpha;
 }
 
-void Light::setAmbientColor(const render::Color& color)
+void Light::setAmbientColor(const glm::vec4& color)
 {
 	mAmbient = color;
 }
 
-const render::Color& Light::getAmbientColor() const
+const glm::vec4& Light::getAmbientColor() const
 {
 	return mAmbient;
 }
 
-void Light::setDiffuseColor(float red, float green, float blue)
+void Light::setDiffuseColor(float red, float green, float blue, float alpha)
 {
 	mDiffuse.r = red;
 	mDiffuse.g = green;
 	mDiffuse.b = blue;
+	mDiffuse.a = alpha;
 }
 
-void Light::setDiffuseColor(const render::Color& color)
+void Light::setDiffuseColor(const glm::vec4& color)
 {
 	mDiffuse = color;
 }
 
-const render::Color& Light::getDiffuseColor() const
+const glm::vec4& Light::getDiffuseColor() const
 {
 	return mDiffuse;
 }
 
-void Light::setSpecularColor(float red, float green, float blue)
+void Light::setSpecularColor(float red, float green, float blue, float alpha)
 {
 	mSpecular.r = red;
 	mSpecular.g = green;
 	mSpecular.b = blue;
+	mSpecular.a = alpha;
 }
 
-void Light::setSpecularColor(const render::Color& color)
+void Light::setSpecularColor(const glm::vec4& color)
 {
 	mSpecular = color;
 }
 
-const render::Color& Light::getSpecularColor() const
+const glm::vec4& Light::getSpecularColor() const
 {
 	return mSpecular;
 }

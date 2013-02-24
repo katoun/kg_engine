@@ -75,10 +75,6 @@ protected:
 	std::string mVersion;
 };
 
-inline glm::vec3 ENGINE_PUBLIC_EXPORT parseVector3d(std::string& params);
-inline glm::quat ENGINE_PUBLIC_EXPORT parseQuaternion(std::string& params);
-inline render::Color ENGINE_PUBLIC_EXPORT parseColor(std::string& params);
-
 }// end namespace resource
 
 #endif

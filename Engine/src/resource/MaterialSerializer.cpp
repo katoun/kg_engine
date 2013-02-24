@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include <physics/Material.h>
 
 #include <tinyxml2.h>
-
 #include <string>
 
 namespace resource
@@ -158,15 +157,20 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 		tinyxml2::XMLElement* pElement = nullptr;
 		tinyxml2::XMLElement* pSubElement = nullptr;
 
+		float r = 0;
+		float g = 0;
+		float b = 0;
+		float a = 1;
+
 		if (dest->getResourceType() == RESOURCE_TYPE_RENDER_MATERIAL)
 		{
 			pElement = pRoot->FirstChildElement("ambient_color");
 			if (pElement != nullptr)
 			{
-				float r = 0.0f;
-				float g = 0.0f;
-				float b = 0.0f;
-				float a = 1.0f;
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 1;
 
 				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
@@ -188,16 +192,16 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 					a = (float)dvalue;
 				}
 
-				renderMaterial->setAmbientColor(render::Color(r, g, b, a));
+				renderMaterial->setAmbientColor(r, g, b, a);
 			}
 
 			pElement = pRoot->FirstChildElement("diffuse_color");
 			if (pElement != nullptr)
 			{
-				float r = 0.0f;
-				float g = 0.0f;
-				float b = 0.0f;
-				float a = 1.0f;
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 1;
 
 				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
@@ -219,16 +223,16 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 					a = (float)dvalue;
 				}
 
-				renderMaterial->setDiffuseColor(render::Color(r, g, b, a));
+				renderMaterial->setDiffuseColor(r, g, b, a);
 			}
 
 			pElement = pRoot->FirstChildElement("specular_color");
 			if (pElement != nullptr)
 			{
-				float r = 0.0f;
-				float g = 0.0f;
-				float b = 0.0f;
-				float a = 1.0f;
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 1;
 
 				if (pElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 				{
@@ -250,7 +254,7 @@ bool MaterialSerializer::importResource(Resource* dest, const std::string& filen
 					a = (float)dvalue;
 				}
 
-				renderMaterial->setSpecularColor(render::Color(r, g, b, a));
+				renderMaterial->setSpecularColor(r, g, b, a);
 			}
 
 			pElement = pRoot->FirstChildElement("shininess");

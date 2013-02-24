@@ -43,9 +43,9 @@ Material::Material(const std::string& name, resource::Serializer* serializer): r
 	mResourceType	= resource::RESOURCE_TYPE_RENDER_MATERIAL;
 	mGLHandle		= 0;
 
-	mAmbient = render::Color::White;
-	mDiffuse = render::Color::Black;
-	mSpecular = render::Color::White;
+	mAmbient = glm::vec4(1, 1, 1, 1);
+	mDiffuse = glm::vec4(0, 0, 0, 1);
+	mSpecular = glm::vec4(0, 0, 0, 1);
 	mShininess = 0.0f;
 
 	mTextureUnits.clear();
@@ -70,53 +70,56 @@ Material::~Material()
 			mGeometryShader->removeResourceEventReceiver(this);
 }
 
-void Material::setAmbientColor(float red, float green, float blue)
+void Material::setAmbientColor(float red, float green, float blue, float alpha)
 {
 	mAmbient.r = red;
 	mAmbient.g = green;
 	mAmbient.b = blue;
+	mAmbient.a = alpha;
 }
 
-void Material::setAmbientColor(const render::Color& color)
+void Material::setAmbientColor(const glm::vec4& color)
 {
 	mAmbient = color;
 }
 
-const render::Color& Material::getAmbientColor() const
+const glm::vec4& Material::getAmbientColor() const
 {
 	return mAmbient;
 }
 
-void Material::setDiffuseColor(float red, float green, float blue)
+void Material::setDiffuseColor(float red, float green, float blue, float alpha)
 {
 	mDiffuse.r = red;
 	mDiffuse.g = green;
 	mDiffuse.b = blue;
+	mDiffuse.a = alpha;
 }
 
-void Material::setDiffuseColor(const render::Color& color)
+void Material::setDiffuseColor(const glm::vec4& color)
 {
 	mDiffuse = color;
 }
 
-const render::Color& Material::getDiffuseColor() const
+const glm::vec4& Material::getDiffuseColor() const
 {
 	return mDiffuse;
 }
 
-void Material::setSpecularColor(float red, float green, float blue)
+void Material::setSpecularColor(float red, float green, float blue, float alpha)
 {
 	mSpecular.r = red;
 	mSpecular.g = green;
 	mSpecular.b = blue;
+	mSpecular.a = alpha;
 }
 
-void Material::setSpecularColor(const render::Color& color)
+void Material::setSpecularColor(const glm::vec4& color)
 {
 	mSpecular = color;
 }
 
-const render::Color& Material::getSpecularColor() const
+const glm::vec4& Material::getSpecularColor() const
 {
 	return mSpecular;
 }
@@ -393,23 +396,6 @@ void Material::setParameter(ShaderParameter* parameter, const float value)
 		return;
 
 	glUniform1f(parameter->mParameterID, value);
-}
-
-void Material::setParameter(const std::string& name, const Color& col)
-{
-	ShaderParameter* param = findParameter(name);
-	setParameter(param, col);
-}
-
-void Material::setParameter(ShaderParameter* parameter, const Color& col)
-{
-	if (parameter == nullptr)
-		return;
-
-	if (parameter->mParameterType != SHADER_PARAMETER_TYPE_FLOAT4)
-		return;
-
-	glUniform4f(parameter->mParameterID, col.r, col.g, col.b, col.a);
 }
 
 void Material::setParameter(const std::string& name, const glm::vec2& vec)

@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include <render/VertexBuffer.h>
 #include <render/IndexBuffer.h>
 #include <render/RenderManager.h>
-#include <render/Color.h>
 
 #include <glm/glm.hpp>
 #include <tinyxml2.h>

@@ -84,9 +84,6 @@
     <ClInclude Include="include\render\Camera.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\Color.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\Font.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -490,9 +487,6 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Camera.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Color.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Font.cpp">

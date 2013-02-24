@@ -28,7 +28,6 @@ THE SOFTWARE.
 #define _VIEWPORT_H_
 
 #include <EngineConfig.h>
-#include <render/Color.h>
 
 namespace render
 {
@@ -88,11 +87,6 @@ public:
 	int getActualHeight();
 	
 	void setDimenionsChanged();
-
-	//! Sets the initial background color of the viewport (before rendering).
-	void setBackgroundColor(Color& color);
-	//! Gets the background color.
-	Color getBackgroundColor();
 
 	//! Determines whether to clear the viewport before rendering.
 	//!

@@ -25,7 +25,6 @@ THE SOFTWARE.
 */
 
 #include <render/RenderStateData.h>
-#include <render/Color.h>
 #include <render/Material.h>
 #include <render/Light.h>
 #include <render/Camera.h>
@@ -152,26 +151,26 @@ const glm::mat4x4& RenderStateData::getModelViewProjectionMatrix()
 	return mModelViewProjMatrix;
 }
 
-Color RenderStateData::getMaterialAmbientColour()
+glm::vec4 RenderStateData::getMaterialAmbientColour()
 {
 	if (mCurrentMaterial == nullptr)
-		return Color::White;
+		return glm::vec4(1, 1, 1, 1);
 
 	return mCurrentMaterial->getAmbientColor();
 }
 
-Color RenderStateData::getMaterialDiffuseColour()
+glm::vec4 RenderStateData::getMaterialDiffuseColour()
 {
 	if (mCurrentMaterial == nullptr)
-		return Color::White;
+		return glm::vec4(1, 1, 1, 1);
 
 	return mCurrentMaterial->getDiffuseColor();
 }
 
-Color RenderStateData::getMaterialSpecularColour()
+glm::vec4 RenderStateData::getMaterialSpecularColour()
 {
 	if (mCurrentMaterial == nullptr)
-		return Color::Black;
+		return glm::vec4(0, 0, 0, 1);
 
 	return mCurrentMaterial->getSpecularColor();
 }
@@ -198,26 +197,26 @@ glm::vec3 RenderStateData::getLightPosition()
 	return glm::vec3(0);
 }
 
-Color RenderStateData::getLightAmbientColour()
+glm::vec4 RenderStateData::getLightAmbientColour()
 {
 	if (mCurrentLight == nullptr)
-		return Color::White;
+		return glm::vec4(1, 1, 1, 1);
 
 	return mCurrentLight->getAmbientColor();
 }
 
-Color RenderStateData::getLightDiffuseColour()
+glm::vec4 RenderStateData::getLightDiffuseColour()
 {
 	if (mCurrentLight == nullptr)
-		return Color::White;
+		return glm::vec4(1, 1, 1, 1);
 
 	return mCurrentLight->getDiffuseColor();
 }
 
-Color RenderStateData::getLightSpecularColour()
+glm::vec4 RenderStateData::getLightSpecularColour()
 {
 	if (mCurrentLight == nullptr)
-		return Color::Black;
+		return glm::vec4(0, 0, 0, 1);
 
 	return mCurrentLight->getSpecularColor();
 }

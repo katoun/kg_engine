@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <core/System.h>
 #include <core/Singleton.h>
-#include <render/Color.h>
 #include <render/Material.h>
 #include <render/RenderStateData.h>
 

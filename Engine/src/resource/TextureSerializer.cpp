@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include <resource/ResourceManager.h>
 #include <resource/PixelFormat.h>
 #include <render/Texture.h>
-#include <render/Color.h>
 
 #include <FreeImage.h>
 

@@ -199,7 +199,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\render\Camera.h" />
     <ClInclude Include="include\render\CameraDefines.h" />
     <ClInclude Include="include\render\CameraFactory.h" />
-    <ClInclude Include="include\render\Color.h" />
     <ClInclude Include="include\render\Font.h" />
     <ClInclude Include="include\render\FontFactory.h" />
     <ClInclude Include="include\render\FrameEventReceiver.h" />
@@ -337,7 +336,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClCompile Include="src\physics\MaterialFactory.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
     <ClCompile Include="src\render\CameraFactory.cpp" />
-    <ClCompile Include="src\render\Color.cpp" />
     <ClCompile Include="src\render\Font.cpp" />
     <ClCompile Include="src\render\FontFactory.cpp" />
     <ClCompile Include="src\render\FrameEventReceiver.cpp" />

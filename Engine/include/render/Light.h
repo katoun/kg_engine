@@ -30,7 +30,8 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <game/Component.h>
 #include <render/LightDefines.h>
-#include <render/Color.h>
+
+#include <glm/glm.hpp>
 
 namespace render
 {
@@ -47,17 +48,17 @@ public:
 	void setLightType(LightType type);
 	LightType getLightType();
 
-	void setAmbientColor(float red, float green, float blue);
-	void setAmbientColor(const render::Color& color);
-	const render::Color& getAmbientColor() const;
+	void setAmbientColor(float red, float green, float blue, float alpha = 1);
+	void setAmbientColor(const glm::vec4& color);
+	const glm::vec4& getAmbientColor() const;
 
-	void setDiffuseColor(float red, float green, float blue);
-	void setDiffuseColor(const render::Color& color);
-	const render::Color& getDiffuseColor() const;
+	void setDiffuseColor(float red, float green, float blue, float alpha = 1);
+	void setDiffuseColor(const glm::vec4& color);
+	const glm::vec4& getDiffuseColor() const;
 
-	void setSpecularColor(float red, float green, float blue);
-	void setSpecularColor(const render::Color& color);
-	const render::Color& getSpecularColor() const;
+	void setSpecularColor(float red, float green, float blue, float alpha = 1);
+	void setSpecularColor(const glm::vec4& color);
+	const glm::vec4& getSpecularColor() const;
 
 	void setPowerScale(float power);
 	float getPowerScale() const;
@@ -87,9 +88,9 @@ private:
 
 	LightType mLightType;
 
-	render::Color mAmbient;
-	render::Color mDiffuse;
-	render::Color mSpecular;
+	glm::vec4 mAmbient;
+	glm::vec4 mDiffuse;
+	glm::vec4 mSpecular;
 
 	float mPowerScale;
 

@@ -27,7 +27,6 @@ THE SOFTWARE.
 #ifndef _ENGINE_RENDER_H_
 #define _ENGINE_RENDER_H_
 
-#include <render/Color.h>
 #include <render/RenderUtils.h>
 #include <render/RenderBuffer.h>
 #include <render/RenderBufferDefines.h>

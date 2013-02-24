@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 #include <core/Utils.h>
 #include <resource/Serializer.h>
-#include <render/Color.h>
 #include <resource/Resource.h>
 
 #include <vector>
@@ -41,101 +40,5 @@ Serializer::Serializer()
 }
 
 Serializer::~Serializer() {}
-
-glm::vec3 parseVector3d(std::string& params)
-{
-#ifdef _DEBUG
-	std::cout<<"Parse Vector3d"<<std::endl;
-	std::cout<<params<<std::endl;
-#endif
-	
-	std::vector<std::string> vecparams = core::splitString(params, " \t", 2);
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-	
-	if (vecparams.size() > 0)
-		x = core::stringToFloat(vecparams[0]);
-	if (vecparams.size() > 1)
-		y = core::stringToFloat(vecparams[1]);
-	if (vecparams.size() > 2)
-		z = core::stringToFloat(vecparams[2]);
-
-	return glm::vec3(x, y, z);
-}
-
-glm::quat parseQuaternion(std::string& params)
-{
-#ifdef _DEBUG
-	std::cout<<"Parse Quaternion"<<std::endl;
-	std::cout<<params<<std::endl;
-#endif
-
-	std::vector<std::string> vecparams = core::splitString(params, " \t", 3);
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-	float w = 0.0f;
-
-	if (vecparams.size() > 0)
-		x = core::stringToFloat(vecparams[0]);
-	if (vecparams.size() > 1)
-		y = core::stringToFloat(vecparams[1]);
-	if (vecparams.size() > 2)
-		z = core::stringToFloat(vecparams[2]);
-	if (vecparams.size() > 3)
-		w = core::stringToFloat(vecparams[3]);
-
-	return glm::quat(x, y, z, w);
-}
-
-render::Color parseColor(std::string& params)
-{
-#ifdef _DEBUG
-	std::cout<<"Parse Color"<<std::endl;
-	std::cout<<params<<std::endl;
-#endif
-	core::stringToLower(params);
-	if (params == "black")
-	{
-		return render::Color::Black;
-	}
-	else if (params == "white")
-	{
-		return render::Color::White;
-	}
-	else if (params == "red")
-	{
-		return render::Color::Red;
-	}
-	else if (params == "green")
-	{
-		return render::Color::Green;
-	}
-	else if (params == "blue")
-	{
-		return render::Color::Blue;
-	}
-	else
-	{
-		std::vector<std::string> vecparams = core::splitString(params, " \t", 3);
-
-		float r = 0.0f;
-		float g = 0.0f;
-		float b = 0.0f;
-		float a = 0.0f;
-
-		if (vecparams.size() > 0)
-			r = core::stringToFloat(vecparams[0]);
-		if (vecparams.size() > 1)
-			g = core::stringToFloat(vecparams[1]);
-		if (vecparams.size() > 2)
-			b = core::stringToFloat(vecparams[2]);
-		if (vecparams.size() > 3)
-			a = core::stringToFloat(vecparams[3]);
-
-		return render::Color(r, g, b, a);
-	}
-}
 
 }// end namespace resource

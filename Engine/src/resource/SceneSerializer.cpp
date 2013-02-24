@@ -43,7 +43,6 @@ THE SOFTWARE.
 #include <sound/Listener.h>
 
 #include <tinyxml2.h>
-
 #include <string>
 
 namespace resource
@@ -150,6 +149,14 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 	tinyxml2::XMLElement* pElement = nullptr;
 	tinyxml2::XMLElement* pSubElement = nullptr;
 	tinyxml2::XMLElement* pComponentSubElement = nullptr;
+	float r = 0;
+	float g = 0;
+	float b = 0;
+	float a = 1;
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float w = 1;
 
 	pElement = rootElement->FirstChildElement("game_object");
 	while (pElement != nullptr)
@@ -192,9 +199,9 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 							pComponentSubElement = pSubElement->FirstChildElement("position");
 							if (pComponentSubElement != nullptr)
 							{
-								float x = 1.0f;
-								float y = 1.0f;
-								float z = 1.0f;
+								x = 0;
+								y = 0;
+								z = 0;
 
 								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -217,10 +224,10 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 							pComponentSubElement = pSubElement->FirstChildElement("orientation");
 							if (pComponentSubElement != nullptr)
 							{
-								float x = 1.0f;
-								float y = 1.0f;
-								float z = 1.0f;
-								float w = 1.0f;
+								x = 1;
+								y = 1;
+								z = 1;
+								w = 1;
 
 								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -248,9 +255,9 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 							pComponentSubElement = pSubElement->FirstChildElement("scale");
 							if (pComponentSubElement != nullptr)
 							{
-								float x = 1.0f;
-								float y = 1.0f;
-								float z = 1.0f;
+								x = 1;
+								y = 1;
+								z = 1;
 
 								if (pElement->QueryDoubleAttribute("x", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -291,10 +298,10 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 							pComponentSubElement = pSubElement->FirstChildElement("ambient_color");
 							if (pComponentSubElement != nullptr)
 							{
-								float r = 1.0f;
-								float g = 1.0f;
-								float b = 1.0f;
-								float a = 1.0f;
+								r = 0;
+								g = 0;
+								b = 0;
+								a = 1;
 
 								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -316,16 +323,16 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 									a = (float)dvalue;
 								}
 
-								pLight->setAmbientColor(render::Color(r,g,b,a));
+								pLight->setAmbientColor(r,g,b,a);
 							}
 
 							pComponentSubElement = pSubElement->FirstChildElement("diffuse_color");
 							if (pComponentSubElement != nullptr)
 							{
-								float r = 1.0f;
-								float g = 1.0f;
-								float b = 1.0f;
-								float a = 1.0f;
+								r = 0;
+								g = 0;
+								b = 0;
+								a = 1;
 
 								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -347,16 +354,16 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 									a = (float)dvalue;
 								}
 
-								pLight->setDiffuseColor(render::Color(r,g,b,a));
+								pLight->setDiffuseColor(r,g,b,a);
 							}
 
 							pComponentSubElement = pSubElement->FirstChildElement("specular_color");
 							if (pComponentSubElement != nullptr)
 							{
-								float r = 1.0f;
-								float g = 1.0f;
-								float b = 1.0f;
-								float a = 1.0f;
+								r = 0;
+								g = 0;
+								b = 0;
+								a = 1;
 
 								if (pComponentSubElement->QueryDoubleAttribute("r", &dvalue) == tinyxml2::XML_SUCCESS)
 								{
@@ -378,7 +385,7 @@ void SceneSerializer::importGameObjects(tinyxml2::XMLElement* rootElement, game:
 									a = (float)dvalue;
 								}
 
-								pLight->setSpecularColor(render::Color(r,g,b,a));
+								pLight->setSpecularColor(r,g,b,a);
 							}
 
 							pComponentSubElement = pSubElement->FirstChildElement("attenuation_range");

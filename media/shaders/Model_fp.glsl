@@ -45,7 +45,6 @@ void main()
 	float shininess = pow(max(dot_h, 0.0), specularPower);
 
 	fragColor = ambientColor;
-	//fragColor += diffuseColor * light_diffuse * lamberFactor;
-	fragColor += diffuseColor * vec4(1,1,1,1) * lamberFactor;
+	fragColor += diffuseColor * light_diffuse * lamberFactor;
 	fragColor += specularColor * light_specular * shininess;
 }

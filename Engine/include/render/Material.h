@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include <render/RenderStateData.h>
 #include <render/TextureDefines.h>
 #include <render/VertexBufferDefines.h>
-#include <render/Color.h>
 
 #include <glm/glm.hpp>
 
@@ -71,17 +70,17 @@ public:
 	Material(const std::string& name, resource::Serializer* serializer);
 	virtual ~Material();
 
-	void setAmbientColor(float red, float green, float blue);
-	void setAmbientColor(const render::Color& color);
-	const render::Color& getAmbientColor() const;
+	void setAmbientColor(float red, float green, float blue, float alpha = 1);
+	void setAmbientColor(const glm::vec4& color);
+	const glm::vec4& getAmbientColor() const;
 
-	void setDiffuseColor(float red, float green, float blue);
-	void setDiffuseColor(const render::Color& color);
-	const render::Color& getDiffuseColor() const;
+	void setDiffuseColor(float red, float green, float blue, float alpha = 1);
+	void setDiffuseColor(const glm::vec4& color);
+	const glm::vec4& getDiffuseColor() const;
 
-	void setSpecularColor(float red, float green, float blue);
-	void setSpecularColor(const render::Color& color);
-	const render::Color& getSpecularColor() const;
+	void setSpecularColor(float red, float green, float blue, float alpha = 1);
+	void setSpecularColor(const glm::vec4& color);
+	const glm::vec4& getSpecularColor() const;
 
 	void setShininess(float shininess);
 	float getShininess() const;
@@ -126,8 +125,6 @@ public:
 
 	void setParameter(const std::string& name, const float value);
 	void setParameter(ShaderParameter* parameter, const float value);
-	void setParameter(const std::string& name, const Color& col);
-	void setParameter(ShaderParameter* parameter, const Color& col);
 	void setParameter(const std::string& name, const glm::vec2& vec);
 	void setParameter(ShaderParameter* parameter, const glm::vec2& vec);
 	void setParameter(const std::string& name, const glm::vec3& vec);
@@ -149,9 +146,9 @@ protected:
 
 	GLhandleARB mGLHandle;
 
-	render::Color mAmbient;
-	render::Color mDiffuse;
-	render::Color mSpecular;
+	glm::vec4 mAmbient;
+	glm::vec4 mDiffuse;
+	glm::vec4 mSpecular;
 	float mShininess;
 	
 	Shader* mVertexShader;

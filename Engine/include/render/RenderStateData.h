@@ -28,7 +28,6 @@ THE SOFTWARE.
 #define _SHADER_PARAM_DATA_H_
 
 #include <EngineConfig.h>
-#include <render/Color.h>
 
 #include <glm/glm.hpp>
 
@@ -64,15 +63,15 @@ public:
 	const glm::mat4x4& getViewProjectionMatrix();
 	const glm::mat4x4& getModelViewProjectionMatrix();
 
-	Color getMaterialAmbientColour();
-	Color getMaterialDiffuseColour();
-	Color getMaterialSpecularColour();
+	glm::vec4 getMaterialAmbientColour();
+	glm::vec4 getMaterialDiffuseColour();
+	glm::vec4 getMaterialSpecularColour();
 	float getMaterialShininess();
 
 	glm::vec3 getLightPosition();
-	Color getLightAmbientColour();
-	Color getLightDiffuseColour();
-	Color getLightSpecularColour();
+	glm::vec4 getLightAmbientColour();
+	glm::vec4 getLightDiffuseColour();
+	glm::vec4 getLightSpecularColour();
 	glm::vec4 getLightAttenuation();
 
 	glm::vec3 getCameraPosition();

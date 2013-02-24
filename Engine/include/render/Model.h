@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include <EngineConfig.h>
 #include <core/Aabox3d.h>
 #include <core/Sphere3d.h>
-#include <render/Color.h>
 #include <game/Component.h>
 #include <resource/ResourceEventReceiver.h>
 
