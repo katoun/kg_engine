@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <render/GLConfig.h>
 #include <render/ShaderDefines.h>
 #include <render/ShaderParameterDefines.h>
-#include <render/RenderBufferDefines.h>
+#include <render/BufferDefines.h>
 #include <render/VertexBufferDefines.h>
 #include <render/RenderDefines.h>
 #include <render/TextureDefines.h>

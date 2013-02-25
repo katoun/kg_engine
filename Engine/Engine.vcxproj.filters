@@ -243,14 +243,7 @@
     <ClInclude Include="include\physics\Shape.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core.h" />
     <ClInclude Include="include\Engine.h" />
-    <ClInclude Include="include\Input.h" />
-    <ClInclude Include="include\Physics.h" />
-    <ClInclude Include="include\Platform.h" />
-    <ClInclude Include="include\Render.h" />
-    <ClInclude Include="include\Resource.h" />
-    <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\input\InputDeviceDefines.h">
       <Filter>input</Filter>
     </ClInclude>
@@ -320,7 +313,6 @@
     <ClInclude Include="include\render\CameraFactory.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\game\Component.h">
       <Filter>game</Filter>
     </ClInclude>
@@ -442,12 +434,6 @@
     <ClInclude Include="..\dependencies\alure\include\main.h">
       <Filter>sound\alure</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\RenderBuffer.h">
-      <Filter>render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\RenderBufferDefines.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\MaterialFactory.h">
       <Filter>physics</Filter>
     </ClInclude>
@@ -456,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="include\physics\ConstraintDefines.h">
       <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\BufferDefines.h">
+      <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -786,9 +775,6 @@
     </ClCompile>
     <ClCompile Include="..\dependencies\alure\src\streamplay.cpp">
       <Filter>sound\alure</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\RenderBuffer.cpp">
-      <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="..\dependencies\alure\src\buffer.cpp">
       <Filter>sound\alure</Filter>

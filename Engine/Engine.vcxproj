@@ -173,7 +173,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\core\Singleton.h" />
     <ClInclude Include="include\core\Sphere3d.h" />
     <ClInclude Include="include\core\Utils.h" />
-    <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\game\Component.h" />
     <ClInclude Include="include\game\ComponentDefines.h" />
     <ClInclude Include="include\game\ComponentFactory.h" />
@@ -196,6 +195,7 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\physics\MaterialFactory.h" />
     <ClInclude Include="include\physics\ShapeDefines.h" />
     <ClInclude Include="include\platform\PlatformDefines.h" />
+    <ClInclude Include="include\render\BufferDefines.h" />
     <ClInclude Include="include\render\Camera.h" />
     <ClInclude Include="include\render\CameraDefines.h" />
     <ClInclude Include="include\render\CameraFactory.h" />
@@ -216,8 +216,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\render\MeshDataFactory.h" />
     <ClInclude Include="include\render\Model.h" />
     <ClInclude Include="include\render\ModelFactory.h" />
-    <ClInclude Include="include\render\RenderBuffer.h" />
-    <ClInclude Include="include\render\RenderBufferDefines.h" />
     <ClInclude Include="include\render\RenderDefines.h" />
     <ClInclude Include="include\render\RenderManager.h" />
     <ClInclude Include="include\render\RenderTarget.h" />
@@ -284,14 +282,7 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClInclude Include="include\physics\Material.h" />
     <ClInclude Include="include\physics\PhysicsManager.h" />
     <ClInclude Include="include\physics\Shape.h" />
-    <ClInclude Include="include\Core.h" />
     <ClInclude Include="include\Engine.h" />
-    <ClInclude Include="include\Input.h" />
-    <ClInclude Include="include\Physics.h" />
-    <ClInclude Include="include\Platform.h" />
-    <ClInclude Include="include\Render.h" />
-    <ClInclude Include="include\Resource.h" />
-    <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\sound\SoundUtils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -349,7 +340,6 @@ copy "$(ProjectDir)..\dependencies\libvorbis\Win32\VS2012\$(Platform)\$(Configur
     <ClCompile Include="src\render\MeshDataFactory.cpp" />
     <ClCompile Include="src\render\Model.cpp" />
     <ClCompile Include="src\render\ModelFactory.cpp" />
-    <ClCompile Include="src\render\RenderBuffer.cpp" />
     <ClCompile Include="src\render\RenderManager.cpp" />
     <ClCompile Include="src\render\RenderTarget.cpp" />
     <ClCompile Include="src\render\RenderTargetEvent.cpp" />

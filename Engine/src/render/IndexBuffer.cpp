@@ -31,11 +31,13 @@ THE SOFTWARE.
 namespace render
 {
 
-IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage): RenderBuffer(usage)
+IndexBuffer::IndexBuffer(IndexType idxType, unsigned int numIndexes, BufferUsage usage)
 {
 	mIndexType = idxType;
 	mNumIndexes = numIndexes;
 	mIndexSize = 0;
+
+	mIsLocked = false;
 
 	// Calculate the size of the indexes
 	switch (mIndexType)
@@ -98,7 +100,6 @@ unsigned int IndexBuffer::getIndexSize()
 	return mIndexSize;
 }
 
-
 void IndexBuffer::readData(unsigned int offset, unsigned int length, void* pDest)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
@@ -125,12 +126,12 @@ void IndexBuffer::writeData(unsigned int offset, unsigned int length, const void
 	}
 }
 
-GLuint IndexBuffer::getGLBufferId() const
+void* IndexBuffer::lock(BufferLocking options)
 {
-	return mBufferId;
+	return lock(0, mSizeInBytes, options);
 }
 
-void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, BufferLocking options)
+void* IndexBuffer::lock(unsigned int offset, unsigned int length, BufferLocking options)
 {
 	GLenum access = 0;
 
@@ -181,7 +182,7 @@ void* IndexBuffer::lockImpl(unsigned int offset, unsigned int length, BufferLock
 	return static_cast<void*>(static_cast<unsigned char*>(pBuffer) + offset);
 }
 
-void IndexBuffer::unlockImpl()
+void IndexBuffer::unlock()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 
@@ -192,6 +193,11 @@ void IndexBuffer::unlockImpl()
 	}
 
 	mIsLocked = false;
+}
+
+GLuint IndexBuffer::getGLBufferId() const
+{
+	return mBufferId;
 }
 
 }// end namespace render

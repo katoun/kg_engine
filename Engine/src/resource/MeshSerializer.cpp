@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include <core/LogDefines.h>
 #include <resource/ResourceManager.h>
 #include <render/MeshData.h>
-#include <render/RenderBufferDefines.h>
+#include <render/BufferDefines.h>
 #include <render/VertexBuffer.h>
 #include <render/IndexBuffer.h>
 #include <render/RenderManager.h>

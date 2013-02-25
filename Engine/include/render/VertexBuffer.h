@@ -29,8 +29,7 @@ THE SOFTWARE.
 
 #include <EngineConfig.h>
 #include <render/GLConfig.h>
-#include <render/RenderBuffer.h>
-#include <render/RenderBufferDefines.h>
+#include <render/BufferDefines.h>
 #include <render/VertexBufferDefines.h>
 
 #include <list>
@@ -39,8 +38,8 @@ THE SOFTWARE.
 namespace render
 {
 
-//! Class for index buffers, still abstract.
-class ENGINE_PUBLIC_EXPORT VertexBuffer: public RenderBuffer
+//! Class for vertex buffers, still abstract.
+class ENGINE_PUBLIC_EXPORT VertexBuffer
 {
 public:
 
@@ -60,16 +59,21 @@ public:
 
 	void writeData(unsigned int offset, unsigned int length, const void* pSource, bool discardWholeBuffer = false);
 
+	void* lock(BufferLocking options);
+	void* lock(unsigned int offset, unsigned int length, BufferLocking options);
+
+	void unlock();
+
 	GLuint getGLBufferId() const;
 
 protected:
 
-	void* lockImpl(unsigned int offset, unsigned int length, BufferLocking options);
-
-	void unlockImpl();
-
 	GLuint				mBufferId;
 	GLenum				mGLUsage;
+
+	BufferUsage			mUsage;
+	unsigned int		mSizeInBytes;
+	bool				mIsLocked;
 	
 	VertexBufferType	mVertexBufferType;
 	VertexElementType	mVertexElementType;

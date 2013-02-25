@@ -28,14 +28,118 @@ THE SOFTWARE.
 #define _ENGINE_H_
 
 #include <EngineConfig.h>
-#include <Core.h>
-#include <Platform.h>
-#include <Input.h>
-#include <Resource.h>
-#include <Game.h>
-#include <Render.h>
-#include <Sound.h>
-#include <Physics.h>
+
+#include <core/Singleton.h>
+#include <core/Log.h>
+#include <core/LogDefines.h>
+#include <core/System.h>
+#include <core/SystemDefines.h>
+#include <core/SystemDriver.h>
+
+#include <core/Math.h>
+#include <core/Utils.h>
+
+#include <core/Aabox3d.h>
+#include <core/Plane3d.h>
+#include <core/Sphere3d.h>
+
+#include <platform/PlatformDefines.h>
+#include <platform/PlatformManager.h>
+
+#include <input/Cursor.h>
+#include <input/InputEvent.h>
+#include <input/InputDevice.h>
+#include <input/InputDeviceDefines.h>
+#include <input/Mouse.h>
+#include <input/MouseDefines.h>
+#include <input/MouseEvent.h>
+#include <input/MouseEventReceiver.h>
+#include <input/Keyboard.h>
+#include <input/KeyboardDefines.h>
+#include <input/KeyEvent.h>
+#include <input/KeyEventReceiver.h>
+#include <input/Joystick.h>
+#include <input/JoystickDefines.h>
+#include <input/JoystickEvent.h>
+#include <input/JoystickEventReceiver.h>
+#include <input/InputDriver.h>
+#include <input/InputManager.h>
+
+#include <resource/Resource.h>
+#include <resource/ResourceDefines.h>
+#include <resource/ResourceEvent.h>
+#include <resource/ResourceEventReceiver.h>
+#include <resource/PixelFormat.h>
+#include <resource/Serializer.h>
+#include <resource/LoadEvent.h>
+#include <resource/LoadEventReceiver.h>
+#include <resource/ResourceManager.h>
+
+#include <game/GameObject.h>
+#include <game/Component.h>
+#include <game/ComponentDefines.h>
+#include <game/ComponentFactory.h>
+#include <game/Transform.h>
+#include <game/TransformDefines.h>
+#include <game/MessageDefines.h>
+#include <game/Scene.h>
+#include <game/SceneFactory.h>
+#include <game/GameManager.h>
+
+#include <render/RenderUtils.h>
+#include <render/BufferDefines.h>
+#include <render/IndexBuffer.h>
+#include <render/IndexBufferDefines.h>
+#include <render/VertexBuffer.h>
+#include <render/VertexBufferDefines.h>
+#include <render/RenderDefines.h>
+#include <render/Camera.h>
+#include <render/CameraDefines.h>
+#include <render/Frustum.h>
+#include <render/FrustumDefines.h>
+#include <render/Light.h>
+#include <render/LightDefines.h>
+#include <render/Font.h>
+#include <render/FontFactory.h>
+#include <render/Model.h>
+#include <render/MeshData.h>
+#include <render/MeshDataFactory.h>
+#include <render/Material.h>
+#include <render/Texture.h>
+#include <render/TextureDefines.h>
+#include <render/Shader.h>
+#include <render/ShaderDefines.h>
+#include <render/ShaderParameter.h>
+#include <render/ShaderParameterDefines.h>
+#include <render/RenderStateData.h>
+#include <render/Viewport.h>
+#include <render/RenderTargetEvent.h>
+#include <render/RenderTargetEventReceiver.h>
+#include <render/RenderTarget.h>
+#include <render/RenderWindow.h>
+#include <render/FrameEventReceiver.h>
+#include <render/RenderManager.h>
+
+#include <sound/Sound.h>
+#include <sound/SoundUtils.h>
+#include <sound/SoundData.h>
+#include <sound/Listener.h>
+#include <sound/SoundFactory.h>
+#include <sound/SoundManager.h>
+
+#include <physics/Body.h>
+#include <physics/BodyFactory.h>
+#include <physics/BodyData.h>
+#include <physics/BodyDataFactory.h>
+#include <physics/Material.h>
+#include <physics/Shape.h>
+#include <physics/ShapeDefines.h>
+#include <physics/Constraint.h>
+#include <physics/ConstraintDefines.h>
+#include <physics/CollisionPoint.h>
+#include <physics/CollisionEvent.h>
+#include <physics/CollisionEventReceiver.h>
+#include <physics/PhysicsManager.h>
 
 #include <engine/Plugin.h>
 #include <engine/PluginManager.h>

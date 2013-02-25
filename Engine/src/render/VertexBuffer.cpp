@@ -31,13 +31,15 @@ THE SOFTWARE.
 namespace render
 {
 
-VertexBuffer::VertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, BufferUsage usage): RenderBuffer(usage)
+VertexBuffer::VertexBuffer(VertexBufferType vertexBufferType, VertexElementType vertexElementType, unsigned int numVertices, BufferUsage usage)
 {
 	mVertexBufferType = vertexBufferType;
 	mVertexElementType = vertexElementType;
 	
 	mNumVertices = numVertices;
 	mVertexSize = 0;
+
+	mIsLocked = false;
 
 	// Calculate the size of the vertices
 	switch(mVertexElementType)
@@ -153,12 +155,12 @@ void VertexBuffer::writeData(unsigned int offset, unsigned int length, const voi
 	}
 }
 
-GLuint VertexBuffer::getGLBufferId() const
+void* VertexBuffer::lock(BufferLocking options)
 {
-	return mBufferId;
+	return lock(0, mSizeInBytes, options);
 }
 
-void* VertexBuffer::lockImpl(unsigned int offset, unsigned int length, BufferLocking options)
+void* VertexBuffer::lock(unsigned int offset, unsigned int length, BufferLocking options)
 {
 	GLenum access = 0;
 
@@ -209,7 +211,7 @@ void* VertexBuffer::lockImpl(unsigned int offset, unsigned int length, BufferLoc
 	return static_cast<void*>(static_cast<unsigned char*>(pBuffer) + offset);
 }
 
-void VertexBuffer::unlockImpl()
+void VertexBuffer::unlock()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 
@@ -220,6 +222,11 @@ void VertexBuffer::unlockImpl()
 	}
 
 	mIsLocked = false;
+}
+
+GLuint VertexBuffer::getGLBufferId() const
+{
+	return mBufferId;
 }
 
 }// end namespace render
