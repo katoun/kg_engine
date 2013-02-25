@@ -503,10 +503,67 @@ void RenderManager::initializeImpl()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+	//////Deferred rendering data/////////////
+	mWidth  = 1024;
+	mHeight = 768;
+
+	glGenFramebuffers(1, &mDeferredFrameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, mDeferredFrameBufferId);
+
+	glGenRenderbuffers(1, &mDepthBufferId);
+	glBindRenderbuffer(GL_RENDERBUFFER, mDepthBufferId);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
+
+	//Position buffer
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &mPosTextureId);
+	glBindTexture(GL_TEXTURE_2D, mPosTextureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	//Normal buffer
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &mNormalTextureId);
+	glBindTexture(GL_TEXTURE_2D, mNormalTextureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	//Color buffer
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &mColorTextureId);
+	glBindTexture(GL_TEXTURE_2D, mColorTextureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBufferId);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mPosTextureId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mNormalTextureId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, mColorTextureId, 0);
+
+	mAttachments.push_back(GL_COLOR_ATTACHMENT0);
+	mAttachments.push_back(GL_COLOR_ATTACHMENT1);
+	mAttachments.push_back(GL_COLOR_ATTACHMENT2);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//////Deferred rendering data/////////////
 }
 
 void RenderManager::uninitializeImpl()
 {
+	//////Deferred rendering data/////////////
+	glDeleteTextures(1, &mPosTextureId);
+	glDeleteTextures(1, &mNormalTextureId);
+	glDeleteTextures(1, &mColorTextureId);
+
+	glDeleteFramebuffers(1, &mDeferredFrameBufferId);
+	glDeleteRenderbuffers(1, &mDepthBufferId);
+	//////Deferred rendering data/////////////
+
 	// Remove all Lights
 	removeAllLights();
 
@@ -704,15 +761,29 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	beginFrame(viewport);
 
+	//////Deferred rendering data/////////////
+	glBindFramebuffer(GL_FRAMEBUFFER, mDeferredFrameBufferId);
+    glDrawBuffers(3, &mAttachments[0]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, mWidth, mHeight);
+	//////Deferred rendering data/////////////
+
 	mRenderStateData.setCurrentCamera(camera);
 
 	std::map<unsigned int, Light*>::const_iterator i = mLights.begin();
 	if (i != mLights.end())
 	{
 		mRenderStateData.setCurrentLight(i->second);
-	}	
+	}
 
 	renderVisibleModels();
+
+	//////Deferred rendering data/////////////
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//TODO:Draw deferred rendering quad!!!
+
+	//////Deferred rendering data/////////////
 	
 	endFrame();
 

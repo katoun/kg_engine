@@ -285,6 +285,20 @@ protected:
 	unsigned int mFaceCount;
 	unsigned int mVertexCount;
 
+	//////Deferred rendering data/////////////
+	GLuint				mDeferredFrameBufferId;
+	GLuint				mDepthBufferId;
+
+	GLuint				mPosTextureId;
+    GLuint				mNormalTextureId;
+	GLuint				mColorTextureId;
+	
+	std::size_t			mWidth;
+    std::size_t			mHeight;
+
+	std::vector<GLenum>	mAttachments;
+	//////Deferred rendering data/////////////
+
 	void fireFrameStarted();
 
 	void fireFrameEnded();
