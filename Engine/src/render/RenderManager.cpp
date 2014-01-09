@@ -504,6 +504,7 @@ void RenderManager::initializeImpl()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
+#ifdef DEFERRED_RENDERING
 	//////Deferred rendering data/////////////
 	mWidth  = 1024;
 	mHeight = 768;
@@ -551,10 +552,12 @@ void RenderManager::initializeImpl()
 	glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//////Deferred rendering data/////////////
+#endif
 }
 
 void RenderManager::uninitializeImpl()
 {
+#ifdef DEFERRED_RENDERING
 	//////Deferred rendering data/////////////
 	glDeleteTextures(1, &mPosTextureId);
 	glDeleteTextures(1, &mNormalTextureId);
@@ -563,6 +566,7 @@ void RenderManager::uninitializeImpl()
 	glDeleteFramebuffers(1, &mDeferredFrameBufferId);
 	glDeleteRenderbuffers(1, &mDepthBufferId);
 	//////Deferred rendering data/////////////
+#endif
 
 	// Remove all Lights
 	removeAllLights();
@@ -761,12 +765,14 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	beginFrame(viewport);
 
+#ifdef DEFERRED_RENDERING
 	//////Deferred rendering data/////////////
 	glBindFramebuffer(GL_FRAMEBUFFER, mDeferredFrameBufferId);
     glDrawBuffers(3, &mAttachments[0]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, mWidth, mHeight);
 	//////Deferred rendering data/////////////
+#endif
 
 	mRenderStateData.setCurrentCamera(camera);
 
@@ -778,13 +784,15 @@ void RenderManager::render(Camera* camera, Viewport* viewport)
 
 	renderVisibleModels();
 
+#ifdef DEFERRED_RENDERING
 	//////Deferred rendering data/////////////
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//TODO:Draw deferred rendering quad!!!
 
 	//////Deferred rendering data/////////////
-	
+#endif
+
 	endFrame();
 
 	endGeometryCount();

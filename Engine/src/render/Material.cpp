@@ -514,7 +514,7 @@ void Material::resourceLoaded(const resource::ResourceEvent& evt)
 				GLint		size;
 				GLint		count;
 				glGetProgramiv(mGLHandle, GL_ACTIVE_UNIFORMS, &count);
-				for (GLint idx=0; idx<count; idx++)
+				for (GLint idx = 0; idx < count; idx++)
 				{
 					glGetActiveUniform(mGLHandle, idx, GL_PARAMETER_NAME_BUFFERSIZE, NULL, &size, &type, uniformName);
 

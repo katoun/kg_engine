@@ -285,6 +285,7 @@ protected:
 	unsigned int mFaceCount;
 	unsigned int mVertexCount;
 
+#ifdef DEFERRED_RENDERING
 	//////Deferred rendering data/////////////
 	GLuint				mDeferredFrameBufferId;
 	GLuint				mDepthBufferId;
@@ -298,6 +299,7 @@ protected:
 
 	std::vector<GLenum>	mAttachments;
 	//////Deferred rendering data/////////////
+#endif
 
 	void fireFrameStarted();
 
